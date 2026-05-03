@@ -50,10 +50,26 @@ describe('computeSunScore', () => {
     expect(result.sun.altitude).toBeLessThan(0);
   });
 
-  test('overcast weather drops score significantly vs sunny', () => {
+  test('overcast weather drops score noticeably vs sunny', () => {
     const sunny = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'sunny');
     const overcast = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'overcast');
-    expect(overcast.score).toBeLessThan(sunny.score * 0.3);
+    // Overcast should be clearly lower (50% headroom is enough), but NOT
+    // crushed to ~15% — that was the old 0.85 cloud factor and it caused
+    // every terrace on a cloudy day to fall in the same low score band.
+    expect(overcast.score).toBeLessThan(sunny.score * 0.7);
+    expect(overcast.score).toBeGreaterThan(sunny.score * 0.3);
+  });
+
+  test('on cloudy days the score range stays wide enough to differentiate facings', () => {
+    // 95% cloud cover (overcast profile). Even with most direct sun blocked,
+    // a south-facing terrace at noon must still score meaningfully higher
+    // than a north-facing one — otherwise pin colors collapse to one band.
+    const south = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'overcast');
+    const north = computeSunScore(terrace('N'), [], 13, '2025-06-21', 'overcast');
+    // Either S/N gap ≥ 10 percentage points, OR S exceeds N by ≥ 30% (relative).
+    // Both express "the cloud factor didn't crush all variation".
+    const gap = south.score - north.score;
+    expect(gap).toBeGreaterThan(0.1);
   });
 
   test('"All" facing terrace gets a flat bonus over a fixed-facing one', () => {

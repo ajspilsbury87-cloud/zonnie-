@@ -106,7 +106,17 @@ export function computeSunScore(
   if (sun.altitude > 0) {
     score = Math.min(1, sun.altitude / 45);
     if (inShadow) score *= 0.15;
-    score *= 1 - (weather.cloudCover / 100) * 0.85;
+    // Cloud penalty: 100% cloud cover reduces score to ~45% of clear-sky.
+    // Previously this was 0.85 (100% cloud → 15% of clear), which on a
+    // cloudy day in Amsterdam crushed every terrace into the same low
+    // score band and the map looked uniformly grey. The shadow / facing
+    // factors couldn't distinguish terraces because cloud was multiplying
+    // them all by the same tiny number.
+    //
+    // 0.55 keeps the cloud signal meaningful (a cloudy day clearly scores
+    // lower than a clear one) while preserving enough dynamic range that
+    // shadow + facing differentiation still lands in different score bands.
+    score *= 1 - (weather.cloudCover / 100) * 0.55;
 
     const facingAzimuth = FACING_AZIMUTHS[terrace.facing];
     if (facingAzimuth >= 0) {
