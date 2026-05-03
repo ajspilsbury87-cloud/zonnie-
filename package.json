@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "validate-coords": "tsx scripts/validate-coords.ts",
     "apply-corrections": "tsx scripts/apply-corrections.ts",
-    "rasterize-assets": "tsx scripts/rasterize-assets.ts"
+    "rasterize-assets": "tsx scripts/rasterize-assets.ts",
+    "postinstall": "mkdir -p .expo/web 2>/dev/null && chmod -R u+w .expo 2>/dev/null || true"
   },
   "jest": {
     "preset": "jest-expo",
