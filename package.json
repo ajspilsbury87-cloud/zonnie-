@@ -13,7 +13,8 @@
     "validate-coords": "tsx scripts/validate-coords.ts",
     "apply-corrections": "tsx scripts/apply-corrections.ts",
     "rasterize-assets": "tsx scripts/rasterize-assets.ts",
-    "postinstall": "node scripts/ensure-expo-cache.js"
+    "postinstall": "node scripts/ensure-expo-cache.js",
+    "eas-build-pre-install": "node scripts/ensure-expo-cache.js"
   },
   "jest": {
     "preset": "jest-expo",
@@ -38,7 +39,7 @@
     "@shopify/flash-list": "2.0.2",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
-    "expo": "~54.0.33",
+    "expo": "~54.0.34",
     "expo-build-properties": "~1.0.10",
     "expo-constants": "~18.0.13",
     "expo-font": "~14.0.11",
