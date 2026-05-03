@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, type Region } from 'react-native-maps';
 
@@ -13,21 +13,6 @@ const AMSTERDAM_REGION: Region = {
 };
 
 /**
- * Cap on how many markers we ever render at once.
- *
- * Background: re-rendering markers on every map region change crashes Apple
- * Maps. So we never track region. But 378 static pins overlapping at city
- * zoom is also visually unusable. Compromise: render at most the top-N by
- * current sun score.
- *
- * Reduced from 50 → 30 after Andy reported native-build crashes when
- * changing time ranges. Each chip tap re-runs scoring for all terraces and
- * the top-N set can churn — fewer markers in the churn pool means fewer
- * concurrent native annotation updates and a larger safety margin.
- */
-const MAX_MARKERS = 30;
-
-/**
  * Pre-rendered pin PNGs per state (`scripts/rasterize-assets.ts`).
  * `require()` is the React Native asset bundler convention — strings won't
  * work, the bundler needs to see the literal at build time.
@@ -40,8 +25,10 @@ const PIN_IMAGES = {
   selected: require('@/assets/images/pins/selected.png'),
 } as const;
 
+type PinAsset = typeof PIN_IMAGES[keyof typeof PIN_IMAGES];
+
 /** Score → pin asset key. Mirrors the band thresholds in `engines/scoring.ts#scoreLabel`. */
-function pinAssetForScore(score: number) {
+function pinAssetForScore(score: number): PinAsset {
   if (score > 0.7) return PIN_IMAGES.full;
   if (score > 0.5) return PIN_IMAGES.mostly;
   if (score > 0.3) return PIN_IMAGES.partial;
@@ -52,11 +39,67 @@ interface ZonnieMapProps {
   onSelect?: (item: ScoredTerrace) => void;
 }
 
+interface TerracePinProps {
+  id: number;
+  latitude: number;
+  longitude: number;
+  asset: PinAsset;
+  title: string;
+  description: string;
+  onPress: () => void;
+}
+
+/**
+ * Memoized marker. Re-renders only when its asset (score band) or coordinates
+ * change. With 378 markers on screen and a time-change rebanding maybe 10–30
+ * of them, this skips ~90% of native bridge traffic on time changes.
+ *
+ * Custom comparator ignores `onPress` because it's a fresh closure per render
+ * — comparing function identity would force a re-render every parent render.
+ */
+const TerracePin = memo(
+  function TerracePin({ latitude, longitude, asset, title, description, onPress }: TerracePinProps) {
+    return (
+      <Marker
+        coordinate={{ latitude, longitude }}
+        // Anchor x:0.5 y:1.0 — base of the T descender sits on the lat/lng,
+        // matching the spec in brand-assets/docs/ASSET-SPECS.md.
+        anchor={{ x: 0.5, y: 1 }}
+        image={asset}
+        title={title}
+        description={description}
+        // For static-image markers there's nothing for the native side to
+        // re-rasterize on every render — `tracksViewChanges={false}` skips
+        // the bridge update entirely. Image prop changes still propagate.
+        tracksViewChanges={false}
+        // iOS Apple Maps shows the callout on first tap; the callout itself
+        // is what the user taps to drill in — that's `onCalloutPress`.
+        onCalloutPress={onPress}
+      />
+    );
+  },
+  (prev, next) =>
+    prev.id === next.id &&
+    prev.asset === next.asset &&
+    prev.latitude === next.latitude &&
+    prev.longitude === next.longitude &&
+    prev.title === next.title &&
+    prev.description === next.description,
+);
+
 /**
  * Score-themed terrace markers (Zonnie brand pins) without app-side
- * clustering. Markers use the `image` prop with pre-rasterized PNGs —
- * Apple Maps handles bitmap annotations efficiently, unlike custom-view
- * annotations which previously crashed on iOS under churn.
+ * clustering.
+ *
+ * Stability strategy:
+ *   1. Per-hour score cache (`useScoredTerraces`) makes time changes cheap.
+ *   2. `TerracePin` is React.memo'd — markers whose score-band didn't cross
+ *      a threshold skip re-render entirely.
+ *   3. `tracksViewChanges={false}` — for image markers, native side ignores
+ *      view-change tracking but still honors image-prop swaps.
+ *
+ * Together these keep the JS thread responsive and the native annotation
+ * traffic bounded, even when re-scoring all 378 terraces per chip tap.
  *
  * "Show on Map" pan-to is driven by `selectionStore.panTo`. ZonnieMap
  * watches it and animates the map there, then clears it.
@@ -67,14 +110,6 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   const selectedId = useSelectionStore((s) => s.selectedId);
   const panTo = useSelectionStore((s) => s.panTo);
   const clearPanTo = useSelectionStore((s) => s.clearPanTo);
-
-  const markers = useMemo(() => {
-    const top = scored.slice(0, MAX_MARKERS);
-    if (selectedId == null) return top;
-    if (top.some((s) => s.terrace.id === selectedId)) return top;
-    const extra = scored.find((s) => s.terrace.id === selectedId);
-    return extra ? [...top, extra] : top;
-  }, [scored, selectedId]);
 
   useEffect(() => {
     if (!panTo) return;
@@ -90,6 +125,19 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     clearPanTo();
   }, [panTo, clearPanTo]);
 
+  // Render every terrace in the active filter set. Cap removed — with the
+  // memoization stack above, ~378 static image markers run smoothly on the
+  // native iOS build (proven stable in earlier 378-static test).
+  const markers = useMemo(
+    () =>
+      scored.map(({ terrace, score }) => ({
+        item: { terrace, score },
+        asset:
+          terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
+      })),
+    [scored, selectedId],
+  );
+
   return (
     <MapView
       ref={mapRef}
@@ -100,30 +148,18 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       showsCompass
       showsScale
     >
-      {markers.map(({ terrace, score }) => {
-        const isSelected = terrace.id === selectedId;
-        return (
-          <Marker
-            key={terrace.id}
-            coordinate={{ latitude: terrace.lat, longitude: terrace.lng }}
-            // Anchor x:0.5 y:1.0 — base of the T descender sits on the lat/lng,
-            // matching the spec in brand-assets/docs/ASSET-SPECS.md.
-            anchor={{ x: 0.5, y: 1 }}
-            image={isSelected ? PIN_IMAGES.selected : pinAssetForScore(score)}
-            title={terrace.name}
-            description={terrace.vibe}
-            // For static-image markers there's nothing for the native side to
-            // re-rasterize on every render — `tracksViewChanges={false}` skips
-            // the bridge update entirely, drastically cutting native traffic
-            // during rapid score recomputes (time chip taps).
-            tracksViewChanges={false}
-            // iOS Apple Maps shows the callout on first tap (no listener fires
-            // for "open detail"). The callout itself is what the user taps to
-            // drill in — that's what `onCalloutPress` is for.
-            onCalloutPress={() => onSelect?.({ terrace, score })}
-          />
-        );
-      })}
+      {markers.map(({ item, asset }) => (
+        <TerracePin
+          key={item.terrace.id}
+          id={item.terrace.id}
+          latitude={item.terrace.lat}
+          longitude={item.terrace.lng}
+          asset={asset}
+          title={item.terrace.name}
+          description={item.terrace.vibe}
+          onPress={() => onSelect?.(item)}
+        />
+      ))}
     </MapView>
   );
 }
