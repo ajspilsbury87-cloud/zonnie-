@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ZONNIE — App Icon Master
+  Concept 1: Sunset stripes
+  
+  Format: 1024x1024 SVG (App Store master size)
+  Palette: 70s sunset (mustard, peach, burnt orange, terracotta, cocoa)
+  
+  Rendering:
+  - Bleeds to all four edges (no padding around the artwork itself)
+  - The 22.37% corner radius is iOS standard for 1024px (squircle ratio)
+  - For Android, render as full 1024x1024 with no rounded corners; let the launcher mask it
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <clipPath id="iosCorner">
+      <rect x="0" y="0" width="1024" height="1024" rx="229" ry="229"/>
+    </clipPath>
+  </defs>
+  
+  <g clip-path="url(#iosCorner)">
+    <!-- Sky band (top) -->
+    <rect x="0" y="0" width="1024" height="1024" fill="#F4D58D"/>
+    
+    <!-- Ground / setting horizon (bottom half) -->
+    <rect x="0" y="512" width="1024" height="512" fill="#E89C5A"/>
+    
+    <!-- Mid-ground orange band -->
+    <rect x="0" y="682" width="1024" height="342" fill="#D9633E"/>
+    
+    <!-- Foreground deep terracotta -->
+    <rect x="0" y="836" width="1024" height="188" fill="#B14222"/>
+    
+    <!-- Cocoa edge (very bottom) -->
+    <rect x="0" y="939" width="1024" height="85" fill="#7A2E14"/>
+    
+    <!-- Sun disc — sitting at horizon line -->
+    <circle cx="512" cy="528" r="188" fill="#FBA85A"/>
+    
+    <!-- Sun inner glow -->
+    <circle cx="512" cy="528" r="120" fill="#FFE5C2"/>
+    
+    <!-- Heat-shimmer stripes across the sun (cream lines) -->
+    <rect x="0" y="580" width="1024" height="22" fill="#FFE5C2"/>
+    <rect x="0" y="630" width="1024" height="14" fill="#FFE5C2"/>
+    <rect x="0" y="668" width="1024" height="9" fill="#FFE5C2" opacity="0.7"/>
+  </g>
+</svg>

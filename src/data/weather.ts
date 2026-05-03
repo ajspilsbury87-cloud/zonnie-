@@ -1,0 +1,66 @@
+/**
+ * Hourly weather forecast for Amsterdam, sourced from Open-Meteo.
+ *
+ * Why Open-Meteo over KNMI: KNMI's open data is dataset-based (GRIB files)
+ * and not consumable directly from a phone. Open-Meteo wraps the same
+ * underlying ECMWF + DWD models in a phone-friendly JSON API with no key,
+ * no rate limits, and 7-day forecast horizon that matches our date picker.
+ *
+ * Swap path to a different provider (KNMI proxy, OpenWeather, etc.): replace
+ * `fetchHourlyForecast` here. The shape of `Weather[]` is provider-neutral.
+ */
+
+import type { Weather } from '@/src/engines/types';
+
+/** Amsterdam centroid — single fetch covers all terraces in the dataset. */
+const AMSTERDAM_LAT = 52.3676;
+const AMSTERDAM_LNG = 4.9041;
+
+const OPEN_METEO_URL = 'https://api.open-meteo.com/v1/forecast';
+
+/**
+ * Fetch a 24-hour weather forecast for the given local date in Amsterdam.
+ * Returns an array indexed by local hour (0–23). Falls back to throwing on
+ * network error — the caller is expected to retry / show fallback synthetic.
+ */
+export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
+  const url =
+    `${OPEN_METEO_URL}?` +
+    new URLSearchParams({
+      latitude: AMSTERDAM_LAT.toString(),
+      longitude: AMSTERDAM_LNG.toString(),
+      hourly: 'cloud_cover,temperature_2m',
+      start_date: dateStr,
+      end_date: dateStr,
+      timezone: 'Europe/Amsterdam',
+    }).toString();
+
+  const res = await fetch(url, {
+    signal: AbortSignal.timeout(10_000),
+    headers: { Accept: 'application/json' },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Open-Meteo HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  const data = (await res.json()) as {
+    hourly?: {
+      time?: string[];
+      cloud_cover?: number[];
+      temperature_2m?: number[];
+    };
+  };
+
+  const cloud = data.hourly?.cloud_cover;
+  const temp = data.hourly?.temperature_2m;
+  const time = data.hourly?.time;
+  if (!cloud || !temp || !time || cloud.length !== 24) {
+    throw new Error(`Unexpected Open-Meteo payload (got ${cloud?.length ?? 0} hours)`);
+  }
+
+  return Array.from({ length: 24 }, (_, h) => ({
+    cloudCover: Math.round(cloud[h] ?? 0),
+    temp: Math.round(temp[h] ?? 0),
+  }));
+}
