@@ -16,14 +16,16 @@ const AMSTERDAM_REGION: Region = {
  * Cap on how many markers we ever render at once.
  *
  * Background: re-rendering markers on every map region change crashes Apple
- * Maps + Expo Go SDK 54. So we never track region. But 378 static pins
- * overlapping at city zoom is also visually unusable. Compromise: render at
- * most the top-N by current sun score.
+ * Maps. So we never track region. But 378 static pins overlapping at city
+ * zoom is also visually unusable. Compromise: render at most the top-N by
+ * current sun score.
  *
- * 50 covers nearly every actually-good sun spot at any given hour and is
- * scannable across the full Amsterdam region.
+ * Reduced from 50 → 30 after Andy reported native-build crashes when
+ * changing time ranges. Each chip tap re-runs scoring for all terraces and
+ * the top-N set can churn — fewer markers in the churn pool means fewer
+ * concurrent native annotation updates and a larger safety margin.
  */
-const MAX_MARKERS = 50;
+const MAX_MARKERS = 30;
 
 /**
  * Pre-rendered pin PNGs per state (`scripts/rasterize-assets.ts`).
@@ -110,6 +112,11 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
             image={isSelected ? PIN_IMAGES.selected : pinAssetForScore(score)}
             title={terrace.name}
             description={terrace.vibe}
+            // For static-image markers there's nothing for the native side to
+            // re-rasterize on every render — `tracksViewChanges={false}` skips
+            // the bridge update entirely, drastically cutting native traffic
+            // during rapid score recomputes (time chip taps).
+            tracksViewChanges={false}
             // iOS Apple Maps shows the callout on first tap (no listener fires
             // for "open detail"). The callout itself is what the user taps to
             // drill in — that's what `onCalloutPress` is for.
