@@ -35,8 +35,13 @@ const config: ExpoConfig = {
   newArchEnabled: true,
   // OTA updates: runtime is the app version. JS bundle changes within 0.1.0
   // ship as OTA; native changes (new packages, plugins) require a new build
-  // and a new version.
+  // and a new version. The `updates.url` points at the EAS Update server for
+  // this project — required by `expo-updates` whenever it's installed, even
+  // if we never push an update. Without it, prebuild errors out.
   runtimeVersion: { policy: 'appVersion' },
+  updates: {
+    url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
+  },
   ios: {
     supportsTablet: false,
     bundleIdentifier: BUNDLE_ID,
