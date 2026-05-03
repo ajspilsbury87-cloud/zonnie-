@@ -23,10 +23,7 @@ const EAS_PROJECT_ID = process.env.EXPO_EAS_PROJECT_ID ?? '4f05324b-142b-48f5-ab
 
 const config: ExpoConfig = {
   name: 'Zonnie',
-  // EAS-side slug (project URL on expo.dev). Internal — doesn't appear on
-  // App Store or home screen. Defaulted from `eas init` and is awkward;
-  // can be renamed any time at expo.dev/accounts/andy.spilsbury/projects/andys/settings.
-  slug: 'andys',
+  slug: 'zonnie',
   version: '0.1.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
