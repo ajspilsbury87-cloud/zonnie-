@@ -113,6 +113,16 @@ const config: ExpoConfig = {
           // 15.1 covers ~99% of iOS devices in 2026 and gives us modern APIs
           // (UIWindowScene, focus engine fixes, etc.) without dropping users.
           deploymentTarget: '15.1',
+          // Belt-and-suspenders: top-level `newArchEnabled: false` should
+          // be enough, but expo-build-properties takes precedence in
+          // pod-install resolution. Setting it explicitly here too ensures
+          // the Podfile is correctly generated for the old (Paper)
+          // architecture path that avoids the react-native-maps Fabric
+          // crash.
+          newArchEnabled: false,
+        },
+        android: {
+          newArchEnabled: false,
         },
       },
     ],

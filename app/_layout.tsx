@@ -17,6 +17,8 @@ import {
 } from '@expo-google-fonts/inter';
 import { useEffect } from 'react';
 
+import { useFavoritesStore } from '@/src/store/favoritesStore';
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -28,6 +30,11 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
   });
+
+  const hydrateFavorites = useFavoritesStore((s) => s.hydrate);
+  useEffect(() => {
+    void hydrateFavorites();
+  }, [hydrateFavorites]);
 
   useEffect(() => {
     if (fontsLoaded || fontError) {

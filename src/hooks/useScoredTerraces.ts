@@ -6,6 +6,7 @@ import { regionForArea } from '@/src/data/regions';
 import { computeSunScore } from '@/src/engines/scoring';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useAreaStore } from '@/src/store/areaStore';
+import { useFavoritesStore } from '@/src/store/favoritesStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import type { Terrace, Weather } from '@/src/engines/types';
@@ -107,6 +108,8 @@ export function useScoredTerraces(): ScoredTerrace[] {
   const fromHour = useTimeStore((s) => s.fromHour);
   const toHour = useTimeStore((s) => s.toHour);
   const selectedRegions = useAreaStore((s) => s.selectedRegions);
+  const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
+  const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
   const query = useSearchStore((s) => s.query);
   const weatherByDate = useWeatherStore((s) => s.byDate);
 
@@ -119,6 +122,9 @@ export function useScoredTerraces(): ScoredTerrace[] {
       weatherEntry?.status === 'ready' ? weatherEntry.data : undefined;
 
     let filtered: readonly Terrace[] = TERRACES;
+    if (favoritesOnly) {
+      filtered = filtered.filter((t) => favoriteIds.has(t.id));
+    }
     if (selectedRegions.size > 0) {
       filtered = filtered.filter((t) => {
         const region = regionForArea(t.area);
@@ -143,5 +149,14 @@ export function useScoredTerraces(): ScoredTerrace[] {
     });
     scored.sort((a, b) => b.score - a.score);
     return scored;
-  }, [dateOffset, fromHour, toHour, selectedRegions, query, weatherByDate]);
+  }, [
+    dateOffset,
+    fromHour,
+    toHour,
+    selectedRegions,
+    favoritesOnly,
+    favoriteIds,
+    query,
+    weatherByDate,
+  ]);
 }

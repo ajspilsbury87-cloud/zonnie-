@@ -32,6 +32,7 @@ import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { usePlacesStore } from '@/src/store/placesStore';
+import { useFavoritesStore } from '@/src/store/favoritesStore';
 import {
   fonts,
   fontSizes,
@@ -71,6 +72,8 @@ export function TerraceDetailSheet() {
   const weatherByDate = useWeatherStore((s) => s.byDate);
   const placesByPlaceId = usePlacesStore((s) => s.byPlaceId);
   const ensurePlace = usePlacesStore((s) => s.ensure);
+  const isFavorite = useFavoritesStore((s) => (selectedId != null ? s.favoriteIds.has(selectedId) : false));
+  const toggleFavorite = useFavoritesStore((s) => s.toggle);
 
   const terrace = useMemo(() => {
     if (selectedId == null) return null;
@@ -187,6 +190,25 @@ export function TerraceDetailSheet() {
                   {CAPACITY_LABELS[terrace.capacity] ?? terrace.capacity}
                 </Text>
               </View>
+              <Pressable
+                onPress={() => terrace && toggleFavorite(terrace.id)}
+                style={({ pressed }) => [
+                  styles.favoriteButton,
+                  isFavorite && styles.favoriteButtonActive,
+                  pressed && styles.favoriteButtonPressed,
+                ]}
+                accessibilityLabel={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                hitSlop={8}
+              >
+                <Text
+                  style={[
+                    styles.favoriteIcon,
+                    isFavorite && styles.favoriteIconActive,
+                  ]}
+                >
+                  {isFavorite ? '♥' : '♡'}
+                </Text>
+              </Pressable>
               <View style={[styles.scoreChip, { backgroundColor: scoreToColor(score) }]}>
                 <Text style={styles.scorePct}>{Math.round(score * 100)}</Text>
                 <Text style={styles.scoreUnit}>%</Text>
@@ -349,6 +371,28 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: palette.inkSoft,
     marginTop: spacing.xs,
+  },
+  favoriteButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: palette.sandDeep,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  favoriteButtonActive: {
+    backgroundColor: palette.burnt,
+  },
+  favoriteButtonPressed: {
+    opacity: 0.65,
+  },
+  favoriteIcon: {
+    fontSize: 22,
+    color: palette.inkSoft,
+    lineHeight: 24,
+  },
+  favoriteIconActive: {
+    color: palette.cream,
   },
   scoreChip: {
     minWidth: 64,
