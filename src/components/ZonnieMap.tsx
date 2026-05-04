@@ -68,10 +68,16 @@ const TerracePin = memo(
         image={asset}
         title={title}
         description={description}
-        // For static-image markers there's nothing for the native side to
-        // re-rasterize on every render — `tracksViewChanges={false}` skips
-        // the bridge update entirely. Image prop changes still propagate.
-        tracksViewChanges={false}
+        // We previously set `tracksViewChanges={false}` here as a perf
+        // optimization. That turned out to be the bug behind "pins
+        // disappear when I change the time range" — for image markers,
+        // tracksViewChanges=false tells iOS NOT to re-rasterize when the
+        // `image` prop changes, which is exactly when a score-band
+        // crossing should swap the pin asset. Markers went stale or
+        // vanished. React.memo on this component already gates
+        // unnecessary re-renders (via the comparator below), so leaving
+        // tracksViewChanges at its default lets band crossings propagate
+        // cleanly without excess bridge traffic.
         // iOS Apple Maps shows the callout on first tap; the callout itself
         // is what the user taps to drill in — that's `onCalloutPress`.
         onCalloutPress={onPress}
