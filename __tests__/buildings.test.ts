@@ -1,5 +1,6 @@
 import { _resetBuildingsCache, getBuildings } from '@/src/data/buildings';
 import { AREA_CENTROIDS } from '@/src/data/areas';
+import { TERRACES } from '@/src/data/terraces';
 
 describe('getBuildings', () => {
   beforeEach(() => {
@@ -25,11 +26,16 @@ describe('getBuildings', () => {
     expect(a).toBe(b);
   });
 
-  test('count matches the prototype formula: sum(20*density + 6) per area', () => {
-    const expected = AREA_CENTROIDS.reduce(
+  test('count = area-clustered baseline + ~2 per non-rooftop terrace', () => {
+    const areaCount = AREA_CENTROIDS.reduce(
       (sum, a) => sum + Math.floor(20 * a.density) + 6,
       0,
     );
+    // Per-terrace generation adds 2 buildings per terrace whose `facing`
+    // is a compass direction (i.e., not 'All'). Loose lower bound only —
+    // exact is `2 × non-All terraces` plus the area-clustered set.
+    const nonAll = TERRACES.filter((t) => t.facing !== 'All').length;
+    const expected = areaCount + 2 * nonAll;
     expect(getBuildings().length).toBe(expected);
   });
 

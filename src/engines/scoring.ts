@@ -104,18 +104,18 @@ export function computeSunScore(
 
   let score = 0;
   if (sun.altitude > 0) {
-    score = Math.min(1, sun.altitude / 45);
+    // Altitude factor: max out at sun altitude 60° instead of 45°. This
+    // leaves more headroom — a midday sun isn't the absolute peak any
+    // more — so the facing bonus and 'All' multiplier don't slam every
+    // terrace into the 1.0 cap. Score 1.0 is reserved for "perfect noon
+    // + south-facing + sunny" cases, which is what users intuitively
+    // expect "100%" to mean.
+    score = Math.min(1, sun.altitude / 60);
     if (inShadow) score *= 0.15;
     // Cloud penalty: 100% cloud cover reduces score to ~45% of clear-sky.
-    // Previously this was 0.85 (100% cloud → 15% of clear), which on a
-    // cloudy day in Amsterdam crushed every terrace into the same low
-    // score band and the map looked uniformly grey. The shadow / facing
-    // factors couldn't distinguish terraces because cloud was multiplying
-    // them all by the same tiny number.
-    //
-    // 0.55 keeps the cloud signal meaningful (a cloudy day clearly scores
-    // lower than a clear one) while preserving enough dynamic range that
-    // shadow + facing differentiation still lands in different score bands.
+    // 0.55 keeps the cloud signal meaningful while preserving enough
+    // dynamic range that shadow + facing differentiation still lands in
+    // different score bands.
     score *= 1 - (weather.cloudCover / 100) * 0.55;
 
     const facingAzimuth = FACING_AZIMUTHS[terrace.facing];
@@ -123,11 +123,20 @@ export function computeSunScore(
       const diff = Math.abs(sun.azimuth - facingAzimuth);
       const facingDiff = Math.min(diff, 360 - diff);
       if (facingDiff < 90) {
-        score *= 1 + (1 - facingDiff / 90) * 0.3;
+        // Reduced from 0.3 to 0.25 — combined with the higher altitude
+        // ceiling (60° instead of 45°), keeps S-facing midday under the
+        // cap while still being clearly the best.
+        score *= 1 + (1 - facingDiff / 90) * 0.25;
+      } else {
+        // Beyond 90° from sun (e.g., N-facing at noon) the terrace is in
+        // the building's own shadow regardless of nearby buildings. Pin
+        // a 0.6 multiplier so it scores noticeably lower than even an
+        // E/W-facing one.
+        score *= 0.6;
       }
     } else {
-      // 'All' facing (rooftop / 360°) gets flat +20%.
-      score *= 1.2;
+      // 'All' facing (rooftop / 360°) gets flat +15% (down from +20%).
+      score *= 1.15;
     }
   }
 
