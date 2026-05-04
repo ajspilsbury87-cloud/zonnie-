@@ -6,7 +6,7 @@ import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { DatePicker } from '@/src/components/DatePicker';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
 import { SearchBox } from '@/src/components/SearchBox';
-import { TimeRangePicker } from '@/src/components/TimeRangePicker';
+import { TimeRangeScrubber } from '@/src/components/TimeRangeScrubber';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { scoreLabel } from '@/src/engines/scoring';
 import { useAreaStore } from '@/src/store/areaStore';
@@ -84,7 +84,7 @@ export function TerraceList({ onSelect }: TerraceListProps) {
       ListHeaderComponent={
         <View style={styles.header}>
           <DatePicker />
-          <TimeRangePicker />
+          <TimeRangeScrubber />
           <SearchBox />
           <NeighborhoodFilter />
         </View>
