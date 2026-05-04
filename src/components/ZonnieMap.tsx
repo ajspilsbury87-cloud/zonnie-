@@ -131,18 +131,32 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     clearPanTo();
   }, [panTo, clearPanTo]);
 
-  // Render every terrace in the active filter set. Cap removed — with the
-  // memoization stack above, ~378 static image markers run smoothly on the
-  // native iOS build (proven stable in earlier 378-static test).
-  const markers = useMemo(
-    () =>
-      scored.map(({ terrace, score }) => ({
-        item: { terrace, score },
-        asset:
-          terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
-      })),
-    [scored, selectedId],
-  );
+  // Render up to MAX_MARKERS terraces by score (top-N). Crash defense: with
+  // 378 markers, large time changes (e.g. 14:00 → 22:00) push hundreds of
+  // markers across score bands at once and the iOS Apple Maps annotation
+  // bridge can choke on that volume of simultaneous image swaps. 100
+  // covers basically every actually-good sun spot at any given hour while
+  // keeping the churn bounded. Filter (region/search) usually narrows
+  // things below this anyway.
+  //
+  // The selected terrace is always included even if it falls below the
+  // top-N — without that, "Show on Map" couldn't pan to a marker outside
+  // the cap.
+  const MAX_MARKERS = 100;
+  const markers = useMemo(() => {
+    const top = scored.slice(0, MAX_MARKERS);
+    const need = selectedId != null && !top.some((s) => s.terrace.id === selectedId);
+    const list = need
+      ? [...top, scored.find((s) => s.terrace.id === selectedId)].filter(
+          (x): x is ScoredTerrace => !!x,
+        )
+      : top;
+    return list.map(({ terrace, score }) => ({
+      item: { terrace, score },
+      asset:
+        terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
+    }));
+  }, [scored, selectedId]);
 
   return (
     <MapView
