@@ -5,24 +5,33 @@
  * `BottomSheetModal` so it overlays the main sheet without dismissing it.
  *
  * Contents:
- *   - Header: name (Fraunces), area · facing · capacity, current score chip
- *   - SunTimeline (24h score bars, current hour highlighted)
+ *   - Header: name, area · facing · capacity, current sun-score chip
+ *   - Google Places card (rating · price · today's hours · open/closed)
+ *     when the terrace has a `placeId` and the API key is configured.
+ *     Falls back gracefully when missing.
+ *   - SunTimeline (24h score bars, in-range hours highlighted)
  *   - Address + vibe
- *   - "Open in Apple Maps" action — uses `Linking` with `maps://` so it
- *     hands off to the native app cleanly.
+ *   - Actions: Show on Map · Open in Google Maps (with directions)
  */
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import { TERRACES } from '@/src/data/terraces';
+import {
+  buildGoogleMapsNavigationUrl,
+  buildGoogleMapsViewUrl,
+  priceLevelToDollars,
+  type PlaceDetails,
+} from '@/src/data/places';
 import { SunTimeline } from '@/src/components/SunTimeline';
 import { computeRangeScore, scoreLabel } from '@/src/engines/scoring';
 import { getBuildings } from '@/src/data/buildings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
+import { usePlacesStore } from '@/src/store/placesStore';
 import {
   fonts,
   fontSizes,
@@ -54,11 +63,14 @@ export function TerraceDetailSheet() {
   const ref = useRef<BottomSheetModal>(null);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const clear = useSelectionStore((s) => s.clear);
+  const setPanTo = useSelectionStore((s) => s.setPanTo);
   const dateOffset = useTimeStore((s) => s.dateOffset);
   const fromHour = useTimeStore((s) => s.fromHour);
   const toHour = useTimeStore((s) => s.toHour);
   const weatherProfile = useTimeStore((s) => s.weatherProfile);
   const weatherByDate = useWeatherStore((s) => s.byDate);
+  const placesByPlaceId = usePlacesStore((s) => s.byPlaceId);
+  const ensurePlace = usePlacesStore((s) => s.ensure);
 
   const terrace = useMemo(() => {
     if (selectedId == null) return null;
@@ -70,6 +82,14 @@ export function TerraceDetailSheet() {
     if (selectedId != null) ref.current?.present();
     else ref.current?.dismiss();
   }, [selectedId]);
+
+  // Trigger Places fetch when a terrace with a placeId is opened.
+  useEffect(() => {
+    if (terrace?.placeId) ensurePlace(terrace.placeId);
+  }, [terrace, ensurePlace]);
+
+  const placeEntry = terrace?.placeId ? placesByPlaceId[terrace.placeId] : undefined;
+  const placeDetails = placeEntry?.status === 'ready' ? placeEntry.data : undefined;
 
   const score = useMemo(() => {
     if (!terrace) return 0;
@@ -106,22 +126,38 @@ export function TerraceDetailSheet() {
     [],
   );
 
-  const handleOpenInMaps = useCallback(() => {
+  /** Open Google Maps with turn-by-turn directions to this terrace. */
+  const handleNavigate = useCallback(() => {
     if (!terrace) return;
-    const label = encodeURIComponent(terrace.name);
-    const lat = terrace.lat;
-    const lng = terrace.lng;
-    const url =
-      Platform.OS === 'ios'
-        ? `maps://?q=${label}&ll=${lat},${lng}`
-        : `geo:${lat},${lng}?q=${lat},${lng}(${label})`;
+    const url = buildGoogleMapsNavigationUrl({
+      lat: terrace.lat,
+      lng: terrace.lng,
+      placeId: terrace.placeId,
+      name: terrace.name,
+    });
     Linking.openURL(url).catch(() => {
-      // Fallback to web Google Maps if the native app isn't reachable.
-      Linking.openURL(`https://maps.google.com/?q=${lat},${lng}`);
+      // Universal-link fallback — Google Maps' web URL deep-links into the
+      // native app on iOS/Android when installed.
+      Linking.openURL(`https://maps.google.com/?q=${terrace.lat},${terrace.lng}`);
     });
   }, [terrace]);
 
-  const setPanTo = useSelectionStore((s) => s.setPanTo);
+  /** Open the place's Google Maps page (no navigation — for browsing reviews/photos). */
+  const handleViewInGoogleMaps = useCallback(() => {
+    if (!terrace) return;
+    const url =
+      placeDetails?.googleMapsUrl ??
+      buildGoogleMapsViewUrl({
+        lat: terrace.lat,
+        lng: terrace.lng,
+        placeId: terrace.placeId,
+        name: terrace.name,
+      });
+    Linking.openURL(url).catch(() => {
+      Linking.openURL(`https://maps.google.com/?q=${terrace.lat},${terrace.lng}`);
+    });
+  }, [terrace, placeDetails]);
+
   const handleShowOnMap = useCallback(() => {
     if (!terrace) return;
     setPanTo({ lat: terrace.lat, lng: terrace.lng });
@@ -157,6 +193,13 @@ export function TerraceDetailSheet() {
               </View>
             </View>
 
+            {/* Google Places card — rating, hours, price */}
+            <PlacesCard
+              loading={placeEntry?.status === 'loading'}
+              hasPlaceId={!!terrace.placeId}
+              details={placeDetails}
+            />
+
             <Text style={styles.sectionLabel}>Sun today</Text>
             <SunTimeline terrace={terrace} />
             <Text style={styles.scoreLabelText}>
@@ -170,10 +213,12 @@ export function TerraceDetailSheet() {
               </>
             ) : null}
 
-            {terrace.address ? (
+            {placeDetails?.address || terrace.address ? (
               <>
                 <Text style={styles.sectionLabel}>Address</Text>
-                <Text style={styles.body}>{terrace.address}</Text>
+                <Text style={styles.body}>
+                  {placeDetails?.address ?? terrace.address}
+                </Text>
               </>
             ) : null}
 
@@ -191,16 +236,82 @@ export function TerraceDetailSheet() {
                 </Text>
               </Pressable>
               <Pressable
-                onPress={handleOpenInMaps}
-                style={({ pressed }) => [styles.action, pressed && styles.actionPressed]}
+                onPress={handleViewInGoogleMaps}
+                style={({ pressed }) => [
+                  styles.action,
+                  styles.actionSecondary,
+                  pressed && styles.actionPressed,
+                ]}
               >
-                <Text style={styles.actionText}>Open in Apple Maps</Text>
+                <Text style={[styles.actionText, styles.actionTextSecondary]}>
+                  View in Maps
+                </Text>
               </Pressable>
             </View>
+
+            <Pressable
+              onPress={handleNavigate}
+              style={({ pressed }) => [
+                styles.actionPrimary,
+                pressed && styles.actionPressed,
+              ]}
+            >
+              <Text style={styles.actionText}>Get Directions</Text>
+            </Pressable>
           </>
         ) : null}
       </BottomSheetView>
     </BottomSheetModal>
+  );
+}
+
+interface PlacesCardProps {
+  loading: boolean;
+  hasPlaceId: boolean;
+  details: PlaceDetails | undefined;
+}
+
+/**
+ * Google Places summary line. Renders rating · price · today's hours
+ * if details have loaded. Renders nothing if there's no placeId on the
+ * terrace, or if the API key is unset (graceful degradation).
+ */
+function PlacesCard({ loading, hasPlaceId, details }: PlacesCardProps) {
+  if (!hasPlaceId) return null;
+  if (loading) {
+    return (
+      <View style={styles.placesCard}>
+        <Text style={styles.placesPlaceholder}>Loading details from Google…</Text>
+      </View>
+    );
+  }
+  if (!details) {
+    // API key missing or fetch failed — silently skip.
+    return null;
+  }
+
+  const segments: string[] = [];
+  if (details.rating) {
+    const stars = '★'.repeat(Math.round(details.rating));
+    const count = details.ratingCount ? ` (${details.ratingCount})` : '';
+    segments.push(`${stars} ${details.rating.toFixed(1)}${count}`);
+  }
+  const price = priceLevelToDollars(details.priceLevel);
+  if (price) segments.push(price);
+  if (details.openNow != null) {
+    segments.push(details.openNow ? 'Open now' : 'Closed now');
+  }
+
+  return (
+    <View style={styles.placesCard}>
+      {segments.length > 0 ? (
+        <Text style={styles.placesSummary}>{segments.join('  ·  ')}</Text>
+      ) : null}
+      {details.todayHours ? (
+        <Text style={styles.placesHours}>{details.todayHours}</Text>
+      ) : null}
+      {details.phone ? <Text style={styles.placesPhone}>{details.phone}</Text> : null}
+    </View>
   );
 }
 
@@ -285,6 +396,36 @@ const styles = StyleSheet.create({
     color: palette.ink,
     lineHeight: fontSizes.md * 1.4,
   },
+  placesCard: {
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: palette.sandDeep,
+    borderRadius: radii.md,
+  },
+  placesPlaceholder: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+    fontStyle: 'italic',
+  },
+  placesSummary: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.ink,
+  },
+  placesHours: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+    marginTop: 2,
+  },
+  placesPhone: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+    marginTop: 2,
+  },
   actionRow: {
     flexDirection: 'row',
     gap: spacing.sm,
@@ -296,6 +437,13 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderRadius: radii.md,
     alignItems: 'center',
+  },
+  actionPrimary: {
+    backgroundColor: palette.amber,
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
   },
   actionSecondary: {
     backgroundColor: palette.sandDeep,

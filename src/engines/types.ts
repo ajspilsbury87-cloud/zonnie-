@@ -26,6 +26,12 @@ export interface Terrace {
   coordSource?: CoordSource;
   /** ISO8601 timestamp of last verification. */
   verifiedAt?: string;
+  /**
+   * Google Places place ID for this terrace, when known. Used at runtime to
+   * fetch details (rating, hours, phone) and for Google Maps deep-link
+   * navigation. Backfilled from `coord_corrections.jsonl`.
+   */
+  placeId?: string;
 }
 
 export interface Building {
