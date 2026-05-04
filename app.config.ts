@@ -27,12 +27,27 @@ const config: ExpoConfig = {
   // display name on expo.dev doesn't change the slug — it's a separate
   // field. Slug is internal; doesn't appear on App Store / home screen.
   slug: 'andys',
-  version: '0.1.0',
+  // 0.1.1 — bumped from 0.1.0 because we're disabling new architecture,
+  // which is a native config change that requires a fresh build. The
+  // runtimeVersion is bound to appVersion, so existing 0.1.0 OTAs won't
+  // apply to this new install — that's intentional.
+  version: '0.1.1',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
   userInterfaceStyle: 'automatic',
-  newArchEnabled: true,
+  // DISABLED — Andy's iOS crash log (2026-05-04) confirmed the time-range
+  // crash was an `NSRangeException` in
+  // `RCTLegacyViewManagerInteropComponentView.finalizeUpdates:`,
+  // a known Fabric (new arch) bug with `react-native-maps`: the legacy
+  // view-manager interop's subview index gets out of sync when many
+  // markers' mount transactions land simultaneously (`insertObject:atIndex:
+  // index 65 beyond bounds [0..63]`). Affects both image AND pinColor
+  // markers since the bug is in the mounting layer, not in our marker
+  // rendering. Disabling new arch routes through the old (Paper)
+  // architecture which doesn't have this code path. Re-enable once
+  // react-native-maps ships a Fabric-safe Marker component.
+  newArchEnabled: false,
   // OTA updates: runtime is the app version. JS bundle changes within 0.1.0
   // ship as OTA; native changes (new packages, plugins) require a new build
   // and a new version. The `updates.url` points at the EAS Update server for
