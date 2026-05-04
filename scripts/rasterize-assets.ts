@@ -141,14 +141,24 @@ async function main() {
   await renderSvgFileToPng(iconSrc, 48, 48, join(OUT_DIR, 'favicon.png'));
 
   console.log('Pin states');
-  const states: PinStateKey[] = ['full', 'mostly', 'partial', 'shade', 'selected'];
-  for (const state of states) {
+  // Size-by-score: pin physical size scales with sun quality. Adds a
+  // non-colour signal so users can read the map at a glance even on
+  // map tiles where colour contrast is poor (cocoa pin on a dark
+  // canal, mustard on a light pavement). The aspect ratio (32:44 ≈
+  // 0.727) is preserved across states.
+  const SIZES: Record<PinStateKey, [number, number]> = {
+    shade: [24, 32], // smallest — least sun
+    partial: [28, 38],
+    mostly: [32, 44], // baseline (was the only size before)
+    full: [36, 50], // largest non-selected — most sun
+    selected: [40, 55], // biggest overall — focused state
+  };
+  for (const state of ['full', 'mostly', 'partial', 'shade', 'selected'] as PinStateKey[]) {
     const svg = pinSvg(state);
-    // Base 32×44 — about 80% of the original size so they're scannable
-    // on a busy map without dominating it. Retina @2x and @3x.
-    await renderSvgToPng(svg, 32, 44, join(PINS_OUT_DIR, `${state}.png`));
-    await renderSvgToPng(svg, 64, 88, join(PINS_OUT_DIR, `${state}@2x.png`));
-    await renderSvgToPng(svg, 96, 132, join(PINS_OUT_DIR, `${state}@3x.png`));
+    const [w, h] = SIZES[state];
+    await renderSvgToPng(svg, w, h, join(PINS_OUT_DIR, `${state}.png`));
+    await renderSvgToPng(svg, w * 2, h * 2, join(PINS_OUT_DIR, `${state}@2x.png`));
+    await renderSvgToPng(svg, w * 3, h * 3, join(PINS_OUT_DIR, `${state}@3x.png`));
   }
 
   console.log('\nDone. Re-run after editing brand-assets/.');
