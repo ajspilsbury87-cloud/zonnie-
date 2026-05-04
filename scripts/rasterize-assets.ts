@@ -141,17 +141,17 @@ async function main() {
   await renderSvgFileToPng(iconSrc, 48, 48, join(OUT_DIR, 'favicon.png'));
 
   console.log('Pin states');
-  // Size-by-score: pin physical size scales with sun quality. Adds a
-  // non-colour signal so users can read the map at a glance even on
-  // map tiles where colour contrast is poor (cocoa pin on a dark
-  // canal, mustard on a light pavement). The aspect ratio (32:44 ≈
-  // 0.727) is preserved across states.
+  // Size-by-score: pin physical size scales with sun quality. The
+  // earlier pass (24/28/32/36) was too subtle on-device — sun pins
+  // didn't visibly stand out from shaded ones. Widened the range so
+  // a full-sun pin is ~2.5× the area of a shaded one. Aspect ratio
+  // (~0.727) preserved across states.
   const SIZES: Record<PinStateKey, [number, number]> = {
-    shade: [24, 32], // smallest — least sun
+    shade: [20, 28], // smallest — least sun
     partial: [28, 38],
-    mostly: [32, 44], // baseline (was the only size before)
-    full: [36, 50], // largest non-selected — most sun
-    selected: [40, 55], // biggest overall — focused state
+    mostly: [38, 52],
+    full: [50, 68], // largest non-selected — most sun, ~2.5× area of shade
+    selected: [56, 76], // biggest overall — focused state
   };
   for (const state of ['full', 'mostly', 'partial', 'shade', 'selected'] as PinStateKey[]) {
     const svg = pinSvg(state);

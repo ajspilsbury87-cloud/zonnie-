@@ -131,32 +131,31 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     clearPanTo();
   }, [panTo, clearPanTo]);
 
-  // Render up to MAX_MARKERS terraces by score (top-N). Crash defense: with
-  // 378 markers, large time changes (e.g. 14:00 → 22:00) push hundreds of
-  // markers across score bands at once and the iOS Apple Maps annotation
-  // bridge can choke on that volume of simultaneous image swaps. 100
-  // covers basically every actually-good sun spot at any given hour while
-  // keeping the churn bounded. Filter (region/search) usually narrows
-  // things below this anyway.
+  // Render every terrace in the active filter set — no top-N cap.
   //
-  // The selected terrace is always included even if it falls below the
-  // top-N — without that, "Show on Map" couldn't pan to a marker outside
-  // the cap.
-  const MAX_MARKERS = 100;
-  const markers = useMemo(() => {
-    const top = scored.slice(0, MAX_MARKERS);
-    const need = selectedId != null && !top.some((s) => s.terrace.id === selectedId);
-    const list = need
-      ? [...top, scored.find((s) => s.terrace.id === selectedId)].filter(
-          (x): x is ScoredTerrace => !!x,
-        )
-      : top;
-    return list.map(({ terrace, score }) => ({
-      item: { terrace, score },
-      asset:
-        terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
-    }));
-  }, [scored, selectedId]);
+  // The cap was tried twice and re-added each time hoping to reduce
+  // "annotation churn during big time changes". It does the opposite:
+  // a top-N-by-score slice makes the marker SET (which IDs render)
+  // shift every time the time window changes, because terraces ranked
+  // 95th–105th rotate in/out as scores rebalance. That's marker
+  // mount/unmount on the iOS Apple Maps annotation bridge, which is
+  // far more expensive than image-prop swaps on a stable set.
+  //
+  // Rendering the full filter set means the marker set only changes
+  // when filters change (region/search), not when time changes. On
+  // a time shift, only the ~10–30 markers that crossed a band
+  // boundary swap their `image` prop — React.memo on TerracePin skips
+  // the rest. This is the configuration that proved stable in the
+  // earlier 378-static test (commit 29137f7 comment).
+  const markers = useMemo(
+    () =>
+      scored.map(({ terrace, score }) => ({
+        item: { terrace, score },
+        asset:
+          terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
+      })),
+    [scored, selectedId],
+  );
 
   return (
     <MapView
