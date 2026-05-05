@@ -11,8 +11,12 @@ const CAPACITIES = new Set(['S', 'M', 'L']);
 
 describe('terraces.json schema', () => {
   test('has roughly the documented count', () => {
-    expect(TERRACES.length).toBeGreaterThanOrEqual(350);
-    expect(TERRACES.length).toBeLessThanOrEqual(500);
+    // Range expanded post-import (2026-05-05): bulk-imported ~750 venues
+    // from Seats-in-the-Sun's competitor list → ~1,100. Upper bound is
+    // generous to allow further imports without breaking this test;
+    // tightens only if a regression would drop us below 800.
+    expect(TERRACES.length).toBeGreaterThanOrEqual(800);
+    expect(TERRACES.length).toBeLessThanOrEqual(2000);
   });
 
   test('every entry has the required fields and sane values', () => {
@@ -22,8 +26,10 @@ describe('terraces.json schema', () => {
       expect(t.name.length).toBeGreaterThan(0);
       expect(typeof t.lat).toBe('number');
       expect(typeof t.lng).toBe('number');
-      // Amsterdam bounding box (loose).
-      expect(t.lat).toBeGreaterThan(52.3);
+      // Amsterdam metro bbox (loose). Wider than the city centre proper —
+      // catches Amstelveen / Ouderkerk venues at the southern edge that
+      // came in with the 2026-05-05 competitor import.
+      expect(t.lat).toBeGreaterThan(52.27);
       expect(t.lat).toBeLessThan(52.45);
       expect(t.lng).toBeGreaterThan(4.7);
       expect(t.lng).toBeLessThan(5.05);

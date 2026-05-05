@@ -167,31 +167,33 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     clearPanTo();
   }, [panTo, clearPanTo]);
 
-  // Render every terrace in the active filter set — no top-N cap.
+  // Cap visible markers at top-N by score. After importing ~750 venues
+  // from the competitor list, the dataset jumped to 1100+ terraces and
+  // rendering them all at city zoom is unusable. Top 200 covers nearly
+  // every actually-good sun spot at any given hour and is scannable on
+  // the full-Amsterdam view; user can filter (region/category/search/
+  // favorites) to narrow further. The selected terrace is always
+  // included even if it falls below the top-N.
   //
-  // The cap was tried twice and re-added each time hoping to reduce
-  // "annotation churn during big time changes". It does the opposite:
-  // a top-N-by-score slice makes the marker SET (which IDs render)
-  // shift every time the time window changes, because terraces ranked
-  // 95th–105th rotate in/out as scores rebalance. That's marker
-  // mount/unmount on the iOS Apple Maps annotation bridge, which is
-  // far more expensive than image-prop swaps on a stable set.
-  //
-  // Rendering the full filter set means the marker set only changes
-  // when filters change (region/search), not when time changes. On
-  // a time shift, only the ~10–30 markers that crossed a band
-  // boundary swap their `image` prop — React.memo on TerracePin skips
-  // the rest. This is the configuration that proved stable in the
-  // earlier 378-static test (commit 29137f7 comment).
-  const markers = useMemo(
-    () =>
-      scored.map(({ terrace, score }) => ({
-        item: { terrace, score },
-        asset:
-          terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
-      })),
-    [scored, selectedId],
-  );
+  // 200 is also well below the threshold (~30+ simultaneous mount
+  // transactions) where the old `react-native-maps` 1.20.1 Fabric bug
+  // tripped. Now on 1.27.2 we don't need that as much, but keeping
+  // markers bounded is still good for native annotation perf.
+  const MAX_MARKERS = 200;
+  const markers = useMemo(() => {
+    const top = scored.slice(0, MAX_MARKERS);
+    const need = selectedId != null && !top.some((s) => s.terrace.id === selectedId);
+    const list = need
+      ? [...top, scored.find((s) => s.terrace.id === selectedId)].filter(
+          (x): x is ScoredTerrace => !!x,
+        )
+      : top;
+    return list.map(({ terrace, score }) => ({
+      item: { terrace, score },
+      asset:
+        terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
+    }));
+  }, [scored, selectedId]);
 
   return (
     <MapView
