@@ -1,7 +1,7 @@
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 
 import { DatePicker } from '@/src/components/DatePicker';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
@@ -13,15 +13,17 @@ import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerr
 import { scoreLabel } from '@/src/engines/scoring';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useSearchStore } from '@/src/store/searchStore';
+import { useSelectionStore } from '@/src/store/selectionStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 
 interface RowProps {
   rank: number;
   item: ScoredTerrace;
+  isSelected: boolean;
   onPress?: (item: ScoredTerrace) => void;
 }
 
-const Row = memo(function Row({ rank, item, onPress }: RowProps) {
+const Row = memo(function Row({ rank, item, isSelected, onPress }: RowProps) {
   const { terrace, score } = item;
   const pct = Math.round(score * 100);
   const color = scoreToColor(score);
@@ -29,7 +31,7 @@ const Row = memo(function Row({ rank, item, onPress }: RowProps) {
     <TouchableOpacity
       onPress={() => onPress?.(item)}
       activeOpacity={0.6}
-      style={styles.row}
+      style={[styles.row, isSelected && styles.rowSelected]}
     >
       <Text style={styles.rank}>{rank}</Text>
       <View style={styles.rowBody}>
@@ -55,17 +57,43 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   const ranked = useScoredTerraces();
   const clearSearch = useSearchStore((s) => s.clear);
   const clearAreas = useAreaStore((s) => s.clear);
+  const selectedId = useSelectionStore((s) => s.selectedId);
+  const listRef = useRef<BottomSheetFlatListMethods>(null);
 
   const handleResetFilters = useCallback(() => {
     clearSearch();
     clearAreas();
   }, [clearSearch, clearAreas]);
 
+  /**
+   * When a terrace is selected (via map marker tap, "Show on Map", or
+   * any other path), scroll the list so it sits at the top — this way
+   * when the user dismisses the detail sheet, the selected terrace is
+   * the first thing they see in the list along with its score chip.
+   * Skips when no selection (clear) so the list doesn't reset to top
+   * unexpectedly.
+   */
+  useEffect(() => {
+    if (selectedId == null) return;
+    const idx = ranked.findIndex((s) => s.terrace.id === selectedId);
+    if (idx < 0) return;
+    listRef.current?.scrollToIndex({
+      index: idx,
+      viewPosition: 0,
+      animated: true,
+    });
+  }, [selectedId, ranked]);
+
   const renderItem = useCallback(
     ({ item, index }: { item: ScoredTerrace; index: number }) => (
-      <Row rank={index + 1} item={item} onPress={onSelect} />
+      <Row
+        rank={index + 1}
+        item={item}
+        isSelected={item.terrace.id === selectedId}
+        onPress={onSelect}
+      />
     ),
-    [onSelect],
+    [onSelect, selectedId],
   );
 
   // BottomSheetFlatList integrates with Gorhom's gesture system so the list
@@ -78,11 +106,20 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   // stay pinned at the top while the list scrolls below.
   return (
     <BottomSheetFlatList
+      ref={listRef}
       data={ranked}
       keyExtractor={(item) => String(item.terrace.id)}
       renderItem={renderItem}
       ItemSeparatorComponent={Separator}
       contentContainerStyle={styles.listContent}
+      // scrollToIndex on a long list with not-yet-rendered rows requires
+      // an estimate; getItemLayout removes the need to scroll-then-wait.
+      // Approximate row height: 70px + hairline separator. Add a header
+      // offset so scrollToIndex(0) doesn't underlap the sticky header.
+      onScrollToIndexFailed={(info) => {
+        const offset = info.averageItemLength * info.index;
+        listRef.current?.scrollToOffset({ offset, animated: true });
+      }}
       ListHeaderComponent={
         <View style={styles.header}>
           <DatePicker />
@@ -131,6 +168,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     gap: spacing.md,
+  },
+  rowSelected: {
+    backgroundColor: palette.cream,
   },
   separator: {
     height: StyleSheet.hairlineWidth,
