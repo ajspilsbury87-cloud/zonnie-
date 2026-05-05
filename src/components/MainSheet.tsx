@@ -3,12 +3,15 @@
  *
  * Snap points (revised 2026-05-05 per user feedback, fifth pass —
  * after pulling the hourly weather strip up into the peek):
- *   - 260  (absolute px) Handle + date picker + "Visiting HH:00 – HH:00"
+ *   - 290  (absolute px) Handle + date picker + "Visiting HH:00 – HH:00"
  *          + [Now][Afternoon][Evening][All day] preset pills + per-hour
  *          weather strip. Three decision tools, all visible at peek:
  *          which day, which time window, what the weather looks like
  *          hour-by-hour. From/To fine-tune sliders sit below the cut.
  *          Absolute (not %) so peek height is identical across phones.
+ *          290 (was 260) leaves breathing room so the bottom of the
+ *          weather strip doesn't clip under the home-bar safe area
+ *          on phones with smaller usable height.
  *   - 60%  Above + From/To sliders + search + neighborhood + venue
  *          filters + ~3 list rows.
  *   - 92%  Full list.
@@ -38,7 +41,7 @@ interface MainSheetProps {
 
 export function MainSheet({ onSelect }: MainSheetProps) {
   const ref = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => [260, '60%', '92%'], []);
+  const snapPoints = useMemo(() => [290, '60%', '92%'], []);
 
   const handleSelect = useCallback(
     (item: ScoredTerrace) => {

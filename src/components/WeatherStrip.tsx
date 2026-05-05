@@ -59,25 +59,43 @@ export function WeatherStrip() {
   const toHour = useTimeStore((s) => s.toHour);
   const weatherByDate = useWeatherStore((s) => s.byDate);
 
-  const cells = useMemo(() => {
+  const { cells, status } = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    if (entry?.status !== 'ready' || !entry.data) return null;
-    const cells: CellProps[] = [];
+    if (!entry || entry.status === 'idle' || entry.status === 'loading') {
+      return { cells: null, status: 'loading' as const };
+    }
+    if (entry.status === 'error' || !entry.data) {
+      return { cells: null, status: 'error' as const };
+    }
+    const out: CellProps[] = [];
     for (let h = fromHour; h <= toHour; h++) {
       const w = entry.data[h];
       if (!w) continue;
-      cells.push({
+      out.push({
         hour: h,
         temp: w.temp,
         cloudCover: w.cloudCover,
         windSpeed: w.windSpeed,
       });
     }
-    return cells;
+    return { cells: out, status: 'ready' as const };
   }, [dateOffset, fromHour, toHour, weatherByDate]);
 
-  if (!cells || cells.length === 0) return null;
+  // Always render *something* so the strip's vertical space is reserved
+  // (no layout jump when data lands) and the user has clear feedback that
+  // a weather row exists here. Earlier versions returned null on
+  // loading/error, which made the strip invisible at peek and led to
+  // "where's the weather?" reports.
+  if (cells == null || cells.length === 0) {
+    return (
+      <View style={styles.placeholderRow}>
+        <Text style={styles.placeholderText}>
+          {status === 'loading' ? 'Loading weather…' : 'Weather unavailable'}
+        </Text>
+      </View>
+    );
+  }
 
   // For long ranges (>5 hours), make horizontally scrollable so cells
   // stay readable without shrinking. Short ranges fit naturally.
@@ -147,5 +165,24 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.xs,
     color: palette.inkSoft,
     marginTop: 1,
+  },
+  // Placeholder row matches the cell row's vertical footprint so the
+  // strip reserves the same height regardless of data state — keeps the
+  // peek-snap layout stable.
+  placeholderRow: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+    backgroundColor: palette.sandDeep,
+    borderRadius: radii.md,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 64,
+  },
+  placeholderText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
   },
 });
