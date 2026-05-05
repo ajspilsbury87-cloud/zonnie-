@@ -1,10 +1,12 @@
-import { memo, useEffect, useMemo, useRef } from 'react';
-import { StyleSheet } from 'react-native';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, type Region } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { palette, radii, spacing } from '@/src/theme/tokens';
 
 const AMSTERDAM_REGION: Region = {
   latitude: 52.3676,
@@ -153,6 +155,50 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     );
   }, [userLoc.status, userLoc.coord]);
 
+  /**
+   * Manual locate-me action. Tapped when the auto-recenter on cold-start
+   * didn't land where the user expected — e.g., the user denied location
+   * the first time and now wants to grant it, or the iOS-cached fix was
+   * stale and the auto-recenter went to the wrong city.
+   *
+   * Asks for permission fresh, does a current-position lookup (not the
+   * potentially-stale last-known), then animates the map there.
+   * Bypasses the AMS_BBOX guard — if the user has explicitly asked to
+   * see where they are, we trust the request even if they're not in
+   * Amsterdam. (The blue dot still respects the bbox so we don't
+   * accidentally show a dot floating in a remote ocean.)
+   */
+  const handleLocateMe = useCallback(async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Location off',
+          'Zonnie needs location to centre the map on you. Enable it in iOS Settings → Privacy → Location → Zonnie.',
+          [
+            { text: 'Not now', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+        );
+        return;
+      }
+      const fix = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      mapRef.current?.animateToRegion(
+        {
+          latitude: fix.coords.latitude,
+          longitude: fix.coords.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        },
+        500,
+      );
+    } catch {
+      Alert.alert('Couldn’t get location', 'Try again in a moment.');
+    }
+  }, []);
+
   useEffect(() => {
     if (!panTo) return;
     mapRef.current?.animateToRegion(
@@ -196,39 +242,86 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   }, [scored, selectedId]);
 
   return (
-    <MapView
-      ref={mapRef}
-      style={styles.map}
-      provider={PROVIDER_DEFAULT}
-      initialRegion={AMSTERDAM_REGION}
-      // Show the standard blue dot only if we have permission and the
-      // user is inside Amsterdam — otherwise the dot floats off-screen
-      // and confuses people testing from elsewhere.
-      showsUserLocation={
-        userLoc.status === 'ready' &&
-        userLoc.coord != null &&
-        isInAmsterdam(userLoc.coord)
-      }
-      showsMyLocationButton={false}
-      showsCompass
-      showsScale
-    >
-      {markers.map(({ item, asset }) => (
-        <TerracePin
-          key={item.terrace.id}
-          id={item.terrace.id}
-          latitude={item.terrace.lat}
-          longitude={item.terrace.lng}
-          asset={asset}
-          title={item.terrace.name}
-          description={item.terrace.vibe}
-          onPress={() => onSelect?.(item)}
-        />
-      ))}
-    </MapView>
+    <View style={styles.container}>
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        provider={PROVIDER_DEFAULT}
+        initialRegion={AMSTERDAM_REGION}
+        // Show the standard blue dot only if we have permission and the
+        // user is inside Amsterdam — otherwise the dot floats off-screen
+        // and confuses people testing from elsewhere.
+        showsUserLocation={
+          userLoc.status === 'ready' &&
+          userLoc.coord != null &&
+          isInAmsterdam(userLoc.coord)
+        }
+        showsMyLocationButton={false}
+        showsCompass
+        showsScale
+      >
+        {markers.map(({ item, asset }) => (
+          <TerracePin
+            key={item.terrace.id}
+            id={item.terrace.id}
+            latitude={item.terrace.lat}
+            longitude={item.terrace.lng}
+            asset={asset}
+            title={item.terrace.name}
+            description={item.terrace.vibe}
+            onPress={() => onSelect?.(item)}
+          />
+        ))}
+      </MapView>
+      {/*
+        Floating "locate me" button. We ship our own (rather than using
+        MapView's `showsMyLocationButton`) because:
+          (a) the platform button only appears once permission is
+              granted — useless when the user wants to grant it now;
+          (b) the platform button's position is fixed to bottom-right
+              on Android and isn't customizable, which collides with our
+              bottom sheet;
+          (c) we want to provide an explicit Settings deep-link in the
+              "permission denied" path.
+      */}
+      <Pressable
+        onPress={handleLocateMe}
+        style={({ pressed }) => [styles.locateButton, pressed && styles.locateButtonPressed]}
+        accessibilityLabel="Centre map on my location"
+        hitSlop={8}
+      >
+        <Text style={styles.locateGlyph}>⌖</Text>
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
   map: { flex: 1 },
+  locateButton: {
+    position: 'absolute',
+    top: spacing.xxl + spacing.lg, // clears the iOS status-bar / notch
+    right: spacing.lg,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: palette.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Subtle shadow so the button reads as floating above the map.
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  locateButtonPressed: {
+    opacity: 0.7,
+  },
+  locateGlyph: {
+    fontSize: 22,
+    color: palette.ink,
+    lineHeight: 24,
+  },
 });

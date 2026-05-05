@@ -1,50 +1,55 @@
 /**
  * Venue-type categorisation derived from terrace name + vibe text.
  *
- * Used for the "Café / Bar / Restaurant / Outdoor" filter chips. Each
- * terrace can match multiple categories — e.g., a brouwerij with a
- * canal terrace is both Bar and Outdoor. Filter semantics: a terrace
- * passes if it matches ANY selected category (OR), so multi-select
- * widens the result set.
+ * Filter chips are deliberately just two: Bar and Restaurant. Earlier
+ * iterations had four (Café / Bar / Restaurant / Outdoor) but in
+ * practice:
+ *   - Café vs Bar is a fuzzy distinction in Amsterdam — most "cafés"
+ *     here are bruine kroegen serving beer, and most "bars" serve
+ *     coffee. Splitting them caused mis-classifications and the user
+ *     had to tap both to get what they meant. Folded into "Bar".
+ *   - "Outdoor" was redundant — every terrace in this app is by
+ *     definition outdoor. The category was leaking signal from the
+ *     facing data (`All`) and adding noise. Removed.
  *
- * Categorisation is heuristic — no perfect categorisation field in our
- * dataset. We combine name-prefix matching (Dutch venue conventions
- * like "Café X", "Brasserie Y", "Eetcafé Z") with vibe-text scanning
- * (the human-curated tag we already store, e.g. "Beer garden",
- * "Rooftop bar", "Bakery café"). Together they classify ~95% of our
- * 378 terraces; the remaining ~5% match no category and only appear
- * when the filter is empty.
+ * Each terrace can match BOTH remaining categories — e.g., a brasserie
+ * with a cocktail menu is both Bar and Restaurant. Filter semantics: a
+ * terrace passes if it matches ANY selected category (OR), so multi-
+ * select widens the result set. Empty selection = no filter.
  */
 
 import type { Terrace } from '@/src/engines/types';
 
-export type VenueCategory = 'cafe' | 'bar' | 'restaurant' | 'outdoor';
+export type VenueCategory = 'bar' | 'restaurant';
 
-export const CATEGORIES_ORDERED: readonly VenueCategory[] = [
-  'cafe',
-  'bar',
-  'restaurant',
-  'outdoor',
-];
+export const CATEGORIES_ORDERED: readonly VenueCategory[] = ['bar', 'restaurant'];
 
 export const CATEGORY_LABELS: Record<VenueCategory, string> = {
-  cafe: 'Café',
   bar: 'Bar',
   restaurant: 'Restaurant',
-  outdoor: 'Outdoor',
 };
 
 export const CATEGORY_GLYPHS: Record<VenueCategory, string> = {
-  cafe: '☕',
   bar: '🍸',
   restaurant: '🍽',
-  outdoor: '🌳',
 };
 
-/** Match terms (lowercase, substring search) per category. */
+/**
+ * Match terms (lowercase, substring search) per category. The "bar"
+ * bucket absorbs the old café terms (coffee / koffie / bakery / tearoom)
+ * since the cafe/bar split caused user confusion.
+ */
 const CATEGORY_TERMS: Record<VenueCategory, string[]> = {
-  cafe: ['café', 'cafe', 'koffie', 'coffee', 'bakery', 'tearoom', 'tasting room'],
   bar: [
+    // Café-ish (folded in)
+    'café',
+    'cafe',
+    'koffie',
+    'coffee',
+    'bakery',
+    'tearoom',
+    'tasting room',
+    // Classic bar
     'bar ',
     ' bar',
     'lounge',
@@ -59,6 +64,8 @@ const CATEGORY_TERMS: Record<VenueCategory, string[]> = {
     'nightclub',
     'club terrace',
     'sky bar',
+    'pub',
+    'kroeg',
   ],
   restaurant: [
     'restaurant',
@@ -72,33 +79,21 @@ const CATEGORY_TERMS: Record<VenueCategory, string[]> = {
     'dining',
     'fine dining',
     'bistro',
-  ],
-  outdoor: [
-    'rooftop',
-    'park',
-    'garden',
-    'square',
-    'canal',
-    'waterfront',
-    'waterside',
-    'beach',
-    'strand',
-    'amstel terrace',
-    'urban garden',
-    'sunny square',
-    'park-side',
-    'boat',
-    'hidden courtyard',
-    'courtyard',
-    'medieval tower',
+    'trattoria',
+    'osteria',
   ],
 };
 
 /**
  * Categorise a single terrace. Returns ALL matching categories — order
  * not significant, callers iterate the set or check membership.
+ *
+ * No facing-based heuristic any more: the old `facing === 'All'` →
+ * 'outdoor' rule is gone with the Outdoor category.
  */
-export function categoriesForTerrace(t: Pick<Terrace, 'name' | 'vibe' | 'facing'>): Set<VenueCategory> {
+export function categoriesForTerrace(
+  t: Pick<Terrace, 'name' | 'vibe' | 'facing'>,
+): Set<VenueCategory> {
   const matches = new Set<VenueCategory>();
   const haystack = `${t.name} ${t.vibe ?? ''}`.toLowerCase();
 
@@ -110,10 +105,6 @@ export function categoriesForTerrace(t: Pick<Terrace, 'name' | 'vibe' | 'facing'
       }
     }
   }
-
-  // Outdoor signal: 'All' facing implies rooftop / open square / 360°
-  // exposure even if no name/vibe term hits.
-  if (t.facing === 'All') matches.add('outdoor');
 
   return matches;
 }

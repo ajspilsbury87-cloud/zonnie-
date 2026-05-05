@@ -25,6 +25,9 @@ import type {
 } from './types';
 
 export const AMSTERDAM_TZ = 'Europe/Amsterdam';
+/** Amsterdam centroid — citywide solar calcs (sunset, etc.) when no terrace coord is in scope. */
+export const AMSTERDAM_LAT = 52.3676;
+export const AMSTERDAM_LNG = 4.9041;
 
 const FACING_AZIMUTHS: Record<Facing, number> = {
   N: 0,

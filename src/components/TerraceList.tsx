@@ -6,7 +6,10 @@ import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bo
 import { DatePicker } from '@/src/components/DatePicker';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
 import { SearchBox } from '@/src/components/SearchBox';
-import { TimeRangeScrubber } from '@/src/components/TimeRangeScrubber';
+import {
+  TimeRangeFineTune,
+  TimeRangeQuickPicker,
+} from '@/src/components/TimeRangeScrubber';
 import { VenueTypeFilter } from '@/src/components/VenueTypeFilter';
 import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -148,9 +151,17 @@ export function TerraceList({ onSelect }: TerraceListProps) {
       contentContainerStyle={styles.listContent}
       ListHeaderComponent={
         <View style={styles.header}>
+          {/*
+            Header order matters — the bottom-sheet peek snap cuts at
+            ~260px, so anything above that line is visible without
+            expanding the sheet. Keep the *decision* tools above the
+            cut (date / time presets / hourly weather) and the *fine-
+            tune / refine* tools below it (sliders / search / filters).
+          */}
           <DatePicker />
-          <TimeRangeScrubber />
+          <TimeRangeQuickPicker />
           <WeatherStrip />
+          <TimeRangeFineTune />
           <SearchBox />
           <NeighborhoodFilter />
           <VenueTypeFilter />

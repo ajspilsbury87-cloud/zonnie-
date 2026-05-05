@@ -1,25 +1,31 @@
 /**
- * Time-window scrubber.
+ * Time-window controls. Split into two sibling components so the
+ * hourly weather strip can sit between them — visually the layout is:
  *
- * Three layers, top to bottom:
- *   1. Title "Visiting HH:00 – HH:00" + overall weather summary.
- *   2. Preset pills [Now] [Afternoon] [Evening] [All day] — covers the
- *      dominant decisions ("where for the next two hours", "where this
- *      evening") in one tap. "Now" means "current hour → +2h, today";
- *      tapping it from another date jumps back to today.
- *   3. Two stacked sliders for fine-tuning a custom From/To. The
- *      day/night gradient track behind them gives a visual cue of where
- *      you're scrubbing relative to peak sun.
+ *   ┌──── TimeRangeQuickPicker ────┐  ← peek-visible
+ *   │ Visiting HH:00 – HH:00       │
+ *   │ [Now][Afternoon][Evening][All day]│
+ *   └──────────────────────────────┘
+ *   ┌──── WeatherStrip (hourly) ───┐  ← peek-visible
+ *   └──────────────────────────────┘
+ *   ┌──── TimeRangeFineTune ───────┐  ← mid-snap+
+ *   │ FROM ●─── 14:00              │
+ *   │ TO   ──●── 16:00             │
+ *   └──────────────────────────────┘
  *
- * The pills are the headline interaction; the sliders are the escape
- * hatch. Tapping a pill bypasses both sliders. Dragging a slider drops
- * the user out of any preset (active state recomputes from store).
+ * Why split: when the scrubber was a single component, the hourly
+ * weather strip was forced below it — invisible at the peek snap.
+ * Splitting lets us reorder the elements in TerraceList's header so
+ * the hourly read sits within the peek window.
  *
- * Slider behaviour: only commits to the store on `onSlidingComplete`
- * (drag-end). During the drag we update LOCAL state to keep the label
- * live, but the score engine doesn't run until the user lifts their
- * finger. That's the slider equivalent of "discrete tap" — one commit
- * per interaction, no cascade.
+ * Both halves pull from `timeStore` independently. Dragging a slider
+ * commits on `onSlidingComplete` only (one store write per gesture)
+ * to avoid cascading score recomputes during the drag.
+ *
+ * Sunset cap: the `To` end of every preset and the `To` slider's max
+ * are capped at sunset hour for the selected date. Past sunset every
+ * terrace scores zero, so letting users pick e.g. 23:00 in December
+ * (when sunset is 16:30) wastes everyone's time.
  */
 
 import { useEffect, useMemo, useState } from 'react';
@@ -28,9 +34,13 @@ import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { AMSTERDAM_TZ } from '@/src/engines/scoring';
+import {
+  AMSTERDAM_LAT,
+  AMSTERDAM_LNG,
+  AMSTERDAM_TZ,
+} from '@/src/engines/scoring';
+import { sunsetHour } from '@/src/engines/solar';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
-import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
@@ -38,7 +48,8 @@ const HOURS = 24;
 /**
  * Preset definitions. "now" computes its range relative to the current
  * Amsterdam hour at apply-time, so it always means "right now → 2h from
- * now". The others are fixed time windows.
+ * now". The others are fixed time windows. Both fixed and computed
+ * ranges are clamped at sunset by the caller.
  */
 type PresetKey = 'now' | 'afternoon' | 'evening' | 'allday';
 interface Preset {
@@ -54,65 +65,101 @@ const PRESETS: Preset[] = [
   { key: 'allday', label: 'All day', fixed: { from: 10, to: 20 } },
 ];
 
-function nowHour(): number {
+function nowHourLocal(): number {
   const h = Number(formatInTimeZone(new Date(), AMSTERDAM_TZ, 'H'));
   return Number.isFinite(h) ? h : 12;
 }
 
-function presetRange(p: Preset): { from: number; to: number } {
-  if (p.fixed) return p.fixed;
-  const h = nowHour();
-  return { from: h, to: Math.min(23, h + 2) };
-}
-
-/**
- * One-line weather summary for the visit window — average temp, dominant
- * sky condition, wind descriptor. Sits below the "Visiting HH:00 – HH:00"
- * title so users get a glance-able overall weather read at the lowest
- * sheet snap, before they expand to see the per-hour strip.
- */
-function summarizeWindow(
-  data: { temp: number; cloudCover: number; windSpeed?: number }[] | undefined,
-  fromHour: number,
-  toHour: number,
-): string | null {
-  if (!data) return null;
-  let tempSum = 0;
-  let cloudSum = 0;
-  let windSum = 0;
-  let count = 0;
-  for (let h = fromHour; h <= toHour; h++) {
-    const w = data[h];
-    if (!w) continue;
-    tempSum += w.temp;
-    cloudSum += w.cloudCover;
-    windSum += w.windSpeed ?? 0;
-    count++;
+function presetRange(p: Preset, sunset: number): { from: number; to: number } {
+  if (p.fixed) {
+    return {
+      from: Math.min(p.fixed.from, sunset),
+      to: Math.min(p.fixed.to, sunset),
+    };
   }
-  if (count === 0) return null;
-  const avgTemp = Math.round(tempSum / count);
-  const avgCloud = cloudSum / count;
-  const avgWind = windSum / count;
-
-  let cloudLabel: string;
-  if (avgCloud < 25) cloudLabel = '☀ Clear';
-  else if (avgCloud < 50) cloudLabel = '🌤 Mostly clear';
-  else if (avgCloud < 75) cloudLabel = '⛅ Mixed';
-  else cloudLabel = '☁ Cloudy';
-
-  let windLabel: string;
-  if (avgWind < 8) windLabel = 'Calm';
-  else if (avgWind < 16) windLabel = 'Breezy';
-  else if (avgWind < 25) windLabel = 'Windy';
-  else windLabel = 'Gusty';
-
-  return `${cloudLabel} · ${avgTemp}° · ${windLabel}`;
+  const h = nowHourLocal();
+  return {
+    from: Math.min(h, sunset),
+    to: Math.min(h + 2, sunset),
+  };
 }
 
 function formatHour(h: number): string {
   const i = Math.round(h);
   return `${i.toString().padStart(2, '0')}:00`;
 }
+
+// ─── Quick picker (peek-visible) ──────────────────────────────────────
+
+export function TimeRangeQuickPicker() {
+  const fromHour = useTimeStore((s) => s.fromHour);
+  const toHour = useTimeStore((s) => s.toHour);
+  const setRange = useTimeStore((s) => s.setRange);
+  const setDateOffset = useTimeStore((s) => s.setDateOffset);
+  const dateOffset = useTimeStore((s) => s.dateOffset);
+
+  const sunset = useMemo(() => {
+    const dateStr = selectedDateStr(dateOffset);
+    return sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+  }, [dateOffset]);
+
+  /**
+   * Which preset (if any) matches the current store state? "Now" only
+   * counts when we're on today AND the from/to is exactly now → now+2.
+   * Drift away from any preset (e.g., user drags a slider) leaves all
+   * pills inactive — the right signal that the user has gone custom.
+   */
+  const activePresetKey = useMemo<PresetKey | null>(() => {
+    for (const p of PRESETS) {
+      const { from, to } = presetRange(p, sunset);
+      if (p.key === 'now' && dateOffset !== 0) continue;
+      if (fromHour === from && toHour === to) return p.key;
+    }
+    return null;
+  }, [fromHour, toHour, dateOffset, sunset]);
+
+  const applyPreset = (p: Preset) => {
+    if (p.key === 'now' && dateOffset !== 0) setDateOffset(0);
+    const { from, to } = presetRange(p, sunset);
+    setRange(from, to);
+  };
+
+  return (
+    <View style={styles.quickRoot}>
+      <Text style={styles.title}>
+        Visiting{' '}
+        <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text>
+        {' '}–{' '}
+        <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
+      </Text>
+
+      <View style={styles.presetRow}>
+        {PRESETS.map((p) => {
+          const active = activePresetKey === p.key;
+          return (
+            <TouchableOpacity
+              key={p.key}
+              onPress={() => applyPreset(p)}
+              activeOpacity={0.7}
+              style={[styles.presetChip, active && styles.presetChipActive]}
+            >
+              <Text
+                style={[
+                  styles.presetChipText,
+                  active && styles.presetChipTextActive,
+                ]}
+              >
+                {p.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+// ─── Fine-tune sliders (mid-snap+) ────────────────────────────────────
 
 /**
  * Day/night track background. We render a row of 24 narrow segments
@@ -174,84 +221,20 @@ function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
   );
 }
 
-export function TimeRangeScrubber() {
+export function TimeRangeFineTune() {
   const fromHour = useTimeStore((s) => s.fromHour);
   const toHour = useTimeStore((s) => s.toHour);
   const setFromHour = useTimeStore((s) => s.setFromHour);
   const setToHour = useTimeStore((s) => s.setToHour);
-  const setRange = useTimeStore((s) => s.setRange);
-  const setDateOffset = useTimeStore((s) => s.setDateOffset);
   const dateOffset = useTimeStore((s) => s.dateOffset);
-  const weatherByDate = useWeatherStore((s) => s.byDate);
 
-  const weatherSummary = useMemo(() => {
+  const sunset = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
-    const entry = weatherByDate[dateStr];
-    if (entry?.status !== 'ready') return null;
-    return summarizeWindow(entry.data, fromHour, toHour);
-  }, [dateOffset, fromHour, toHour, weatherByDate]);
-
-  /**
-   * Which preset (if any) matches the current store state? "Now" only
-   * counts when we're on today AND the from/to is exactly now → now+2.
-   * Drift away from any preset (e.g., user drags a slider) leaves all
-   * pills inactive, which is the right signal — the user has gone
-   * custom.
-   */
-  const activePresetKey = useMemo<PresetKey | null>(() => {
-    for (const p of PRESETS) {
-      const { from, to } = presetRange(p);
-      if (p.key === 'now' && dateOffset !== 0) continue;
-      if (fromHour === from && toHour === to) return p.key;
-    }
-    return null;
-  }, [fromHour, toHour, dateOffset]);
-
-  const applyPreset = (p: Preset) => {
-    if (p.key === 'now' && dateOffset !== 0) setDateOffset(0);
-    const { from, to } = presetRange(p);
-    setRange(from, to);
-  };
+    return sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+  }, [dateOffset]);
 
   return (
-    <View style={styles.root}>
-      <View style={styles.titleColumn}>
-        <Text style={styles.title}>
-          Visiting{' '}
-          <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text>
-          {' '}–{' '}
-          <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
-        </Text>
-        {weatherSummary ? (
-          <Text style={styles.summary} numberOfLines={1}>
-            {weatherSummary}
-          </Text>
-        ) : null}
-      </View>
-
-      <View style={styles.presetRow}>
-        {PRESETS.map((p) => {
-          const active = activePresetKey === p.key;
-          return (
-            <TouchableOpacity
-              key={p.key}
-              onPress={() => applyPreset(p)}
-              activeOpacity={0.7}
-              style={[styles.presetChip, active && styles.presetChipActive]}
-            >
-              <Text
-                style={[
-                  styles.presetChipText,
-                  active && styles.presetChipTextActive,
-                ]}
-              >
-                {p.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
+    <View style={styles.fineTuneRoot}>
       <View style={styles.scrubberArea}>
         <DayNightTrack />
         <View style={styles.slidersOverlay}>
@@ -259,14 +242,14 @@ export function TimeRangeScrubber() {
             label="From"
             value={fromHour}
             min={0}
-            max={Math.max(0, toHour)}
+            max={Math.min(sunset, Math.max(0, toHour))}
             onCommit={setFromHour}
           />
           <RangeSlider
             label="To"
             value={toHour}
-            min={Math.min(23, fromHour)}
-            max={23}
+            min={Math.min(sunset, fromHour)}
+            max={sunset}
             onCommit={setToHour}
           />
         </View>
@@ -276,35 +259,30 @@ export function TimeRangeScrubber() {
 }
 
 const styles = StyleSheet.create({
-  root: {
+  quickRoot: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+  },
+  fineTuneRoot: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-  },
-  titleColumn: {
-    minWidth: 0,
-    marginBottom: spacing.sm,
   },
   title: {
     fontFamily: fonts.body,
     fontSize: fontSizes.md,
     color: palette.inkSoft,
+    marginBottom: spacing.sm,
   },
   titleStrong: {
     fontFamily: fonts.displayBold,
     fontSize: fontSizes.lg,
     color: palette.ink,
   },
-  summary: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: fontSizes.sm,
-    color: palette.inkSoft,
-    marginTop: 2,
-  },
   presetRow: {
     flexDirection: 'row',
     gap: spacing.xs,
-    marginBottom: spacing.sm,
   },
   presetChip: {
     flex: 1,

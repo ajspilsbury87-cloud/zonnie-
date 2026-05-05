@@ -5,6 +5,8 @@
  * Pure math, zero dependencies — safe to call from any thread.
  */
 
+import { fromZonedTime } from 'date-fns-tz';
+
 import type { SunPosition } from './types';
 
 const DEG = Math.PI / 180;
@@ -75,4 +77,37 @@ export function solarPosition(date: Date, lat: number, lng: number): SunPosition
   if (Math.sin(ha) > 0) azimuth = 360 - azimuth;
 
   return { altitude, azimuth };
+}
+
+/**
+ * Last integer hour (Amsterdam local time) on the given date where the
+ * sun is still above the horizon. Used to cap the visit-window's "To"
+ * slider — there's no point letting users pick a sun-score visit time
+ * after sunset, when every terrace scores zero.
+ *
+ * Searches downward from 23:00 to find the latest hour with positive
+ * altitude. Falls back to 12 if the sun never sets at this lat (won't
+ * happen at Amsterdam's latitude, but the guard is cheap).
+ *
+ * Pure deterministic — just date + lat/lng — so the caller can safely
+ * memo by dateStr.
+ *
+ * @param dateStr  YYYY-MM-DD in Amsterdam local time
+ * @param lat      latitude in degrees
+ * @param lng      longitude in degrees
+ * @param tz       IANA timezone (e.g., 'Europe/Amsterdam')
+ */
+export function sunsetHour(
+  dateStr: string,
+  lat: number,
+  lng: number,
+  tz: string,
+): number {
+  for (let h = 23; h >= 12; h--) {
+    const local = `${dateStr}T${h.toString().padStart(2, '0')}:00:00`;
+    const utc = fromZonedTime(local, tz);
+    const pos = solarPosition(utc, lat, lng);
+    if (pos.altitude > 0) return h;
+  }
+  return 12;
 }

@@ -1,13 +1,13 @@
 /**
- * Horizontal chip row of venue types: Café / Bar / Restaurant / Outdoor.
+ * Horizontal chip row of venue types: Bar / Restaurant.
  *
- * Multi-select, OR semantics — selecting "Café" + "Outdoor" shows
- * cafés AND outdoor venues (union, not intersection). Empty selection
- * = no category filter.
+ * Multi-select, OR semantics — selecting "Bar" + "Restaurant" shows
+ * everything that matches either (union, not intersection). Empty
+ * selection = no category filter.
  *
- * Categorisation is heuristic — see `src/data/categories.ts`. About 5%
- * of terraces match no category and only appear when the filter row
- * is empty.
+ * Two chips, deliberately. Earlier iterations had four (adding Café
+ * and Outdoor); see `src/data/categories.ts` for the simplification
+ * rationale.
  */
 
 import { ScrollView, StyleSheet, Text } from 'react-native';
