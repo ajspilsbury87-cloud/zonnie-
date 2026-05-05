@@ -16,6 +16,12 @@ import { useSearchStore } from '@/src/store/searchStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 
+// Row pitch used by selectedId → scroll-to-top math. Keep in sync with
+// the row's natural height (paddingVertical * 2 + name lineHeight +
+// subtitle lineHeight + marginTop). Doesn't need to be exact — slight
+// drift just means the row lands a few px off, which is fine.
+const ROW_HEIGHT = 65;
+
 interface RowProps {
   rank: number;
   item: ScoredTerrace;
@@ -72,16 +78,26 @@ export function TerraceList({ onSelect }: TerraceListProps) {
    * the first thing they see in the list along with its score chip.
    * Skips when no selection (clear) so the list doesn't reset to top
    * unexpectedly.
+   *
+   * Implementation note: we compute the offset ourselves rather than
+   * calling `scrollToIndex`. With 886 windowed rows and the sheet often
+   * at peek snap (list barely visible), `scrollToIndex` for an off-window
+   * target falls into `onScrollToIndexFailed` and the fallback was
+   * unreliable in practice. `scrollToOffset` with a known row pitch
+   * always lands. The 80ms defer lets the BottomSheet's layout pass
+   * (e.g. detail sheet opening, snap change) finish first; without it,
+   * the scroll command can fire before the FlatList has measured its
+   * height and quietly no-op.
    */
   useEffect(() => {
     if (selectedId == null) return;
     const idx = ranked.findIndex((s) => s.terrace.id === selectedId);
     if (idx < 0) return;
-    listRef.current?.scrollToIndex({
-      index: idx,
-      viewPosition: 0,
-      animated: true,
-    });
+    const offset = idx * (ROW_HEIGHT + StyleSheet.hairlineWidth);
+    const t = setTimeout(() => {
+      listRef.current?.scrollToOffset({ offset, animated: true });
+    }, 80);
+    return () => clearTimeout(t);
   }, [selectedId, ranked]);
 
   const renderItem = useCallback(
@@ -112,14 +128,6 @@ export function TerraceList({ onSelect }: TerraceListProps) {
       renderItem={renderItem}
       ItemSeparatorComponent={Separator}
       contentContainerStyle={styles.listContent}
-      // scrollToIndex on a long list with not-yet-rendered rows requires
-      // an estimate; getItemLayout removes the need to scroll-then-wait.
-      // Approximate row height: 70px + hairline separator. Add a header
-      // offset so scrollToIndex(0) doesn't underlap the sticky header.
-      onScrollToIndexFailed={(info) => {
-        const offset = info.averageItemLength * info.index;
-        listRef.current?.scrollToOffset({ offset, animated: true });
-      }}
       ListHeaderComponent={
         <View style={styles.header}>
           <DatePicker />

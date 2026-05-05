@@ -1,16 +1,17 @@
 /**
  * Bottom sheet hosting the time/weather scrubber and the ranked list.
  *
- * Snap points (revised 2026-05-05 per user feedback):
- *   - 36%  Date picker + full From/To scrubber sliders. The user can
- *          adjust the time window without expanding the sheet.
- *   - 60%  Above + weather strip + search + filters + ~3 list rows.
+ * Snap points (revised 2026-05-05 per user feedback, second pass):
+ *   - 27%  Date picker + From/To scrubber sliders only. Time can be
+ *          adjusted without hiding the map. Filter chips are tucked away.
+ *   - 60%  Above + weather strip + search + neighborhood + venue filters
+ *          + ~3 list rows.
  *   - 92%  Full list.
  *
- * The previous 22% peek hid the actual sliders (only the title bar
- * showed) — adjusting time required expanding to 55% first, which made
- * the map invisible. 36% keeps the sliders reachable while still giving
- * most of the map view.
+ * History: 22% hid the sliders entirely; 36% revealed the sliders but
+ * also leaked the filter chips, eating more map than necessary. 27% is
+ * the sweet spot — sliders fully visible, filters out of sight until
+ * you swipe up.
  *
  * Layout note: the Scrubber + filters are rendered as the FlatList's
  * sticky header (`stickyHeaderIndices={[0]}`) rather than siblings.
@@ -32,7 +33,7 @@ interface MainSheetProps {
 
 export function MainSheet({ onSelect }: MainSheetProps) {
   const ref = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['36%', '60%', '92%'], []);
+  const snapPoints = useMemo(() => ['27%', '60%', '92%'], []);
 
   const handleSelect = useCallback(
     (item: ScoredTerrace) => {
