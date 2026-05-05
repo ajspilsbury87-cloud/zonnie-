@@ -59,14 +59,23 @@ export const useTimeStore = create<TimeState>((set, get) => ({
   weatherProfile: 'sunny',
   setDateOffset: (offset) => set({ dateOffset: clampOffset(offset) }),
   setFromHour: (h) => {
+    // Clamp From to <= current To, but never PUSH To. Reason: the iOS
+    // native Slider reports the user's finger position on release (not
+    // the visually-clamped value). If user drags From past To, the
+    // raw value comes through > toHour. Earlier we set
+    // `toHour: Math.max(from, toHour)`, which made the To handle jump
+    // up to follow — Andy saw this as "I move one bar, the other
+    // moves too". Now we silently clamp From to To and never disturb
+    // To. Visual effect: From's thumb snaps back to To's position;
+    // To stays still.
     const from = clampHour(h);
     const { toHour } = get();
-    set({ fromHour: from, toHour: Math.max(from, toHour) });
+    set({ fromHour: Math.min(from, toHour) });
   },
   setToHour: (h) => {
     const to = clampHour(h);
     const { fromHour } = get();
-    set({ toHour: to, fromHour: Math.min(fromHour, to) });
+    set({ toHour: Math.max(to, fromHour) });
   },
   setRange: (from, to) => {
     const f = clampHour(from);
