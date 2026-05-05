@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import type { Region } from '@/src/data/regions';
+import type { VenueCategory } from '@/src/data/categories';
 
 interface AreaState {
   /**
@@ -10,12 +11,19 @@ interface AreaState {
    */
   selectedRegions: Set<Region>;
   /**
+   * Selected venue categories (Café / Bar / Restaurant / Outdoor). Empty =
+   * no category filter. OR semantics: a terrace passes if it matches ANY
+   * selected category.
+   */
+  selectedCategories: Set<VenueCategory>;
+  /**
    * When true, the ranked list and map markers are restricted to the user's
    * favorites (from `favoritesStore`). Composes with region/search/time
    * filters — they all AND together.
    */
   favoritesOnly: boolean;
   toggle: (region: Region) => void;
+  toggleCategory: (cat: VenueCategory) => void;
   setAll: (regions: Region[]) => void;
   clear: () => void;
   setFavoritesOnly: (on: boolean) => void;
@@ -24,6 +32,7 @@ interface AreaState {
 
 export const useAreaStore = create<AreaState>((set, get) => ({
   selectedRegions: new Set<Region>(),
+  selectedCategories: new Set<VenueCategory>(),
   favoritesOnly: false,
   toggle: (region) =>
     set((s) => {
@@ -32,8 +41,20 @@ export const useAreaStore = create<AreaState>((set, get) => ({
       else next.add(region);
       return { selectedRegions: next };
     }),
+  toggleCategory: (cat) =>
+    set((s) => {
+      const next = new Set(s.selectedCategories);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return { selectedCategories: next };
+    }),
   setAll: (regions) => set({ selectedRegions: new Set(regions) }),
-  clear: () => set({ selectedRegions: new Set(), favoritesOnly: false }),
+  clear: () =>
+    set({
+      selectedRegions: new Set(),
+      selectedCategories: new Set(),
+      favoritesOnly: false,
+    }),
   setFavoritesOnly: (on) => set({ favoritesOnly: on }),
   toggleFavoritesOnly: () => set({ favoritesOnly: !get().favoritesOnly }),
 }));

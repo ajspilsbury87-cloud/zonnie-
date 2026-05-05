@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { TERRACES } from '@/src/data/terraces';
 import { getBuildings } from '@/src/data/buildings';
 import { regionForArea } from '@/src/data/regions';
+import { categoriesForTerrace } from '@/src/data/categories';
 import { computeSunScore } from '@/src/engines/scoring';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useAreaStore } from '@/src/store/areaStore';
@@ -108,6 +109,7 @@ export function useScoredTerraces(): ScoredTerrace[] {
   const fromHour = useTimeStore((s) => s.fromHour);
   const toHour = useTimeStore((s) => s.toHour);
   const selectedRegions = useAreaStore((s) => s.selectedRegions);
+  const selectedCategories = useAreaStore((s) => s.selectedCategories);
   const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
   const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
   const query = useSearchStore((s) => s.query);
@@ -129,6 +131,15 @@ export function useScoredTerraces(): ScoredTerrace[] {
       filtered = filtered.filter((t) => {
         const region = regionForArea(t.area);
         return region != null && selectedRegions.has(region);
+      });
+    }
+    if (selectedCategories.size > 0) {
+      filtered = filtered.filter((t) => {
+        const cats = categoriesForTerrace(t);
+        for (const sel of selectedCategories) {
+          if (cats.has(sel)) return true;
+        }
+        return false;
       });
     }
     if (q.length > 0) {
@@ -154,6 +165,7 @@ export function useScoredTerraces(): ScoredTerrace[] {
     fromHour,
     toHour,
     selectedRegions,
+    selectedCategories,
     favoritesOnly,
     favoriteIds,
     query,

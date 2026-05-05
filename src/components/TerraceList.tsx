@@ -7,6 +7,8 @@ import { DatePicker } from '@/src/components/DatePicker';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
 import { SearchBox } from '@/src/components/SearchBox';
 import { TimeRangeScrubber } from '@/src/components/TimeRangeScrubber';
+import { VenueTypeFilter } from '@/src/components/VenueTypeFilter';
+import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { scoreLabel } from '@/src/engines/scoring';
 import { useAreaStore } from '@/src/store/areaStore';
@@ -85,8 +87,10 @@ export function TerraceList({ onSelect }: TerraceListProps) {
         <View style={styles.header}>
           <DatePicker />
           <TimeRangeScrubber />
+          <WeatherStrip />
           <SearchBox />
           <NeighborhoodFilter />
+          <VenueTypeFilter />
         </View>
       }
       ListEmptyComponent={

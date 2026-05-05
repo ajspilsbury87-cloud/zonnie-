@@ -13,6 +13,7 @@
     "validate-coords": "tsx scripts/validate-coords.ts",
     "apply-corrections": "tsx scripts/apply-corrections.ts",
     "rasterize-assets": "tsx scripts/rasterize-assets.ts",
+    "import-venues": "tsx scripts/import-competitor-venues.ts",
     "backfill-place-ids": "tsx scripts/backfill-place-ids.ts",
     "postinstall": "node scripts/ensure-expo-cache.js",
     "eas-build-pre-install": "node scripts/ensure-expo-cache.js"
