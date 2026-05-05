@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
@@ -72,31 +72,49 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   }, [clearSearch, clearAreas]);
 
   /**
-   * When a terrace is selected (via map marker tap, "Show on Map", or
-   * any other path), scroll the list so it sits at the top — this way
-   * when the user dismisses the detail sheet, the selected terrace is
-   * the first thing they see in the list along with its score chip.
-   * Skips when no selection (clear) so the list doesn't reset to top
-   * unexpectedly.
+   * Scroll the list so the just-shown terrace sits at the top — so when
+   * the user dismisses the detail sheet, the row + its score chip is the
+   * first thing they see.
    *
-   * Implementation note: we compute the offset ourselves rather than
-   * calling `scrollToIndex`. With 886 windowed rows and the sheet often
-   * at peek snap (list barely visible), `scrollToIndex` for an off-window
-   * target falls into `onScrollToIndexFailed` and the fallback was
-   * unreliable in practice. `scrollToOffset` with a known row pitch
-   * always lands. The 80ms defer lets the BottomSheet's layout pass
-   * (e.g. detail sheet opening, snap change) finish first; without it,
-   * the scroll command can fire before the FlatList has measured its
-   * height and quietly no-op.
+   * Why we scroll on DISMISS (not on selection): the detail sheet is a
+   * `BottomSheetModal` which becomes Gorhom's active scrollable while it's
+   * presented. Programmatic scroll on the main sheet's FlatList during
+   * that window silently no-ops (the gesture-handler tree has handed
+   * control to the modal). We instead wait for `selectedId` to flip
+   * back to null (= modal dismissed via onDismiss → clear()), at which
+   * point the main sheet's FlatList is active again and scrollToOffset
+   * lands cleanly. We remember the previous selection in a ref so we
+   * know what to scroll to even after the store has been cleared.
+   *
+   * `prevSelectedRef` also keeps the row visually "selected" (cream tint)
+   * after dismiss, until another row is tapped — so the user can
+   * identify which terrace they were just looking at.
    */
+  const prevSelectedRef = useRef<number | null>(null);
+  const [stickySelectedId, setStickySelectedId] = useState<number | null>(null);
+
   useEffect(() => {
-    if (selectedId == null) return;
-    const idx = ranked.findIndex((s) => s.terrace.id === selectedId);
+    const prev = prevSelectedRef.current;
+    prevSelectedRef.current = selectedId;
+
+    if (selectedId != null) {
+      // Selection just happened (or changed) — remember it for the post-
+      // dismiss scroll, and tint the corresponding row.
+      setStickySelectedId(selectedId);
+      return;
+    }
+
+    // selectedId went null → detail sheet dismissed. Scroll to the
+    // remembered terrace.
+    if (prev == null) return;
+    const idx = ranked.findIndex((s) => s.terrace.id === prev);
     if (idx < 0) return;
     const offset = idx * (ROW_HEIGHT + StyleSheet.hairlineWidth);
+    // 120ms defer: lets the modal-dismiss animation hand control back
+    // to the main sheet before we issue the scroll command.
     const t = setTimeout(() => {
       listRef.current?.scrollToOffset({ offset, animated: true });
-    }, 80);
+    }, 120);
     return () => clearTimeout(t);
   }, [selectedId, ranked]);
 
@@ -105,11 +123,11 @@ export function TerraceList({ onSelect }: TerraceListProps) {
       <Row
         rank={index + 1}
         item={item}
-        isSelected={item.terrace.id === selectedId}
+        isSelected={item.terrace.id === stickySelectedId}
         onPress={onSelect}
       />
     ),
-    [onSelect, selectedId],
+    [onSelect, stickySelectedId],
   );
 
   // BottomSheetFlatList integrates with Gorhom's gesture system so the list

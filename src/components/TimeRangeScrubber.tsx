@@ -19,15 +19,60 @@
  * per interaction, no cascade.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { useTimeStore } from '@/src/store/timeStore';
+import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
+import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
+
+/**
+ * One-line weather summary for the visit window — average temp, dominant
+ * sky condition, wind descriptor. Sits below the "Visiting HH:00 – HH:00"
+ * title so users get a glance-able overall weather read at the lowest
+ * sheet snap, before they expand to see the per-hour strip.
+ */
+function summarizeWindow(
+  data: { temp: number; cloudCover: number; windSpeed?: number }[] | undefined,
+  fromHour: number,
+  toHour: number,
+): string | null {
+  if (!data) return null;
+  let tempSum = 0;
+  let cloudSum = 0;
+  let windSum = 0;
+  let count = 0;
+  for (let h = fromHour; h <= toHour; h++) {
+    const w = data[h];
+    if (!w) continue;
+    tempSum += w.temp;
+    cloudSum += w.cloudCover;
+    windSum += w.windSpeed ?? 0;
+    count++;
+  }
+  if (count === 0) return null;
+  const avgTemp = Math.round(tempSum / count);
+  const avgCloud = cloudSum / count;
+  const avgWind = windSum / count;
+
+  let cloudLabel: string;
+  if (avgCloud < 25) cloudLabel = '☀ Clear';
+  else if (avgCloud < 50) cloudLabel = '🌤 Mostly clear';
+  else if (avgCloud < 75) cloudLabel = '⛅ Mixed';
+  else cloudLabel = '☁ Cloudy';
+
+  let windLabel: string;
+  if (avgWind < 8) windLabel = 'Calm';
+  else if (avgWind < 16) windLabel = 'Breezy';
+  else if (avgWind < 25) windLabel = 'Windy';
+  else windLabel = 'Gusty';
+
+  return `${cloudLabel} · ${avgTemp}° · ${windLabel}`;
+}
 
 function formatHour(h: number): string {
   const i = Math.round(h);
@@ -100,16 +145,32 @@ export function TimeRangeScrubber() {
   const setFromHour = useTimeStore((s) => s.setFromHour);
   const setToHour = useTimeStore((s) => s.setToHour);
   const resetToNow = useTimeStore((s) => s.resetToNow);
+  const dateOffset = useTimeStore((s) => s.dateOffset);
+  const weatherByDate = useWeatherStore((s) => s.byDate);
+
+  const weatherSummary = useMemo(() => {
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    if (entry?.status !== 'ready') return null;
+    return summarizeWindow(entry.data, fromHour, toHour);
+  }, [dateOffset, fromHour, toHour, weatherByDate]);
 
   return (
     <View style={styles.root}>
       <View style={styles.header}>
-        <Text style={styles.title}>
-          Visiting{' '}
-          <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text>
-          {' '}–{' '}
-          <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
-        </Text>
+        <View style={styles.titleColumn}>
+          <Text style={styles.title}>
+            Visiting{' '}
+            <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text>
+            {' '}–{' '}
+            <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
+          </Text>
+          {weatherSummary ? (
+            <Text style={styles.summary} numberOfLines={1}>
+              {weatherSummary}
+            </Text>
+          ) : null}
+        </View>
         <TouchableOpacity onPress={resetToNow} style={styles.nowButton} activeOpacity={0.7}>
           <Text style={styles.nowButtonText}>Now</Text>
         </TouchableOpacity>
@@ -150,8 +211,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: spacing.sm,
   },
-  title: {
+  titleColumn: {
     flex: 1,
+    minWidth: 0,
+  },
+  title: {
     fontFamily: fonts.body,
     fontSize: fontSizes.md,
     color: palette.inkSoft,
@@ -160,6 +224,12 @@ const styles = StyleSheet.create({
     fontFamily: fonts.displayBold,
     fontSize: fontSizes.lg,
     color: palette.ink,
+  },
+  summary: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+    marginTop: 2,
   },
   nowButton: {
     paddingHorizontal: spacing.md,
