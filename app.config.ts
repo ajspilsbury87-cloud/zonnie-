@@ -27,27 +27,24 @@ const config: ExpoConfig = {
   // display name on expo.dev doesn't change the slug — it's a separate
   // field. Slug is internal; doesn't appear on App Store / home screen.
   slug: 'andys',
-  // 0.1.1 — bumped from 0.1.0 because we're disabling new architecture,
-  // which is a native config change that requires a fresh build. The
-  // runtimeVersion is bound to appVersion, so existing 0.1.0 OTAs won't
-  // apply to this new install — that's intentional.
-  version: '0.1.1',
+  version: '0.1.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
   userInterfaceStyle: 'automatic',
-  // DISABLED — Andy's iOS crash log (2026-05-04) confirmed the time-range
-  // crash was an `NSRangeException` in
-  // `RCTLegacyViewManagerInteropComponentView.finalizeUpdates:`,
-  // a known Fabric (new arch) bug with `react-native-maps`: the legacy
-  // view-manager interop's subview index gets out of sync when many
-  // markers' mount transactions land simultaneously (`insertObject:atIndex:
-  // index 65 beyond bounds [0..63]`). Affects both image AND pinColor
-  // markers since the bug is in the mounting layer, not in our marker
-  // rendering. Disabling new arch routes through the old (Paper)
-  // architecture which doesn't have this code path. Re-enable once
-  // react-native-maps ships a Fabric-safe Marker component.
-  newArchEnabled: false,
+  // KNOWN ISSUE: with `newArchEnabled: true`, the time-range crash
+  // surfaces as an NSRangeException in
+  // `RCTLegacyViewManagerInteropComponentView.finalizeUpdates:` when
+  // many `react-native-maps` Markers' mount transactions land in one
+  // tick. Crash log on file from 2026-05-04. The fix is one of:
+  //   (a) upgrade `react-native-maps` to a version with proper Fabric
+  //       support (1.20.1 uses legacy view manager interop on Fabric)
+  //   (b) migrate to `expo-maps` (Expo's official replacement, native
+  //       Fabric components)
+  //   (c) disable new architecture here — but our 2026-05-04 attempts
+  //       at this hit pod-install failures during EAS Build (no error
+  //       detail), so leaving as-is until the proper fix lands.
+  newArchEnabled: true,
   // OTA updates: runtime is the app version. JS bundle changes within 0.1.0
   // ship as OTA; native changes (new packages, plugins) require a new build
   // and a new version. The `updates.url` points at the EAS Update server for
@@ -66,7 +63,7 @@ const config: ExpoConfig = {
     // but the framework presence makes Apple expect this string to exist.
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
-        'Zonnie can show terraces near you on the map. Location is used only while the app is open and never sent off your device.',
+        'Zonnie centers the map on your location and surfaces nearby sunny terraces. Location is used only while the app is open and never sent off your device.',
       // Apple-required transport security: we only fetch from HTTPS endpoints.
       NSAppTransportSecurity: {
         NSAllowsArbitraryLoads: false,
@@ -95,6 +92,13 @@ const config: ExpoConfig = {
     'expo-router',
     'expo-font',
     [
+      'expo-location',
+      {
+        locationAlwaysAndWhenInUsePermission:
+          'Zonnie centers the map on your location and surfaces nearby sunny terraces.',
+      },
+    ],
+    [
       'expo-splash-screen',
       {
         image: './assets/images/splash-icon.png',
@@ -110,19 +114,9 @@ const config: ExpoConfig = {
       'expo-build-properties',
       {
         ios: {
-          // 15.1 covers ~99% of iOS devices in 2026 and gives us modern APIs
-          // (UIWindowScene, focus engine fixes, etc.) without dropping users.
+          // 15.1 covers ~99% of iOS devices in 2026 and gives us modern
+          // APIs (UIWindowScene, focus engine fixes, etc.).
           deploymentTarget: '15.1',
-          // Belt-and-suspenders: top-level `newArchEnabled: false` should
-          // be enough, but expo-build-properties takes precedence in
-          // pod-install resolution. Setting it explicitly here too ensures
-          // the Podfile is correctly generated for the old (Paper)
-          // architecture path that avoids the react-native-maps Fabric
-          // crash.
-          newArchEnabled: false,
-        },
-        android: {
-          newArchEnabled: false,
         },
       },
     ],

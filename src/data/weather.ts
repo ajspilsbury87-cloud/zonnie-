@@ -29,7 +29,10 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
     new URLSearchParams({
       latitude: AMSTERDAM_LAT.toString(),
       longitude: AMSTERDAM_LNG.toString(),
-      hourly: 'cloud_cover,temperature_2m',
+      // wind_speed_10m + wind_direction_10m feed the wind-shelter score
+      // (engines/scoring → terrace facing × wind direction). Adds ~3KB
+      // per response, no extra request — same endpoint, just more fields.
+      hourly: 'cloud_cover,temperature_2m,wind_speed_10m,wind_direction_10m',
       start_date: dateStr,
       end_date: dateStr,
       timezone: 'Europe/Amsterdam',
@@ -49,11 +52,15 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
       time?: string[];
       cloud_cover?: number[];
       temperature_2m?: number[];
+      wind_speed_10m?: number[];
+      wind_direction_10m?: number[];
     };
   };
 
   const cloud = data.hourly?.cloud_cover;
   const temp = data.hourly?.temperature_2m;
+  const wind = data.hourly?.wind_speed_10m;
+  const windDir = data.hourly?.wind_direction_10m;
   const time = data.hourly?.time;
   if (!cloud || !temp || !time || cloud.length !== 24) {
     throw new Error(`Unexpected Open-Meteo payload (got ${cloud?.length ?? 0} hours)`);
@@ -62,5 +69,7 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
   return Array.from({ length: 24 }, (_, h) => ({
     cloudCover: Math.round(cloud[h] ?? 0),
     temp: Math.round(temp[h] ?? 0),
+    windSpeed: wind?.[h] != null ? Math.round(wind[h]!) : undefined,
+    windDirection: windDir?.[h] != null ? Math.round(windDir[h]!) : undefined,
   }));
 }

@@ -55,6 +55,11 @@ export interface Weather {
   cloudCover: number;
   /** Celsius. */
   temp: number;
+  /** km/h. Optional — synthetic profiles don't supply it. */
+  windSpeed?: number;
+  /** Degrees from north, clockwise (0 = N, 90 = E, 180 = S, 270 = W). The
+   * direction the wind is coming FROM (meteorological convention). */
+  windDirection?: number;
 }
 
 export interface ScoreResult {

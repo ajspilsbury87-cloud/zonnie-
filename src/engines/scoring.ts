@@ -38,6 +38,60 @@ const FACING_AZIMUTHS: Record<Facing, number> = {
   All: -1,
 };
 
+/**
+ * Wind-shelter multiplier. A terrace facing INTO the wind takes a comfort
+ * penalty (cold + buffeting). A terrace facing AWAY from the wind is
+ * sheltered behind its own building and takes none.
+ *
+ * Meteorological convention: `windDirection` is the direction wind is
+ * coming FROM (0 = wind from north). So a S-facing terrace (opens south,
+ * building behind to north) is sheltered when windDirection ≈ 0 (N wind
+ * blocked by the building). It's most exposed when windDirection ≈ 180
+ * (S wind blowing right at the seating area).
+ *
+ * Ramps in only above 8 km/h — calm days are unaffected. Caps the penalty
+ * at ~15% so wind never dominates the sun signal.
+ */
+export function windShelterFactor(facing: Facing, weather: Weather): number {
+  const windSpeed = weather.windSpeed;
+  const windDir = weather.windDirection;
+  if (windSpeed == null || windDir == null) return 1.0;
+  if (windSpeed < 8) return 1.0; // calm — no penalty
+  const facingAz = FACING_AZIMUTHS[facing];
+  // Penalty ramps from 0 at 8 km/h up to 0.15 at 50+ km/h.
+  const penaltyMagnitude = Math.min(0.15, (windSpeed - 8) / 280);
+  if (facingAz < 0) {
+    // 'All' facing (rooftop / open square) — no shelter at any direction.
+    return 1.0 - penaltyMagnitude;
+  }
+  // Wind blowing AT the open side of the terrace = exposure 1; blowing
+  // AT the back of the building (sheltering the terrace) = exposure 0.
+  // Wind direction `windDir` is FROM-direction, so wind hits the terrace
+  // when (windDir + 180) ≈ facingAz, i.e. when |windDir - (facingAz-180)|
+  // is small. Equivalently: |windDir - facingAz| ≈ 180 = sheltered, ≈ 0
+  // = exposed. Cosine maps that smoothly.
+  const angleDiff = Math.abs(facingAz - windDir);
+  const minDiff = Math.min(angleDiff, 360 - angleDiff);
+  // Physics:
+  //   facingAz = direction the terrace OPENS toward (where seating looks)
+  //   windDir  = direction wind is COMING FROM (meteorology convention)
+  //
+  // Case 1: windDir == facingAz (e.g., N-facing terrace, wind from N).
+  //   Building is BEHIND the terrace (south, opposite to facing). Wind
+  //   blows from north → south, directly into the open seating area.
+  //   → EXPOSED.
+  // Case 2: windDir == facingAz ± 180 (e.g., S-facing terrace, wind from N).
+  //   Building is to the north. Wind hits the building first; seating is
+  //   in the lee. → SHELTERED.
+  //
+  // So: small minDiff = exposed; large minDiff = sheltered.
+  // Mapping: exposure = (1 + cos(minDiff)) / 2
+  //   minDiff = 0   → cos = 1  → exposure = 1 (fully exposed)
+  //   minDiff = 180 → cos = -1 → exposure = 0 (fully sheltered)
+  const exposure = (1 + Math.cos((minDiff * Math.PI) / 180)) / 2;
+  return 1.0 - penaltyMagnitude * exposure;
+}
+
 interface WeatherProfileBaseline {
   baseCloud: number;
   baseTemp: number;
@@ -138,6 +192,13 @@ export function computeSunScore(
       // 'All' facing (rooftop / 360°) gets flat +15% (down from +20%).
       score *= 1.15;
     }
+
+    // Wind-shelter factor: open terraces facing INTO the wind take a
+    // comfort penalty; terraces facing AWAY from the wind (i.e., sheltered
+    // by the building behind them) take none. None of our competitors do
+    // this. Ramps in only on noticeably windy days (>8 km/h) so calm
+    // afternoons aren't affected.
+    score *= windShelterFactor(terrace.facing, weather);
   }
 
   return {

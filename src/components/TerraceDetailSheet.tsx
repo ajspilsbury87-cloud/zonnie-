@@ -26,7 +26,7 @@ import {
   type PlaceDetails,
 } from '@/src/data/places';
 import { SunTimeline } from '@/src/components/SunTimeline';
-import { computeRangeScore, scoreLabel } from '@/src/engines/scoring';
+import { computeRangeScore, computeSunScore, scoreLabel } from '@/src/engines/scoring';
 import { getBuildings } from '@/src/data/buildings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
@@ -110,6 +110,89 @@ export function TerraceDetailSheet() {
       hourlyWeather,
     );
   }, [terrace, dateOffset, fromHour, toHour, weatherProfile, weatherByDate]);
+
+  /**
+   * Trend at the start of the visit window: was sun rising, holding,
+   * or falling vs an hour ago? Helps users decide between two terraces
+   * with the same average — pick the rising one.
+   */
+  const sunTrend = useMemo(() => {
+    if (!terrace) return null as 'rising' | 'holding' | 'falling' | null;
+    const buildings = getBuildings();
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const here = computeSunScore(
+      terrace,
+      buildings,
+      fromHour,
+      dateStr,
+      weatherProfile,
+      hourlyWeather?.[fromHour],
+    ).score;
+    const prevHour = Math.max(0, fromHour - 1);
+    const before = computeSunScore(
+      terrace,
+      buildings,
+      prevHour,
+      dateStr,
+      weatherProfile,
+      hourlyWeather?.[prevHour],
+    ).score;
+    const delta = here - before;
+    if (delta > 0.05) return 'rising';
+    if (delta < -0.05) return 'falling';
+    return 'holding';
+  }, [terrace, dateOffset, fromHour, weatherProfile, weatherByDate]);
+
+  /**
+   * Wind summary for the visit window — speed (avg) and direction
+   * label. Drives the small chip below the timeline.
+   */
+  const windSummary = useMemo(() => {
+    if (!terrace) return null as { avgKmh: number; direction: string } | null;
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    if (entry?.status !== 'ready') return null;
+    const data = entry.data;
+    if (!data) return null;
+    let speedSum = 0;
+    let dirSum = 0;
+    let count = 0;
+    for (let h = fromHour; h <= toHour; h++) {
+      const w = data[h];
+      if (w?.windSpeed != null && w.windDirection != null) {
+        speedSum += w.windSpeed;
+        dirSum += w.windDirection;
+        count++;
+      }
+    }
+    if (count === 0) return null;
+    const avgKmh = Math.round(speedSum / count);
+    const avgDir = (dirSum / count) % 360;
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    const idx = Math.round(avgDir / 45) % 8;
+    const direction = directions[idx] ?? 'N';
+    return { avgKmh, direction };
+  }, [terrace, dateOffset, fromHour, toHour, weatherByDate]);
+
+  /**
+   * Curation freshness label — "verified by Zonnie" with a relative time
+   * for the most-recent verification. Surfaces our quality moat over
+   * Sun Seekr / Coffee in the Sun's stale POI scrapes and Seats in the
+   * Sun's crowdsourced (often-closed) listings.
+   */
+  const curationLabel = useMemo(() => {
+    if (!terrace || !terrace.verified) return null;
+    if (!terrace.verifiedAt) return 'Verified by Zonnie';
+    const ms = Date.now() - new Date(terrace.verifiedAt).getTime();
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+    if (days < 1) return 'Verified today';
+    if (days < 7) return `Verified ${days} day${days === 1 ? '' : 's'} ago`;
+    if (days < 30) return `Verified ${Math.floor(days / 7)} week${days < 14 ? '' : 's'} ago`;
+    if (days < 365) return `Verified ${Math.floor(days / 30)} month${days < 60 ? '' : 's'} ago`;
+    return `Verified ${Math.floor(days / 365)} year${days < 730 ? '' : 's'} ago`;
+  }, [terrace]);
 
   const rangeLabel = useMemo(() => {
     const f = fromHour.toString().padStart(2, '0');
@@ -227,6 +310,45 @@ export function TerraceDetailSheet() {
             <Text style={styles.scoreLabelText}>
               {rangeLabel}: <Text style={styles.scoreLabelStrong}>{scoreLabel(score)}</Text>
             </Text>
+
+            <View style={styles.infoChipRow}>
+              {sunTrend ? (
+                <View
+                  style={[
+                    styles.infoChip,
+                    sunTrend === 'rising' && styles.infoChipPositive,
+                    sunTrend === 'falling' && styles.infoChipNegative,
+                  ]}
+                >
+                  <Text style={styles.infoChipText}>
+                    {sunTrend === 'rising'
+                      ? '↑ Rising'
+                      : sunTrend === 'falling'
+                        ? '↓ Falling'
+                        : '→ Holding'}
+                  </Text>
+                </View>
+              ) : null}
+              {windSummary ? (
+                <View style={styles.infoChip}>
+                  <Text style={styles.infoChipText}>
+                    {windSummary.avgKmh >= 25
+                      ? '🌬️ '
+                      : windSummary.avgKmh >= 12
+                        ? '💨 '
+                        : ''}
+                    {windSummary.avgKmh} km/h {windSummary.direction}
+                  </Text>
+                </View>
+              ) : null}
+              {curationLabel ? (
+                <View style={[styles.infoChip, styles.infoChipBrand]}>
+                  <Text style={[styles.infoChipText, styles.infoChipTextBrand]}>
+                    ✓ {curationLabel}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
 
             {terrace.vibe ? (
               <>
@@ -433,6 +555,36 @@ const styles = StyleSheet.create({
   scoreLabelStrong: {
     fontFamily: fonts.bodySemibold,
     color: palette.ink,
+  },
+  infoChipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.sm,
+  },
+  infoChip: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: palette.sandDeep,
+  },
+  infoChipPositive: {
+    backgroundColor: palette.cream,
+  },
+  infoChipNegative: {
+    backgroundColor: palette.mist,
+  },
+  infoChipBrand: {
+    backgroundColor: palette.burnt,
+  },
+  infoChipText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.xs,
+    color: palette.inkSoft,
+  },
+  infoChipTextBrand: {
+    color: palette.cream,
   },
   body: {
     fontFamily: fonts.body,

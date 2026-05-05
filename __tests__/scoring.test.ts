@@ -5,6 +5,7 @@ import {
   getWeather,
   scoreColor,
   scoreLabel,
+  windShelterFactor,
 } from '@/src/engines/scoring';
 import { solarPosition } from '@/src/engines/solar';
 import type { Facing, Terrace } from '@/src/engines/types';
@@ -112,6 +113,50 @@ describe('getWeather', () => {
       expect(w.cloudCover).toBeGreaterThanOrEqual(0);
       expect(w.cloudCover).toBeLessThanOrEqual(100);
     }
+  });
+});
+
+describe('windShelterFactor', () => {
+  const calm = { cloudCover: 10, temp: 18, windSpeed: 5, windDirection: 0 };
+  const stiff = { cloudCover: 10, temp: 14, windSpeed: 25, windDirection: 0 }; // wind from N
+
+  test('no penalty when wind is calm (<8 km/h)', () => {
+    expect(windShelterFactor('S', calm)).toBe(1.0);
+    expect(windShelterFactor('N', calm)).toBe(1.0);
+  });
+
+  test('no penalty when wind data missing (synthetic profile)', () => {
+    expect(windShelterFactor('S', { cloudCover: 10, temp: 18 })).toBe(1.0);
+  });
+
+  test('S-facing terrace is sheltered when wind comes from N (windDir 0)', () => {
+    // Wind FROM N hits the building behind the S-facing terrace, terrace
+    // is in the lee. Penalty should be ~0.
+    const factor = windShelterFactor('S', stiff);
+    expect(factor).toBeGreaterThan(0.99);
+  });
+
+  test('N-facing terrace is exposed when wind comes from N (windDir 0)', () => {
+    // Wind FROM N blows directly INTO the open seating of an N-facing
+    // terrace. Exposed → penalty applies.
+    const factor = windShelterFactor('N', stiff);
+    expect(factor).toBeLessThan(0.99);
+    expect(factor).toBeGreaterThan(0.85); // capped at ~15%
+  });
+
+  test('penalty caps at ~15% even in extreme wind', () => {
+    const gale = { cloudCover: 10, temp: 14, windSpeed: 100, windDirection: 0 };
+    expect(windShelterFactor('N', gale)).toBeGreaterThanOrEqual(0.85);
+  });
+
+  test('"All" facing takes the full penalty regardless of wind direction', () => {
+    // No shelter at any angle → penalty applies as if maximally exposed.
+    const fA = windShelterFactor('All', stiff);
+    expect(fA).toBeLessThan(1.0);
+    // Sanity: more penalty than a sheltered compass direction (S, lee from N wind).
+    expect(fA).toBeLessThan(windShelterFactor('S', stiff));
+    // And roughly the same as a fully-exposed direction (N, into N wind).
+    expect(fA).toBeCloseTo(windShelterFactor('N', stiff), 5);
   });
 });
 
