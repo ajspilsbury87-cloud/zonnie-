@@ -18,6 +18,14 @@
     "postinstall": "node scripts/ensure-expo-cache.js",
     "eas-build-pre-install": "node scripts/ensure-expo-cache.js"
   },
+  "expo": {
+    "install": {
+      "exclude": [
+        "react-native-maps",
+        "@react-native-community/slider"
+      ]
+    }
+  },
   "jest": {
     "preset": "jest-expo",
     "testEnvironment": "node",
