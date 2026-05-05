@@ -1,16 +1,19 @@
 /**
- * Time-window scrubber. Two stacked horizontal sliders — one for "From",
- * one for "To" — that let the user drag to set their visit window. The
- * track shows a day/night gradient (dark at 0–6 and 22–24, peak yellow
- * at 12) so the user gets a visual sense of where they're scrubbing
- * without needing to read the numeric label.
+ * Time-window scrubber.
  *
- * Replaces the chip-row picker. Two reasons we moved away from chips:
- *   1. Coffee in the Sun's signature feature is a draggable scrubber and
- *      it tested as the killer interaction. Chip rows were second-best.
- *   2. The chip rows fired `setFromHour`/`setToHour` synchronously on
- *      every tap. Rapid tapping cascaded scoring recomputes and was the
- *      most likely culprit for the time-change crashes Andy was seeing.
+ * Three layers, top to bottom:
+ *   1. Title "Visiting HH:00 – HH:00" + overall weather summary.
+ *   2. Preset pills [Now] [Afternoon] [Evening] [All day] — covers the
+ *      dominant decisions ("where for the next two hours", "where this
+ *      evening") in one tap. "Now" means "current hour → +2h, today";
+ *      tapping it from another date jumps back to today.
+ *   3. Two stacked sliders for fine-tuning a custom From/To. The
+ *      day/night gradient track behind them gives a visual cue of where
+ *      you're scrubbing relative to peak sun.
+ *
+ * The pills are the headline interaction; the sliders are the escape
+ * hatch. Tapping a pill bypasses both sliders. Dragging a slider drops
+ * the user out of any preset (active state recomputes from store).
  *
  * Slider behaviour: only commits to the store on `onSlidingComplete`
  * (drag-end). During the drag we update LOCAL state to keep the label
@@ -23,12 +26,44 @@ import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { formatInTimeZone } from 'date-fns-tz';
 
+import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
+
+/**
+ * Preset definitions. "now" computes its range relative to the current
+ * Amsterdam hour at apply-time, so it always means "right now → 2h from
+ * now". The others are fixed time windows.
+ */
+type PresetKey = 'now' | 'afternoon' | 'evening' | 'allday';
+interface Preset {
+  key: PresetKey;
+  label: string;
+  /** Fixed window, or null for "compute from current hour". */
+  fixed: { from: number; to: number } | null;
+}
+const PRESETS: Preset[] = [
+  { key: 'now', label: 'Now', fixed: null },
+  { key: 'afternoon', label: 'Afternoon', fixed: { from: 13, to: 17 } },
+  { key: 'evening', label: 'Evening', fixed: { from: 18, to: 22 } },
+  { key: 'allday', label: 'All day', fixed: { from: 10, to: 20 } },
+];
+
+function nowHour(): number {
+  const h = Number(formatInTimeZone(new Date(), AMSTERDAM_TZ, 'H'));
+  return Number.isFinite(h) ? h : 12;
+}
+
+function presetRange(p: Preset): { from: number; to: number } {
+  if (p.fixed) return p.fixed;
+  const h = nowHour();
+  return { from: h, to: Math.min(23, h + 2) };
+}
 
 /**
  * One-line weather summary for the visit window — average temp, dominant
@@ -144,7 +179,8 @@ export function TimeRangeScrubber() {
   const toHour = useTimeStore((s) => s.toHour);
   const setFromHour = useTimeStore((s) => s.setFromHour);
   const setToHour = useTimeStore((s) => s.setToHour);
-  const resetToNow = useTimeStore((s) => s.resetToNow);
+  const setRange = useTimeStore((s) => s.setRange);
+  const setDateOffset = useTimeStore((s) => s.setDateOffset);
   const dateOffset = useTimeStore((s) => s.dateOffset);
   const weatherByDate = useWeatherStore((s) => s.byDate);
 
@@ -155,25 +191,65 @@ export function TimeRangeScrubber() {
     return summarizeWindow(entry.data, fromHour, toHour);
   }, [dateOffset, fromHour, toHour, weatherByDate]);
 
+  /**
+   * Which preset (if any) matches the current store state? "Now" only
+   * counts when we're on today AND the from/to is exactly now → now+2.
+   * Drift away from any preset (e.g., user drags a slider) leaves all
+   * pills inactive, which is the right signal — the user has gone
+   * custom.
+   */
+  const activePresetKey = useMemo<PresetKey | null>(() => {
+    for (const p of PRESETS) {
+      const { from, to } = presetRange(p);
+      if (p.key === 'now' && dateOffset !== 0) continue;
+      if (fromHour === from && toHour === to) return p.key;
+    }
+    return null;
+  }, [fromHour, toHour, dateOffset]);
+
+  const applyPreset = (p: Preset) => {
+    if (p.key === 'now' && dateOffset !== 0) setDateOffset(0);
+    const { from, to } = presetRange(p);
+    setRange(from, to);
+  };
+
   return (
     <View style={styles.root}>
-      <View style={styles.header}>
-        <View style={styles.titleColumn}>
-          <Text style={styles.title}>
-            Visiting{' '}
-            <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text>
-            {' '}–{' '}
-            <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
+      <View style={styles.titleColumn}>
+        <Text style={styles.title}>
+          Visiting{' '}
+          <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text>
+          {' '}–{' '}
+          <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
+        </Text>
+        {weatherSummary ? (
+          <Text style={styles.summary} numberOfLines={1}>
+            {weatherSummary}
           </Text>
-          {weatherSummary ? (
-            <Text style={styles.summary} numberOfLines={1}>
-              {weatherSummary}
-            </Text>
-          ) : null}
-        </View>
-        <TouchableOpacity onPress={resetToNow} style={styles.nowButton} activeOpacity={0.7}>
-          <Text style={styles.nowButtonText}>Now</Text>
-        </TouchableOpacity>
+        ) : null}
+      </View>
+
+      <View style={styles.presetRow}>
+        {PRESETS.map((p) => {
+          const active = activePresetKey === p.key;
+          return (
+            <TouchableOpacity
+              key={p.key}
+              onPress={() => applyPreset(p)}
+              activeOpacity={0.7}
+              style={[styles.presetChip, active && styles.presetChipActive]}
+            >
+              <Text
+                style={[
+                  styles.presetChipText,
+                  active && styles.presetChipTextActive,
+                ]}
+              >
+                {p.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       <View style={styles.scrubberArea}>
@@ -205,15 +281,9 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.sm,
-  },
   titleColumn: {
-    flex: 1,
     minWidth: 0,
+    marginBottom: spacing.sm,
   },
   title: {
     fontFamily: fonts.body,
@@ -231,16 +301,29 @@ const styles = StyleSheet.create({
     color: palette.inkSoft,
     marginTop: 2,
   },
-  nowButton: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+  presetRow: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  presetChip: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xs,
     borderRadius: radii.pill,
     backgroundColor: palette.sandDeep,
+    alignItems: 'center',
   },
-  nowButtonText: {
+  presetChipActive: {
+    backgroundColor: palette.amber,
+  },
+  presetChipText: {
     fontFamily: fonts.bodySemibold,
     fontSize: fontSizes.sm,
     color: palette.inkSoft,
+  },
+  presetChipTextActive: {
+    color: palette.white,
   },
   scrubberArea: {
     position: 'relative',

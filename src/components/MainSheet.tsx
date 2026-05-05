@@ -1,18 +1,25 @@
 /**
  * Bottom sheet hosting the time/weather scrubber and the ranked list.
  *
- * Snap points (revised 2026-05-05 per user feedback, third pass):
- *   - 30%  Date picker + scrubber title + weather summary + From/To
- *          sliders. Time can be adjusted without hiding the map; an
- *          overall "☀ 22° · Breezy"-style read sits below the title.
- *          Filter chips remain tucked away.
- *   - 60%  Above + per-hour weather strip + search + neighborhood +
- *          venue filters + ~3 list rows.
+ * Snap points (revised 2026-05-05 per user feedback, fourth pass —
+ * after switching to preset-pill UX):
+ *   - 200  (absolute px) Handle + date picker + "Visiting HH:00 – HH:00"
+ *          + weather summary + [Now][Afternoon][Evening][All day] preset
+ *          pills. Pills cover the dominant decisions in one tap. Custom
+ *          From/To sliders are deliberately hidden at this layer — the
+ *          peek is for *deciding*, not *fine-tuning*.
+ *          Absolute (not %) so peek height is identical across phones —
+ *          on iPhone SE it doesn't clip the pills, on iPhone Pro Max
+ *          it doesn't waste screen.
+ *   - 60%  Above + From/To sliders + per-hour weather strip + search
+ *          + neighborhood + venue filters + ~3 list rows.
  *   - 92%  Full list.
  *
- * History: 22% hid the sliders entirely; 36% leaked the filter chips;
- * 27% fit the sliders but had no room for the weather summary line we
- * added. 30% is the sweet spot.
+ * History: 22% hid sliders entirely; 36% leaked filter chips; 27% fit
+ * sliders but no room for the weather summary; 30% with summary worked
+ * but felt busy at peek. Switching to preset pills as the primary
+ * interaction made the sliders fine-tune territory, so they moved
+ * below the peek cut.
  *
  * Layout note: the Scrubber + filters are rendered as the FlatList's
  * sticky header (`stickyHeaderIndices={[0]}`) rather than siblings.
@@ -34,7 +41,7 @@ interface MainSheetProps {
 
 export function MainSheet({ onSelect }: MainSheetProps) {
   const ref = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['30%', '60%', '92%'], []);
+  const snapPoints = useMemo(() => [200, '60%', '92%'], []);
 
   const handleSelect = useCallback(
     (item: ScoredTerrace) => {
