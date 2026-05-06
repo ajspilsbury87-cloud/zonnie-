@@ -41,6 +41,8 @@ coord_corrections.jsonl
 # pre-computed result lives in src/data/buildings.json (committed).
 scripts/competitor-research/osm-buildings-with-heights.json
 scripts/competitor-research/fetch-buildings.log
+scripts/competitor-research/fetch-3dbag.log
+scripts/__pycache__/
 
 # typescript
 *.tsbuildinfo

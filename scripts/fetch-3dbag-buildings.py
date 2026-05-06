@@ -1,32 +1,43 @@
 """
-╔══════════════════════════════════════════════════════════════════════╗
-║  ZONNIE — 3D BAG Building Fetcher                                   ║
-║  Replaces procedurally generated buildings with real Amsterdam data  ║
-╚══════════════════════════════════════════════════════════════════════╝
+ZONNIE — 3D BAG Building Fetcher
+Real Amsterdam buildings, LIDAR-derived heights from the Dutch
+government's 3D Basisregistratie Adressen en Gebouwen.
 
-Queries the Dutch 3D BAG OGC API for every building within 200m of any
-terrace, then writes src/data/buildings.json for the shadow engine.
+Pipeline:
+  1. Tile the bbox around terraces in RD New metres (~2km tiles).
+  2. For each tile, page through the OGC Features API. The API caps
+     at ~100 features per page regardless of `limit`, so follow the
+     `next` link until exhausted.
+  3. Parse each CityJSON feature: vertices are scaled integers, real
+     RD coordinates = vertex * transform.scale + transform.translate.
+     The transform lives at the RESPONSE level (data["metadata"]
+     ["transform"]), not on each feature.
+  4. Take the building's median roof height (b3_h_dak_50p) as the
+     real height — accurate to ~0.5m via LIDAR.
+  5. Convert RD → WGS84, dedup, filter to within 200m of any terrace.
+  6. Pre-compute per-terrace nearest 30 buildings; write
+     src/data/buildings.json keyed by terrace id.
 
 API notes (discovered via diagnostic):
   - storageCrs: EPSG:7415 (3D RD New). bbox must be in RD metres.
   - f=json causes HTTP 400 — use Accept header, never the f param.
-  - Response format is CityJSON Features (not GeoJSON). Geometry is
-    stored as indexed vertices: feature["vertices"][[x,y,z], ...] and
-    boundaries contain integer indices into that array.
-  - Coordinates are raw integers; apply feature["transform"] if present.
+  - Response format is CityJSON Features (not GeoJSON).
 
 USAGE (PowerShell from the SunBae folder):
-    python scripts/fetch-3dbag-buildings.py --dry-run
-    python scripts/fetch-3dbag-buildings.py
+    python -X utf8 scripts/fetch-3dbag-buildings.py --debug   # one-feature probe
+    python -u -X utf8 scripts/fetch-3dbag-buildings.py --dry-run
+    python -u -X utf8 scripts/fetch-3dbag-buildings.py
 
 OUTPUT:
-    src/data/buildings.json   — array of { lat, lng, height, width }
+    src/data/buildings.json   — { "<terraceId>": [{lat,lng,height,width}, ...] }
 
 COST: Free. 3D BAG is a public Dutch government dataset, no API key needed.
 """
 
 import json, math, time, sys, argparse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 TERRACES_PATH = "src/data/terraces.json"
@@ -41,8 +52,9 @@ FETCH_RADIUS_M = 220
 # Tile size in RD metres (~2 km × 2 km, well under the API's feature limit).
 TILE_SIZE_M = 2000
 
-REQUEST_DELAY = 0.3   # seconds between requests
+REQUEST_DELAY = 0.1   # seconds between requests
 MAX_RETRIES   = 3
+PARALLEL_TILES = 4    # tiles fetched concurrently
 
 # Approximate scale factors at Amsterdam latitude (for dist_m filter only)
 M_PER_DEG_LAT = 110540
@@ -110,31 +122,16 @@ def _collect_indices(boundaries, out: set) -> None:
 
 # ── 3D BAG fetcher ────────────────────────────────────────────────────────────
 
-def fetch_tile_rd(min_x: float, min_y: float, max_x: float, max_y: float) -> list:
-    """
-    Fetch pand features for an RD New bounding box.
-    Returns list of CityJSON Feature dicts (may be empty on error).
-
-    Key: no &f=json — the API rejects it. Format is controlled by Accept header.
-    """
-    url = (
-        f"{API_BASE}"
-        f"?bbox={min_x:.0f},{min_y:.0f},{max_x:.0f},{max_y:.0f}"
-        f"&limit=500"
-    )
-
+def _fetch_page(url: str) -> dict | None:
+    """Fetch a single page, with retry. Returns the parsed JSON dict or None."""
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             req = urllib.request.Request(
                 url,
                 headers={"Accept": "application/geo+json"},
             )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                data = json.loads(resp.read().decode())
-                features = data.get("features") or []
-                if len(features) >= 500:
-                    print(f"\n  ⚠ Tile hit 500-feature limit — some buildings may be missing.")
-                return features
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read().decode())
         except urllib.error.HTTPError as e:
             body = e.read().decode(errors="replace")[:300]
             print(f"\n  HTTP {e.code} on attempt {attempt}: {body}")
@@ -144,18 +141,59 @@ def fetch_tile_rd(min_x: float, min_y: float, max_x: float, max_y: float) -> lis
             print(f"\n  Error on attempt {attempt}: {e}")
             if attempt < MAX_RETRIES:
                 time.sleep(2 ** attempt)
+    return None
 
-    return []
+
+def fetch_tile_rd(min_x: float, min_y: float, max_x: float, max_y: float):
+    """
+    Fetch pand features for an RD New bounding box, following pagination.
+    Yields (features, transform) per page so the caller can stream-process
+    tiles with hundreds of thousands of features without memory blowing up.
+
+    Pagination: 3D BAG OGC API caps response size at ~100 features per
+    page regardless of the requested `limit`. The next page is reachable
+    via the `next` link in `data["links"]`. Central Amsterdam tiles
+    routinely have 20k+ buildings (200+ pages).
+
+    Transform: lives at response level under `data["metadata"]["transform"]`,
+    not per-feature. CityJSON 2.0 stores vertices as compressed integers.
+    Same transform applies to all features in this response page.
+    """
+    url = (
+        f"{API_BASE}"
+        f"?bbox={min_x:.0f},{min_y:.0f},{max_x:.0f},{max_y:.0f}"
+        f"&limit=500"  # API ignores anything above ~100, but we ask politely
+    )
+
+    while url:
+        data = _fetch_page(url)
+        if data is None:
+            return
+        features = data.get("features") or []
+        metadata = data.get("metadata") or {}
+        transform = metadata.get("transform") or {}
+        yield features, transform
+
+        # Find next-page link
+        next_url = None
+        for link in data.get("links") or []:
+            if link.get("rel") == "next" and link.get("href"):
+                next_url = link["href"]
+                break
+        url = next_url
+        if url:
+            time.sleep(REQUEST_DELAY)
 
 
-def extract_building(feature: dict) -> dict | None:
+def extract_building(feature: dict, transform: dict) -> dict | None:
     """
     Parse a 3D BAG CityJSON Feature → { lat, lng, height, width } or None.
 
     The API returns CityJSON Features format (not GeoJSON). Each feature has:
       feature["CityObjects"]  — dict of building objects keyed by BAG id
-      feature["vertices"]     — [[x, y, z], ...] in RD New metres (EPSG:7415)
-      feature["transform"]    — optional { scale, translate } for compressed coords
+      feature["vertices"]     — [[x, y, z], ...] integers, scaled
+      `transform` (passed in) — { scale, translate } from the response-level
+        metadata. Vertices need: real = vertex * scale + translate.
 
     Geometry boundaries contain integer indices into feature["vertices"].
     """
@@ -165,8 +203,7 @@ def extract_building(feature: dict) -> dict | None:
     if not city_objects or not raw_vertices:
         return None
 
-    # Apply CityJSON transform if present (coordinates may be scaled integers)
-    transform = feature.get("transform") or {}
+    # Apply CityJSON transform from the response metadata.
     scale     = transform.get("scale",     [1.0, 1.0, 1.0])
     translate = transform.get("translate", [0.0, 0.0, 0.0])
 
@@ -278,6 +315,10 @@ def main():
         debug_feature_structure()
         return
 
+    # Defaults for runtime tuning (used by per-terrace pre-compute below).
+    NEARBY_RADIUS_M = 200
+    MAX_NEARBY = 30
+
     print(f"📂 Reading {TERRACES_PATH}...")
     try:
         with open(TERRACES_PATH, encoding="utf-8") as f:
@@ -305,28 +346,61 @@ def main():
         print("Remove --dry-run to proceed.")
         return
 
-    # Fetch all tiles
+    # Fetch all tiles. Tiles are independent, so we run them in a small
+    # thread pool. The 3DBAG API tolerates a handful of concurrent
+    # connections fine; we keep PARALLEL_TILES modest to be polite.
     all_buildings: dict[tuple, dict] = {}
+    buildings_lock = Lock()
+    completed = 0
+    completed_lock = Lock()
 
-    for i, (tx, ty) in enumerate(tiles):
-        tag = f"[{i+1:2}/{len(tiles)}]"
-        lat_sw, lng_sw = rd_to_wgs84(tx, ty)
-        lat_ne, lng_ne = rd_to_wgs84(tx + TILE_SIZE_M, ty + TILE_SIZE_M)
-        print(f"  {tag} {lat_sw:.3f},{lng_sw:.3f} → {lat_ne:.3f},{lng_ne:.3f} ...", end=" ", flush=True)
+    def process_tile(idx: int, tx: float, ty: float) -> tuple[int, int, int]:
+        page_count = 0
+        feature_count = 0
+        added = 0
+        for features, transform in fetch_tile_rd(tx, ty, tx + TILE_SIZE_M, ty + TILE_SIZE_M):
+            page_count += 1
+            feature_count += len(features)
+            local_new: list[tuple] = []
+            for feat in features:
+                b = extract_building(feat, transform)
+                if b is None:
+                    continue
+                local_new.append((b["lat"], b["lng"], b))
+            with buildings_lock:
+                for lat, lng, b in local_new:
+                    key = (lat, lng)
+                    if key not in all_buildings:
+                        all_buildings[key] = b
+                        added += 1
+        return page_count, feature_count, added
 
-        features = fetch_tile_rd(tx, ty, tx + TILE_SIZE_M, ty + TILE_SIZE_M)
-        count = 0
-        for feat in features:
-            b = extract_building(feat)
-            if b is None:
+    print(f"\nFetching {len(tiles)} tiles with {PARALLEL_TILES} workers...")
+    start = time.time()
+    with ThreadPoolExecutor(max_workers=PARALLEL_TILES) as ex:
+        futures = {
+            ex.submit(process_tile, i, tx, ty): (i, tx, ty)
+            for i, (tx, ty) in enumerate(tiles)
+        }
+        for fut in as_completed(futures):
+            i, tx, ty = futures[fut]
+            try:
+                pages, feats, added = fut.result()
+            except Exception as e:
+                print(f"  [{i+1:2}/{len(tiles)}] ERROR: {e}", flush=True)
                 continue
-            key = (b["lat"], b["lng"])
-            if key not in all_buildings:
-                all_buildings[key] = b
-                count += 1
-        print(f"{len(features)} features → {count} buildings parsed")
-
-        time.sleep(REQUEST_DELAY)
+            with completed_lock:
+                completed += 1
+                done = completed
+            elapsed = time.time() - start
+            rate = done / elapsed if elapsed > 0 else 0
+            remaining = (len(tiles) - done) / rate if rate > 0 else 0
+            lat_sw, lng_sw = rd_to_wgs84(tx, ty)
+            print(
+                f"  [{done:2}/{len(tiles)}] {lat_sw:.3f},{lng_sw:.3f}: "
+                f"{pages} pages -> {added:5} new buildings (total {len(all_buildings)}, ETA {remaining/60:.1f}m)",
+                flush=True,
+            )
 
     print(f"\n  {len(all_buildings)} unique buildings from 3D BAG.")
 
@@ -343,13 +417,36 @@ def main():
         n = len(heights)
         print(f"\n  Height stats: min={heights[0]:.1f}m  median={heights[n//2]:.1f}m  max={heights[-1]:.1f}m  mean={sum(heights)/n:.1f}m")
 
+    # ── Per-terrace pre-compute (top-N nearest within NEARBY_RADIUS_M) ────────
+    # The shadow engine reads buildings.json keyed by terrace id; on each
+    # score recompute it scans only ~30 nearby buildings rather than all
+    # 200k+ in central Amsterdam. Done at build time so the app boots cheap.
+    print(f"\nPre-computing per-terrace nearby (top {MAX_NEARBY} within {NEARBY_RADIUS_M}m)...")
+    by_terrace: dict[str, list] = {}
+    total_entries = 0
+    zero_count = 0
+    for t in terraces:
+        candidates = []
+        for b in nearby:
+            d = dist_m(b["lat"], b["lng"], t["lat"], t["lng"])
+            if d <= NEARBY_RADIUS_M:
+                candidates.append((d, b))
+        candidates.sort(key=lambda c: c[0])
+        chosen = [c[1] for c in candidates[:MAX_NEARBY]]
+        if not chosen:
+            zero_count += 1
+        by_terrace[str(t["id"])] = chosen
+        total_entries += len(chosen)
+    print(f"  Avg nearby per terrace:  {total_entries / len(terraces):.1f}")
+    print(f"  Terraces with 0 nearby:  {zero_count}")
+
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(nearby, f, indent=2, ensure_ascii=False)
+        json.dump(by_terrace, f, ensure_ascii=False)
         f.write("\n")
 
-    size_kb = len(json.dumps(nearby)) / 1024
-    print(f"\n✅ Written {len(nearby)} buildings to {OUTPUT_PATH} ({size_kb:.1f} KB)")
-    print(f"\nThe shadow engine will automatically use this data on next app start.")
+    size_mb = len(json.dumps(by_terrace)) / (1024 * 1024)
+    print(f"\nWritten {total_entries} per-terrace entries to {OUTPUT_PATH} ({size_mb:.1f} MB)")
+    print("The shadow engine will pick this up on next app start.")
 
 
 if __name__ == "__main__":

@@ -3,15 +3,21 @@
  *
  * Source priority (first wins):
  *   1. `src/data/buildings.json` — REAL buildings around each terrace,
- *      pre-computed by `npm run fetch-osm-buildings -- --apply`. Schema:
+ *      pre-computed by one of:
+ *        - `python scripts/fetch-3dbag-buildings.py` (preferred — Dutch
+ *          government 3D BAG registry, LIDAR-derived heights, accurate
+ *          to ~0.5m); or
+ *        - `npm run fetch-osm-buildings -- --apply` (fallback — OSM
+ *          building polygons, ~6.5% have explicit height tags so most
+ *          fall back to a 9m default).
+ *
+ *      Schema (same for both sources):
  *
  *        { "<terraceId>": [{ lat, lng, height, width }, ...], ... }
  *
  *      Stored per-terrace (top ~30 within 200m) so the shadow engine
  *      doesn't have to scan the full city dataset on every score
- *      recompute. Buildings are sourced from OpenStreetMap; height
- *      comes from the `height` tag where present, otherwise
- *      `building:levels × 3m`, falling back to a 12m default.
+ *      recompute.
  *
  *   2. Procedural fallback — used when the JSON is empty (e.g. fresh
  *      checkout before the fetcher's been run). Places one building

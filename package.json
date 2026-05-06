@@ -16,6 +16,8 @@
     "import-venues": "tsx scripts/import-competitor-venues.ts",
     "infer-facing": "tsx scripts/infer-facing.ts",
     "fetch-osm-buildings": "tsx scripts/fetch-osm-buildings.ts",
+    "fetch-3dbag-buildings": "python -u -X utf8 scripts/fetch-3dbag-buildings.py",
+    "patch-3dbag-buildings": "tsx scripts/patch-3dbag-buildings.ts",
     "validate-scoring": "tsx scripts/validate-scoring.ts",
     "backfill-place-ids": "tsx scripts/backfill-place-ids.ts",
     "postinstall": "node scripts/ensure-expo-cache.js",
