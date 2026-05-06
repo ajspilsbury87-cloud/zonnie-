@@ -2,28 +2,29 @@
  * Building data for shadow ray-casting.
  *
  * Source priority (first wins):
- *   1. `src/data/buildings.json` — real 3D BAG footprints, when fetched
- *      (`python scripts/fetch-3dbag-buildings.py`). Currently incomplete:
- *      the OGC API returns CityJSON with relative vertex coords that need
- *      a tile transform we haven't decoded yet. Tracked separately.
- *   2. Procedural fallback below — generates a tall building immediately
- *      BEHIND each terrace based on its `facing` direction, plus a sparse
- *      set of additional area-clustered buildings for variety.
+ *   1. `src/data/buildings.json` — REAL buildings around each terrace,
+ *      pre-computed by `npm run fetch-osm-buildings -- --apply`. Schema:
  *
- * Why per-terrace adjacent buildings: the prior fallback scattered random
- * buildings within 670m of neighborhood centroids, with zero relationship
- * to actual terrace positions. Result: 0% of terraces ever fell into a
- * building's shadow at any time of day, so the shadow engine produced no
- * variation between terraces. Score variance collapsed.
+ *        { "<terraceId>": [{ lat, lng, height, width }, ...], ... }
  *
- * The new model exploits the `facing` field as a hint about the urban
- * geometry: a south-facing terrace opens to the south, which means there's
- * a building behind it (to the north). Placing a building immediately
- * north of a south-facing terrace creates physically realistic shadows —
- * the building blocks the sun whenever the sun is north of due-east-west
- * (i.e., never in northern-hemisphere midsummer noon, but yes in winter
- * mornings/evenings). This produces realistic time-varying shadow
- * patterns that the engine can ray-cast against.
+ *      Stored per-terrace (top ~30 within 200m) so the shadow engine
+ *      doesn't have to scan the full city dataset on every score
+ *      recompute. Buildings are sourced from OpenStreetMap; height
+ *      comes from the `height` tag where present, otherwise
+ *      `building:levels × 3m`, falling back to a 12m default.
+ *
+ *   2. Procedural fallback — used when the JSON is empty (e.g. fresh
+ *      checkout before the fetcher's been run). Places one building
+ *      behind each terrace based on its `facing`, plus a sparse
+ *      area-clustered set. Realistic enough that scores are non-zero
+ *      but not the gold standard. Real OSM data is the production
+ *      path.
+ *
+ * Why per-terrace pre-compute: the previous flat-array approach loops
+ * every nearby building per shadow check; with ~50k Amsterdam buildings
+ * that's prohibitive at 60Hz. Pre-computing the top ~30 within 200m at
+ * build time is bounded (886 × 30 = 26.6k entries, ~2 MB JSON) and the
+ * runtime check is constant-time per terrace.
  */
 
 import type { Building, Facing, Terrace } from '@/src/engines/types';
@@ -31,14 +32,25 @@ import { generateBuildingsForArea } from '@/src/engines/shadow';
 import { AREA_CENTROIDS } from './areas';
 import { TERRACES } from './terraces';
 
-// Populated by fetch-3dbag-buildings.py. Empty until that script is run.
-let bag3dBuildings: Building[] | null = null;
+// Populated by `npm run fetch-osm-buildings -- --apply`. Keyed by
+// stringified terrace id; value is the pre-computed nearby-building
+// list for that terrace.
+let buildingsByTerrace: Record<string, Building[]> | null = null;
 try {
-  // Dynamic require so the app doesn't crash if the file doesn't exist yet.
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  bag3dBuildings = require('./buildings.json') as Building[];
+  const raw = require('./buildings.json');
+  if (raw && typeof raw === 'object') {
+    if (Array.isArray(raw)) {
+      // Old flat-array shape — treat as empty for this code path.
+      // (Anyone updating from an older build will overwrite via the
+      // fetcher script.)
+      buildingsByTerrace = null;
+    } else {
+      buildingsByTerrace = raw as Record<string, Building[]>;
+    }
+  }
 } catch {
-  // buildings.json not yet fetched — fall back to procedural generation below.
+  // buildings.json missing — fall through to procedural fallback.
 }
 
 // ── Procedural fallback ─────────────────────────────────────────────────────
@@ -55,22 +67,16 @@ function makeRng(seed = 42): () => number {
 const M_PER_DEG_LAT = 110540;
 const M_PER_DEG_LNG = 111320 * Math.cos((52.37 * Math.PI) / 180);
 
-/**
- * Compass bearing of the building relative to the terrace (degrees from
- * north, clockwise) for each terrace facing. The building sits OPPOSITE
- * the facing — a south-facing terrace has a building to its north (0°);
- * a west-facing terrace has a building to its east (90°); etc.
- */
 const BUILDING_BEARING: Record<Facing, number | null> = {
-  S: 0, // building to north of S-facing terrace
-  SW: 45, // NE
-  W: 90, // E
-  NW: 135, // SE
-  N: 180, // S
-  NE: 225, // SW
-  E: 270, // W
-  SE: 315, // NW
-  All: null, // rooftop / square — no adjacent building
+  S: 0,
+  SW: 45,
+  W: 90,
+  NW: 135,
+  N: 180,
+  NE: 225,
+  E: 270,
+  SE: 315,
+  All: null,
 };
 
 interface NeighborhoodHints {
@@ -78,7 +84,6 @@ interface NeighborhoodHints {
   avgHeight: number;
 }
 
-/** Find the nearest centroid for height/density hints. */
 function nearestCentroidHints(lat: number, lng: number): NeighborhoodHints {
   let best: (typeof AREA_CENTROIDS)[number] | null = null;
   let bestDist = Infinity;
@@ -94,19 +99,13 @@ function nearestCentroidHints(lat: number, lng: number): NeighborhoodHints {
   return best ?? { density: 0.4, avgHeight: 14 };
 }
 
-/**
- * Place a building 12m behind each terrace in its facing-opposite direction,
- * at neighborhood-typical height. Adds a smaller secondary building 25m
- * away for additional shadow variety in narrow-street terraces.
- */
 function generatePerTerraceBuildings(rng: () => number): Building[] {
   const buildings: Building[] = [];
   for (const t of TERRACES) {
     const bearing = BUILDING_BEARING[t.facing];
-    if (bearing == null) continue; // 'All' = no adjacent building
+    if (bearing == null) continue;
 
     const hints = nearestCentroidHints(t.lat, t.lng);
-    // Primary building 8–14m behind, 4–7 stories tall.
     const primaryDist = 8 + rng() * 6;
     const bearingRad = (bearing * Math.PI) / 180;
     const dyMeters = Math.cos(bearingRad) * primaryDist;
@@ -118,8 +117,6 @@ function generatePerTerraceBuildings(rng: () => number): Building[] {
       width: 12 + rng() * 16,
     });
 
-    // Secondary building offset 30° from the primary, 18–30m away. Adds
-    // partial shadowing at oblique sun angles (mid-morning / mid-afternoon).
     const offsetBearing = bearing + (rng() < 0.5 ? -30 : 30);
     const offRad = (offsetBearing * Math.PI) / 180;
     const secDist = 18 + rng() * 12;
@@ -136,7 +133,6 @@ function generatePerTerraceBuildings(rng: () => number): Building[] {
 function generateFallbackBuildings(): Building[] {
   const rng = makeRng(42);
   const buildings: Building[] = [];
-  // Original area-clustered set kept for ambient variety.
   for (const area of AREA_CENTROIDS) {
     buildings.push(...generateBuildingsForArea(area, rng));
   }
@@ -146,27 +142,75 @@ function generateFallbackBuildings(): Building[] {
 
 // ── Public API ──────────────────────────────────────────────────────────────
 
-let cached: Building[] | null = null;
+let flatCache: Building[] | null = null;
+let perTerraceCache: Map<number, Building[]> | null = null;
 
-/**
- * Returns the building set used by the shadow engine.
- *
- * Uses real 3D BAG data if buildings.json has been fetched; otherwise falls
- * back to the per-terrace procedural set above.
- */
-export function getBuildings(): Building[] {
-  if (cached) return cached;
-  const real = bag3dBuildings && bag3dBuildings.length > 0 ? bag3dBuildings : null;
-  cached = real ?? generateFallbackBuildings();
-  return cached;
+function ensureCaches(): void {
+  if (flatCache && perTerraceCache) return;
+
+  if (
+    buildingsByTerrace &&
+    Object.keys(buildingsByTerrace).length > 0
+  ) {
+    perTerraceCache = new Map();
+    const allBuildings: Building[] = [];
+    for (const [k, list] of Object.entries(buildingsByTerrace)) {
+      const id = Number(k);
+      if (!Number.isFinite(id)) continue;
+      perTerraceCache.set(id, list);
+      // Flat-cache is the union — used by tests and validator that want
+      // a global view. De-duplication isn't worth the complexity here.
+      allBuildings.push(...list);
+    }
+    flatCache = allBuildings;
+  } else {
+    // Procedural fallback: build flat list, then index by nearest terrace
+    // for the per-terrace API.
+    flatCache = generateFallbackBuildings();
+    perTerraceCache = new Map();
+    for (const t of TERRACES) {
+      const nearby: Building[] = [];
+      for (const b of flatCache) {
+        const dy = (b.lat - t.lat) * M_PER_DEG_LAT;
+        const dx = (b.lng - t.lng) * M_PER_DEG_LNG;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < 200 * 200) nearby.push(b);
+      }
+      perTerraceCache.set(t.id, nearby);
+    }
+  }
 }
 
-/** Returns true if real 3D BAG data is loaded (vs the procedural fallback). */
+/**
+ * All buildings the engine knows about. Useful for tooling that wants a
+ * global view (validators, debug scripts). Per-frame scoring should use
+ * `getBuildingsForTerrace` instead — much cheaper.
+ */
+export function getBuildings(): Building[] {
+  ensureCaches();
+  return flatCache!;
+}
+
+/**
+ * Buildings nearby to a specific terrace (top ~30 within 200m when
+ * data is real; all in-radius when procedural). The runtime hot path —
+ * each scored hour calls this once per terrace.
+ */
+export function getBuildingsForTerrace(terraceId: number): Building[] {
+  ensureCaches();
+  return perTerraceCache!.get(terraceId) ?? [];
+}
+
+/** Returns true if real OSM data is loaded (vs the procedural fallback). */
 export function isUsingRealBuildingData(): boolean {
-  return bag3dBuildings !== null && bag3dBuildings.length > 0;
+  return (
+    buildingsByTerrace != null &&
+    Object.keys(buildingsByTerrace).length > 0
+  );
 }
 
 /** Test-only: reset the cache. */
 export function _resetBuildingsCache(): void {
-  cached = null;
+  flatCache = null;
+  perTerraceCache = null;
 }

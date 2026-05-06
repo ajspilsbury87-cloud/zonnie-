@@ -20,7 +20,8 @@ const scores = TERRACES.map((t) => {
     name: t.name,
     facing: t.facing,
     score: r.score,
-    inShadow: r.shadow,
+    coverage: r.shadow,
+    inShadow: r.shadow >= 0.5,
     sunAlt: r.sun.altitude,
   };
 });

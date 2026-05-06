@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { TERRACES } from '@/src/data/terraces';
-import { getBuildings } from '@/src/data/buildings';
+import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { regionForArea } from '@/src/data/regions';
 import { categoriesForTerrace } from '@/src/data/categories';
 import { computeSunScore } from '@/src/engines/scoring';
@@ -63,7 +63,6 @@ function weatherBucket(w: Weather | undefined): string {
 
 function cachedHourScore(
   terrace: Pick<Terrace, 'id' | 'lat' | 'lng' | 'facing'>,
-  buildings: ReturnType<typeof getBuildings>,
   hour: number,
   dateStr: string,
   weather: Weather | undefined,
@@ -71,6 +70,9 @@ function cachedHourScore(
   const key = `${terrace.id}|${hour}|${dateStr}|${weatherBucket(weather)}`;
   const hit = HOUR_SCORE_CACHE.get(key);
   if (hit != null) return hit;
+  // Per-terrace nearby buildings — bounded (≤30) and pre-computed at
+  // build time, so every score recompute is cheap.
+  const buildings = getBuildingsForTerrace(terrace.id);
   const score = computeSunScore(
     terrace,
     buildings,
@@ -116,7 +118,6 @@ export function useScoredTerraces(): ScoredTerrace[] {
   const weatherByDate = useWeatherStore((s) => s.byDate);
 
   return useMemo(() => {
-    const buildings = getBuildings();
     const dateStr = selectedDateStr(dateOffset);
     const q = fold(query.trim());
     const weatherEntry = weatherByDate[dateStr];
@@ -154,7 +155,7 @@ export function useScoredTerraces(): ScoredTerrace[] {
     const scored: ScoredTerrace[] = filtered.map((terrace) => {
       let sum = 0;
       for (let h = fromHour; h <= toHour; h++) {
-        sum += cachedHourScore(terrace, buildings, h, dateStr, hourlyWeather?.[h]);
+        sum += cachedHourScore(terrace, h, dateStr, hourlyWeather?.[h]);
       }
       return { terrace, score: sum / span };
     });

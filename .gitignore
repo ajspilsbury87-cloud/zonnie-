@@ -36,6 +36,12 @@ yarn-error.*
 # coord-validation output (large logs, contains place_ids — keep local)
 coord_corrections.jsonl
 
+# OSM Overpass cache for the building fetcher — 27MB raw OSM dump,
+# regeneratable via `npm run fetch-osm-buildings`. Per-terrace
+# pre-computed result lives in src/data/buildings.json (committed).
+scripts/competitor-research/osm-buildings-with-heights.json
+scripts/competitor-research/fetch-buildings.log
+
 # typescript
 *.tsbuildinfo
 

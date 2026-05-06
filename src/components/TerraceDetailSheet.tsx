@@ -27,7 +27,7 @@ import {
 } from '@/src/data/places';
 import { SunTimeline } from '@/src/components/SunTimeline';
 import { computeRangeScore, computeSunScore, scoreLabel } from '@/src/engines/scoring';
-import { getBuildings } from '@/src/data/buildings';
+import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -96,7 +96,7 @@ export function TerraceDetailSheet() {
 
   const score = useMemo(() => {
     if (!terrace) return 0;
-    const buildings = getBuildings();
+    const buildings = getBuildingsForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -118,7 +118,7 @@ export function TerraceDetailSheet() {
    */
   const sunTrend = useMemo(() => {
     if (!terrace) return null as 'rising' | 'holding' | 'falling' | null;
-    const buildings = getBuildings();
+    const buildings = getBuildingsForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;

@@ -66,6 +66,11 @@ export interface ScoreResult {
   /** 0–1 normalized sun score. */
   score: number;
   sun: SunPosition;
-  shadow: boolean;
+  /**
+   * Fraction of the sun's silhouette blocked by surrounding buildings,
+   * 0 = unobstructed, 1 = fully blocked. Replaces the earlier `shadow:
+   * boolean`. Used by debug/validation tooling and the detail sheet.
+   */
+  shadow: number;
   weather: Weather;
 }

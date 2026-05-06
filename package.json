@@ -15,6 +15,8 @@
     "rasterize-assets": "tsx scripts/rasterize-assets.ts",
     "import-venues": "tsx scripts/import-competitor-venues.ts",
     "infer-facing": "tsx scripts/infer-facing.ts",
+    "fetch-osm-buildings": "tsx scripts/fetch-osm-buildings.ts",
+    "validate-scoring": "tsx scripts/validate-scoring.ts",
     "backfill-place-ids": "tsx scripts/backfill-place-ids.ts",
     "postinstall": "node scripts/ensure-expo-cache.js",
     "eas-build-pre-install": "node scripts/ensure-expo-cache.js"

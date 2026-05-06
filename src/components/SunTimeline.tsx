@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { getBuildings } from '@/src/data/buildings';
+import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { computeSunScore } from '@/src/engines/scoring';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -25,7 +25,7 @@ const BAR_HEIGHT = 64;
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
 interface SunTimelineProps {
-  terrace: Pick<Terrace, 'lat' | 'lng' | 'facing'>;
+  terrace: Pick<Terrace, 'id' | 'lat' | 'lng' | 'facing'>;
 }
 
 export function SunTimeline({ terrace }: SunTimelineProps) {
@@ -37,7 +37,7 @@ export function SunTimeline({ terrace }: SunTimelineProps) {
   const weatherByDate = useWeatherStore((s) => s.byDate);
 
   const hourly = useMemo(() => {
-    const buildings = getBuildings();
+    const buildings = getBuildingsForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;

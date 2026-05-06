@@ -14,7 +14,7 @@
 
 import { fromZonedTime } from 'date-fns-tz';
 import { solarPosition } from './solar';
-import { isInShadow } from './shadow';
+import { shadowCoverage } from './shadow';
 import type {
   Building,
   Facing,
@@ -157,7 +157,7 @@ export function computeSunScore(
   const utcDate = amsterdamLocalToUtc(dateStr, hour);
   const sun = solarPosition(utcDate, terrace.lat, terrace.lng);
   const weather = weatherOverride ?? getWeather(hour, weatherProfile);
-  const inShadow = isInShadow(terrace, buildings, sun.altitude, sun.azimuth);
+  const coverage = shadowCoverage(terrace, buildings, sun.altitude, sun.azimuth);
 
   let score = 0;
   if (sun.altitude > 0) {
@@ -168,7 +168,11 @@ export function computeSunScore(
     // + south-facing + sunny" cases, which is what users intuitively
     // expect "100%" to mean.
     score = Math.min(1, sun.altitude / 60);
-    if (inShadow) score *= 0.15;
+    // Continuous shadow attenuation — the multiplier ramps smoothly from 1.0
+    // (no obstruction) down to 0.15 (fully blocked). Replaces the old binary
+    // "in shadow → ×0.15, else ×1.0" cliff that produced bimodal score
+    // distributions.
+    score *= 1 - 0.85 * coverage;
     // Cloud penalty: 100% cloud cover reduces score to ~45% of clear-sky.
     // 0.55 keeps the cloud signal meaningful while preserving enough
     // dynamic range that shadow + facing differentiation still lands in
@@ -207,7 +211,7 @@ export function computeSunScore(
   return {
     score: Math.min(1, Math.max(0, score)),
     sun,
-    shadow: inShadow,
+    shadow: coverage,
     weather,
   };
 }
