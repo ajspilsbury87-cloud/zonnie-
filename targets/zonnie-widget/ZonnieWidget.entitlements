@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      App Group lets the main Zonnie app and this widget extension share
+      a sandboxed file container. The JS side writes
+      widget-snapshot.json into this container; the widget reads it.
+
+      The same `com.apple.security.application-groups` array — with the
+      same group identifier — also has to appear in the main app's
+      entitlements via app.config.ts:
+          ios.entitlements: { "com.apple.security.application-groups":
+            ["group.com.spilsbury.zonnie"] }
+    -->
+    <key>com.apple.security.application-groups</key>
+    <array>
+        <string>group.com.spilsbury.zonnie</string>
+    </array>
+</dict>
+</plist>
