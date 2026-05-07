@@ -15,8 +15,9 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { SplashOverlay } from '@/src/components/SplashOverlay';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
 import { useWidgetSync } from '@/src/widget/useWidgetSync';
 
@@ -47,6 +48,14 @@ export default function RootLayout() {
     }
   }, [fontsLoaded, fontError]);
 
+  // Branded splash overlay — sits above the app surface for ~1.6s after
+  // fonts load. Hands off to the live map+list once its fade-out
+  // completes. The native splash hides as soon as fonts are ready;
+  // because both screens use `palette.sand` as the background and our
+  // overlay mounts in the same frame, the handover is seamless.
+  const [showSplashOverlay, setShowSplashOverlay] = useState(true);
+  const handleSplashDone = useCallback(() => setShowSplashOverlay(false), []);
+
   if (!fontsLoaded && !fontError) {
     return null;
   }
@@ -57,6 +66,9 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <StatusBar style="auto" />
           <Stack screenOptions={{ headerShown: false }} />
+          {showSplashOverlay ? (
+            <SplashOverlay onAnimationDone={handleSplashDone} />
+          ) : null}
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
