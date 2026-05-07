@@ -40,6 +40,7 @@ import {
   AMSTERDAM_TZ,
 } from '@/src/engines/scoring';
 import { sunsetHour } from '@/src/engines/solar';
+import { haptics } from '@/src/lib/haptics';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
@@ -119,6 +120,7 @@ export function TimeRangeQuickPicker() {
   }, [fromHour, toHour, dateOffset, sunset]);
 
   const applyPreset = (p: Preset) => {
+    haptics.selection();
     if (p.key === 'now' && dateOffset !== 0) setDateOffset(0);
     const { from, to } = presetRange(p, sunset);
     setRange(from, to);
@@ -212,7 +214,10 @@ function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
         step={1}
         value={value}
         onValueChange={setLocal}
-        onSlidingComplete={onCommit}
+        onSlidingComplete={(h) => {
+          haptics.light();
+          onCommit(h);
+        }}
         minimumTrackTintColor={palette.burnt}
         maximumTrackTintColor={palette.mistDeep}
         thumbTintColor={palette.peach}

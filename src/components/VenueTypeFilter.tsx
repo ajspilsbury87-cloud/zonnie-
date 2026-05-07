@@ -19,6 +19,7 @@ import {
   CATEGORY_GLYPHS,
   CATEGORY_LABELS,
 } from '@/src/data/categories';
+import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
@@ -39,7 +40,10 @@ export function VenueTypeFilter() {
         return (
           <TouchableOpacity
             key={cat}
-            onPress={() => toggleCategory(cat)}
+            onPress={() => {
+              haptics.selection();
+              toggleCategory(cat);
+            }}
             activeOpacity={0.7}
             style={[styles.chip, active && styles.chipActive]}
           >
@@ -50,7 +54,10 @@ export function VenueTypeFilter() {
         );
       })}
       <TouchableOpacity
-        onPress={toggleMatchModeOnly}
+        onPress={() => {
+          haptics.selection();
+          toggleMatchModeOnly();
+        }}
         activeOpacity={0.7}
         style={[styles.chip, matchModeOnly && styles.chipMatchActive]}
         accessibilityLabel="Show only terraces with outdoor TVs"

@@ -33,6 +33,7 @@ import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { usePlacesStore } from '@/src/store/placesStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
+import { haptics } from '@/src/lib/haptics';
 import {
   fonts,
   fontSizes,
@@ -215,6 +216,7 @@ export function TerraceDetailSheet() {
   /** Open Google Maps with turn-by-turn directions to this terrace. */
   const handleNavigate = useCallback(() => {
     if (!terrace) return;
+    haptics.medium();
     const url = buildGoogleMapsNavigationUrl({
       lat: terrace.lat,
       lng: terrace.lng,
@@ -231,6 +233,7 @@ export function TerraceDetailSheet() {
   /** Open the place's Google Maps page (no navigation — for browsing reviews/photos). */
   const handleViewInGoogleMaps = useCallback(() => {
     if (!terrace) return;
+    haptics.light();
     const url =
       placeDetails?.googleMapsUrl ??
       buildGoogleMapsViewUrl({
@@ -246,6 +249,7 @@ export function TerraceDetailSheet() {
 
   const handleShowOnMap = useCallback(() => {
     if (!terrace) return;
+    haptics.light();
     setPanTo({ lat: terrace.lat, lng: terrace.lng });
     clear();
   }, [terrace, setPanTo, clear]);
@@ -274,7 +278,14 @@ export function TerraceDetailSheet() {
                 </Text>
               </View>
               <Pressable
-                onPress={() => terrace && toggleFavorite(terrace.id)}
+                onPress={() => {
+                  if (!terrace) return;
+                  // Success haptic when adding to favourites; lighter
+                  // tick when removing.
+                  if (isFavorite) haptics.selection();
+                  else haptics.success();
+                  toggleFavorite(terrace.id);
+                }}
                 style={({ pressed }) => [
                   styles.favoriteButton,
                   isFavorite && styles.favoriteButtonActive,

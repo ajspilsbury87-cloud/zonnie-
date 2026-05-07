@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
+import { haptics } from '@/src/lib/haptics';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { palette, radii, spacing } from '@/src/theme/tokens';
 
@@ -169,6 +170,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
    * accidentally show a dot floating in a remote ocean.)
    */
   const handleLocateMe = useCallback(async () => {
+    haptics.light();
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -269,7 +271,10 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
             asset={asset}
             title={item.terrace.name}
             description={item.terrace.vibe}
-            onPress={() => onSelect?.(item)}
+            onPress={() => {
+              haptics.light();
+              onSelect?.(item);
+            }}
           />
         ))}
       </MapView>

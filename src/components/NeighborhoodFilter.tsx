@@ -13,6 +13,7 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { REGIONS_ORDERED } from '@/src/data/regions';
+import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -34,14 +35,20 @@ export function NeighborhoodFilter() {
       contentContainerStyle={styles.scroll}
     >
       <TouchableOpacity
-        onPress={clear}
+        onPress={() => {
+          haptics.selection();
+          clear();
+        }}
         activeOpacity={0.7}
         style={[styles.chip, allActive && styles.chipActive]}
       >
         <Text style={[styles.chipLabel, allActive && styles.chipLabelActive]}>All</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={toggleFavoritesOnly}
+        onPress={() => {
+          haptics.selection();
+          toggleFavoritesOnly();
+        }}
         activeOpacity={0.7}
         style={[
           styles.chip,
@@ -65,7 +72,10 @@ export function NeighborhoodFilter() {
         return (
           <TouchableOpacity
             key={region}
-            onPress={() => toggle(region)}
+            onPress={() => {
+              haptics.selection();
+              toggle(region);
+            }}
             activeOpacity={0.7}
             style={[styles.chip, active && styles.chipActive]}
           >

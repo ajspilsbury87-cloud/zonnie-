@@ -15,6 +15,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
+import { haptics } from '@/src/lib/haptics';
 import { useTimeStore, MAX_DATE_OFFSET, selectedDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -96,7 +97,10 @@ export function DatePicker() {
         return (
           <TouchableOpacity
             key={d.dateStr}
-            onPress={() => setDateOffset(d.offset)}
+            onPress={() => {
+              if (d.offset !== dateOffset) haptics.selection();
+              setDateOffset(d.offset);
+            }}
             activeOpacity={0.7}
             style={[styles.chip, active && styles.chipActive]}
           >

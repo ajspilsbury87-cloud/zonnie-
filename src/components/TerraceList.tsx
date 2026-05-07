@@ -14,6 +14,7 @@ import { VenueTypeFilter } from '@/src/components/VenueTypeFilter';
 import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { scoreLabel } from '@/src/engines/scoring';
+import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
@@ -38,7 +39,10 @@ const Row = memo(function Row({ rank, item, isSelected, onPress }: RowProps) {
   const color = scoreToColor(score);
   return (
     <TouchableOpacity
-      onPress={() => onPress?.(item)}
+      onPress={() => {
+        haptics.light();
+        onPress?.(item);
+      }}
       activeOpacity={0.6}
       style={[styles.row, isSelected && styles.rowSelected]}
     >
