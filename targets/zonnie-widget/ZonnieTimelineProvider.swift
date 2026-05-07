@@ -73,13 +73,14 @@ struct ZonnieTimelineProvider: TimelineProvider {
         completion(timeline)
     }
 
-    /// Read the JSON the JS side wrote to the App Group container. The
-    /// file lives at: <app-group>/widget-snapshot.json
-    /// If the file doesn't exist or fails to parse, fall back to the
+    /// Read the snapshot JSON the JS side wrote to the App Group's
+    /// shared UserDefaults under the `widget-snapshot` key. If the
+    /// key is missing or the JSON fails to parse, fall back to the
     /// hardcoded sample so the widget is never blank.
     private func currentEntry() -> ZonnieEntry {
-        if let url = appGroupSnapshotURL(),
-           let data = try? Data(contentsOf: url),
+        if let defaults = UserDefaults(suiteName: appGroupId),
+           let raw = defaults.string(forKey: snapshotKey),
+           let data = raw.data(using: .utf8),
            let snapshot = try? JSONDecoder().decode(WidgetSnapshot.self, from: data) {
             return ZonnieEntry(
                 date: Date(),
@@ -98,16 +99,14 @@ struct ZonnieTimelineProvider: TimelineProvider {
         )
     }
 
-    private func appGroupSnapshotURL() -> URL? {
-        // Replace this with whatever group identifier we configure on
-        // both the main app and the widget extension. Convention: a
-        // reverse-DNS prefix matching the app's bundle id, with a
-        // `group.` prefix that App Groups requires.
-        let groupId = "group.com.spilsbury.zonnie"
-        return FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: groupId)?
-            .appendingPathComponent("widget-snapshot.json")
-    }
+    /// Single source of truth on the Swift side. Mirrors:
+    ///   - app.config.ts (ios.entitlements)
+    ///   - targets/zonnie-widget/expo-target.config.js (entitlements)
+    ///   - targets/zonnie-widget/ZonnieWidget.entitlements
+    ///   - src/widget/snapshot.ts (WIDGET_APP_GROUP_ID)
+    private let appGroupId = "group.com.spilsbury.zonnie"
+    /// Mirrors src/widget/snapshot.ts (WIDGET_SNAPSHOT_KEY).
+    private let snapshotKey = "widget-snapshot"
 }
 
 /// What the JS side writes. Kept in lockstep with the TS payload type

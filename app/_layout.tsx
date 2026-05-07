@@ -18,6 +18,7 @@ import {
 import { useEffect } from 'react';
 
 import { useFavoritesStore } from '@/src/store/favoritesStore';
+import { useWidgetSync } from '@/src/widget/useWidgetSync';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,6 +36,10 @@ export default function RootLayout() {
   useEffect(() => {
     void hydrateFavorites();
   }, [hydrateFavorites]);
+
+  // Keep the iOS home-screen widget's snapshot in sync with the live
+  // top-3. iOS-only inside the hook; cheap no-op on Android.
+  useWidgetSync();
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
