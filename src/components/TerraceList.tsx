@@ -73,7 +73,41 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   const selectedId = useSelectionStore((s) => s.selectedId);
   const listRef = useRef<BottomSheetFlatListMethods>(null);
 
+  // Context-aware empty-state messaging — the user has hit "no results"
+  // for a different reason depending on which filter is active. A
+  // generic "no terraces match" doesn't tell them *which* filter to
+  // loosen. Order matches: most-specific first (match mode is the
+  // narrowest), so we surface the most likely-to-be-the-cause filter.
+  const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
+  const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
+  const query = useSearchStore((s) => s.query);
+  const emptyState = (() => {
+    if (matchModeOnly) {
+      return {
+        title: 'No outdoor-TV terraces match',
+        body: 'Tap 📺 Match again to clear, or widen your other filters.',
+      };
+    }
+    if (favoritesOnly) {
+      return {
+        title: 'No favourites yet',
+        body: 'Tap the ♡ on a terrace detail to save it for later.',
+      };
+    }
+    if (query.trim().length > 0) {
+      return {
+        title: 'No matches',
+        body: `Nothing in the dataset matches "${query.trim()}".`,
+      };
+    }
+    return {
+      title: 'No terraces match',
+      body: 'Try a different search, fewer neighbourhoods, or a wider time range.',
+    };
+  })();
+
   const handleResetFilters = useCallback(() => {
+    haptics.selection();
     clearSearch();
     clearAreas();
   }, [clearSearch, clearAreas]);
@@ -173,10 +207,8 @@ export function TerraceList({ onSelect }: TerraceListProps) {
       }
       ListEmptyComponent={
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>No terraces match</Text>
-          <Text style={styles.emptyBody}>
-            Try a different search, fewer neighborhoods, or a wider time range.
-          </Text>
+          <Text style={styles.emptyTitle}>{emptyState.title}</Text>
+          <Text style={styles.emptyBody}>{emptyState.body}</Text>
           <TouchableOpacity onPress={handleResetFilters} style={styles.emptyButton}>
             <Text style={styles.emptyButtonText}>Clear filters</Text>
           </TouchableOpacity>
