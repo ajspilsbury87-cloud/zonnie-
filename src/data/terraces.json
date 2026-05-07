@@ -1593,7 +1593,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:37:04.424Z",
-    "placeId": "ChIJ6RkTfL4JxkcRvTYNCHw3uNg"
+    "placeId": "ChIJ6RkTfL4JxkcRvTYNCHw3uNg",
+    "outdoorScreens": 2,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 120,
@@ -1620,7 +1622,9 @@
     "capacity": "M",
     "vibe": "Adult playground",
     "address": "Neveritaweg 41",
-    "verified": true
+    "verified": true,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 122,
@@ -1980,7 +1984,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:37:14.124Z",
-    "placeId": "ChIJDd6p-9QJxkcR9M4b-fwpLSY"
+    "placeId": "ChIJDd6p-9QJxkcR9M4b-fwpLSY",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 147,
@@ -5025,7 +5031,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:08:26.528Z",
-    "placeId": "ChIJmVIT1rQJxkcRSOtEj6d6BhQ"
+    "placeId": "ChIJmVIT1rQJxkcRSOtEj6d6BhQ",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 536,
@@ -5895,7 +5903,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:08:53.948Z",
-    "placeId": "ChIJ3W7FUykJxkcRj-ftNcI3mFA"
+    "placeId": "ChIJ3W7FUykJxkcRj-ftNcI3mFA",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 594,
@@ -8385,7 +8395,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:27:52.227Z",
-    "placeId": "ChIJ_7aXWR8KxkcRsogRnEYUXik"
+    "placeId": "ChIJ_7aXWR8KxkcRsogRnEYUXik",
+    "outdoorScreens": 2,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 941,
@@ -11025,7 +11037,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:38:46.634Z",
-    "placeId": "ChIJuQnD-wTixUcRzoyMvDy7e7U"
+    "placeId": "ChIJuQnD-wTixUcRzoyMvDy7e7U",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 1123,
@@ -12525,7 +12539,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:39:38.585Z",
-    "placeId": "ChIJgR4jc4HvxUcR5GLp81BaeNs"
+    "placeId": "ChIJgR4jc4HvxUcR5GLp81BaeNs",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 1227,
@@ -12630,7 +12646,9 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:39:42.469Z",
-    "placeId": "ChIJpUJCrNYJxkcRnW_0xBMXH98"
+    "placeId": "ChIJpUJCrNYJxkcRnW_0xBMXH98",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
   {
     "id": 1234,
@@ -13006,5 +13024,69 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:39:56.158Z",
     "placeId": "ChIJg0zxi9UJxkcRLTxtTCJt6SY"
+  },
+  {
+    "id": 1259,
+    "name": "Westergasterras",
+    "lat": 52.3870141,
+    "lng": 4.8699152,
+    "area": "Westerpark",
+    "facing": "All",
+    "capacity": "L",
+    "vibe": "Cozy restaurant on the historic Westergasfabriek grounds, large terrace, big screen for matches",
+    "address": "Klönneplein 4-6",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-07T21:38:49.656Z",
+    "outdoorScreens": 2,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+  },
+  {
+    "id": 1260,
+    "name": "Westerunie",
+    "lat": 52.3868,
+    "lng": 4.8695,
+    "area": "Westerpark",
+    "facing": "All",
+    "capacity": "L",
+    "vibe": "Events venue with large outdoor terrace, big screen for international matches",
+    "address": "Klönneplein 1",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-07T21:38:49.658Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+  },
+  {
+    "id": 1261,
+    "name": "Vondeltuin",
+    "lat": 52.3549253,
+    "lng": 4.8565105,
+    "area": "Vondelpark",
+    "facing": "SW",
+    "capacity": "L",
+    "vibe": "Café in southern Vondelpark, picnic tables, outdoor screen for big matches",
+    "address": "Vondelpark 7",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-07T21:38:49.660Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+  },
+  {
+    "id": 1262,
+    "name": "Radio Radio",
+    "lat": 52.3860704,
+    "lng": 4.8740538,
+    "area": "Westerpark",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Bar with outdoor terrace at Westergasfabriek, pizza and football on the screen",
+    "address": "Pazzanistraat 3",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-07T21:38:49.660Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   }
 ]
