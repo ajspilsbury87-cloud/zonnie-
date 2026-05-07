@@ -26,8 +26,17 @@ module.exports = {
   // The user-visible widget gallery name comes from CFBundleDisplayName
   // in Info.plist (still 'Zonnie' there).
   name: 'ZonnieWidget',
-  // Same deployment target as the main app (app.config.ts: 15.1).
-  deploymentTarget: '15.1',
+  // Widget needs iOS 17.0 (the main app stays at 15.1) because:
+  //   - SwiftUI's `containerBackground(_:for:)` modifier is iOS 17+
+  //     and is REQUIRED for widgets to render correctly under iOS 17's
+  //     new widget design system. Earlier modifiers (`.background()`)
+  //     produce visually broken widgets on iOS 17+.
+  //   - The `.widget` `WidgetRenderingMode` enum case used by it is
+  //     also 17+.
+  // iOS 17 adoption was 85%+ by mid-2024, so excluding older devices
+  // from the widget specifically (main app still works on 15.1+) is
+  // acceptable. Apple effectively forces this for new widgets.
+  deploymentTarget: '17.0',
   entitlements: {
     'com.apple.security.application-groups': ['group.com.spilsbury.zonnie'],
   },
