@@ -161,13 +161,28 @@ export function computeSunScore(
 
   let score = 0;
   if (sun.altitude > 0) {
-    // Altitude factor: max out at sun altitude 60° instead of 45°. This
-    // leaves more headroom — a midday sun isn't the absolute peak any
-    // more — so the facing bonus and 'All' multiplier don't slam every
-    // terrace into the 1.0 cap. Score 1.0 is reserved for "perfect noon
-    // + south-facing + sunny" cases, which is what users intuitively
-    // expect "100%" to mean.
-    score = Math.min(1, sun.altitude / 60);
+    // Altitude factor: sqrt(altitude / 90).
+    //
+    // Earlier versions used `min(1, altitude / 60)` — physically right for
+    // solar irradiance (W/m²), but it under-rated the perceived "sunniness"
+    // of golden-hour and evening sun. At alt 19° (a sunny May 19:00) the
+    // linear curve gives 0.32 — labelled "Partial Sun" — but the actual
+    // experience on a W-facing terrace is bright and warm. Andy flagged
+    // the top evening scores reading 28% as "Mostly Shade" which is wrong.
+    //
+    // sqrt(alt / 90) gives 0.46 at 19° altitude (vs 0.32) and 0.74 at 50°
+    // (vs 1.0 capped). That:
+    //   - lifts evening scores into the Partial → Mostly-Sunny range
+    //   - removes the hard cap at 60° so top-tier afternoon scores spread
+    //     0.85-0.93 instead of clumping at 0.95
+    //   - mirrors human perception: sun feels "sunny" across a wide
+    //     altitude range, not just at noon
+    //
+    // The 90° denominator means we never hit 1.0 at Amsterdam latitude
+    // (max altitude ~61° in midsummer), reserving 100% scores for the
+    // theoretical zenith. That's fine — the labelled "Full Sun" band
+    // starts at 0.7, which is reachable at midday with a SW facing bonus.
+    score = Math.sqrt(sun.altitude / 90);
     // Continuous shadow attenuation — the multiplier ramps smoothly from 1.0
     // (no obstruction) down to 0.15 (fully blocked). Replaces the old binary
     // "in shadow → ×0.15, else ×1.0" cliff that produced bimodal score
