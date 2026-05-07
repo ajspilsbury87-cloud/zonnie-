@@ -19,8 +19,13 @@ module.exports = {
   // Match the main app's bundle id with .widget suffix; iOS requires
   // the extension's bundle id to be a child of the host app's.
   bundleIdentifier: 'com.spilsbury.zonnie.widget',
-  // Display name when the user picks the widget from the gallery.
-  name: 'Zonnie',
+  // Xcode TARGET name — must differ from the main app's target name
+  // ('Zonnie'), otherwise prebuild generates two targets with the same
+  // name and Xcode errors with "Multiple commands produce conflicting
+  // outputs" + the provisioning-profile-to-target mapping inverts.
+  // The user-visible widget gallery name comes from CFBundleDisplayName
+  // in Info.plist (still 'Zonnie' there).
+  name: 'ZonnieWidget',
   // Same deployment target as the main app (app.config.ts: 15.1).
   deploymentTarget: '15.1',
   entitlements: {
