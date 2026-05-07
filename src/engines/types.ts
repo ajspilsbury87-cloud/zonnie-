@@ -32,6 +32,24 @@ export interface Terrace {
    * navigation. Backfilled from `coord_corrections.jsonl`.
    */
   placeId?: string;
+  /**
+   * Number of outdoor TV screens visible from the terrace seating area.
+   * Absent or 0 = no outdoor TVs. 1 = a single screen. 2+ = a multi-
+   * screen sports-bar setup. Indoor-only TVs are intentionally NOT
+   * counted — they don't serve Zonnie's "watch in the sun" use case.
+   *
+   * Drives the World Cup 2026 launch filter (`📺 Match` chip in
+   * VenueTypeFilter) and the outdoor-screens badge in the detail sheet.
+   * Sourced from beer-brand "WK kijken" listings (Heineken, Amstel,
+   * Grolsch) plus manual curation; see `scripts/import-outdoor-tvs.ts`.
+   */
+  outdoorScreens?: number;
+  /**
+   * ISO8601 timestamp of last manual confirmation of `outdoorScreens`.
+   * Mirrors the existing `verifiedAt` pattern; lets us age-out stale
+   * data quietly in a "verified by Zonnie 3 days ago" badge.
+   */
+  outdoorScreensVerifiedAt?: string;
 }
 
 export interface Building {

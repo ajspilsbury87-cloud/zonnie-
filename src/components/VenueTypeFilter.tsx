@@ -1,13 +1,14 @@
 /**
- * Horizontal chip row of venue types: Bar / Restaurant.
+ * Horizontal chip row of venue filters.
  *
- * Multi-select, OR semantics — selecting "Bar" + "Restaurant" shows
- * everything that matches either (union, not intersection). Empty
- * selection = no category filter.
+ * Bar / Restaurant chips: multi-select with OR semantics (selecting
+ * both shows the union). Empty = no category filter.
  *
- * Two chips, deliberately. Earlier iterations had four (adding Café
- * and Outdoor); see `src/data/categories.ts` for the simplification
- * rationale.
+ * 📺 Match chip: standalone toggle, ANDs with the others. Shows only
+ * terraces with `outdoorScreens > 0` — designed for the World Cup
+ * 2026 launch ("watch the match in the sun"). Visually emphasised
+ * with a different active colour so it doesn't look like just another
+ * venue type.
  */
 
 import { ScrollView, StyleSheet, Text } from 'react-native';
@@ -24,6 +25,8 @@ import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 export function VenueTypeFilter() {
   const selectedCategories = useAreaStore((s) => s.selectedCategories);
   const toggleCategory = useAreaStore((s) => s.toggleCategory);
+  const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
+  const toggleMatchModeOnly = useAreaStore((s) => s.toggleMatchModeOnly);
 
   return (
     <ScrollView
@@ -46,6 +49,16 @@ export function VenueTypeFilter() {
           </TouchableOpacity>
         );
       })}
+      <TouchableOpacity
+        onPress={toggleMatchModeOnly}
+        activeOpacity={0.7}
+        style={[styles.chip, matchModeOnly && styles.chipMatchActive]}
+        accessibilityLabel="Show only terraces with outdoor TVs"
+      >
+        <Text style={[styles.chipLabel, matchModeOnly && styles.chipLabelActive]}>
+          📺 Match
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -64,6 +77,11 @@ const styles = StyleSheet.create({
   },
   chipActive: {
     backgroundColor: palette.peach,
+  },
+  // Distinct active colour for the match-mode chip so it reads as a
+  // mode/feature toggle rather than just another venue category.
+  chipMatchActive: {
+    backgroundColor: palette.burnt,
   },
   chipLabel: {
     fontFamily: fonts.bodyMedium,

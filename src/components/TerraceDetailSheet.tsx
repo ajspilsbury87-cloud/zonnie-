@@ -348,6 +348,15 @@ export function TerraceDetailSheet() {
                   </Text>
                 </View>
               ) : null}
+              {terrace.outdoorScreens && terrace.outdoorScreens > 0 ? (
+                <View style={[styles.infoChip, styles.infoChipMatch]}>
+                  <Text style={[styles.infoChipText, styles.infoChipTextMatch]}>
+                    📺 {terrace.outdoorScreens === 1
+                      ? '1 outdoor screen'
+                      : `${terrace.outdoorScreens} outdoor screens`}
+                  </Text>
+                </View>
+              ) : null}
             </View>
 
             {terrace.vibe ? (
@@ -578,12 +587,21 @@ const styles = StyleSheet.create({
   infoChipBrand: {
     backgroundColor: palette.burnt,
   },
+  // Match-mode badge: distinct from the cream "verified by Zonnie" brand
+  // chip so the user instantly recognises an outdoor-screen venue at a
+  // glance — important for World Cup match-day scanning.
+  infoChipMatch: {
+    backgroundColor: palette.ink,
+  },
   infoChipText: {
     fontFamily: fonts.bodyMedium,
     fontSize: fontSizes.xs,
     color: palette.inkSoft,
   },
   infoChipTextBrand: {
+    color: palette.cream,
+  },
+  infoChipTextMatch: {
     color: palette.cream,
   },
   body: {

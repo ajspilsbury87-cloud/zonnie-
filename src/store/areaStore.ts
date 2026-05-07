@@ -22,18 +22,28 @@ interface AreaState {
    * filters — they all AND together.
    */
   favoritesOnly: boolean;
+  /**
+   * When true, restrict to terraces with at least one outdoor TV screen
+   * (`outdoorScreens > 0`). Designed for the World Cup 2026 launch
+   * use case — "where do I watch the match in the sun?". ANDs with all
+   * other filters.
+   */
+  matchModeOnly: boolean;
   toggle: (region: Region) => void;
   toggleCategory: (cat: VenueCategory) => void;
   setAll: (regions: Region[]) => void;
   clear: () => void;
   setFavoritesOnly: (on: boolean) => void;
   toggleFavoritesOnly: () => void;
+  setMatchModeOnly: (on: boolean) => void;
+  toggleMatchModeOnly: () => void;
 }
 
 export const useAreaStore = create<AreaState>((set, get) => ({
   selectedRegions: new Set<Region>(),
   selectedCategories: new Set<VenueCategory>(),
   favoritesOnly: false,
+  matchModeOnly: false,
   toggle: (region) =>
     set((s) => {
       const next = new Set(s.selectedRegions);
@@ -54,7 +64,10 @@ export const useAreaStore = create<AreaState>((set, get) => ({
       selectedRegions: new Set(),
       selectedCategories: new Set(),
       favoritesOnly: false,
+      matchModeOnly: false,
     }),
   setFavoritesOnly: (on) => set({ favoritesOnly: on }),
   toggleFavoritesOnly: () => set({ favoritesOnly: !get().favoritesOnly }),
+  setMatchModeOnly: (on) => set({ matchModeOnly: on }),
+  toggleMatchModeOnly: () => set({ matchModeOnly: !get().matchModeOnly }),
 }));

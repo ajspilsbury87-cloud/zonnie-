@@ -113,6 +113,7 @@ export function useScoredTerraces(): ScoredTerrace[] {
   const selectedRegions = useAreaStore((s) => s.selectedRegions);
   const selectedCategories = useAreaStore((s) => s.selectedCategories);
   const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
+  const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
   const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
   const query = useSearchStore((s) => s.query);
   const weatherByDate = useWeatherStore((s) => s.byDate);
@@ -127,6 +128,9 @@ export function useScoredTerraces(): ScoredTerrace[] {
     let filtered: readonly Terrace[] = TERRACES;
     if (favoritesOnly) {
       filtered = filtered.filter((t) => favoriteIds.has(t.id));
+    }
+    if (matchModeOnly) {
+      filtered = filtered.filter((t) => (t.outdoorScreens ?? 0) > 0);
     }
     if (selectedRegions.size > 0) {
       filtered = filtered.filter((t) => {
@@ -169,6 +173,7 @@ export function useScoredTerraces(): ScoredTerrace[] {
     selectedCategories,
     favoritesOnly,
     favoriteIds,
+    matchModeOnly,
     query,
     weatherByDate,
   ]);
