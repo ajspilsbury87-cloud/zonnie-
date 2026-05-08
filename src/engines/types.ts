@@ -33,6 +33,19 @@ export interface Terrace {
    */
   placeId?: string;
   /**
+   * Paid-placement / curated-feature flag. When true, this terrace
+   * surfaces as the lead card on the LandingPage regardless of its
+   * computed sun score, with a "Featured" badge. v1 plumbing only —
+   * no terraces have it set yet; introduced so the monetisation
+   * surface exists when we open it up to bar-side bookings.
+   *
+   * Selection rule on the landing page: the lead slot prefers a
+   * featured terrace if one exists for the active filter set;
+   * otherwise top-by-score for the current hour. Other slots are
+   * always top-by-score.
+   */
+  featured?: boolean;
+  /**
    * Number of outdoor TV screens visible from the terrace seating area.
    * Absent or 0 = no outdoor TVs. 1 = a single screen. 2+ = a multi-
    * screen sports-bar setup. Indoor-only TVs are intentionally NOT

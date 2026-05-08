@@ -17,7 +17,7 @@ import {
 } from '@expo-google-fonts/inter';
 import { useCallback, useEffect, useState } from 'react';
 
-import { SplashOverlay } from '@/src/components/SplashOverlay';
+import { LandingPage } from '@/src/components/LandingPage';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
 import { useWidgetSync } from '@/src/widget/useWidgetSync';
 
@@ -48,13 +48,13 @@ export default function RootLayout() {
     }
   }, [fontsLoaded, fontError]);
 
-  // Branded splash overlay — sits above the app surface for ~1.6s after
-  // fonts load. Hands off to the live map+list once its fade-out
-  // completes. The native splash hides as soon as fonts are ready;
-  // because both screens use `palette.sand` as the background and our
-  // overlay mounts in the same frame, the handover is seamless.
-  const [showSplashOverlay, setShowSplashOverlay] = useState(true);
-  const handleSplashDone = useCallback(() => setShowSplashOverlay(false), []);
+  // Branded landing page — sits above the app surface on launch with
+  // the brand sun-and-rays moment + top 3 sunny terraces "right now"
+  // as cards. User taps "See all terraces" to enter the live map.
+  // Native splash hides as soon as fonts load; the landing background
+  // is `palette.sand` to match for a seamless handover.
+  const [showLanding, setShowLanding] = useState(true);
+  const handleLandingContinue = useCallback(() => setShowLanding(false), []);
 
   if (!fontsLoaded && !fontError) {
     return null;
@@ -66,8 +66,8 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <StatusBar style="auto" />
           <Stack screenOptions={{ headerShown: false }} />
-          {showSplashOverlay ? (
-            <SplashOverlay onAnimationDone={handleSplashDone} />
+          {showLanding ? (
+            <LandingPage onContinue={handleLandingContinue} />
           ) : null}
         </BottomSheetModalProvider>
       </SafeAreaProvider>
