@@ -69,46 +69,62 @@ const PIN_STATES: Record<PinStateKey, PinConfig> = {
 };
 
 /**
- * Sun + rays use the same fill + outline as the T so the marker reads as
- * one unified shape. The sun was previously always-ink which felt
- * disconnected from the colored T.
+ * Pin silhouette redesign (v3, 2026-05-08): a sun glyph (filled circle
+ * + 7 rays) sitting above a short triangular pointer.
+ *
+ * Earlier design used an italic-T silhouette — a horizontal score-chip
+ * cap above a long descender. User feedback: at small sizes on a
+ * busy map, that read as a Christian cross / crucifix shape. Replaced
+ * with the brand sun motif (consistent with the splash + landing page
+ * + app icon) plus a small downward triangle to communicate "this is
+ * the location".
+ *
+ * Anchoring is unchanged: viewBox `-16 -22 32 44`, anchor at
+ * (0, 22). The triangle's tip is the anchor, so the pin still
+ * touches lat/lng cleanly.
  */
-function sunOnTopSvg(cfg: PinConfig): string {
-  const sunStrokeWidth = cfg.selected ? 0.9 : 0.7;
-  const rayStrokeWidth = cfg.selected ? 0.7 : 0.55;
+function sunGlyphSvg(cfg: PinConfig): string {
+  // 7 rays around the sun (skipping the bottom one — that's where the
+  // pointer triangle goes). Drawn as fat lines for visibility at @1x.
+  const rayStrokeWidth = cfg.selected ? 1.4 : 1.2;
+  const sunStrokeWidth = cfg.selected ? 1.0 : 0.8;
   return `
-    <circle cx="3" cy="-9" r="2.4" fill="${cfg.fill}" stroke="${cfg.outline}" stroke-width="${sunStrokeWidth}"/>
     <g stroke="${cfg.outline}" stroke-width="${rayStrokeWidth}" stroke-linecap="round" fill="none">
-      <line x1="-3.5" y1="-9" x2="-2.2" y2="-9"/>
-      <line x1="9.4" y1="-9" x2="8.2" y2="-9"/>
-      <line x1="3" y1="-15" x2="3" y2="-13.7"/>
-      <line x1="-1.2" y1="-13.5" x2="-0.4" y2="-12.6"/>
-      <line x1="7.4" y1="-13.5" x2="6.6" y2="-12.6"/>
-    </g>`;
+      <line x1="0" y1="-19" x2="0" y2="-15.5"/>
+      <line x1="-13.5" y1="-5" x2="-10.5" y2="-5"/>
+      <line x1="10.5" y1="-5" x2="13.5" y2="-5"/>
+      <line x1="-9.4" y1="-14.4" x2="-7.4" y2="-12.4"/>
+      <line x1="7.4" y1="-12.4" x2="9.4" y2="-14.4"/>
+      <line x1="-9.4" y1="4.4" x2="-7.4" y2="2.4"/>
+      <line x1="7.4" y1="2.4" x2="9.4" y2="4.4"/>
+    </g>
+    <circle cx="0" cy="-5" r="9.5" fill="${cfg.fill}" stroke="${cfg.outline}" stroke-width="${sunStrokeWidth}"/>`;
 }
 
-function italicTSvg(cfg: PinConfig): string {
-  const strokeWidth = cfg.selected ? 0.7 : 0.55;
+/** Small triangular pointer below the sun whose tip sits on the lat/lng. */
+function pointerSvg(cfg: PinConfig): string {
+  const strokeWidth = cfg.selected ? 1.0 : 0.8;
   return `
-    <g transform="skewX(-16)" fill="${cfg.fill}" stroke="${cfg.outline}" stroke-width="${strokeWidth}" stroke-linejoin="round">
-      <rect x="-9.5" y="-0.7" width="19" height="3"/>
-      <rect x="-1.5" y="-0.7" width="3" height="22"/>
-    </g>`;
+    <path d="M -3.6 5.5 L 0 22 L 3.6 5.5 Z"
+          fill="${cfg.fill}"
+          stroke="${cfg.outline}"
+          stroke-width="${strokeWidth}"
+          stroke-linejoin="round"/>`;
 }
 
 function pinSvg(state: PinStateKey): string {
   const cfg = PIN_STATES[state];
   const halo = cfg.selected
-    ? `<ellipse cx="0" cy="5" rx="17" ry="17" fill="${COLORS.haloOuter}" opacity="0.20"/>
-       <ellipse cx="0" cy="5" rx="12" ry="12" fill="${COLORS.haloInner}" opacity="0.55"/>`
+    ? `<ellipse cx="0" cy="-5" rx="17" ry="17" fill="${COLORS.haloOuter}" opacity="0.20"/>
+       <ellipse cx="0" cy="-5" rx="12" ry="12" fill="${COLORS.haloInner}" opacity="0.55"/>`
     : '';
-  // ViewBox: -16 -22 32 44 — base render size 32×44 (was 40×56). The
-  // anchor (0, 22) — base of the T descender — still sits on the lat/lng.
+  // ViewBox unchanged: -16 -22 32 44. Anchor at (0, 22) is now the
+  // tip of the pointer triangle (was the base of the T descender).
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16 -22 32 44" width="32" height="44">
     <g>
       ${halo}
-      ${sunOnTopSvg(cfg)}
-      ${italicTSvg(cfg)}
+      ${pointerSvg(cfg)}
+      ${sunGlyphSvg(cfg)}
     </g>
   </svg>`;
 }
