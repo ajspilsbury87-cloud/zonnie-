@@ -39,7 +39,11 @@ const config: ExpoConfig = {
   // display name on expo.dev doesn't change the slug — it's a separate
   // field. Slug is internal; doesn't appear on App Store / home screen.
   slug: 'andys',
-  version: '0.1.0',
+  // 1.0.0 = first App Store submission. Bumped from 0.1.0 (TestFlight
+  // preview-only) on 2026-05-08 when prepping for review. Future
+  // submissions follow semver: 1.0.x = patch (bug fix), 1.x.0 = minor
+  // (additive feature), 2.0.0 = major (breaking UX change).
+  version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
