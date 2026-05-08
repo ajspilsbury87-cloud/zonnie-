@@ -25,6 +25,10 @@ const PIN_IMAGES = {
   full: require('@/assets/images/pins/full.png'),
   mostly: require('@/assets/images/pins/mostly.png'),
   partial: require('@/assets/images/pins/partial.png'),
+  // mshade ("mostly shade") added with the v3 Aperol-spritz pin design —
+  // splits the previous single shade band into two so the foam/ice
+  // fade-out gradient has somewhere to land.
+  mshade: require('@/assets/images/pins/mshade.png'),
   shade: require('@/assets/images/pins/shade.png'),
   selected: require('@/assets/images/pins/selected.png'),
 } as const;
@@ -36,6 +40,7 @@ function pinAssetForScore(score: number): PinAsset {
   if (score > 0.7) return PIN_IMAGES.full;
   if (score > 0.5) return PIN_IMAGES.mostly;
   if (score > 0.3) return PIN_IMAGES.partial;
+  if (score > 0.1) return PIN_IMAGES.mshade;
   return PIN_IMAGES.shade;
 }
 
@@ -66,9 +71,12 @@ const TerracePin = memo(
     return (
       <Marker
         coordinate={{ latitude, longitude }}
-        // Anchor x:0.5 y:1.0 — base of the T descender sits on the lat/lng,
-        // matching the spec in brand-assets/docs/ASSET-SPECS.md.
-        anchor={{ x: 0.5, y: 1 }}
+        // Anchor: base of the spritz glass sits on the lat/lng. The v3
+        // pin SVG has glyph from y=-38 to y=9 (47 units) within a 56-tall
+        // viewBox, leaving 9 units of transparent space below the glass.
+        // 47 / 56 ≈ 0.84 puts the lat/lng at the glass base, not the
+        // bottom of the asset's bounding box.
+        anchor={{ x: 0.5, y: 0.84 }}
         image={asset}
         title={title}
         description={description}

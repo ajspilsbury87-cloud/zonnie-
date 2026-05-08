@@ -27,104 +27,119 @@ const PINS_OUT_DIR = join(OUT_DIR, 'pins');
 
 // ─── Pin SVG generator ──────────────────────────────────────────────────────
 //
-// v2 redesign: smaller pins (32×44), per-state contrast outline (light fills
-// get a dark outline, dark fills get a light outline), and the sun glyph
-// adopts the same fill+outline as the T so the marker reads as one unified
-// shape. Diverges from the original brand-asset module (which always used
-// ink-coloured strokes) — that lost contrast on dark fills against dim map
-// regions, and the sun looking different from the T felt visually
-// disconnected at small sizes.
+// v3 redesign (2026-05-08): Aperol spritz silhouette with sun overhead,
+// per Andy's brand-handover spec at brand-assets/v2/. v2 (sun+pointer)
+// was an overnight intermediate; this is the canonical pin design.
+// Replaces the italic-T (v1, "looked like a Calvary cross"). The glass
+// fill carries the score-band signal; foam + ice fade darker in shade
+// states so the drink looks "in shadow". Sun glyph above is constant
+// ink colour across states — separates the "what" (sun overhead) from
+// the "how much" (glass brightness).
 
 const COLORS = {
   ink: '#2A1F15',
-  cream: '#FFE5C2',
-  fullSun: '#D9633E', // terracotta — medium-dark
-  mostlySunny: '#E89C5A', // peach — medium
-  partialSun: '#F4D58D', // mustard — light
-  shade: '#7A2E14', // cocoa — dark
-  selected: '#FBA85A', // warm orange — medium
+  foam: '#FFE5C2',
   haloOuter: '#FBA85A',
   haloInner: '#FFE5C2',
+  selectedFill: '#FF8A3D',
+  // Pin score-band gradient. More saturated than the in-app warm
+  // palette in `theme/tokens.ts` — deliberately, so pins read at
+  // peripheral glance on a busy map. Score chips elsewhere keep
+  // the warmer brand tones.
+  fullSun: '#FF6B1A', // vivid bright orange
+  mostlySunny: '#E55A1F', // amber orange
+  partialSun: '#C04A1E', // deep orange
+  mostlyShade: '#9A3A19', // rust brown
+  shade: '#5A2410', // deep cocoa
 } as const;
 
-type PinStateKey = 'full' | 'mostly' | 'partial' | 'shade' | 'selected';
+type PinStateKey = 'full' | 'mostly' | 'partial' | 'mshade' | 'shade' | 'selected';
 
 interface PinConfig {
   fill: string;
-  /** Contrast outline color — opposite tonal value of the fill. */
-  outline: string;
+  /** Foam (top of drink) opacity — fades in shade states. */
+  foamOpacity: number;
+  /** Ice cube opacity — fades alongside foam. */
+  iceOpacity: number;
   selected: boolean;
 }
 
 /**
- * Outline rule (Andy's call): dark fills get a light outline, light fills
- * get a dark outline. Always-visible regardless of map region brightness.
+ * Five score bands + selected. Foam/ice fade in the bottom two bands so
+ * the drink visibly "sits in shadow" when the score is low — extra
+ * peripheral signal beyond the fill colour alone.
  */
 const PIN_STATES: Record<PinStateKey, PinConfig> = {
-  full: { fill: COLORS.fullSun, outline: COLORS.cream, selected: false }, // dark fill → cream outline
-  mostly: { fill: COLORS.mostlySunny, outline: COLORS.ink, selected: false }, // medium → ink reads better against most map tiles
-  partial: { fill: COLORS.partialSun, outline: COLORS.ink, selected: false }, // light → ink
-  shade: { fill: COLORS.shade, outline: COLORS.cream, selected: false }, // dark → cream
-  selected: { fill: COLORS.selected, outline: COLORS.cream, selected: true }, // halo + cream outline
+  full:    { fill: COLORS.fullSun,    foamOpacity: 1.00, iceOpacity: 0.70, selected: false },
+  mostly:  { fill: COLORS.mostlySunny, foamOpacity: 1.00, iceOpacity: 0.70, selected: false },
+  partial: { fill: COLORS.partialSun, foamOpacity: 1.00, iceOpacity: 0.70, selected: false },
+  mshade:  { fill: COLORS.mostlyShade, foamOpacity: 0.85, iceOpacity: 0.65, selected: false },
+  shade:   { fill: COLORS.shade,      foamOpacity: 0.55, iceOpacity: 0.45, selected: false },
+  selected:{ fill: COLORS.selectedFill, foamOpacity: 1.00, iceOpacity: 0.75, selected: true },
 };
 
 /**
- * Pin silhouette redesign (v3, 2026-05-08): a sun glyph (filled circle
- * + 7 rays) sitting above a short triangular pointer.
+ * Aperol spritz pin silhouette (v3 spec, brand-assets/v2/zonnie-pin.js).
  *
- * Earlier design used an italic-T silhouette — a horizontal score-chip
- * cap above a long descender. User feedback: at small sizes on a
- * busy map, that read as a Christian cross / crucifix shape. Replaced
- * with the brand sun motif (consistent with the splash + landing page
- * + app icon) plus a small downward triangle to communicate "this is
- * the location".
+ * Tulip-glass body, cream foam top, ice cube, black straw. A small
+ * hollow sun with 5 rays sits above the glass. Brightness gradient
+ * across score bands tells the sun-rating story without needing to
+ * read any text.
  *
- * Anchoring is unchanged: viewBox `-16 -22 32 44`, anchor at
- * (0, 22). The triangle's tip is the anchor, so the pin still
- * touches lat/lng cleanly.
+ * Geometry (per the brand-handover SVG):
+ *   ViewBox  -20 -38 40 56   (40 wide, 56 tall)
+ *   Sun centre   (0, -26)
+ *   Sun rays span y=-35 (top) to y=-30
+ *   Glass top    y = -14
+ *   Glass base   y =  9   ← lat/lng anchor
+ *   Empty space  y =  9 to 18 (transparent — gives breathing room
+ *                              below the anchor; ZonnieMap uses
+ *                              anchor.y = 47/56 ≈ 0.84 to compensate)
  */
-function sunGlyphSvg(cfg: PinConfig): string {
-  // 7 rays around the sun (skipping the bottom one — that's where the
-  // pointer triangle goes). Drawn as fat lines for visibility at @1x.
-  const rayStrokeWidth = cfg.selected ? 1.4 : 1.2;
-  const sunStrokeWidth = cfg.selected ? 1.0 : 0.8;
+function sunOverGlassSvg(cfg: PinConfig): string {
+  const sunStrokeWidth = cfg.selected ? 1.2 : 1.0;
+  const rayStrokeWidth = cfg.selected ? 1.0 : 0.9;
   return `
-    <g stroke="${cfg.outline}" stroke-width="${rayStrokeWidth}" stroke-linecap="round" fill="none">
-      <line x1="0" y1="-19" x2="0" y2="-15.5"/>
-      <line x1="-13.5" y1="-5" x2="-10.5" y2="-5"/>
-      <line x1="10.5" y1="-5" x2="13.5" y2="-5"/>
-      <line x1="-9.4" y1="-14.4" x2="-7.4" y2="-12.4"/>
-      <line x1="7.4" y1="-12.4" x2="9.4" y2="-14.4"/>
-      <line x1="-9.4" y1="4.4" x2="-7.4" y2="2.4"/>
-      <line x1="7.4" y1="2.4" x2="9.4" y2="4.4"/>
-    </g>
-    <circle cx="0" cy="-5" r="9.5" fill="${cfg.fill}" stroke="${cfg.outline}" stroke-width="${sunStrokeWidth}"/>`;
+    <circle cx="0" cy="-26" r="3.5" fill="none" stroke="${COLORS.ink}" stroke-width="${sunStrokeWidth}"/>
+    <g stroke="${COLORS.ink}" stroke-width="${rayStrokeWidth}" stroke-linecap="round" fill="none">
+      <line x1="-9" y1="-26" x2="-6.5" y2="-26"/>
+      <line x1="9" y1="-26" x2="6.5" y2="-26"/>
+      <line x1="0" y1="-35" x2="0" y2="-32"/>
+      <line x1="-6" y1="-32" x2="-5" y2="-30.5"/>
+      <line x1="6" y1="-32" x2="5" y2="-30.5"/>
+    </g>`;
 }
 
-/** Small triangular pointer below the sun whose tip sits on the lat/lng. */
-function pointerSvg(cfg: PinConfig): string {
-  const strokeWidth = cfg.selected ? 1.0 : 0.8;
+function spritzGlassSvg(cfg: PinConfig): string {
+  const strokeWidth = cfg.selected ? 1.4 : 1.2;
   return `
-    <path d="M -3.6 5.5 L 0 22 L 3.6 5.5 Z"
-          fill="${cfg.fill}"
-          stroke="${cfg.outline}"
-          stroke-width="${strokeWidth}"
-          stroke-linejoin="round"/>`;
+    <!-- Tulip glass bowl -->
+    <path d="M -10 -14 L 10 -14 L 7 6 Q 7 9 4 9 L -4 9 Q -7 9 -7 6 Z"
+          fill="${cfg.fill}" stroke="${COLORS.ink}" stroke-width="${strokeWidth}"/>
+    <!-- Foam / liquid surface -->
+    <ellipse cx="0" cy="-13" rx="10" ry="2"
+             fill="${COLORS.foam}" opacity="${cfg.foamOpacity}"
+             stroke="${COLORS.ink}" stroke-width="0.8"/>
+    <!-- Ice cube -->
+    <rect x="-3" y="-11" width="3" height="3"
+          fill="${COLORS.foam}" opacity="${cfg.iceOpacity}"
+          stroke="${COLORS.ink}" stroke-width="0.4"/>
+    <!-- Straw (black, slight angle) -->
+    <line x1="-3" y1="-18" x2="-1" y2="-10"
+          stroke="${COLORS.ink}" stroke-width="1" stroke-linecap="round"/>`;
 }
 
 function pinSvg(state: PinStateKey): string {
   const cfg = PIN_STATES[state];
   const halo = cfg.selected
-    ? `<ellipse cx="0" cy="-5" rx="17" ry="17" fill="${COLORS.haloOuter}" opacity="0.20"/>
-       <ellipse cx="0" cy="-5" rx="12" ry="12" fill="${COLORS.haloInner}" opacity="0.55"/>`
+    ? `<ellipse cx="0" cy="-2" rx="20" ry="20" fill="${COLORS.haloOuter}" opacity="0.20"/>
+       <ellipse cx="0" cy="-2" rx="14" ry="14" fill="${COLORS.haloInner}" opacity="0.55"/>`
     : '';
-  // ViewBox unchanged: -16 -22 32 44. Anchor at (0, 22) is now the
-  // tip of the pointer triangle (was the base of the T descender).
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16 -22 32 44" width="32" height="44">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -38 40 56" width="40" height="56">
     <g>
       ${halo}
-      ${pointerSvg(cfg)}
-      ${sunGlyphSvg(cfg)}
+      ${sunOverGlassSvg(cfg)}
+      ${spritzGlassSvg(cfg)}
     </g>
   </svg>`;
 }
@@ -157,19 +172,20 @@ async function main() {
   await renderSvgFileToPng(iconSrc, 48, 48, join(OUT_DIR, 'favicon.png'));
 
   console.log('Pin states');
-  // Size-by-score: pin physical size scales with sun quality. The
-  // earlier pass (24/28/32/36) was too subtle on-device — sun pins
-  // didn't visibly stand out from shaded ones. Widened the range so
-  // a full-sun pin is ~2.5× the area of a shaded one. Aspect ratio
-  // (~0.727) preserved across states.
+  // Size-by-score: pin physical size scales with sun quality. Sunny
+  // pins are ~2.5× the area of shaded ones — the size differential is
+  // an extra peripheral signal beyond the colour gradient. Aspect
+  // ratio matches the SVG viewBox (~0.714) so Sharp doesn't pad.
   const SIZES: Record<PinStateKey, [number, number]> = {
-    shade: [20, 28], // smallest — least sun
-    partial: [28, 38],
-    mostly: [38, 52],
-    full: [50, 68], // largest non-selected — most sun, ~2.5× area of shade
-    selected: [56, 76], // biggest overall — focused state
+    shade:    [22, 31],   // smallest — least sun
+    mshade:   [27, 38],
+    partial:  [32, 45],
+    mostly:   [38, 53],
+    full:     [44, 62],   // largest non-selected
+    selected: [50, 70],   // biggest overall — focused state
   };
-  for (const state of ['full', 'mostly', 'partial', 'shade', 'selected'] as PinStateKey[]) {
+  const STATES: PinStateKey[] = ['full', 'mostly', 'partial', 'mshade', 'shade', 'selected'];
+  for (const state of STATES) {
     const svg = pinSvg(state);
     const [w, h] = SIZES[state];
     await renderSvgToPng(svg, w, h, join(PINS_OUT_DIR, `${state}.png`));
