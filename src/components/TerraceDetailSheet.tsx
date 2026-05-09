@@ -193,21 +193,20 @@ export function TerraceDetailSheet() {
   }, [terrace, dateOffset, fromHour, toHour, weatherByDate]);
 
   /**
-   * Curation freshness label — "verified by Zonnie" with a relative time
-   * for the most-recent verification. Surfaces our quality moat over
-   * Sun Seekr / Coffee in the Sun's stale POI scrapes and Seats in the
-   * Sun's crowdsourced (often-closed) listings.
+   * Curation trust signal. Surfaces our quality moat over Sun Seekr /
+   * Coffee in the Sun (stale POI scrapes) and Seats in the Sun (often-
+   * closed crowdsourced listings).
+   *
+   * Earlier this rendered as "Verified N days/weeks/months ago" off
+   * `terrace.verifiedAt`. Andy: that read as if we'd physically
+   * inspected the venue on that date, which isn't true — `verifiedAt`
+   * is just the timestamp of the last data-import or curation-script
+   * pass. Replaced with a simple "Curated by Zonnie" string so the
+   * trust signal lands without implying a recent on-site visit.
    */
   const curationLabel = useMemo(() => {
     if (!terrace || !terrace.verified) return null;
-    if (!terrace.verifiedAt) return 'Verified by Zonnie';
-    const ms = Date.now() - new Date(terrace.verifiedAt).getTime();
-    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-    if (days < 1) return 'Verified today';
-    if (days < 7) return `Verified ${days} day${days === 1 ? '' : 's'} ago`;
-    if (days < 30) return `Verified ${Math.floor(days / 7)} week${days < 14 ? '' : 's'} ago`;
-    if (days < 365) return `Verified ${Math.floor(days / 30)} month${days < 60 ? '' : 's'} ago`;
-    return `Verified ${Math.floor(days / 365)} year${days < 730 ? '' : 's'} ago`;
+    return 'Curated by Zonnie';
   }, [terrace]);
 
   const rangeLabel = useMemo(() => {
