@@ -27,11 +27,12 @@
  * scrollable; siblings get the sheet drag handler and break row taps.
  */
 
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
 
 import { TerraceList } from '@/src/components/TerraceList';
+import { useSelectionStore } from '@/src/store/selectionStore';
 import type { ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { palette, radii } from '@/src/theme/tokens';
 
@@ -42,6 +43,12 @@ interface MainSheetProps {
 export function MainSheet({ onSelect }: MainSheetProps) {
   const ref = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [290, '60%', '92%'], []);
+  // The detail sheet's "Show on Map" action sets `panTo` then clears
+  // selection. ZonnieMap watches `panTo` and animates the map. We
+  // also want this sheet to minimise to peek so the user actually
+  // sees the map — otherwise the listing covers the destination.
+  // Subscribe to panTo; on transition null → non-null, snap to index 0.
+  const panTo = useSelectionStore((s) => s.panTo);
 
   const handleSelect = useCallback(
     (item: ScoredTerrace) => {
@@ -49,6 +56,12 @@ export function MainSheet({ onSelect }: MainSheetProps) {
     },
     [onSelect],
   );
+
+  useEffect(() => {
+    if (panTo != null) {
+      ref.current?.snapToIndex(0);
+    }
+  }, [panTo]);
 
   return (
     <BottomSheet
