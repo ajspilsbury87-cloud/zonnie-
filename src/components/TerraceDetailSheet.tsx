@@ -1,8 +1,13 @@
 /**
- * Modal bottom sheet showing the detail of a single terrace.
+ * Bottom sheet showing the detail of a single terrace.
  *
- * Opens when `useSelectionStore.selectedId` is set. Uses Gorhom
- * `BottomSheetModal` so it overlays the main sheet without dismissing it.
+ * Mounts when `useSelectionStore.selectedId` is set, unmounts when
+ * cleared. Uses a plain Gorhom `BottomSheet` (not `BottomSheetModal`)
+ * with conditional render — Gorhom v5's modal portal silently failed
+ * to present on Andy's iOS TestFlight build. Inline render avoids
+ * the portal entirely; the sheet visually overlays the persistent
+ * MainSheet because it's rendered later in the tree (drawn on top
+ * by RN's default z-order).
  *
  * Contents:
  *   - Header: name, area · facing · capacity, current sun-score chip
@@ -16,7 +21,10 @@
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
 
 import { TERRACES } from '@/src/data/terraces';
 import {
@@ -62,7 +70,7 @@ const CAPACITY_LABELS: Record<string, string> = {
 };
 
 export function TerraceDetailSheet() {
-  const ref = useRef<BottomSheetModal>(null);
+  const ref = useRef<BottomSheet>(null);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const clear = useSelectionStore((s) => s.clear);
   const setPanTo = useSelectionStore((s) => s.setPanTo);
@@ -81,13 +89,9 @@ export function TerraceDetailSheet() {
     return TERRACES.find((t) => t.id === selectedId) ?? null;
   }, [selectedId]);
 
-  // Open / close the sheet based on store state.
-  useEffect(() => {
-    if (selectedId != null) ref.current?.present();
-    else ref.current?.dismiss();
-  }, [selectedId]);
-
   // Trigger Places fetch when a terrace with a placeId is opened.
+  // (The sheet's open/close is now driven by conditional render
+  // below — no imperative present()/dismiss() needed.)
   useEffect(() => {
     if (terrace?.placeId) ensurePlace(terrace.placeId);
   }, [terrace, ensurePlace]);
@@ -254,12 +258,23 @@ export function TerraceDetailSheet() {
     clear();
   }, [terrace, setPanTo, clear]);
 
+  // Sheet is conditionally rendered based on selectedId. Mount when a
+  // terrace is selected; unmount when cleared. This bypasses Gorhom v5's
+  // BottomSheetModalProvider portal mechanism which silently failed to
+  // present on Andy's TestFlight 1.0.0 build (the TEST DETAIL diagnostic
+  // confirmed the store updated but the modal never appeared). Plain
+  // <BottomSheet> renders inline, no portal involvement.
+  if (selectedId == null) return null;
+
   return (
-    <BottomSheetModal
+    <BottomSheet
       ref={ref}
+      // index=0 = first snap point on mount. Default would be -1 (closed).
+      index={0}
       snapPoints={['70%', '92%']}
       enableDynamicSizing={false}
-      onDismiss={clear}
+      enablePanDownToClose
+      onClose={clear}
       backdropComponent={renderBackdrop}
       handleIndicatorStyle={styles.handle}
       backgroundStyle={styles.background}
@@ -425,7 +440,7 @@ export function TerraceDetailSheet() {
           </>
         ) : null}
       </BottomSheetView>
-    </BottomSheetModal>
+    </BottomSheet>
   );
 }
 

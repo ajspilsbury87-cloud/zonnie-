@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
 import { MainSheet } from '@/src/components/MainSheet';
@@ -36,34 +35,30 @@ export default function Index() {
     if (first) select(first.id);
   }, [select]);
 
-  // BottomSheetModalProvider moved here from app/_layout.tsx. Suspected
-  // cause of "modal won't present": expo-router's <Stack> creates a
-  // navigator boundary that breaks Gorhom v5's modal portal host
-  // discovery when the provider sits ABOVE the navigator. Mounting it
-  // directly above the consumer (TerraceDetailSheet) sidesteps that.
+  // No more BottomSheetModalProvider — TerraceDetailSheet is now a
+  // plain `<BottomSheet>` with conditional rendering, so the portal
+  // mechanism that was failing in v5 is no longer in the picture.
   return (
-    <BottomSheetModalProvider>
-      <View style={styles.container}>
-        <ErrorBoundary surface="ZonnieMap">
-          <ZonnieMap onSelect={handleSelect} />
-        </ErrorBoundary>
-        <ErrorBoundary surface="MainSheet">
-          <MainSheet onSelect={handleSelect} />
-        </ErrorBoundary>
-        <ErrorBoundary surface="TerraceDetailSheet">
-          <TerraceDetailSheet />
-        </ErrorBoundary>
-        {/* DEBUG (temporary): label shows live selectedId */}
-        <Pressable
-          onPress={debugSelect}
-          style={({ pressed }) => [styles.debugButton, pressed && styles.debugButtonPressed]}
-        >
-          <Text style={styles.debugButtonText}>
-            TEST DETAIL · sel={selectedId ?? 'null'}
-          </Text>
-        </Pressable>
-      </View>
-    </BottomSheetModalProvider>
+    <View style={styles.container}>
+      <ErrorBoundary surface="ZonnieMap">
+        <ZonnieMap onSelect={handleSelect} />
+      </ErrorBoundary>
+      <ErrorBoundary surface="MainSheet">
+        <MainSheet onSelect={handleSelect} />
+      </ErrorBoundary>
+      <ErrorBoundary surface="TerraceDetailSheet">
+        <TerraceDetailSheet />
+      </ErrorBoundary>
+      {/* DEBUG (temporary): label shows live selectedId */}
+      <Pressable
+        onPress={debugSelect}
+        style={({ pressed }) => [styles.debugButton, pressed && styles.debugButtonPressed]}
+      >
+        <Text style={styles.debugButtonText}>
+          TEST DETAIL · sel={selectedId ?? 'null'}
+        </Text>
+      </Pressable>
+    </View>
   );
 }
 
