@@ -1,0 +1,356 @@
+[
+  {
+    "name": "Nomos Coffee",
+    "address": "Zeilstraat 45 H",
+    "lat": 52.3506889,
+    "lng": 4.8539543
+  },
+  {
+    "name": "DAK Coffee Roasters Showroom",
+    "address": "Bellamyplein 16H",
+    "lat": 52.3684127,
+    "lng": 4.8673105
+  },
+  {
+    "name": "Yusu",
+    "address": "Andreas Bonnstraat 2",
+    "lat": 52.3598821,
+    "lng": 4.9110865
+  },
+  {
+    "name": "Luuk's Coffee",
+    "address": "Westerstraat 3",
+    "lat": 52.3787639,
+    "lng": 4.8862575
+  },
+  {
+    "name": "Caff\\u00e8nation Amsterdam",
+    "address": "Warmondstraat 120",
+    "lat": 52.354718,
+    "lng": 4.849319
+  },
+  {
+    "name": "uncommon",
+    "address": "Eerste Constantijn Huygensstraat 63-H",
+    "lat": 52.3632828,
+    "lng": 4.8752135
+  },
+  {
+    "name": "Screaming Beans",
+    "address": "Waterlooplein 129",
+    "lat": 52.3686094,
+    "lng": 4.9021188
+  },
+  {
+    "name": "LERA",
+    "address": "Ferdinand Bolstraat 146",
+    "lat": 52.3524323,
+    "lng": 4.8910493
+  },
+  {
+    "name": "LOT61",
+    "address": "Hendrik Jacobszstraat 18",
+    "lat": 52.3515355,
+    "lng": 4.8602111
+  },
+  {
+    "name": "FUKU",
+    "address": "Bos en Lommerweg 136 HS",
+    "lat": 52.3812743,
+    "lng": 4.8550735
+  },
+  {
+    "name": "Rum Baba",
+    "address": "Pretoriusstraat 15",
+    "lat": 52.3559936,
+    "lng": 4.9265403
+  },
+  {
+    "name": "Bocca Coffee",
+    "address": "Kerkstraat 96-98",
+    "lat": 52.364447,
+    "lng": 4.886827
+  },
+  {
+    "name": "Taal Coffee",
+    "address": "J.J. Cremerplein 34",
+    "lat": 52.3602119,
+    "lng": 4.8582577
+  },
+  {
+    "name": "Scandinavian Embassy",
+    "address": "Sarphatipark 34II",
+    "lat": 52.353474255,
+    "lng": 4.894267693
+  },
+  {
+    "name": "Badeta - Watergraafsmeer",
+    "address": "Helmholtzstraat 37",
+    "lat": 52.3505682,
+    "lng": 4.9385593
+  },
+  {
+    "name": "De Koffieschenkerij",
+    "address": "Oudekerksplein 27",
+    "lat": 52.3741579,
+    "lng": 4.8983543
+  },
+  {
+    "name": "Screaming Beans",
+    "address": "Runstraat 6",
+    "lat": 52.3689415,
+    "lng": 4.8838849
+  },
+  {
+    "name": "Clapham Specialty Coffee",
+    "address": "Willemsparkweg 152H",
+    "lat": 52.3562255,
+    "lng": 4.8710219
+  },
+  {
+    "name": "Lova",
+    "address": "Haarlemmerdijk 182",
+    "lat": 52.3841947,
+    "lng": 4.8846434
+  },
+  {
+    "name": "Margo\\u2019s Amsterdam",
+    "address": "Eerste Tuindwarsstraat 2A",
+    "lat": 52.3777616,
+    "lng": 4.883549
+  },
+  {
+    "name": "Sango",
+    "address": "Stromarkt 15",
+    "lat": 52.3784959,
+    "lng": 4.8942721
+  },
+  {
+    "name": "Coffee Bru",
+    "address": "Beukenplein 14",
+    "lat": 52.3570875,
+    "lng": 4.9176981
+  },
+  {
+    "name": "Esth\\u00e9tique cafe",
+    "address": "Cornelis Krusemanstraat 55",
+    "lat": 52.3504381,
+    "lng": 4.8603269
+  },
+  {
+    "name": "Back to Black Van Hallstraat",
+    "address": "Van Hallstraat 268",
+    "lat": 52.3793993,
+    "lng": 4.8714727
+  },
+  {
+    "name": "Badeta - VanWou \\/ Albertcuyp",
+    "address": "Van Woustraat 14",
+    "lat": 52.3569733,
+    "lng": 4.8994519
+  },
+  {
+    "name": "Elevate Coffee Lab",
+    "address": "Van der Helstplein 10H",
+    "lat": 52.3515732,
+    "lng": 4.8945192
+  },
+  {
+    "name": "NU koffie & delicatessen",
+    "address": "Tweede Egelantiersdwarsstraat 13H",
+    "lat": 52.3765931,
+    "lng": 4.8822931
+  },
+  {
+    "name": "Five Ways",
+    "address": "Kinkerstraat 186",
+    "lat": 52.3659977,
+    "lng": 4.8671922
+  },
+  {
+    "name": "4850",
+    "address": "Camperstraat 48-50",
+    "lat": 52.3577937,
+    "lng": 4.913378
+  },
+  {
+    "name": "Harmani Microroasterie",
+    "address": "Frans Halsstraat 89",
+    "lat": 52.3548868,
+    "lng": 4.888565
+  },
+  {
+    "name": "Cafecito Nassaukade",
+    "address": "Nassaukade 330",
+    "lat": 52.3684435,
+    "lng": 4.8758971
+  },
+  {
+    "name": "Monks Coffee Roasters",
+    "address": "Bilderdijkstraat 46H",
+    "lat": 52.3712151,
+    "lng": 4.8702463
+  },
+  {
+    "name": "white label coffee west",
+    "address": "Jan Evertsenstraat 136 H",
+    "lat": 52.370419645,
+    "lng": 4.851581678
+  },
+  {
+    "name": "Wakuli specialty coffee bar",
+    "address": "Linnaeusstraat 237a",
+    "lat": 52.3559863,
+    "lng": 4.9280085
+  },
+  {
+    "name": "Badeta - De Pijp",
+    "address": "Tweede van der Helststraat 18H",
+    "lat": 52.3523812,
+    "lng": 4.8947452
+  },
+  {
+    "name": "Priesthood",
+    "address": "Prins Hendrikkade 51",
+    "lat": 52.376584,
+    "lng": 4.899513
+  },
+  {
+    "name": "Haku Specialty Coffee",
+    "address": "Rozengracht 69",
+    "lat": 52.373288,
+    "lng": 4.8808005
+  },
+  {
+    "name": "Orange heart coffee",
+    "address": "Tafelbergweg 51",
+    "lat": 52.292488,
+    "lng": 4.961997
+  },
+  {
+    "name": "Good Beans Coffee",
+    "address": "Binnen Oranjestraat 4",
+    "lat": 52.382401,
+    "lng": 4.88724
+  },
+  {
+    "name": "Maracuy\\u00e1",
+    "address": "Jan Pieter Heijestraat 95",
+    "lat": 52.3638782,
+    "lng": 4.8634461
+  },
+  {
+    "name": "Skina",
+    "address": "Bilderdijkstraat 113",
+    "lat": 52.3689174,
+    "lng": 4.8713245
+  },
+  {
+    "name": "ASOP Caf\\u00e9 by Amplify",
+    "address": "Willemsstraat 141",
+    "lat": 52.380878,
+    "lng": 4.8826239
+  },
+  {
+    "name": "Cafecito Overtoom",
+    "address": "Overtoom 429H",
+    "lat": 52.3589308,
+    "lng": 4.8606317
+  },
+  {
+    "name": "Black Gold Amsterdam",
+    "address": "Korte Koningsstraat 13 H",
+    "lat": 52.371788,
+    "lng": 4.9030432
+  },
+  {
+    "name": "Espressofabriek Westergas",
+    "address": "Pazzanistraat 5",
+    "lat": 52.386143042,
+    "lng": 4.872023463
+  },
+  {
+    "name": "Cafecito Beethovenstraat",
+    "address": "Beethovenstraat 19",
+    "lat": 52.3492805,
+    "lng": 4.8778544
+  },
+  {
+    "name": "Back to Black Weteringstraat",
+    "address": "Weteringstraat 48",
+    "lat": 52.361051,
+    "lng": 4.888573
+  },
+  {
+    "name": "Saint-Jean",
+    "address": "Lindengracht 158h",
+    "lat": 52.3803056,
+    "lng": 4.8842824
+  },
+  {
+    "name": "TOKI",
+    "address": "Binnen Dommersstraat 15",
+    "lat": 52.382911,
+    "lng": 4.885517
+  },
+  {
+    "name": "Five Ways Coffee Roasters",
+    "address": "Boerhaaveplein 3",
+    "lat": 52.3598712,
+    "lng": 4.9123059
+  },
+  {
+    "name": "Gentle Place Coffee",
+    "address": "Distelweg 409",
+    "lat": 52.394723,
+    "lng": 4.8998311
+  },
+  {
+    "name": "LOT61",
+    "address": "Kinkerstraat 112",
+    "lat": 52.3668339,
+    "lng": 4.870300144
+  },
+  {
+    "name": "Morning Owl Coffee",
+    "address": "Zeedijk 71",
+    "lat": 52.3746793,
+    "lng": 4.9008684
+  },
+  {
+    "name": "Espressofabriek IJburg",
+    "address": "IJburglaan 1489",
+    "lat": 52.3519334,
+    "lng": 5.0019645
+  },
+  {
+    "name": "Trakteren",
+    "address": "J.P. Heijestraat 119ah",
+    "lat": 52.3626377,
+    "lng": 4.8642344
+  },
+  {
+    "name": "Barmhartig Koffie",
+    "address": "Veemkade 1288",
+    "lat": 52.374092,
+    "lng": 4.938665
+  },
+  {
+    "name": "Coffee District",
+    "address": "Willemsparkweg 8h",
+    "lat": 52.358013701,
+    "lng": 4.877635539
+  },
+  {
+    "name": "Cafecito Van Baerlestraat",
+    "address": "Van Baerlestraat 83",
+    "lat": 52.3542065,
+    "lng": 4.8816198
+  },
+  {
+    "name": "Espressofabriek Slibvijzel",
+    "address": "Roepie Kruizestraat 2",
+    "lat": 52.3736535,
+    "lng": 4.967817
+  }
+]

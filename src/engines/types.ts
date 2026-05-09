@@ -46,6 +46,29 @@ export interface Terrace {
    */
   featured?: boolean;
   /**
+   * Explicit venue-category tag(s). When present, overrides the regex
+   * inference in `src/data/categories.ts` — a terrace with
+   * `category: ['coffee']` is shown under the ☕ Coffee chip even
+   * though its name might match the ambiguous `café` / `koffie` text
+   * patterns that would otherwise route it to Bar.
+   *
+   * Used primarily for specialty / third-wave coffee shops imported
+   * via `scripts/import-coffee-shops.ts` — those venues need to be
+   * distinguished from bruine kroegen ("Café X" brown bars), and that
+   * distinction is impossible from name/vibe text alone.
+   *
+   * Multiple tags are allowed: a coffee roaster that also serves
+   * natural wine could be `['coffee', 'bar']`. Untagged entries fall
+   * back to text inference, preserving behaviour for the 800+
+   * pre-existing terraces.
+   *
+   * Typed as `string[]` to avoid a circular import with
+   * `src/data/categories.ts`; runtime values must be members of the
+   * `VenueCategory` union ('bar' | 'restaurant' | 'coffee'). The
+   * categoriser filters out unknown strings defensively.
+   */
+  category?: string[];
+  /**
    * Number of outdoor TV screens visible from the terrace seating area.
    * Absent or 0 = no outdoor TVs. 1 = a single screen. 2+ = a multi-
    * screen sports-bar setup. Indoor-only TVs are intentionally NOT
