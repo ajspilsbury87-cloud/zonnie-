@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zonnie — Support</title>
+<meta name="description" content="Help and FAQ for Zonnie, Amsterdam's terrace sun tracker.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sun: #F5A623;
+    --sky: #080F1E;
+    --sky-card: rgba(255,255,255,0.045);
+    --text: #F2EEE8;
+    --muted: #7A7872;
+    --border: rgba(245,166,35,0.18);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--sky);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.75;
+  }
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background: radial-gradient(ellipse 90% 45% at 50% -5%, rgba(245,166,35,0.10) 0%, transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+  .wrap {
+    position:relative; z-index:1;
+    max-width:680px; margin:0 auto;
+    padding:64px 24px 96px;
+  }
+  /* Header */
+  .hdr { text-align:center; margin-bottom:56px; }
+  .icon {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:52px; height:52px; border-radius:14px;
+    background:linear-gradient(135deg,#F5A623,#D4861A);
+    font-size:26px; margin-bottom:18px;
+  }
+  h1 {
+    font-family:'DM Serif Display',serif;
+    font-size:clamp(1.9rem,5vw,2.8rem);
+    letter-spacing:-0.02em; margin-bottom:10px;
+  }
+  .sub { color:var(--muted); font-size:0.95rem; }
+
+  /* Section label */
+  .label {
+    font-size:0.68rem; letter-spacing:0.13em;
+    text-transform:uppercase; color:var(--sun);
+    font-weight:500; margin-bottom:18px;
+  }
+
+  /* FAQ */
+  .faq { display:flex; flex-direction:column; gap:6px; margin-bottom:52px; }
+  details {
+    background:var(--sky-card);
+    border:1px solid var(--border);
+    border-radius:12px; overflow:hidden;
+    transition:background 0.2s;
+  }
+  details[open] { background:rgba(245,166,35,0.055); }
+  summary {
+    padding:17px 20px;
+    cursor:pointer; font-size:0.93rem; font-weight:400;
+    list-style:none; display:flex;
+    justify-content:space-between; align-items:center; gap:14px;
+  }
+  summary::-webkit-details-marker { display:none; }
+  summary::after {
+    content:'+'; color:var(--sun);
+    font-size:1.15rem; font-weight:300; flex-shrink:0;
+    transition:transform 0.2s;
+  }
+  details[open] summary::after { transform:rotate(45deg); }
+  .ans {
+    padding:0 20px 17px;
+    color:var(--muted); font-size:0.88rem; line-height:1.78;
+  }
+  .ans a { color:var(--sun); text-decoration:none; }
+  .ans a:hover { text-decoration:underline; }
+
+  /* Contact */
+  .cta {
+    background:var(--sky-card);
+    border:1px solid var(--border);
+    border-radius:16px; padding:36px;
+    text-align:center; margin-bottom:44px;
+  }
+  .cta h2 {
+    font-family:'DM Serif Display',serif;
+    font-size:1.45rem; margin-bottom:9px;
+  }
+  .cta p { color:var(--muted); font-size:0.88rem; margin-bottom:22px; }
+  .btn {
+    display:inline-block;
+    background:var(--sun); color:#080F1E;
+    font-family:'DM Sans',sans-serif; font-weight:500;
+    font-size:0.88rem; padding:11px 26px;
+    border-radius:100px; text-decoration:none;
+    letter-spacing:0.01em;
+    transition:opacity 0.18s, transform 0.14s;
+  }
+  .btn:hover { opacity:0.86; transform:translateY(-1px); }
+
+  /* Footer */
+  footer { text-align:center; color:var(--muted); font-size:0.78rem; }
+  footer a { color:var(--muted); text-decoration:underline; text-underline-offset:3px; }
+  footer a:hover { color:var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hdr">
+    <div class="icon">☀️</div>
+    <h1>Zonnie Support</h1>
+    <p class="sub">Amsterdam's terrace sun tracker — we're here to help</p>
+  </header>
+
+  <p class="label">Frequently asked questions</p>
+
+  <div class="faq">
+
+    <details>
+      <summary>How does the sun score work?</summary>
+      <div class="ans">Each terrace gets a score from 0–100, calculated from three things: the real position of the sun in Amsterdam's sky for the selected date and time, whether nearby buildings are casting a shadow on that spot, and current cloud cover. A sun-facing terrace with no obstructions on a clear day scores 100.</div>
+    </details>
+
+    <details>
+      <summary>How accurate are the shadow predictions?</summary>
+      <div class="ans">Directional accuracy is high — the app correctly identifies which side of a street is sunny. Building height data is currently estimated by neighbourhood density, so shadow lengths are approximate. We're integrating Amsterdam's 3D BAG dataset which will make heights precise and push accuracy well above 90%.</div>
+    </details>
+
+    <details>
+      <summary>Does the app use my location?</summary>
+      <div class="ans">Only if you allow it. Location is used while the app is open to centre the map and sort terraces by distance. Your coordinates are never sent to our servers — they stay on your device. You can revoke access anytime in <strong>Settings → Zonnie → Location</strong>.</div>
+    </details>
+
+    <details>
+      <summary>Where does the weather data come from?</summary>
+      <div class="ans">Live cloud cover comes from <a href="https://open-meteo.com" target="_blank">Open-Meteo</a>, a free and open meteorological API. Only Amsterdam's city-centre coordinates and the current date are sent — nothing that identifies you.</div>
+    </details>
+
+    <details>
+      <summary>My favourite terrace is missing. Can I add it?</summary>
+      <div class="ans">Yes! Email us the terrace name and address at <a href="mailto:a.j.spilsbury87@gmail.com">a.j.spilsbury87@gmail.com</a> and we'll add it to the next update. The app currently covers ~500 venues and we're expanding steadily.</div>
+    </details>
+
+    <details>
+      <summary>The score looks wrong for a terrace I know well.</summary>
+      <div class="ans">Shadow prediction isn't perfect yet, especially on narrow streets or with unusual building shapes. Real-world corrections are genuinely useful — please let us know at <a href="mailto:a.j.spilsbury87@gmail.com">a.j.spilsbury87@gmail.com</a> with the terrace name and what you observed.</div>
+    </details>
+
+    <details>
+      <summary>How do I clear my favourites or app data?</summary>
+      <div class="ans">Favourites are stored only on your device. To clear them, delete and reinstall the app. There's nothing to clear on our end — we don't store any user data on our servers.</div>
+    </details>
+
+    <details>
+      <summary>Is there an Android version?</summary>
+      <div class="ans">Not yet. Zonnie is currently iOS only. An Android version is on the roadmap. In the meantime the web app works well in any mobile browser.</div>
+    </details>
+
+  </div>
+
+  <div class="cta">
+    <h2>Still need help?</h2>
+    <p>Can't find your answer above? Drop us a line — we usually reply within one working day.</p>
+    <a class="btn" href="mailto:a.j.spilsbury87@gmail.com">Email us</a>
+  </div>
+
+  <footer>
+    <a href="PRIVACY-POLICY.md">Privacy Policy</a> &nbsp;·&nbsp; © 2026 Zonnie &nbsp;·&nbsp; Made in Amsterdam ☀️
+  </footer>
+
+</div>
+</body>
+</html>

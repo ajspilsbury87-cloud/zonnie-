@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zonnie — Find the sunny terrace</title>
+<meta name="description" content="Stop guessing. Zonnie tells you which Amsterdam terraces are in the sun right now — and at any time today.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sun: #F5A623;
+    --sun-pale: #FDE68A;
+    --sky: #080F1E;
+    --sky-card: rgba(255,255,255,0.042);
+    --text: #F2EEE8;
+    --muted: #6E6C67;
+    --border: rgba(245,166,35,0.16);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background:var(--sky);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+  }
+
+  /* Atmospheric layer */
+  .atmos {
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 100% 50% at 50% -8%, rgba(245,166,35,0.13) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 35% at 85% 15%, rgba(245,166,35,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 40% at 10% 70%, rgba(13,26,50,0.8) 0%, transparent 60%);
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position:relative; z-index:10;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 40px;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .nav-logo {
+    display:flex; align-items:center; gap:10px;
+    font-family:'DM Serif Display',serif;
+    font-size:1.2rem; letter-spacing:-0.01em;
+  }
+  .nav-logo span { font-size:1.3rem; }
+  nav a.dl {
+    background:var(--sun); color:#080F1E;
+    font-weight:500; font-size:0.83rem;
+    padding:9px 20px; border-radius:100px;
+    text-decoration:none; letter-spacing:0.01em;
+    transition:opacity 0.18s, transform 0.14s;
+  }
+  nav a.dl:hover { opacity:0.86; transform:translateY(-1px); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position:relative; z-index:1;
+    text-align:center;
+    padding:96px 24px 80px;
+    max-width:780px; margin:0 auto;
+  }
+  .badge {
+    display:inline-block;
+    border:1px solid var(--border);
+    border-radius:100px;
+    padding:5px 14px;
+    font-size:0.75rem; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--sun);
+    margin-bottom:28px;
+  }
+  .hero h1 {
+    font-family:'DM Serif Display',serif;
+    font-size:clamp(2.6rem,7vw,4.4rem);
+    letter-spacing:-0.03em;
+    line-height:1.08;
+    margin-bottom:22px;
+  }
+  .hero h1 em {
+    font-style:italic; color:var(--sun);
+  }
+  .hero p {
+    color:var(--muted); font-size:1.05rem;
+    max-width:500px; margin:0 auto 40px;
+    line-height:1.75;
+  }
+  .hero-btns {
+    display:flex; align-items:center;
+    justify-content:center; gap:14px; flex-wrap:wrap;
+  }
+  .btn-primary {
+    background:var(--sun); color:#080F1E;
+    font-family:'DM Sans',sans-serif; font-weight:500;
+    font-size:0.92rem; padding:13px 30px;
+    border-radius:100px; text-decoration:none;
+    letter-spacing:0.01em;
+    transition:opacity 0.18s, transform 0.14s;
+  }
+  .btn-primary:hover { opacity:0.86; transform:translateY(-1px); }
+  .btn-ghost {
+    border:1px solid var(--border); color:var(--text);
+    font-size:0.88rem; padding:12px 24px;
+    border-radius:100px; text-decoration:none;
+    transition:border-color 0.18s;
+  }
+  .btn-ghost:hover { border-color:var(--sun); color:var(--sun); }
+
+  /* ─── PHONE MOCKUP ─── */
+  .mockup-wrap {
+    position:relative; z-index:1;
+    display:flex; justify-content:center;
+    padding:0 24px 80px;
+  }
+  .phone {
+    width:260px; height:520px;
+    background:linear-gradient(160deg,#122040 0%,#0A1628 100%);
+    border:1px solid rgba(245,166,35,0.25);
+    border-radius:36px;
+    box-shadow:
+      0 0 0 6px rgba(8,15,30,0.9),
+      0 40px 80px rgba(0,0,0,0.6),
+      0 0 60px rgba(245,166,35,0.08);
+    overflow:hidden;
+    position:relative;
+  }
+  /* Fake map background */
+  .phone-map {
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px);
+  }
+  /* Fake sun glow on map */
+  .phone-map::after {
+    content:'';
+    position:absolute; top:30%; left:40%;
+    width:120px; height:120px;
+    background:radial-gradient(circle, rgba(245,166,35,0.18) 0%, transparent 70%);
+    border-radius:50%;
+  }
+  /* Status bar */
+  .phone-status {
+    position:relative; z-index:2;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 18px 6px;
+    font-size:0.65rem; font-weight:500; color:rgba(242,238,232,0.5);
+  }
+  /* Score pills on the map */
+  .pin {
+    position:absolute; z-index:2;
+    background:var(--sky); border:1px solid var(--border);
+    border-radius:100px; padding:4px 9px;
+    font-size:0.62rem; font-weight:500; color:var(--text);
+    display:flex; align-items:center; gap:4px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.4);
+  }
+  .pin .dot {
+    width:6px; height:6px; border-radius:50%;
+  }
+  .pin.high .dot { background:#4ADE80; }
+  .pin.mid  .dot { background:var(--sun); }
+  .pin.low  .dot { background:#6E6C67; }
+  /* Fake sidebar card */
+  .phone-card {
+    position:absolute; bottom:0; left:0; right:0; z-index:3;
+    background:rgba(8,15,30,0.92);
+    backdrop-filter:blur(12px);
+    border-top:1px solid var(--border);
+    padding:14px 16px;
+    border-radius:0 0 36px 36px;
+  }
+  .card-label { font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .card-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+    font-size:0.72rem;
+  }
+  .card-row:last-child { border-bottom:none; }
+  .card-name { color:var(--text); }
+  .score {
+    font-weight:500; font-size:0.78rem;
+    padding:2px 7px; border-radius:100px;
+  }
+  .score.hi { background:rgba(74,222,128,0.15); color:#4ADE80; }
+  .score.md { background:rgba(245,166,35,0.15); color:var(--sun); }
+  .score.lo { background:rgba(110,108,103,0.15); color:var(--muted); }
+
+  /* ─── FEATURES ─── */
+  .section {
+    position:relative; z-index:1;
+    max-width:900px; margin:0 auto;
+    padding:0 24px 96px;
+  }
+  .section-label {
+    font-size:0.68rem; letter-spacing:0.13em;
+    text-transform:uppercase; color:var(--sun);
+    font-weight:500; text-align:center; margin-bottom:48px;
+  }
+  .features {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:16px;
+  }
+  .feat {
+    background:var(--sky-card);
+    border:1px solid var(--border);
+    border-radius:16px; padding:28px 24px;
+    transition:border-color 0.2s;
+  }
+  .feat:hover { border-color:rgba(245,166,35,0.35); }
+  .feat-icon { font-size:1.6rem; margin-bottom:14px; }
+  .feat h3 {
+    font-family:'DM Serif Display',serif;
+    font-size:1.1rem; margin-bottom:8px;
+  }
+  .feat p { color:var(--muted); font-size:0.85rem; line-height:1.7; }
+
+  /* ─── HOW IT WORKS ─── */
+  .steps {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(200px,1fr));
+    gap:0; margin-bottom:0;
+  }
+  .step {
+    padding:32px 28px;
+    border-right:1px solid var(--border);
+    position:relative;
+  }
+  .step:last-child { border-right:none; }
+  .step-num {
+    font-family:'DM Serif Display',serif;
+    font-size:2.4rem; color:var(--border);
+    line-height:1; margin-bottom:14px;
+  }
+  .step h3 { font-size:0.95rem; font-weight:500; margin-bottom:8px; }
+  .step p { color:var(--muted); font-size:0.83rem; line-height:1.7; }
+  .steps-wrap {
+    background:var(--sky-card);
+    border:1px solid var(--border);
+    border-radius:16px; overflow:hidden;
+    margin-bottom:96px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position:relative; z-index:1;
+    border-top:1px solid rgba(255,255,255,0.05);
+    padding:40px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:16px;
+    max-width:900px; margin:0 auto;
+  }
+  .foot-logo {
+    font-family:'DM Serif Display',serif;
+    font-size:1rem; display:flex; align-items:center; gap:8px;
+  }
+  .foot-links { display:flex; gap:24px; }
+  .foot-links a { color:var(--muted); font-size:0.8rem; text-decoration:none; }
+  .foot-links a:hover { color:var(--text); }
+  .foot-copy { color:var(--muted); font-size:0.78rem; }
+</style>
+</head>
+<body>
+<div class="atmos"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>☀️</span> Zonnie</div>
+  <a class="dl" href="https://apps.apple.com/app/zonnie" target="_blank">Download on iOS</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Amsterdam · Free · No account needed</div>
+  <h1>Find the <em>sunny</em><br>terrace. Every time.</h1>
+  <p>Stop wandering. Zonnie calculates exactly which Amsterdam terraces are in the sun — right now, or at any hour today.</p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://apps.apple.com/app/zonnie" target="_blank">Download free on iOS</a>
+    <a class="btn-ghost" href="support.html">Support &amp; FAQ</a>
+  </div>
+</section>
+
+<!-- PHONE MOCKUP -->
+<div class="mockup-wrap">
+  <div class="phone">
+    <div class="phone-map"></div>
+    <div class="phone-status"><span>9:41</span><span>◼◼◼</span></div>
+    <!-- Score pins -->
+    <div class="pin high" style="top:32%;left:18%"><span class="dot"></span>Westerpark</div>
+    <div class="pin mid" style="top:44%;left:52%"><span class="dot"></span>Centrum</div>
+    <div class="pin mid" style="top:28%;left:58%"><span class="dot"></span>Jordaan</div>
+    <div class="pin low" style="top:52%;left:22%"><span class="dot"></span>De Pijp</div>
+    <!-- Bottom card -->
+    <div class="phone-card">
+      <div class="card-label">Sunny now · 14:30</div>
+      <div class="card-row"><span class="card-name">Café Kobalt</span><span class="score hi">92</span></div>
+      <div class="card-row"><span class="card-name">Hannekes Boom</span><span class="score hi">87</span></div>
+      <div class="card-row"><span class="card-name">Brouwerij 't IJ</span><span class="score md">61</span></div>
+      <div class="card-row"><span class="card-name">Café de Sluyswacht</span><span class="score lo">18</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section">
+  <p class="section-label">What Zonnie does</p>
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">🌞</div>
+      <h3>Real solar position</h3>
+      <p>A precise algorithm places the sun in Amsterdam's sky for any date and hour. No approximations.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🏗</div>
+      <h3>Shadow casting</h3>
+      <p>Building heights are projected to determine which terraces are blocked — and which are glowing.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🌤</div>
+      <h3>Live cloud cover</h3>
+      <p>Open-Meteo provides Amsterdam weather in real time so scores reflect actual sky conditions.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📍</div>
+      <h3>500+ terraces</h3>
+      <p>A curated dataset of Amsterdam café terraces, bars, and restaurant terraces — updated constantly.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">⏱</div>
+      <h3>Time slider</h3>
+      <p>Scrub through the day to plan ahead. See which terrace peaks at 16:00 before you even leave home.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔒</div>
+      <h3>Zero tracking</h3>
+      <p>No account, no analytics, no ad SDKs. Your data stays on your device. Always.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <p class="section-label">How it works</p>
+  <div class="steps-wrap">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Pick a time</h3>
+        <p>Use the slider to set any hour of the day, or let it default to now.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Scores update</h3>
+        <p>Each terrace gets a 0–100 sun score based on solar angle, shadows, and cloud cover.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Pick your spot</h3>
+        <p>Filter by neighbourhood, tap a terrace for the full-day timeline, and head out.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">☀️ Zonnie</div>
+  <div class="foot-links">
+    <a href="support.html">Support</a>
+    <a href="PRIVACY-POLICY.md">Privacy</a>
+    <a href="mailto:a.j.spilsbury87@gmail.com">Contact</a>
+  </div>
+  <div class="foot-copy">© 2026 Andy Spilsbury · Amsterdam</div>
+</footer>
+
+</body>
+</html>
