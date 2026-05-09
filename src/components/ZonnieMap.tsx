@@ -71,12 +71,16 @@ const TerracePin = memo(
     return (
       <Marker
         coordinate={{ latitude, longitude }}
-        // Anchor: base of the spritz glass sits on the lat/lng. The v3
-        // pin SVG has glyph from y=-38 to y=9 (47 units) within a 56-tall
-        // viewBox, leaving 9 units of transparent space below the glass.
-        // 47 / 56 ≈ 0.84 puts the lat/lng at the glass base, not the
-        // bottom of the asset's bounding box.
-        anchor={{ x: 0.5, y: 0.84 }}
+        // Anchor: base of the spritz glass sits on the lat/lng.
+        //   - unselected: viewBox y=-38..18 (56 tall), glass base at y=9
+        //                 → anchor.y = 47 / 56 ≈ 0.84
+        //   - selected:   viewBox y=-42..34 (76 tall, expanded for halo),
+        //                 glass base at y=9 → anchor.y = 51 / 76 ≈ 0.67
+        // Pick the right anchor based on whether this is the selected
+        // pin (asset comparison is fine here — TerracePin gets the same
+        // PIN_IMAGES.selected reference for selected and any score
+        // band's PIN_IMAGES[…] otherwise).
+        anchor={{ x: 0.5, y: asset === PIN_IMAGES.selected ? 0.67 : 0.84 }}
         image={asset}
         // Single-tap → detail sheet. Two earlier attempts to make this
         // work + suppress Apple Maps' default callout failed:

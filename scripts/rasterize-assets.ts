@@ -115,7 +115,9 @@ function sunOverGlassSvg(cfg: PinConfig): string {
 }
 
 function spritzGlassSvg(cfg: PinConfig): string {
-  const strokeWidth = cfg.selected ? 1.4 : 1.2;
+  // Thicker outline for the selected glass — extra peripheral signal
+  // alongside the bigger halo. Unselected stays at 1.2 for a clean look.
+  const strokeWidth = cfg.selected ? 2.2 : 1.2;
   return `
     <!-- Tulip glass bowl -->
     <path d="M -10 -14 L 10 -14 L 7 6 Q 7 9 4 9 L -4 9 Q -7 9 -7 6 Z"
@@ -135,11 +137,23 @@ function spritzGlassSvg(cfg: PinConfig): string {
 
 function pinSvg(state: PinStateKey): string {
   const cfg = PIN_STATES[state];
+  // Selected halo bumped 2026-05-09 (Andy: "in dense clusters it's
+  // hard to tell which pin is selected"). Triple-ring with stronger
+  // opacities; the size differential below also widens. For non-
+  // selected the pin uses the standard viewBox.
   const halo = cfg.selected
-    ? `<ellipse cx="0" cy="-2" rx="20" ry="20" fill="${COLORS.haloOuter}" opacity="0.20"/>
-       <ellipse cx="0" cy="-2" rx="14" ry="14" fill="${COLORS.haloInner}" opacity="0.55"/>`
+    ? `<ellipse cx="0" cy="-2" rx="30" ry="30" fill="${COLORS.haloOuter}" opacity="0.18"/>
+       <ellipse cx="0" cy="-2" rx="22" ry="22" fill="${COLORS.haloOuter}" opacity="0.32"/>
+       <ellipse cx="0" cy="-2" rx="16" ry="16" fill="${COLORS.haloInner}" opacity="0.72"/>`
     : '';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -38 40 56" width="40" height="56">
+  // Selected viewBox expands to fit the larger halo; unselected
+  // unchanged. Anchor recomputed in ZonnieMap from the new dims —
+  // glass base sits at y=9 within a 76-tall viewBox = 51/76 ≈ 0.67
+  // for selected, vs the original 47/56 ≈ 0.84.
+  const viewBox = cfg.selected ? '-30 -42 60 76' : '-20 -38 40 56';
+  const w = cfg.selected ? 60 : 40;
+  const h = cfg.selected ? 76 : 56;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${w}" height="${h}">
     <g>
       ${halo}
       ${sunOverGlassSvg(cfg)}
@@ -223,7 +237,10 @@ async function main() {
     partial:  [32, 45],
     mostly:   [38, 53],
     full:     [44, 62],   // largest non-selected
-    selected: [50, 70],   // biggest overall — focused state
+    // Selected uses an expanded viewBox (60×76) for the big halo, and
+    // a bigger render size to make the focused pin pop out of dense
+    // clusters. ~1.5× the area of `full` and ~3× the area of `shade`.
+    selected: [66, 84],
   };
   const STATES: PinStateKey[] = ['full', 'mostly', 'partial', 'mshade', 'shade', 'selected'];
   for (const state of STATES) {

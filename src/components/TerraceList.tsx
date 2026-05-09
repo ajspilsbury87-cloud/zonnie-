@@ -51,8 +51,12 @@ const Row = memo(function Row({ rank, item, isSelected, onPress }: RowProps) {
         <Text style={styles.name} numberOfLines={1}>
           {terrace.name}
         </Text>
+        {/* Neighborhood lead — pin glyph + area is what users actually
+            scan for ("where in town is this?"). Score label + facing
+            were too noisy for the row; the score chip on the right
+            already conveys the sun band. */}
         <Text style={styles.subtitle} numberOfLines={1}>
-          {terrace.area} · {terrace.facing} · {scoreLabel(score)}
+          📍 {terrace.area} · {scoreLabel(score)}
         </Text>
       </View>
       <View style={[styles.scoreChip, { backgroundColor: color }]}>
