@@ -69,8 +69,8 @@ const SHOTS: ShotSpec[] = [
   {
     source: 'IMG_2791.PNG',
     out: '02-map.png',
-    headline: 'Real shadows.',
-    subhead: 'LIDAR-derived building heights from 3D BAG.',
+    headline: 'Sun strength, modelled.',
+    subhead: 'Custom shadow algorithm. LIDAR building data.',
   },
   {
     source: 'IMG_2792.PNG',
