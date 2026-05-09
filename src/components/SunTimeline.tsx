@@ -19,7 +19,23 @@ import { computeSunScore } from '@/src/engines/scoring';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import type { Terrace } from '@/src/engines/types';
-import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
+import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
+
+/**
+ * Saturated bar palette tuned for the timeline chart specifically.
+ * The in-app `scoreToColor()` (warmer brand tones — burnt, orange,
+ * mustard, cocoa) read as muted on a white sheet at chart scale —
+ * Andy's feedback was the bars look dim. Mirrors the more
+ * saturated map-pin palette so the chart pops alongside the sun
+ * pins users see on the map.
+ */
+function timelineBarColor(score: number): string {
+  if (score > 0.7) return '#FF6B1A'; // vivid bright orange — full sun
+  if (score > 0.5) return '#F59328'; // warm orange — mostly sunny
+  if (score > 0.3) return '#F4C443'; // saturated mustard — partial sun
+  if (score > 0.1) return '#9A3A19'; // rust brown — mostly shade
+  return '#5A2410'; // deep cocoa — shade
+}
 
 const BAR_HEIGHT = 64;
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -74,8 +90,12 @@ export function SunTimeline({ terrace }: SunTimelineProps) {
                     styles.barFill,
                     {
                       height: fillHeight,
-                      backgroundColor: scoreToColor(score),
-                      opacity: inRange ? 1 : 0.35,
+                      backgroundColor: timelineBarColor(score),
+                      // Out-of-window hours dim noticeably less now that
+                      // the in-window bars are saturated — was 0.35,
+                      // bumped to 0.55 so out-of-window context stays
+                      // legible (you can see the curve of the day).
+                      opacity: inRange ? 1 : 0.55,
                     },
                   ]}
                 />

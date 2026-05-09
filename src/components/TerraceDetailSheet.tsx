@@ -90,11 +90,22 @@ export function TerraceDetailSheet() {
   }, [selectedId]);
 
   // Trigger Places fetch when a terrace with a placeId is opened.
-  // (The sheet's open/close is now driven by conditional render
-  // below — no imperative present()/dismiss() needed.)
   useEffect(() => {
     if (terrace?.placeId) ensurePlace(terrace.placeId);
   }, [terrace, ensurePlace]);
+
+  // Imperative open/close. The `index` prop in Gorhom v5 only drives
+  // INITIAL mount; later prop changes don't reliably animate the sheet
+  // — Andy hit this when "Show on Map" called clear() but the sheet
+  // stayed open. Drive the actual snap state imperatively here so
+  // every selectedId change (open AND close) animates.
+  useEffect(() => {
+    if (selectedId != null) {
+      ref.current?.snapToIndex(0);
+    } else {
+      ref.current?.close();
+    }
+  }, [selectedId]);
 
   const placeEntry = terrace?.placeId ? placesByPlaceId[terrace.placeId] : undefined;
   const placeDetails = placeEntry?.status === 'ready' ? placeEntry.data : undefined;
@@ -349,10 +360,10 @@ export function TerraceDetailSheet() {
                 >
                   <Text style={styles.infoChipText}>
                     {sunTrend === 'rising'
-                      ? '↑ Rising'
+                      ? '↑ Sun rising'
                       : sunTrend === 'falling'
-                        ? '↓ Falling'
-                        : '→ Holding'}
+                        ? '↓ Sun fading'
+                        : '→ Sun steady'}
                   </Text>
                 </View>
               ) : null}
