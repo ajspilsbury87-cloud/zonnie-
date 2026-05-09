@@ -68,52 +68,61 @@ export async function syncTomorrowForecastNotification(
 
   // Only schedule if the user has previously granted permission.
   // We never request inside this function — that's the prompt's job.
-  const perms = await Notifications.getPermissionsAsync();
-  if (perms.status !== 'granted') {
-    return { status: 'no-permission' };
+  // Wrapped in try/catch so a build without the native module (older
+  // OTA target predating the expo-notifications install) gracefully
+  // falls through to "unsupported" instead of throwing inside the
+  // _layout effect.
+  try {
+    const perms = await Notifications.getPermissionsAsync();
+    if (perms.status !== 'granted') {
+      return { status: 'no-permission' };
+    }
+
+    await Notifications.cancelScheduledNotificationAsync(NOTIFICATION_ID).catch(
+      () => {
+        // Cancel can throw if the id doesn't exist — ignore.
+      },
+    );
+
+    const block = findGoodWeatherBlock(hourly);
+    if (!block) return { status: 'cancelled' };
+
+    const fireAt = tomorrowAt9amAmsterdam();
+    // Sanity check — if for some reason fireAt is in the past (clock skew,
+    // user opens app at 8:59am with stale data), don't schedule.
+    if (fireAt.getTime() < Date.now()) {
+      return { status: 'cancelled' };
+    }
+
+    await Notifications.scheduleNotificationAsync({
+      identifier: NOTIFICATION_ID,
+      content: {
+        title: 'Sunny weather tomorrow ☀️',
+        body: formatNotificationBody(block),
+        badge: 1,
+        sound: 'default',
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: fireAt,
+      },
+    });
+
+    return { status: 'scheduled', block };
+  } catch {
+    // Native module not available in this build. No-op silently.
+    return { status: 'unsupported' };
   }
-
-  // Always cancel existing, then re-create if conditions met. Avoids
-  // stale schedules accumulating after multiple app opens.
-  await Notifications.cancelScheduledNotificationAsync(NOTIFICATION_ID).catch(
-    () => {
-      // Cancel can throw if the id doesn't exist — ignore.
-    },
-  );
-
-  const block = findGoodWeatherBlock(hourly);
-  if (!block) return { status: 'cancelled' };
-
-  const fireAt = tomorrowAt9amAmsterdam();
-  // Sanity check — if for some reason fireAt is in the past (clock skew,
-  // user opens app at 8:59am with stale data), don't schedule.
-  if (fireAt.getTime() < Date.now()) {
-    return { status: 'cancelled' };
-  }
-
-  await Notifications.scheduleNotificationAsync({
-    identifier: NOTIFICATION_ID,
-    content: {
-      title: 'Sunny weather tomorrow ☀️',
-      body: formatNotificationBody(block),
-      // iOS: badge count update (1 unread notification).
-      badge: 1,
-      // Default system sound.
-      sound: 'default',
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.DATE,
-      date: fireAt,
-    },
-  });
-
-  return { status: 'scheduled', block };
 }
 
 /** Manually cancel — used by the "Disable notifications" toggle. */
 export async function cancelTomorrowForecastNotification(): Promise<void> {
   if (Platform.OS === 'web') return;
-  await Notifications.cancelScheduledNotificationAsync(NOTIFICATION_ID).catch(
-    () => {},
-  );
+  try {
+    await Notifications.cancelScheduledNotificationAsync(NOTIFICATION_ID).catch(
+      () => {},
+    );
+  } catch {
+    // Native module missing.
+  }
 }

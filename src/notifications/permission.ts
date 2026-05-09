@@ -28,10 +28,17 @@ export type PermissionStatus = 'granted' | 'denied' | 'undetermined' | 'unsuppor
 
 export async function getPermissionStatus(): Promise<PermissionStatus> {
   if (Platform.OS === 'web') return 'unsupported';
-  const perms = await Notifications.getPermissionsAsync();
-  if (perms.status === 'granted') return 'granted';
-  if (perms.status === 'denied') return 'denied';
-  return 'undetermined';
+  try {
+    const perms = await Notifications.getPermissionsAsync();
+    if (perms.status === 'granted') return 'granted';
+    if (perms.status === 'denied') return 'denied';
+    return 'undetermined';
+  } catch {
+    // Native module missing (older build that didn't include
+    // expo-notifications) or permission API failure — treat as
+    // "unsupported" so callers gracefully no-op.
+    return 'unsupported';
+  }
 }
 
 /**
@@ -40,16 +47,20 @@ export async function getPermissionStatus(): Promise<PermissionStatus> {
  */
 export async function requestPermission(): Promise<PermissionStatus> {
   if (Platform.OS === 'web') return 'unsupported';
-  const result = await Notifications.requestPermissionsAsync({
-    ios: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
-    },
-  });
-  if (result.status === 'granted') return 'granted';
-  if (result.status === 'denied') return 'denied';
-  return 'undetermined';
+  try {
+    const result = await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+      },
+    });
+    if (result.status === 'granted') return 'granted';
+    if (result.status === 'denied') return 'denied';
+    return 'undetermined';
+  } catch {
+    return 'unsupported';
+  }
 }
 
 /** True if we've already shown our in-app explainer to this user. */
