@@ -4619,13 +4619,13 @@
     "lat": 52.365401399999996,
     "lng": 4.9594916,
     "area": "IJburg",
-    "facing": "N",
+    "facing": "S",
     "capacity": "M",
     "vibe": "Restaurant & bar",
     "address": "Zuider IJdijk 20A, 1095 KN Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:10.330Z",
+    "verifiedAt": "2026-05-09T06:25:39.224Z",
     "placeId": "ChIJxzv0FTgJxkcRdrxwNCCj0J4"
   },
   {
@@ -13088,5 +13088,33 @@
     "verifiedAt": "2026-05-07T21:38:49.660Z",
     "outdoorScreens": 1,
     "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+  },
+  {
+    "id": 1263,
+    "name": "Hangar Oost",
+    "lat": 52.3690104,
+    "lng": 4.9647143,
+    "area": "Zeeburgereiland",
+    "facing": "SW",
+    "capacity": "L",
+    "vibe": "Big waterfront terrace on Zeeburgereiland with views over the IJ. Topped zonopjebakkes.nl's 2026 sunny-terraces list at #1.",
+    "address": "Zuiderzeeweg 6H",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-09T06:25:39.224Z"
+  },
+  {
+    "id": 1264,
+    "name": "Watts Hub",
+    "lat": 52.3863105,
+    "lng": 4.8350925,
+    "area": "Sloterdijk",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Industrial-area café/restaurant near Sloterdijk. Listed at #4 on zonopjebakkes.nl 2026 sunny-terraces.",
+    "address": "Radarweg 480",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-09T06:25:39.224Z"
   }
 ]
