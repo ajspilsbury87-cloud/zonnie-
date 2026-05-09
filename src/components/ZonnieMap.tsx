@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
-import MapView, { Callout, Marker, PROVIDER_DEFAULT, type Region } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT, type Region } from 'react-native-maps';
 import * as Location from 'expo-location';
 
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -78,25 +78,22 @@ const TerracePin = memo(
         // bottom of the asset's bounding box.
         anchor={{ x: 0.5, y: 0.84 }}
         image={asset}
-        // Accessibility (VoiceOver) — still useful even though we
-        // suppress the visual callout below.
-        title={title}
-        description={description}
-        // Single-tap → detail sheet. Earlier wiring used onCalloutPress,
-        // which required two taps (marker → callout → drill-in) and felt
-        // broken on-device — Andy reported "the info card does not open"
-        // after the 1.0.0 build. Now `onPress` fires on the first tap.
+        // Single-tap → detail sheet. Two earlier attempts to make this
+        // work + suppress Apple Maps' default callout failed:
+        //   (a) `onCalloutPress={onPress}` required two taps.
+        //   (b) `onPress={onPress}` + an empty `<Callout>` child still
+        //       didn't fire on iOS — react-native-maps treats any
+        //       Callout child as a tap target competing with the
+        //       Marker's onPress, and the Callout always wins.
+        // No Callout AND no title/description on the Marker means
+        // Apple Maps has nothing to show in its default popup, so the
+        // popup is suppressed — and onPress fires cleanly on first tap.
+        // Accessibility goes through accessibilityLabel which doesn't
+        // trigger the popup the way `title` does.
+        accessibilityLabel={title}
+        accessibilityHint={description ?? undefined}
         onPress={onPress}
-      >
-        {/*
-          Empty Callout suppresses Apple Maps' default title+description
-          tooltip. Without this, iOS still pops the callout on tap which
-          competes with our detail sheet animation. We never want it.
-        */}
-        <Callout tooltip>
-          <View />
-        </Callout>
-      </Marker>
+      />
     );
   },
   (prev, next) =>
