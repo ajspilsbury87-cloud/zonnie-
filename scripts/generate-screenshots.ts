@@ -1,10 +1,13 @@
 #!/usr/bin/env tsx
 /**
- * Generate 5 App Store screenshots at the iPhone 6.7" size (1290×2796 px).
+ * Generate 5 App Store screenshots at the iPhone 6.9" size (1320×2868 px).
  *
- * Apple accepts this size for ALL iPhone listings as of mid-2026 — it's
- * the largest universally-supported size, so we render once and submit
- * the same set everywhere. Output PNGs land in `assets/marketing/`.
+ * Apple replaced the 6.7" required tab with 6.9" (iPhone 16 Pro Max
+ * spec) in late-2024 App Store Connect. New submissions must include
+ * a 6.9" set; ASC accepts the same image for the optional 6.5" tab
+ * (legacy iPhone 11 Pro Max / XS Max sizes), automatically downscaled.
+ *
+ * Output PNGs land in `assets/marketing/`.
  *
  * Marketing-style framing: a large brand headline at the top (sand
  * background), then a phone-screen mockup of the relevant in-app view
@@ -49,10 +52,11 @@ function pinDataUri(state: 'full' | 'mostly' | 'partial' | 'mshade' | 'shade' | 
   return `data:image/png;base64,${buf.toString('base64')}`;
 }
 
-// iPhone 6.7" — 1290×2796 logical points × 1 = pixels (Apple's screenshot
-// spec already accounts for @3x rendering).
-const W = 1290;
-const H = 2796;
+// iPhone 6.9" — 1320×2868. Same aspect ratio (~0.460) as the prior
+// 6.7" target, so the existing layout values (text sizes, paddings,
+// element positions) scale cleanly without retuning.
+const W = 1320;
+const H = 2868;
 
 mkdirSync(OUT_DIR, { recursive: true });
 
