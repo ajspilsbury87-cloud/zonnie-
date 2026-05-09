@@ -1,19 +1,15 @@
 /**
  * Branded landing page shown above the app surface on launch.
  *
- * Replaces the earlier 1.6s auto-dismissing SplashOverlay with an
- * interactive landing screen — same animated sun-and-rays moment, then
- * the top 3 sunny terraces "right now" fade in as cards, and the user
- * taps "Continue" to enter the map.
+ * Branded landing screen: sun-and-rays brand intro, then a scrolling
+ * list of "Sunniest right now" cards GROUPED BY REGION (Jordaan,
+ * Zuid, Oost, West, Centrum, Noord — six macro-regions of Amsterdam),
+ * three terraces per region. The user taps a card to drill straight
+ * into that terrace's detail, or "See all terraces" to enter the map.
  *
- * Why a landing screen and not just-a-splash:
- *   1. First-impression value prop — the user sees what Zonnie does
- *      (rank terraces by sun) before they touch a control.
- *   2. Featured-bar placement surface — a `featured?: boolean` on
- *      Terrace can override the lead slot. No featured venues exist
- *      yet; plumbing is in place for bar-side paid bookings later.
- *   3. Better than auto-dismiss — gives users a beat to register
- *      "this is Zonnie" before the map's complexity loads in.
+ * Restructured 2026-05-09 — was top-3-overall (which always picked
+ * SW-facing Stadionbuurt venues at midday), now top-3-per-region so
+ * users in any neighbourhood see a sunny option without scrolling.
  *
  * Animation sequence (Reanimated 3, all on the UI thread):
  *   0ms     overlay opaque, sun + text invisible
@@ -21,22 +17,24 @@
  *   120ms   8 rays fan out
  *   350ms   "Zonnie" wordmark fades + slides up
  *   600ms   tagline fades + slides up
- *   1100ms  card stack fades in (staggered 80ms each)
- *   1700ms  "Continue" button fades in
- *   user taps → onContinue() fires
+ *   1100ms  region sections fade + slide in
+ *   1700ms  "See all terraces" button fades in
+ *   user taps card → select(id) + onContinue() (detail sheet animates
+ *                    up after landing fades out)
+ *   user taps button → onContinue() (lands on map without selection)
  *
- * Cards always show 3 venues:
- *   slot 0 — featured if any exists, else top-by-score
- *   slots 1-2 — top-by-score (skipping the featured one if used)
+ * Per region: featured terrace (`Terrace.featured === true` AND
+ * non-zero current score) leads the section if one exists, otherwise
+ * top-by-score. Featured slot is plumbing for paid bar-side bookings;
+ * no terraces have it set yet.
  *
- * Top-by-score uses the CURRENT Amsterdam hour (single point in time,
- * not a window) so the landing page answers "where's sunny right now?"
- * regardless of any time-window the user has previously selected
- * in-app. Mirrors the widget's "now" behaviour.
+ * Scoring uses the CURRENT Amsterdam hour (single point in time, not
+ * a window) so the landing answers "where's sunny right now?"
+ * regardless of any in-app time-window the user has selected.
  */
 
 import { useEffect, useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -49,17 +47,22 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { TERRACES } from '@/src/data/terraces';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
-import { AMSTERDAM_TZ, computeSunScore, scoreLabel } from '@/src/engines/scoring';
+import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
+import { AMSTERDAM_TZ, computeSunScore } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
+import { useSelectionStore } from '@/src/store/selectionStore';
 import { todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 import type { Terrace } from '@/src/engines/types';
 
+// Sun + ray geometry. Smaller than v1 to leave room for the 6 region
+// sections × 3 cards each below — was 88×20×6, now compressed so the
+// brand block takes ~30% of screen height instead of ~40%.
 const RAY_COUNT = 8;
-const SUN_DIAMETER = 88;
-const RAY_LENGTH = 20;
-const RAY_THICKNESS = 6;
+const SUN_DIAMETER = 64;
+const RAY_LENGTH = 14;
+const RAY_THICKNESS = 5;
 
 interface LandingPageProps {
   /** Called when the user taps "Continue"; parent should unmount the landing. */
@@ -72,57 +75,101 @@ interface TopVenue {
   featured: boolean;
 }
 
+interface RegionSection {
+  region: Region;
+  venues: TopVenue[];
+}
+
+const PER_REGION = 3;
+
 function nowAmsterdamHour(): number {
   const h = Number(formatInTimeZone(new Date(), AMSTERDAM_TZ, 'H'));
   return Number.isFinite(h) ? h : 12;
 }
 
 /**
- * Score every terrace at the current hour and pick 3:
- *   - Slot 0: featured if any, else top-by-score
- *   - Slots 1-2: next two by score (skipping the featured used in slot 0)
+ * Score every terrace at the current hour, group by macro-region, and
+ * return the top N per region in the canonical region order
+ * (Jordaan, Zuid, Oost, West, Centrum, Noord). Featured venues lead
+ * their own region's section if their score is non-zero.
+ *
+ * Replaces the earlier "top 3 overall" picker. Per Andy's feedback:
+ * one big top-3 was too coarse — most picks ended up in the same
+ * SW-facing Stadionbuurt cluster. Splitting by region surfaces a
+ * citywide spread so users in any neighbourhood see a sunny option
+ * without scrolling past the Stadionbuurt cluster first.
  */
-function pickTopThree(weatherByDate: ReturnType<typeof useWeatherStore.getState>['byDate']): TopVenue[] {
+function pickTopByRegion(
+  weatherByDate: ReturnType<typeof useWeatherStore.getState>['byDate'],
+): RegionSection[] {
   const dateStr = todayAmsterdamDateStr();
   const hour = nowAmsterdamHour();
   const entry = weatherByDate[dateStr];
   const hourly = entry?.status === 'ready' ? entry.data : undefined;
   const w = hourly?.[hour];
 
-  const scored = TERRACES.map((t) => {
+  // One scoring pass for all terraces, then group by region.
+  const scoredByRegion = new Map<Region, TopVenue[]>();
+  for (const t of TERRACES) {
+    const region = regionForArea(t.area);
+    if (region == null) continue;
     const buildings = getBuildingsForTerrace(t.id);
     const r = computeSunScore(t, buildings, hour, dateStr, 'sunny', w);
-    return { terrace: t, score: r.score };
-  });
-  scored.sort((a, b) => b.score - a.score);
-
-  const result: TopVenue[] = [];
-
-  // Lead slot — prefer a featured venue if one exists with a non-zero score.
-  // (Excluding zero-score ensures we never lead with a venue that's currently
-  // in deep shadow, even if it's a paid placement.)
-  const featured = scored.find(
-    (s) => s.terrace.featured === true && s.score > 0,
-  );
-  if (featured) {
-    result.push({ ...featured, featured: true });
+    const list = scoredByRegion.get(region) ?? [];
+    list.push({ terrace: t, score: r.score, featured: false });
+    scoredByRegion.set(region, list);
   }
 
-  // Fill the remaining 2-3 slots from top-by-score, skipping any
-  // already taken by the featured pick.
-  for (const s of scored) {
-    if (result.length >= 3) break;
-    if (result.some((r) => r.terrace.id === s.terrace.id)) continue;
-    result.push({ ...s, featured: false });
+  const sections: RegionSection[] = [];
+  for (const region of REGIONS_ORDERED) {
+    const list = scoredByRegion.get(region) ?? [];
+    list.sort((a, b) => b.score - a.score);
+
+    // Featured for this region: leads the section if it has a non-zero
+    // current score (so a paid pick can never lead while in deep shadow).
+    const featured = list.find((v) => v.terrace.featured === true && v.score > 0);
+
+    const picks: TopVenue[] = [];
+    if (featured) picks.push({ ...featured, featured: true });
+    for (const v of list) {
+      if (picks.length >= PER_REGION) break;
+      if (picks.some((p) => p.terrace.id === v.terrace.id)) continue;
+      picks.push(v);
+    }
+
+    // Skip a region with no terraces in the dataset (unlikely but
+    // graceful — Jordaan is the smallest and could in principle be
+    // empty for a filtered build).
+    if (picks.length === 0) continue;
+    sections.push({ region, venues: picks });
   }
-  return result;
+  return sections;
 }
 
 export function LandingPage({ onContinue }: LandingPageProps) {
   const weatherByDate = useWeatherStore((s) => s.byDate);
+  const select = useSelectionStore((s) => s.select);
   // Recomputes whenever weather data loads — keeps the landing fresh
   // even if the fetch lands while the user is still reading.
-  const top3 = useMemo(() => pickTopThree(weatherByDate), [weatherByDate]);
+  const sections = useMemo(
+    () => pickTopByRegion(weatherByDate),
+    [weatherByDate],
+  );
+
+  /**
+   * Tapping a card on the landing page should open that terrace's
+   * detail directly — set the selection BEFORE we fade out, so by
+   * the time the map is visible the detail sheet has already animated
+   * up. Saves the user a tap.
+   */
+  const handleCardPress = (terraceId: number) => {
+    haptics.light();
+    select(terraceId);
+    // Defer onContinue by a frame so the selection has time to land
+    // in the store + the detail sheet has rendered before we unmount
+    // the landing.
+    setTimeout(onContinue, 60);
+  };
 
   // Animation drivers
   const containerOpacity = useSharedValue(1);
@@ -248,12 +295,27 @@ export function LandingPage({ onContinue }: LandingPageProps) {
         </Animated.Text>
       </View>
 
-      {/* Top 3 venue cards */}
+      {/* Top 3 per region. ScrollView in case the 6 regions × 3 cards
+          overflow on smaller screens. */}
       <Animated.View style={[styles.cardStack, cardsStyle]}>
         <Text style={styles.sectionLabel}>SUNNIEST RIGHT NOW</Text>
-        {top3.map((v, idx) => (
-          <VenueCard key={v.terrace.id} rank={idx + 1} venue={v} />
-        ))}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {sections.map((section) => (
+            <View key={section.region} style={styles.regionBlock}>
+              <Text style={styles.regionLabel}>{section.region}</Text>
+              {section.venues.map((v) => (
+                <VenueCard
+                  key={v.terrace.id}
+                  venue={v}
+                  onPress={handleCardPress}
+                />
+              ))}
+            </View>
+          ))}
+        </ScrollView>
       </Animated.View>
 
       {/* Continue button */}
@@ -293,21 +355,28 @@ function Ray({ angle, progress }: RayProps) {
 }
 
 interface VenueCardProps {
-  rank: number;
   venue: TopVenue;
+  onPress: (terraceId: number) => void;
 }
 
-function VenueCard({ rank, venue }: VenueCardProps) {
+/**
+ * Compact landing-page card. One row: name on the left (with optional
+ * featured badge inline), area subtitle below, score chip on the right.
+ * Tapping a card opens that terrace's detail directly — selection lands
+ * before the landing fades, so by the time the map shows, the detail
+ * sheet is already animating up.
+ */
+function VenueCard({ venue, onPress }: VenueCardProps) {
   const { terrace, score, featured } = venue;
   const pct = Math.round(score * 100);
   const color = scoreToColor(score);
-  const label = scoreLabel(score);
 
   return (
-    <View style={styles.card}>
-      <View style={styles.cardRank}>
-        <Text style={styles.cardRankText}>{rank}</Text>
-      </View>
+    <Pressable
+      onPress={() => onPress(terrace.id)}
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      accessibilityLabel={`Open ${terrace.name}, ${pct}% sun`}
+    >
       <View style={styles.cardBody}>
         <View style={styles.cardTitleRow}>
           <Text style={styles.cardName} numberOfLines={1}>
@@ -320,13 +389,13 @@ function VenueCard({ rank, venue }: VenueCardProps) {
           ) : null}
         </View>
         <Text style={styles.cardSubtitle} numberOfLines={1}>
-          {terrace.area} · {label}
+          {terrace.area}
         </Text>
       </View>
       <View style={[styles.cardScore, { backgroundColor: color }]}>
         <Text style={styles.cardScoreText}>{pct}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -337,13 +406,13 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     elevation: 1000,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xxl * 2,
-    paddingBottom: spacing.xxl,
+    paddingTop: spacing.xxl + spacing.lg,
+    paddingBottom: spacing.lg,
     alignItems: 'stretch',
   },
   brandBlock: {
     alignItems: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: spacing.md,
   },
   sunGroup: {
     width: SUN_DIAMETER + RAY_LENGTH * 2,
@@ -370,23 +439,22 @@ const styles = StyleSheet.create({
     backgroundColor: palette.peach,
   },
   title: {
-    marginTop: 28,
+    marginTop: 16,
     fontFamily: fonts.displayBold,
-    fontSize: fontSizes.display,
+    fontSize: fontSizes.xxl,
     color: palette.ink,
     letterSpacing: -0.5,
   },
   tagline: {
-    marginTop: 4,
+    marginTop: 2,
     fontFamily: fonts.body,
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.sm,
     color: palette.inkSoft,
     letterSpacing: 0.2,
   },
   cardStack: {
     flex: 1,
     justifyContent: 'flex-start',
-    gap: spacing.sm,
   },
   sectionLabel: {
     fontFamily: fonts.bodySemibold,
@@ -394,35 +462,43 @@ const styles = StyleSheet.create({
     color: palette.inkSoft,
     textTransform: 'uppercase',
     letterSpacing: 1,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs,
   },
+  scrollContent: {
+    paddingBottom: spacing.md,
+  },
+  regionBlock: {
+    marginBottom: spacing.md,
+  },
+  regionLabel: {
+    fontFamily: fonts.displayBold,
+    fontSize: fontSizes.md,
+    color: palette.ink,
+    marginBottom: spacing.xs,
+    letterSpacing: -0.2,
+  },
+  // Compact card — sized so 6 regions × 3 cards fit on a 6.7" screen
+  // without scrolling on most phones, with scroll for smaller screens.
+  // Single row layout: name + (optional) Featured badge over area
+  // subtitle on the left; score chip on the right.
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: palette.white,
-    borderRadius: radii.lg,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-    // Soft shadow for depth on the cream background.
+    borderRadius: radii.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
     shadowColor: palette.ink,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
     elevation: 1,
   },
-  cardRank: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: palette.sandDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardRankText: {
-    fontFamily: fonts.displayBold,
-    fontSize: fontSizes.md,
-    color: palette.inkSoft,
+  cardPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
   },
   cardBody: {
     flex: 1,
@@ -436,38 +512,38 @@ const styles = StyleSheet.create({
   cardName: {
     flex: 1,
     fontFamily: fonts.displayBold,
-    fontSize: fontSizes.lg,
+    fontSize: fontSizes.md,
     color: palette.ink,
   },
   featuredBadge: {
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
     borderRadius: radii.pill,
     backgroundColor: palette.burnt,
   },
   featuredBadgeText: {
     fontFamily: fonts.bodySemibold,
-    fontSize: 9,
+    fontSize: 8,
     color: palette.cream,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   cardSubtitle: {
     fontFamily: fonts.body,
-    fontSize: fontSizes.sm,
+    fontSize: fontSizes.xs,
     color: palette.inkSoft,
-    marginTop: 2,
+    marginTop: 1,
   },
   cardScore: {
-    minWidth: 48,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
+    minWidth: 38,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
     borderRadius: radii.pill,
     alignItems: 'center',
   },
   cardScoreText: {
     fontFamily: fonts.displayBold,
-    fontSize: fontSizes.md,
+    fontSize: fontSizes.sm,
     color: palette.white,
   },
   buttonWrap: {
