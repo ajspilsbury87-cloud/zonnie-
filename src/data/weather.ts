@@ -38,10 +38,25 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
       timezone: 'Europe/Amsterdam',
     }).toString();
 
-  const res = await fetch(url, {
-    signal: AbortSignal.timeout(10_000),
-    headers: { Accept: 'application/json' },
-  });
+  // 10-second timeout via AbortController. We previously used the static
+  // `AbortSignal.timeout(10_000)`, but that's a 2022 WHATWG fetch API
+  // not yet shipped in React Native's whatwg-fetch polyfill — the call
+  // throws `TypeError: AbortSignal.timeout is not a function` on-device,
+  // the fetch never fires, and every weather request ends up in the
+  // store's error state (so the strip shows "Weather unavailable" / the
+  // summary line never appears). Manual controller works on every RN
+  // version.
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10_000);
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!res.ok) {
     throw new Error(`Open-Meteo HTTP ${res.status}: ${res.statusText}`);

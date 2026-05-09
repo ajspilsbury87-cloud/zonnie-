@@ -4,10 +4,13 @@
  * Bar / Restaurant chips: multi-select with OR semantics (selecting
  * both shows the union). Empty = no category filter.
  *
- * 📺 Match chip: standalone toggle, ANDs with the others. Shows only
- * terraces with `outdoorScreens > 0` — designed for the World Cup
- * 2026 launch ("watch the match in the sun"). Visually emphasised
- * with a different active colour so it doesn't look like just another
+ * ⚽ Outdoor Screen chip: standalone toggle, ANDs with the others.
+ * Shows only terraces with `outdoorScreens > 0` — designed for the
+ * World Cup 2026 launch ("watch the match in the sun"). Football
+ * icon hooks the World Cup framing, while the label describes the
+ * literal feature ("outdoor screen") so it's still useful outside
+ * tournament season. Visually emphasised with a different active
+ * colour (palette.burnt) so it doesn't look like just another
  * venue type.
  */
 
@@ -60,10 +63,10 @@ export function VenueTypeFilter() {
         }}
         activeOpacity={0.7}
         style={[styles.chip, matchModeOnly && styles.chipMatchActive]}
-        accessibilityLabel="Show only terraces with outdoor TVs"
+        accessibilityLabel="Show only terraces with outdoor screens"
       >
         <Text style={[styles.chipLabel, matchModeOnly && styles.chipLabelActive]}>
-          📺 Match
+          ⚽ Outdoor Screen
         </Text>
       </TouchableOpacity>
     </ScrollView>

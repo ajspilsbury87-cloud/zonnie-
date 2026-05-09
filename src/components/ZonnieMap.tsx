@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT, type Region } from 'react-native-maps';
+import MapView, { Callout, Marker, PROVIDER_DEFAULT, type Region } from 'react-native-maps';
 import * as Location from 'expo-location';
 
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -78,22 +78,25 @@ const TerracePin = memo(
         // bottom of the asset's bounding box.
         anchor={{ x: 0.5, y: 0.84 }}
         image={asset}
+        // Accessibility (VoiceOver) — still useful even though we
+        // suppress the visual callout below.
         title={title}
         description={description}
-        // We previously set `tracksViewChanges={false}` here as a perf
-        // optimization. That turned out to be the bug behind "pins
-        // disappear when I change the time range" — for image markers,
-        // tracksViewChanges=false tells iOS NOT to re-rasterize when the
-        // `image` prop changes, which is exactly when a score-band
-        // crossing should swap the pin asset. Markers went stale or
-        // vanished. React.memo on this component already gates
-        // unnecessary re-renders (via the comparator below), so leaving
-        // tracksViewChanges at its default lets band crossings propagate
-        // cleanly without excess bridge traffic.
-        // iOS Apple Maps shows the callout on first tap; the callout itself
-        // is what the user taps to drill in — that's `onCalloutPress`.
-        onCalloutPress={onPress}
-      />
+        // Single-tap → detail sheet. Earlier wiring used onCalloutPress,
+        // which required two taps (marker → callout → drill-in) and felt
+        // broken on-device — Andy reported "the info card does not open"
+        // after the 1.0.0 build. Now `onPress` fires on the first tap.
+        onPress={onPress}
+      >
+        {/*
+          Empty Callout suppresses Apple Maps' default title+description
+          tooltip. Without this, iOS still pops the callout on tap which
+          competes with our detail sheet animation. We never want it.
+        */}
+        <Callout tooltip>
+          <View />
+        </Callout>
+      </Marker>
     );
   },
   (prev, next) =>

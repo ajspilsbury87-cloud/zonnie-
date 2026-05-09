@@ -150,18 +150,44 @@ function pinSvg(state: PinStateKey): string {
 
 // ─── Tasks ───────────────────────────────────────────────────────────────────
 
-async function renderSvgToPng(svgString: string, width: number, height: number, outPath: string) {
-  const buf = await sharp(Buffer.from(svgString), { density: 600 })
-    .resize(width, height, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .png()
-    .toBuffer();
+async function renderSvgToPng(
+  svgString: string,
+  width: number,
+  height: number,
+  outPath: string,
+  options: { roundedCorners?: number } = {},
+) {
+  let pipeline = sharp(Buffer.from(svgString), { density: 600 })
+    .resize(width, height, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } });
+
+  if (options.roundedCorners != null && options.roundedCorners > 0) {
+    // Apply iOS-style rounded corners by compositing a rounded-rectangle
+    // mask. Apple's icon corner radius is ~22.37% of the icon's edge —
+    // we match that so a square brand icon reads as a "real" iOS icon
+    // on the launch screen without baking the radius into the source SVG.
+    const r = options.roundedCorners;
+    const mask = Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        `<rect width="${width}" height="${height}" rx="${r}" ry="${r}" fill="white"/>` +
+        `</svg>`,
+    );
+    pipeline = pipeline.composite([{ input: mask, blend: 'dest-in' }]);
+  }
+
+  const buf = await pipeline.png().toBuffer();
   writeFileSync(outPath, buf);
   console.log(`  ${outPath.replace(PROJECT_ROOT, '.')}  (${width}×${height})`);
 }
 
-async function renderSvgFileToPng(srcSvg: string, width: number, height: number, outPath: string) {
+async function renderSvgFileToPng(
+  srcSvg: string,
+  width: number,
+  height: number,
+  outPath: string,
+  options: { roundedCorners?: number } = {},
+) {
   const svg = readFileSync(srcSvg, 'utf-8');
-  await renderSvgToPng(svg, width, height, outPath);
+  await renderSvgToPng(svg, width, height, outPath, options);
 }
 
 async function main() {
@@ -170,8 +196,19 @@ async function main() {
 
   console.log('App icon + splash');
   const iconSrc = join(SRC_DIR, 'icons', 'zonnie-icon-square-1024.svg');
+  // App icon (Apple applies the OS-level corner mask so we ship square).
   await renderSvgFileToPng(iconSrc, 1024, 1024, join(OUT_DIR, 'icon.png'));
-  await renderSvgFileToPng(iconSrc, 1024, 1024, join(OUT_DIR, 'splash-icon.png'));
+  // Splash icon — iOS does NOT mask this, so we bake in the corner
+  // radius. ~22.4% of the edge length (=229 px on 1024) matches Apple's
+  // canonical squircle so the launch icon reads as a real iOS app
+  // icon, not a square brand mark on a sand background.
+  await renderSvgFileToPng(
+    iconSrc,
+    1024,
+    1024,
+    join(OUT_DIR, 'splash-icon.png'),
+    { roundedCorners: 229 },
+  );
   await renderSvgFileToPng(iconSrc, 1024, 1024, join(OUT_DIR, 'android-icon-foreground.png'));
   await renderSvgFileToPng(iconSrc, 48, 48, join(OUT_DIR, 'favicon.png'));
 

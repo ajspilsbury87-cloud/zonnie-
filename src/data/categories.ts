@@ -35,75 +35,111 @@ export const CATEGORY_GLYPHS: Record<VenueCategory, string> = {
 };
 
 /**
- * Match terms (lowercase, substring search) per category. The "bar"
- * bucket absorbs the old café terms (coffee / koffie / bakery / tearoom)
- * since the cafe/bar split caused user confusion.
+ * Bar evidence is split into "strong" (definitely a bar) vs "ambiguous"
+ * (café-ish terms — cafés in Amsterdam are often actually restaurants).
+ * The tiebreaker logic uses this distinction:
+ *
+ *   - STRONG bar terms always mark the venue as `bar`.
+ *   - AMBIGUOUS bar terms mark `bar` only if no `restaurant` term hit.
+ *     If a venue matches both "café" AND "restaurant", we treat the
+ *     restaurant signal as authoritative and drop the bar mark.
+ *
+ * Examples this fixes:
+ *   "Eetcafé van Houten" → was bar+restaurant; now restaurant only
+ *   "Restaurant Café Hans" → was bar+restaurant; now restaurant only
+ *   "Café Brix" (no restaurant terms) → still bar ✓
+ *   "Brasserie Margaux" (no bar terms) → still restaurant ✓
+ *   "Bar & Brasserie XYZ" (strong bar AND restaurant) → bar+restaurant ✓
  */
-const CATEGORY_TERMS: Record<VenueCategory, string[]> = {
-  bar: [
-    // Café-ish (folded in)
-    'café',
-    'cafe',
-    'koffie',
-    'coffee',
-    'bakery',
-    'tearoom',
-    'tasting room',
-    // Classic bar
-    'bar ',
-    ' bar',
-    'lounge',
-    'cocktail',
-    'distillery',
-    'brewery',
-    'brouwerij',
-    'beer garden',
-    'wine',
-    'speakeasy',
-    'jazz',
-    'nightclub',
-    'club terrace',
-    'sky bar',
-    'pub',
-    'kroeg',
-  ],
-  restaurant: [
-    'restaurant',
-    'brasserie',
-    'eetcafé',
-    'eetcafe',
-    'kitchen',
-    'pizza',
-    'seafood',
-    'italian terrace',
-    'dining',
-    'fine dining',
-    'bistro',
-    'trattoria',
-    'osteria',
-  ],
-};
+const BAR_STRONG_TERMS = [
+  // Word-boundary matched below — both "bar " and " bar" pass through
+  // a single \bbar\b regex.
+  'bar',
+  'lounge',
+  'cocktail',
+  'distillery',
+  'brewery',
+  'brouwerij',
+  'beer garden',
+  'wine bar',
+  'speakeasy',
+  'jazz',
+  'nightclub',
+  'sky bar',
+  'pub',
+  'kroeg',
+] as const;
+
+const BAR_AMBIGUOUS_TERMS = [
+  'café',
+  'cafe',
+  'koffie',
+  'coffee',
+  'bakery',
+  'tearoom',
+  'tasting room',
+] as const;
+
+const RESTAURANT_TERMS = [
+  'restaurant',
+  'brasserie',
+  'eetcafé',
+  'eetcafe',
+  'kitchen',
+  'pizza',
+  'seafood',
+  'italian',
+  'dining',
+  'bistro',
+  'trattoria',
+  'osteria',
+  'ristorante',
+  'sushi',
+  'thai',
+  'indian',
+  'mexican',
+  'burger',
+  'steakhouse',
+  'tapas',
+] as const;
+
+/**
+ * Word-boundary substring check that's Unicode-safe. Matches `bar` in
+ * "bar Bonnie" but not "bargain"; matches `eetcafé` in "Eetcafé X" — the
+ * `é` is not an ASCII word character so `\b` doesn't form a boundary
+ * there, hence this uses `(?:^|\W)` / `(?:$|\W)` instead. The captured
+ * non-word character isn't part of the term, so we use lookahead to
+ * keep it out of the match (and out of any future use).
+ */
+function hasTerm(haystack: string, term: string): boolean {
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?:^|\\W)${escaped}(?=$|\\W)`, 'i').test(haystack);
+}
 
 /**
  * Categorise a single terrace. Returns ALL matching categories — order
  * not significant, callers iterate the set or check membership.
  *
- * No facing-based heuristic any more: the old `facing === 'All'` →
- * 'outdoor' rule is gone with the Outdoor category.
+ * Tiebreaker: when ambiguous bar terms (café, coffee) overlap with
+ * restaurant terms, restaurant wins.
  */
 export function categoriesForTerrace(
   t: Pick<Terrace, 'name' | 'vibe' | 'facing'>,
 ): Set<VenueCategory> {
-  const matches = new Set<VenueCategory>();
   const haystack = `${t.name} ${t.vibe ?? ''}`.toLowerCase();
+  const matches = new Set<VenueCategory>();
 
-  for (const cat of CATEGORIES_ORDERED) {
-    for (const term of CATEGORY_TERMS[cat]) {
-      if (haystack.includes(term)) {
-        matches.add(cat);
-        break;
-      }
-    }
+  const hasBarStrong = BAR_STRONG_TERMS.some((t) => hasTerm(haystack, t));
+  const hasBarAmbiguous = BAR_AMBIGUOUS_TERMS.some((t) => hasTerm(haystack, t));
+  const hasRestaurant = RESTAURANT_TERMS.some((t) => hasTerm(haystack, t));
+
+  if (hasRestaurant) matches.add('restaurant');
+  if (hasBarStrong) matches.add('bar');
+  if (hasBarAmbiguous && !hasRestaurant) {
+    // Café-ish only counts as bar when there's no clearer restaurant
+    // signal in the name/vibe. "Eetcafé" + restaurant terms → restaurant
+    // only; pure "Café Brix" → bar.
+    matches.add('bar');
   }
 
   return matches;
