@@ -18,6 +18,9 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 
 import { LandingPage } from '@/src/components/LandingPage';
+import { NotificationPrompt } from '@/src/components/NotificationPrompt';
+import { shouldShowPrompt } from '@/src/notifications/permission';
+import { useDailyForecastNotification } from '@/src/notifications/useDailyForecastNotification';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
 import { useWidgetSync } from '@/src/widget/useWidgetSync';
 
@@ -42,6 +45,11 @@ export default function RootLayout() {
   // top-3. iOS-only inside the hook; cheap no-op on Android.
   useWidgetSync();
 
+  // Daily "sunny tomorrow" notification scheduler — re-syncs whenever
+  // tomorrow's weather data lands or changes. No-op until the user
+  // grants notification permission via the prompt below.
+  useDailyForecastNotification();
+
   useEffect(() => {
     if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
@@ -56,6 +64,27 @@ export default function RootLayout() {
   const [showLanding, setShowLanding] = useState(true);
   const handleLandingContinue = useCallback(() => setShowLanding(false), []);
 
+  // Notification permission explainer — shown once on the first
+  // launch where permission is undetermined. Self-marks as prompted
+  // either way, so users never see it twice. Deferred until the
+  // landing page has dismissed (showing both at once is jarring).
+  const [showNotifPrompt, setShowNotifPrompt] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (showLanding) return;
+    void (async () => {
+      const should = await shouldShowPrompt();
+      if (!cancelled && should) setShowNotifPrompt(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [showLanding]);
+  const handleNotifPromptDismiss = useCallback(
+    () => setShowNotifPrompt(false),
+    [],
+  );
+
   if (!fontsLoaded && !fontError) {
     return null;
   }
@@ -68,6 +97,9 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }} />
           {showLanding ? (
             <LandingPage onContinue={handleLandingContinue} />
+          ) : null}
+          {showNotifPrompt ? (
+            <NotificationPrompt onDismiss={handleNotifPromptDismiss} />
           ) : null}
         </BottomSheetModalProvider>
       </SafeAreaProvider>
