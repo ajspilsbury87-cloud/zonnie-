@@ -97,11 +97,15 @@ const PIN_STATES: Record<PinStateKey, PinConfig> = {
  *                              anchor.y = 47/56 ≈ 0.84 to compensate)
  */
 function sunOverGlassSvg(cfg: PinConfig): string {
+  // Sun + rays match the glass fill colour so the marker reads as
+  // one unified shape per score band. Earlier version used ink (dark
+  // brown) for the sun, which felt visually disconnected from the
+  // coloured glass below — Andy's feedback after on-device testing.
   const sunStrokeWidth = cfg.selected ? 1.2 : 1.0;
   const rayStrokeWidth = cfg.selected ? 1.0 : 0.9;
   return `
-    <circle cx="0" cy="-26" r="3.5" fill="none" stroke="${COLORS.ink}" stroke-width="${sunStrokeWidth}"/>
-    <g stroke="${COLORS.ink}" stroke-width="${rayStrokeWidth}" stroke-linecap="round" fill="none">
+    <circle cx="0" cy="-26" r="3.5" fill="none" stroke="${cfg.fill}" stroke-width="${sunStrokeWidth}"/>
+    <g stroke="${cfg.fill}" stroke-width="${rayStrokeWidth}" stroke-linecap="round" fill="none">
       <line x1="-9" y1="-26" x2="-6.5" y2="-26"/>
       <line x1="9" y1="-26" x2="6.5" y2="-26"/>
       <line x1="0" y1="-35" x2="0" y2="-32"/>
