@@ -258,19 +258,20 @@ export function TerraceDetailSheet() {
     clear();
   }, [terrace, setPanTo, clear]);
 
-  // Sheet is conditionally rendered based on selectedId. Mount when a
-  // terrace is selected; unmount when cleared. This bypasses Gorhom v5's
-  // BottomSheetModalProvider portal mechanism which silently failed to
-  // present on Andy's TestFlight 1.0.0 build (the TEST DETAIL diagnostic
-  // confirmed the store updated but the modal never appeared). Plain
-  // <BottomSheet> renders inline, no portal involvement.
-  if (selectedId == null) return null;
+  // Drive open/close via the controlled `index` prop, not by mounting/
+  // unmounting the BottomSheet. Conditionally mounting (return null when
+  // no selection) didn't trigger Gorhom v5's initial layout pass on
+  // iOS — the sheet rendered but never animated in. Always-mounted +
+  // index swap is the canonical Gorhom pattern, and it matches what
+  // MainSheet does (which works fine).
+  //   index = -1 → closed (sheet off-screen below)
+  //   index =  0 → open at first snap point (70%)
+  const sheetIndex = selectedId != null ? 0 : -1;
 
   return (
     <BottomSheet
       ref={ref}
-      // index=0 = first snap point on mount. Default would be -1 (closed).
-      index={0}
+      index={sheetIndex}
       snapPoints={['70%', '92%']}
       enableDynamicSizing={false}
       enablePanDownToClose
