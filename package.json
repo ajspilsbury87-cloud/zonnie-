@@ -14,6 +14,7 @@
     "apply-corrections": "tsx scripts/apply-corrections.ts",
     "rasterize-assets": "tsx scripts/rasterize-assets.ts",
     "generate-screenshots": "tsx scripts/generate-screenshots.ts",
+    "compose-screenshots": "tsx scripts/compose-screenshots.ts",
     "import-venues": "tsx scripts/import-competitor-venues.ts",
     "infer-facing": "tsx scripts/infer-facing.ts",
     "fetch-osm-buildings": "tsx scripts/fetch-osm-buildings.ts",
