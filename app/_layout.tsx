@@ -2,7 +2,6 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
@@ -89,19 +88,24 @@ export default function RootLayout() {
     return null;
   }
 
+  // BottomSheetModalProvider was originally HERE (wrapping the entire
+  // Stack). After Andy's TEST DETAIL diagnostic showed the modal silently
+  // failing to present, suspected cause: expo-router's <Stack> creates a
+  // navigator boundary that breaks the Gorhom v5 modal portal's host
+  // discovery. Provider moved into app/index.tsx so it sits directly
+  // above the consumer (TerraceDetailSheet) without any navigator
+  // boundary in between.
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <BottomSheetModalProvider>
-          <StatusBar style="auto" />
-          <Stack screenOptions={{ headerShown: false }} />
-          {showLanding ? (
-            <LandingPage onContinue={handleLandingContinue} />
-          ) : null}
-          {showNotifPrompt ? (
-            <NotificationPrompt onDismiss={handleNotifPromptDismiss} />
-          ) : null}
-        </BottomSheetModalProvider>
+        <StatusBar style="auto" />
+        <Stack screenOptions={{ headerShown: false }} />
+        {showLanding ? (
+          <LandingPage onContinue={handleLandingContinue} />
+        ) : null}
+        {showNotifPrompt ? (
+          <NotificationPrompt onDismiss={handleNotifPromptDismiss} />
+        ) : null}
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

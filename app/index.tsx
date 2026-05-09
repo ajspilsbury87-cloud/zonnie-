@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
 import { MainSheet } from '@/src/components/MainSheet';
@@ -12,6 +13,7 @@ import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 export default function Index() {
   const select = useSelectionStore((s) => s.select);
+  const selectedId = useSelectionStore((s) => s.selectedId);
   const handleSelect = useCallback(
     (item: ScoredTerrace) => select(item.terrace.id),
     [select],
@@ -23,34 +25,45 @@ export default function Index() {
   // a thrown render error would unmount the tree and the user would see a
   // blank screen / iOS would eventually kill the process.
   // DEBUG (temporary, 2026-05-09): Andy reports the detail sheet won't
-  // open from either marker tap or list-row tap. This button bypasses
-  // both paths and calls `select(id)` directly. If TAPPING IT opens
-  // the sheet, the marker/list onPress chain is broken; if NOT, the
-  // BottomSheetModal itself isn't presenting. Remove once diagnosed.
+  // open from marker/list tap. The debug button bypasses both paths and
+  // calls select() directly. The label echoes live `selectedId` from
+  // the store so a tap visibly changes the number even if the sheet
+  // doesn't open — distinguishes "store works but sheet doesn't" from
+  // "store also broken". Sheet diagnosis is now: with provider moved
+  // here, present() should land cleanly.
   const debugSelect = useCallback(() => {
     const first = TERRACES[0];
     if (first) select(first.id);
   }, [select]);
 
+  // BottomSheetModalProvider moved here from app/_layout.tsx. Suspected
+  // cause of "modal won't present": expo-router's <Stack> creates a
+  // navigator boundary that breaks Gorhom v5's modal portal host
+  // discovery when the provider sits ABOVE the navigator. Mounting it
+  // directly above the consumer (TerraceDetailSheet) sidesteps that.
   return (
-    <View style={styles.container}>
-      <ErrorBoundary surface="ZonnieMap">
-        <ZonnieMap onSelect={handleSelect} />
-      </ErrorBoundary>
-      <ErrorBoundary surface="MainSheet">
-        <MainSheet onSelect={handleSelect} />
-      </ErrorBoundary>
-      <ErrorBoundary surface="TerraceDetailSheet">
-        <TerraceDetailSheet />
-      </ErrorBoundary>
-      {/* DEBUG (temporary): floating button to bypass marker/list paths */}
-      <Pressable
-        onPress={debugSelect}
-        style={({ pressed }) => [styles.debugButton, pressed && styles.debugButtonPressed]}
-      >
-        <Text style={styles.debugButtonText}>TEST DETAIL</Text>
-      </Pressable>
-    </View>
+    <BottomSheetModalProvider>
+      <View style={styles.container}>
+        <ErrorBoundary surface="ZonnieMap">
+          <ZonnieMap onSelect={handleSelect} />
+        </ErrorBoundary>
+        <ErrorBoundary surface="MainSheet">
+          <MainSheet onSelect={handleSelect} />
+        </ErrorBoundary>
+        <ErrorBoundary surface="TerraceDetailSheet">
+          <TerraceDetailSheet />
+        </ErrorBoundary>
+        {/* DEBUG (temporary): label shows live selectedId */}
+        <Pressable
+          onPress={debugSelect}
+          style={({ pressed }) => [styles.debugButton, pressed && styles.debugButtonPressed]}
+        >
+          <Text style={styles.debugButtonText}>
+            TEST DETAIL · sel={selectedId ?? 'null'}
+          </Text>
+        </Pressable>
+      </View>
+    </BottomSheetModalProvider>
   );
 }
 
