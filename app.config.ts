@@ -112,6 +112,18 @@ const config: ExpoConfig = {
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
+    // Google Maps for Android needs an API key at the platform level
+    // (iOS uses Apple Maps via the default `react-native-maps` provider
+    // and needs no key). Expo writes this into AndroidManifest.xml at
+    // prebuild as `com.google.android.geo.API_KEY`. Stored as an EAS
+    // SECRET env var so it's never committed; cloud builds read it
+    // from EAS at build time, local prebuild reads it from `.env` if
+    // you set one up for emulator runs.
+    config: {
+      googleMaps: {
+        apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY,
+      },
+    },
   },
   web: {
     output: 'static',
