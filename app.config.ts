@@ -1,4 +1,65 @@
 import type { ExpoConfig } from 'expo/config';
+import {
+  withAndroidManifest,
+  withPlugins,
+  type ConfigPlugin,
+} from 'expo/config-plugins';
+
+/**
+ * Custom config plugin that injects the Google Maps API key directly into
+ * AndroidManifest.xml during prebuild's "apply mods" phase. We need this
+ * because EAS Build evaluates `app.config.ts` BEFORE it injects env vars
+ * into the process environment — so the canonical
+ * `android.config.googleMaps.apiKey` schema (further down in this file)
+ * sees `process.env.GOOGLE_MAPS_ANDROID_API_KEY` as undefined and silently
+ * drops the meta-data tag, leaving the APK without a key.
+ *
+ * `withAndroidManifest` runs LATER in the prebuild pipeline — at that
+ * point env vars are loaded — so reading the variable from inside this
+ * plugin's body gets the real value, which we then write into the
+ * manifest as `<meta-data android:name="com.google.android.geo.API_KEY"
+ * android:value="..." />` under `<application>`.
+ */
+const withGoogleMapsApiKey: ConfigPlugin = (cfg) =>
+  withAndroidManifest(cfg, (modCfg) => {
+    const apiKey = process.env.GOOGLE_MAPS_ANDROID_API_KEY;
+    if (!apiKey) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[zonnie] GOOGLE_MAPS_ANDROID_API_KEY undefined at withAndroidManifest time. ' +
+          'Maps will not work in the resulting APK.',
+      );
+      return modCfg;
+    }
+    const application = modCfg.modResults.manifest.application?.[0];
+    if (!application) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[zonnie] No <application> tag in AndroidManifest to inject Maps key into.',
+      );
+      return modCfg;
+    }
+    const metaDataList = application['meta-data'] ?? [];
+    const existing = metaDataList.find(
+      (md) => md.$?.['android:name'] === 'com.google.android.geo.API_KEY',
+    );
+    if (existing) {
+      existing.$['android:value'] = apiKey;
+    } else {
+      metaDataList.push({
+        $: {
+          'android:name': 'com.google.android.geo.API_KEY',
+          'android:value': apiKey,
+        },
+      });
+      application['meta-data'] = metaDataList;
+    }
+    // eslint-disable-next-line no-console
+    console.log(
+      `[zonnie] Injected Maps API key into manifest (${apiKey.length} chars, ends ...${apiKey.slice(-4)})`,
+    );
+    return modCfg;
+  });
 
 /**
  * Bundle identifier — Apple uses this to permanently identify the app on
@@ -115,13 +176,24 @@ const config: ExpoConfig = {
     // Google Maps for Android needs an API key at the platform level
     // (iOS uses Apple Maps via the default `react-native-maps` provider
     // and needs no key). Expo writes this into AndroidManifest.xml at
-    // prebuild as `com.google.android.geo.API_KEY`. Stored as an EAS
-    // SECRET env var so it's never committed; cloud builds read it
-    // from EAS at build time, local prebuild reads it from `.env` if
-    // you set one up for emulator runs.
+    // prebuild as `com.google.android.geo.API_KEY`. The key is stored
+    // as an EAS SENSITIVE env var so EAS Build can resolve it at the
+    // config-eval phase of prebuild (SECRET-visibility vars are only
+    // available at Gradle-run-time, too late for the manifest write).
     config: {
       googleMaps: {
-        apiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY,
+        // IIFE so we can log diagnostic info while still returning the
+        // string (or undefined) that Expo's schema expects.
+        apiKey: (() => {
+          const k = process.env.GOOGLE_MAPS_ANDROID_API_KEY;
+          // eslint-disable-next-line no-console
+          console.log(
+            `[app.config] GOOGLE_MAPS_ANDROID_API_KEY at config eval: ${
+              k ? `present (${k.length} chars, ends ...${k.slice(-4)})` : 'UNDEFINED'
+            }`,
+          );
+          return k;
+        })(),
       },
     },
   },
@@ -132,6 +204,13 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     'expo-font',
+    // `withGoogleMapsApiKey` (function plugin defined above) is applied
+    // separately at the bottom of this file via `withPlugins(...)` —
+    // ExpoConfig's `plugins` array type doesn't accept inline functions,
+    // only strings / tuples, but the runtime plugin system does. Applying
+    // it via withPlugins after the fact gives us the runtime behaviour
+    // without fighting the type checker.
+    //
     // Widget extension target. Reads `targets/zonnie-widget/expo-target.
     // config.js` to declare a WidgetKit extension during prebuild. The
     // Swift sources + Info.plist + entitlements in that directory are
@@ -177,4 +256,7 @@ const config: ExpoConfig = {
   },
 };
 
-export default config;
+// Apply function plugins after the typed config object — bypasses the
+// ExpoConfig.plugins array's overly-strict type that only accepts
+// strings/tuples. Runtime accepts function plugins fine.
+export default withPlugins(config, [withGoogleMapsApiKey]);
