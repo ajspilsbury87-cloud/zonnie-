@@ -1,15 +1,23 @@
-import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT, type Region } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT, type Region as MapRegion } from 'react-native-maps';
 import * as Location from 'expo-location';
 
+import { MapRegionPill } from '@/src/components/MapRegionPill';
+import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
+import type { Region } from '@/src/data/regions';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { haptics } from '@/src/lib/haptics';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { palette, radii, spacing } from '@/src/theme/tokens';
 
-const AMSTERDAM_REGION: Region = {
+// Above this latitude delta (~5km vertical span), the map view spans
+// more than one region so showing a specific region label would lie.
+// Pill falls back to "Amsterdam" in that case.
+const REGION_PILL_ZOOM_THRESHOLD = 0.04;
+
+const AMSTERDAM_REGION: MapRegion = {
   latitude: 52.3676,
   longitude: 4.9041,
   latitudeDelta: 0.05,
@@ -148,6 +156,40 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   const clearPanTo = useSelectionStore((s) => s.clearPanTo);
   const userLoc = useUserLocation();
 
+  // Tracks which macro-region the map is currently centred on, driving
+  // the floating region pill. Updates on gesture-settle (not during the
+  // pan itself) so the label doesn't flap as the user drags. Null when
+  // the user is zoomed out far enough that no single region dominates
+  // — the pill falls back to "Amsterdam" in that case.
+  const [visibleRegion, setVisibleRegion] = useState<Region | null>(null);
+
+  const handleRegionChangeComplete = useCallback((mapRegion: MapRegion) => {
+    if (mapRegion.latitudeDelta > REGION_PILL_ZOOM_THRESHOLD) {
+      setVisibleRegion(null);
+      return;
+    }
+    const r = regionForCoordinate(mapRegion.latitude, mapRegion.longitude);
+    setVisibleRegion((prev) => (prev === r ? prev : r));
+  }, []);
+
+  const handlePillPress = useCallback((region: Region | null) => {
+    if (region == null) {
+      // Zoomed-out view — recentre on the whole city.
+      mapRef.current?.animateToRegion(AMSTERDAM_REGION, 500);
+      return;
+    }
+    const c = centroidForRegion(region);
+    mapRef.current?.animateToRegion(
+      {
+        latitude: c.lat,
+        longitude: c.lng,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      },
+      500,
+    );
+  }, []);
+
   // Auto-recenter map on user once their location lands AND they're inside
   // the Amsterdam metro bbox. Tighter zoom (latDelta 0.02 ≈ 2km radius) so
   // they immediately see nearby pins instead of the whole city.
@@ -262,6 +304,9 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         style={styles.map}
         provider={PROVIDER_DEFAULT}
         initialRegion={AMSTERDAM_REGION}
+        // Fires after the user releases a pan/pinch gesture (not during).
+        // Drives the floating region pill so it doesn't churn during pan.
+        onRegionChangeComplete={handleRegionChangeComplete}
         // Show the standard blue dot only if we have permission and the
         // user is inside Amsterdam — otherwise the dot floats off-screen
         // and confuses people testing from elsewhere.
@@ -290,6 +335,13 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
           />
         ))}
       </MapView>
+      {/*
+        Floating region pill — sits top-centre, updates after each
+        pan-settle to tell the user which macro-region the map is
+        currently centred on. Tappable: tap to recenter on that
+        region's centroid (or on the whole city when zoomed out).
+      */}
+      <MapRegionPill region={visibleRegion} onPress={handlePillPress} />
       {/*
         Floating "locate me" button. We ship our own (rather than using
         MapView's `showsMyLocationButton`) because:
