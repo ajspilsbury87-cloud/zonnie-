@@ -1,39 +1,48 @@
 #!/usr/bin/env tsx
 /**
- * Import specialty / third-wave coffee shops from
- * `scripts/competitor-research/ect-amsterdam-venues.json` (scraped from
- * europeancoffeetrip.com — 59 hand-curated specialty venues with name,
- * address, lat, lng).
+ * Bulk-import specialty / third-wave coffee shops listed by European
+ * Coffee Trip (https://europeancoffeetrip.com/amsterdam/) into the
+ * Zonnie dataset.
  *
- * What this does, in order:
+ * Input: `scripts/competitor-research/coffee-shops-ect.json` — a flat
+ * JSON array of venue names extracted from the ECT page. Chains where
+ * the same brand has multiple Amsterdam locations are listed once per
+ * location with the location qualifier embedded in the name (e.g.
+ * "Cafecito Nassaukade" vs "Cafecito Overtoom") so Places API
+ * disambiguates them on lookup.
  *
- *   1. Read the scraped venues, normalise unicode escapes (the scrape
- *      keeps `é` literal in the JSON).
- *   2. For each venue, try to match against the existing 892 terraces
- *      by name+location. If matched → annotate the existing entry with
- *      `category: ['coffee']` (also keeping any existing categories the
- *      data file might carry from older imports).
- *   3. For unmatched venues, hit Places API (New) Text Search with the
- *      `outdoorSeating` field requested. Only candidates that come back
- *      with `outdoorSeating === true` pass — the brand promise of
- *      Zonnie is "find sunny terraces", and a coffee shop with no
- *      pavement seating doesn't qualify.
- *   4. Map lat/lng → area via nearest-existing-terrace lookup (same
- *      approach as `import-competitor-venues.ts` so we stay consistent
- *      with how the 22 area names are assigned).
- *   5. Default `facing: 'S'` (hand-edit later if we know better),
- *      `capacity: 'S'` (coffee shops are usually small), `vibe:
- *      "Specialty coffee"` (placeholder; can be enriched per-venue later).
- *   6. Write merged data back to `src/data/terraces.json`.
+ * For each name:
+ *
+ *   1. Query Google Places API (New) Text Search with the name biased
+ *      toward Amsterdam, requesting `outdoorSeating` + `servesCoffee`
+ *      atmosphere fields.
+ *   2. Skip anything Places marks as:
+ *        - businessStatus CLOSED_*
+ *        - outside the Amsterdam metro bbox
+ *        - `outdoorSeating: false` (Zonnie's brand promise is sunny
+ *          terraces; coffee shops with no outdoor seating don't
+ *          qualify). `outdoorSeating: null/undefined` is allowed
+ *          through — Places' data is incomplete and ECT's editorial
+ *          vetting is a stronger signal than Places' silence.
+ *   3. Dedupe in two passes:
+ *        a. Exact-placeId match against any existing terrace → annotate
+ *           that terrace with `category: ['coffee']` (preserves
+ *           hand-edits like vibe, capacity).
+ *        b. 60m proximity + name-overlap match → same annotation. Catches
+ *           the same venue added earlier under a different name
+ *           spelling (we have ~890 entries from a prior import; some
+ *           overlap is likely).
+ *      Otherwise → create new entry with `category: ['coffee']`.
+ *   4. Map lat/lng → area via nearest-existing-terrace lookup.
  *
  * Usage (PowerShell):
- *   $env:GOOGLE_MAPS_API_KEY = "AIza..."
- *   npm run import-coffee -- --dry-run        # preview, no writes
- *   npm run import-coffee -- --apply          # actually write
- *   npm run import-coffee -- --apply --skip-outdoor-check  # accept all (testing)
+ *   $env:GOOGLE_MAPS_API_KEY = "AIza..."   # Places API key, NOT the
+ *                                          # restricted Android-Maps key
+ *   npm run import-coffee-shops -- --dry-run        # preview, no writes
+ *   npm run import-coffee-shops -- --apply          # write terraces.json
  *
- * Cost: 59 venues × $0.025 (Places API New, Atmosphere SKU because we
- * want `outdoorSeating`) ≈ $1.50 total. Well inside the free tier.
+ * Cost: Atmosphere SKU (needed for outdoorSeating) ≈ $0.025/req.
+ *       ~60 candidates × $0.025 ≈ $1.50 total.
  */
 
 import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
@@ -41,20 +50,13 @@ import { join } from 'node:path';
 
 import type { Capacity, Facing, Terrace } from '../src/engines/types';
 
-interface ScrapedVenue {
-  name: string;
-  address: string;
-  lat: number;
-  lng: number;
-}
-
 const ROOT = process.cwd();
 const TERRACES_PATH = join(ROOT, 'src', 'data', 'terraces.json');
-const SCRAPED_PATH = join(
+const NAMES_PATH = join(
   ROOT,
   'scripts',
   'competitor-research',
-  'ect-amsterdam-venues.json',
+  'coffee-shops-ect.json',
 );
 const LOG_PATH = join(
   ROOT,
@@ -64,10 +66,8 @@ const LOG_PATH = join(
 );
 
 const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText';
-// Atmosphere SKU — `outdoorSeating` is not a Basic-SKU field. Note
-// this field-mask requires the new "Atmosphere" pricing tier; if a
-// project uses only Basic, the request returns the field as null
-// (which we treat conservatively as "outdoor seating not confirmed").
+// `outdoorSeating` requires the Atmosphere SKU (Pro/Enterprise tier);
+// projects on Basic only see it as undefined. Both cases handled below.
 const FIELD_MASK = [
   'places.id',
   'places.displayName',
@@ -80,28 +80,33 @@ const FIELD_MASK = [
 ].join(',');
 
 const AMSTERDAM_CENTER = { latitude: 52.3676, longitude: 4.9041 };
+const AMSTERDAM_BBOX = {
+  minLat: 52.27,
+  maxLat: 52.45,
+  minLng: 4.7,
+  maxLng: 5.05,
+};
 const PLACES_BIAS_RADIUS_M = 15_000;
 const REQUEST_DELAY_MS = 200;
 
-/** Match-existing-terrace tolerance — coffee shop chains (LOT61,
- *  Cafecito) deliberately have multiple distinct sites, so this needs
- *  to be tight enough to NOT collapse e.g. LOT61 Kinkerstraat into
- *  LOT61 Hendrik Jacobszstraat. 60m is the kerb-to-kerb distance for
- *  the same building, which is the case we want to dedupe. */
+/** Same-building proximity threshold — tight enough that distinct
+ *  chain locations on different streets are kept separate. */
 const DEDUPE_DISTANCE_M = 60;
 const DEDUPE_NAME_OVERLAP_THRESHOLD = 0.6;
 
 interface Args {
   apply: boolean;
-  skipOutdoorCheck: boolean;
+  /** Skip Places API entirely; treat all candidates as importable. For
+   *  schema-validation testing only — never use for real data. */
+  skipPlaces: boolean;
 }
 
 function parseArgs(argv: string[]): Args {
-  const a: Args = { apply: false, skipOutdoorCheck: false };
+  const a: Args = { apply: false, skipPlaces: false };
   for (const tok of argv) {
     if (tok === '--apply') a.apply = true;
     else if (tok === '--dry-run') a.apply = false;
-    else if (tok === '--skip-outdoor-check') a.skipOutdoorCheck = true;
+    else if (tok === '--skip-places') a.skipPlaces = true;
   }
   return a;
 }
@@ -130,8 +135,16 @@ function distMeters(
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-/** Normalize a venue name for fuzzy comparison: lowercase, strip
- *  punctuation/diacritics, collapse whitespace. */
+function isInAmsterdam(c: { lat: number; lng: number }): boolean {
+  return (
+    c.lat >= AMSTERDAM_BBOX.minLat &&
+    c.lat <= AMSTERDAM_BBOX.maxLat &&
+    c.lng >= AMSTERDAM_BBOX.minLng &&
+    c.lng <= AMSTERDAM_BBOX.maxLng
+  );
+}
+
+/** Strip diacritics/punctuation and collapse whitespace for name match. */
 function normName(s: string): string {
   return s
     .toLowerCase()
@@ -142,8 +155,7 @@ function normName(s: string): string {
     .trim();
 }
 
-/** Crude name-similarity score: fraction of `a`'s tokens that appear
- *  as substrings in `b`. Symmetric-ish for our use case. */
+/** Fraction of `a`'s tokens (3+ chars) that appear as substrings in `b`. */
 function nameOverlap(a: string, b: string): number {
   const aTokens = normName(a).split(' ').filter((t) => t.length >= 3);
   if (aTokens.length === 0) return 0;
@@ -153,22 +165,23 @@ function nameOverlap(a: string, b: string): number {
 }
 
 /** Find an existing terrace that probably represents the same venue:
- *  close in space AND with name overlap. Order: tighten distance to
- *  catch only same-building dedupes, not nearby-but-different shops. */
+ *  close in space AND with name overlap. Tight distance to avoid
+ *  collapsing chain locations on nearby streets. */
 function findExistingMatch(
-  candidate: ScrapedVenue,
+  ectName: string,
+  coord: { lat: number; lng: number },
   existing: readonly Terrace[],
 ): Terrace | null {
-  let best: { t: Terrace; d: number; sim: number } | null = null;
+  let best: { t: Terrace; d: number } | null = null;
   for (const t of existing) {
-    const d = distMeters(candidate, t);
+    const d = distMeters(coord, t);
     if (d > DEDUPE_DISTANCE_M) continue;
     const sim = Math.max(
-      nameOverlap(candidate.name, t.name),
-      nameOverlap(t.name, candidate.name),
+      nameOverlap(ectName, t.name),
+      nameOverlap(t.name, ectName),
     );
     if (sim < DEDUPE_NAME_OVERLAP_THRESHOLD) continue;
-    if (!best || d < best.d) best = { t, d, sim };
+    if (!best || d < best.d) best = { t, d };
   }
   return best?.t ?? null;
 }
@@ -194,13 +207,17 @@ async function placesSearch(
   query: string,
   apiKey: string,
 ): Promise<PlaceResult | null> {
+  // Appending "coffee Amsterdam" tightens the search to the right city
+  // and venue type — short/ambiguous names like "Skina", "Yusu", "LERA"
+  // get reliably resolved this way.
   const body = {
-    textQuery: query,
+    textQuery: `${query} coffee Amsterdam`,
     locationBias: {
       circle: { center: AMSTERDAM_CENTER, radius: PLACES_BIAS_RADIUS_M },
     },
     maxResultCount: 1,
     languageCode: 'en',
+    includedType: 'cafe',
   };
   const res = await fetch(PLACES_URL, {
     method: 'POST',
@@ -221,12 +238,13 @@ async function placesSearch(
 }
 
 interface Outcome {
-  scrapedName: string;
+  ectName: string;
   kind:
     | 'annotated_existing'
     | 'imported'
     | 'no_outdoor_seating'
     | 'no_places_match'
+    | 'out_of_bounds'
     | 'closed'
     | 'api_error';
   reason?: string;
@@ -238,181 +256,229 @@ interface Outcome {
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  if (!apiKey && !args.skipOutdoorCheck) {
+  if (!apiKey && !args.skipPlaces) {
     console.error('GOOGLE_MAPS_API_KEY not set in environment.');
-    console.error('Either:');
+    console.error('');
+    console.error('Set it with:');
     console.error('  $env:GOOGLE_MAPS_API_KEY = "AIza..."');
-    console.error('  npm run import-coffee -- --apply');
-    console.error('Or for testing only (skips outdoor-seating verification):');
-    console.error('  npm run import-coffee -- --apply --skip-outdoor-check');
+    console.error('');
+    console.error('Must be a key with Places API (New) enabled. NOT the');
+    console.error('GOOGLE_MAPS_ANDROID_API_KEY in EAS — that one is');
+    console.error('restricted to "Maps SDK for Android" only.');
     process.exit(1);
   }
 
   console.log(`Mode: ${args.apply ? 'APPLY (writes terraces.json)' : 'DRY-RUN'}`);
-  console.log(
-    `Outdoor-seating check: ${args.skipOutdoorCheck ? 'SKIPPED' : 'ENABLED'}`,
-  );
+  console.log(`Places API check: ${args.skipPlaces ? 'SKIPPED' : 'ENABLED'}`);
   console.log();
 
-  const rawScraped = readFileSync(SCRAPED_PATH, 'utf-8');
-  // The scrape keeps unicode escapes literal (e.g. "Caff\\u00e8nation").
-  // JSON.parse will resolve them back to "Caffènation".
-  const scraped = JSON.parse(rawScraped) as ScrapedVenue[];
-  console.log(`Loaded ${scraped.length} scraped venues`);
+  const names = JSON.parse(readFileSync(NAMES_PATH, 'utf-8')) as string[];
+  console.log(`Loaded ${names.length} ECT-listed coffee shops`);
 
-  const terracesRaw = readFileSync(TERRACES_PATH, 'utf-8');
-  const terraces = JSON.parse(terracesRaw) as Terrace[];
+  const terraces = JSON.parse(
+    readFileSync(TERRACES_PATH, 'utf-8'),
+  ) as Terrace[];
   console.log(`Loaded ${terraces.length} existing terraces`);
 
-  // Map of existing-id → new categories to assign (so we can annotate
-  // multiple matches in one pass without races).
-  const existingCategoryAdditions = new Map<number, Set<string>>();
-  // List of brand-new entries to append.
-  const newEntries: Terrace[] = [];
-  const outcomes: Outcome[] = [];
-
-  let nextId =
-    terraces.reduce((max, t) => (t.id > max ? t.id : max), 0) + 1;
-
-  for (const v of scraped) {
-    // Step 1: Existing-match dedup.
-    const match = findExistingMatch(v, terraces);
-    if (match) {
-      const set = existingCategoryAdditions.get(match.id) ?? new Set<string>();
-      set.add('coffee');
-      existingCategoryAdditions.set(match.id, set);
-      outcomes.push({
-        scrapedName: v.name,
-        kind: 'annotated_existing',
-        reason: `matched ${match.name} (id ${match.id})`,
-        existingId: match.id,
-      });
-      console.log(`  [annotate] "${v.name}" → existing #${match.id} "${match.name}"`);
-      continue;
-    }
-
-    // Step 2: Verify via Places API + outdoor seating.
-    if (!args.skipOutdoorCheck) {
-      try {
-        const result = await placesSearch(`${v.name} ${v.address} Amsterdam`, apiKey!);
-        if (!result || !result.location) {
-          outcomes.push({
-            scrapedName: v.name,
-            kind: 'no_places_match',
-            reason: 'Places returned 0',
-          });
-          console.log(`  [skip] "${v.name}" — no Places match`);
-          await sleep(REQUEST_DELAY_MS);
-          continue;
-        }
-        if (result.businessStatus && result.businessStatus !== 'OPERATIONAL') {
-          outcomes.push({
-            scrapedName: v.name,
-            kind: 'closed',
-            reason: result.businessStatus,
-            placeId: result.id,
-          });
-          console.log(
-            `  [skip] "${v.name}" — ${result.businessStatus}`,
-          );
-          await sleep(REQUEST_DELAY_MS);
-          continue;
-        }
-        // outdoorSeating may be:
-        //   true  — confirmed has outdoor seating → keep
-        //   false — confirmed indoor-only → skip
-        //   null  — Places doesn't know → keep (conservative; the
-        //           ECT curation already vouches for these venues)
-        if (result.outdoorSeating === false) {
-          outcomes.push({
-            scrapedName: v.name,
-            kind: 'no_outdoor_seating',
-            reason: 'Places marks indoor-only',
-            placeId: result.id,
-          });
-          console.log(
-            `  [skip] "${v.name}" — Places: outdoorSeating=false`,
-          );
-          await sleep(REQUEST_DELAY_MS);
-          continue;
-        }
-        // Use Places' canonical lat/lng (more accurate than scrape).
-        v.lat = result.location.latitude;
-        v.lng = result.location.longitude;
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        outcomes.push({
-          scrapedName: v.name,
-          kind: 'api_error',
-          reason: msg,
-        });
-        console.log(`  [error] "${v.name}" — ${msg}`);
-        await sleep(REQUEST_DELAY_MS);
-        continue;
-      }
-      await sleep(REQUEST_DELAY_MS);
-    }
-
-    // Step 3: Build the new Terrace.
-    const area = nearestAreaName(v, terraces);
-    const newTerrace: Terrace = {
-      id: nextId++,
-      name: v.name,
-      lat: v.lat,
-      lng: v.lng,
-      area,
-      facing: 'S' as Facing,
-      capacity: 'S' as Capacity,
-      vibe: 'Specialty coffee',
-      address: v.address,
-      verified: true,
-      coordSource: 'places_api',
-      verifiedAt: new Date().toISOString(),
-      category: ['coffee'],
-    };
-    newEntries.push(newTerrace);
-    outcomes.push({
-      scrapedName: v.name,
-      kind: 'imported',
-      newId: newTerrace.id,
-    });
-    console.log(`  [import] "${v.name}" → #${newTerrace.id} (${area})`);
+  const existingByPlaceId = new Map<string, Terrace>();
+  for (const t of terraces) {
+    if (t.placeId) existingByPlaceId.set(t.placeId, t);
   }
 
+  // Annotations to apply on existing entries (place_id or proximity
+  // matched) → category set additions.
+  const existingCategoryAdditions = new Map<number, Set<string>>();
+  const newEntries: Terrace[] = [];
+  const outcomes: Outcome[] = [];
+  let nextId = terraces.reduce((m, t) => (t.id > m ? t.id : m), 0) + 1;
+
+  for (const name of names) {
+    let outcome: Outcome;
+
+    try {
+      let placeResult: PlaceResult | null = null;
+      if (!args.skipPlaces) {
+        placeResult = await placesSearch(name, apiKey!);
+      }
+      if (!args.skipPlaces && (!placeResult || !placeResult.location)) {
+        outcome = { ectName: name, kind: 'no_places_match' };
+      } else if (
+        placeResult?.businessStatus &&
+        placeResult.businessStatus !== 'OPERATIONAL'
+      ) {
+        outcome = {
+          ectName: name,
+          kind: 'closed',
+          reason: placeResult.businessStatus,
+          placeId: placeResult.id,
+        };
+      } else if (placeResult?.outdoorSeating === false) {
+        // Confirmed indoor-only. Skip.
+        outcome = {
+          ectName: name,
+          kind: 'no_outdoor_seating',
+          reason: 'Places marks outdoorSeating=false',
+          placeId: placeResult.id,
+        };
+      } else if (
+        placeResult?.location &&
+        !isInAmsterdam({
+          lat: placeResult.location.latitude,
+          lng: placeResult.location.longitude,
+        })
+      ) {
+        outcome = {
+          ectName: name,
+          kind: 'out_of_bounds',
+          reason: placeResult.formattedAddress,
+          placeId: placeResult.id,
+        };
+      } else if (
+        placeResult?.id &&
+        existingByPlaceId.has(placeResult.id)
+      ) {
+        const ex = existingByPlaceId.get(placeResult.id)!;
+        const set =
+          existingCategoryAdditions.get(ex.id) ?? new Set<string>();
+        set.add('coffee');
+        existingCategoryAdditions.set(ex.id, set);
+        outcome = {
+          ectName: name,
+          kind: 'annotated_existing',
+          reason: `placeId ${placeResult.id} matches existing #${ex.id} "${ex.name}"`,
+          existingId: ex.id,
+          placeId: placeResult.id,
+        };
+      } else if (placeResult?.location) {
+        const coord = {
+          lat: placeResult.location.latitude,
+          lng: placeResult.location.longitude,
+        };
+        // Proximity-fallback dedupe (no shared placeId — older entry
+        // pre-dates the placeId backfill, or same brand close enough).
+        const proxMatch = findExistingMatch(name, coord, terraces);
+        if (proxMatch) {
+          const set =
+            existingCategoryAdditions.get(proxMatch.id) ?? new Set<string>();
+          set.add('coffee');
+          existingCategoryAdditions.set(proxMatch.id, set);
+          outcome = {
+            ectName: name,
+            kind: 'annotated_existing',
+            reason: `within ${DEDUPE_DISTANCE_M}m of "${proxMatch.name}" (id ${proxMatch.id})`,
+            existingId: proxMatch.id,
+            placeId: placeResult.id,
+          };
+        } else {
+          // New entry.
+          const newTerrace: Terrace = {
+            id: nextId++,
+            name: placeResult.displayName?.text ?? name,
+            lat: coord.lat,
+            lng: coord.lng,
+            area: nearestAreaName(coord, terraces),
+            facing: 'S' as Facing,
+            capacity: 'S' as Capacity,
+            vibe: 'Specialty coffee',
+            address: placeResult.formattedAddress ?? '',
+            verified: true,
+            coordSource: 'places_api',
+            verifiedAt: new Date().toISOString(),
+            placeId: placeResult.id,
+            category: ['coffee'],
+          };
+          newEntries.push(newTerrace);
+          // Mutate in-memory `terraces` for in-loop dedupe of the next
+          // candidate (won't be persisted unless --apply).
+          terraces.push(newTerrace);
+          if (newTerrace.placeId) {
+            existingByPlaceId.set(newTerrace.placeId, newTerrace);
+          }
+          outcome = {
+            ectName: name,
+            kind: 'imported',
+            newId: newTerrace.id,
+            placeId: placeResult.id,
+          };
+        }
+      } else {
+        // --skip-places path: fabricate a minimal entry with no coords.
+        // For schema-validation testing ONLY; never use for real data.
+        const newTerrace: Terrace = {
+          id: nextId++,
+          name,
+          lat: AMSTERDAM_CENTER.latitude,
+          lng: AMSTERDAM_CENTER.longitude,
+          area: 'Centrum',
+          facing: 'S' as Facing,
+          capacity: 'S' as Capacity,
+          vibe: 'Specialty coffee',
+          address: '',
+          verified: false,
+          coordSource: 'estimated',
+          category: ['coffee'],
+        };
+        newEntries.push(newTerrace);
+        terraces.push(newTerrace);
+        outcome = { ectName: name, kind: 'imported', newId: newTerrace.id };
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      outcome = { ectName: name, kind: 'api_error', reason: msg };
+    }
+
+    outcomes.push(outcome);
+    const dot =
+      outcome.kind === 'imported'
+        ? '✓'
+        : outcome.kind === 'annotated_existing'
+          ? '·'
+          : outcome.kind === 'no_outdoor_seating'
+            ? '∅'
+            : outcome.kind === 'no_places_match'
+              ? '?'
+              : 'x';
+    process.stdout.write(dot);
+
+    if (!args.skipPlaces) await sleep(REQUEST_DELAY_MS);
+  }
   console.log();
+
+  // Tally summary.
+  console.log('\n— Summary —');
   const tally = outcomes.reduce<Record<string, number>>((m, o) => {
     m[o.kind] = (m[o.kind] ?? 0) + 1;
     return m;
   }, {});
-  console.log('Summary:');
   for (const [k, n] of Object.entries(tally)) {
-    console.log(`  ${k}: ${n}`);
+    console.log(`  ${k.padEnd(22)} ${n}`);
   }
 
   if (!args.apply) {
     console.log('\n(dry run — no files written)');
+    console.log('Re-run with --apply to write the changes.');
     return;
   }
 
-  // Apply category annotations to existing entries.
-  const merged: Terrace[] = terraces.map((t) => {
+  // Re-read the file to avoid persisting the in-loop dedupe scratch.
+  const original = JSON.parse(
+    readFileSync(TERRACES_PATH, 'utf-8'),
+  ) as Terrace[];
+  const merged: Terrace[] = original.map((t) => {
     const adds = existingCategoryAdditions.get(t.id);
     if (!adds) return t;
     const existingCats = new Set<string>(t.category ?? []);
     for (const c of adds) existingCats.add(c);
     return { ...t, category: Array.from(existingCats) };
   });
-
-  // Append new entries.
   for (const e of newEntries) merged.push(e);
 
   writeFileSync(TERRACES_PATH, JSON.stringify(merged, null, 2) + '\n');
   console.log(
-    `\nWrote ${merged.length} terraces to ${TERRACES_PATH} (` +
-      `+${newEntries.length} new, ${existingCategoryAdditions.size} annotated)`,
+    `\nWrote ${merged.length} terraces to ${TERRACES_PATH} ` +
+      `(+${newEntries.length} new, ${existingCategoryAdditions.size} annotated)`,
   );
 
-  // Append to JSONL log for incremental review.
   const stamp = new Date().toISOString();
   for (const o of outcomes) {
     appendFileSync(LOG_PATH, JSON.stringify({ stamp, ...o }) + '\n');
