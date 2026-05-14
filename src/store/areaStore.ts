@@ -2,26 +2,15 @@ import { create } from 'zustand';
 
 import type { Region } from '@/src/data/regions';
 import type { VenueCategory } from '@/src/data/categories';
-import { useTimeStore } from '@/src/store/timeStore';
 
-/**
- * Category-aware default visit window. When the user toggles a venue
- * category ON, we shift the time scrubber to that category's natural
- * hours — coffee shops live mornings, bars and restaurants live
- * afternoons/evenings. This addresses user-test feedback that coffee
- * shops appeared to rank "badly" at the default 12:00-17:00 window
- * (their morning peak was already over). The user can still scrub
- * manually after a category toggle; we only nudge the default once
- * per ON toggle.
- *
- * Same defaults for bar + restaurant — they share the afternoon
- * pattern. Coffee gets the morning slot.
- */
-const CATEGORY_DEFAULT_WINDOW: Record<VenueCategory, readonly [number, number]> = {
-  bar: [12, 17],
-  restaurant: [12, 17],
-  coffee: [9, 12],
-};
+// v1.1.3: removed the category-aware time-window auto-shift. v1.1
+// added it (Coffee → 9-12, Bar/Restaurant → 12-17) based on early
+// user-test feedback. Real users hated that toggling a chip yanked
+// the time scrubber away from "now" — most people open the app
+// thinking "where can I sit NOW?" and a Coffee tap moving them to
+// 9 AM (after lunch) felt broken. The single-hour "live sun" default
+// is more intuitive. Users who want to plan for a different time
+// scrub the slider manually, same as before this feature existed.
 
 interface AreaState {
   /**
@@ -74,17 +63,8 @@ export const useAreaStore = create<AreaState>((set, get) => ({
   toggleCategory: (cat) =>
     set((s) => {
       const next = new Set(s.selectedCategories);
-      const wasOn = next.has(cat);
-      if (wasOn) next.delete(cat);
+      if (next.has(cat)) next.delete(cat);
       else next.add(cat);
-      // When the user adds (not removes) a category, nudge the visit
-      // window to that category's natural hours. Cross-store call:
-      // safe because both stores are top-level singletons, and the
-      // user is allowed to override with the time scrubber after.
-      if (!wasOn) {
-        const [from, to] = CATEGORY_DEFAULT_WINDOW[cat];
-        useTimeStore.getState().setRange(from, to);
-      }
       return { selectedCategories: next };
     }),
   setAll: (regions) => set({ selectedRegions: new Set(regions) }),
