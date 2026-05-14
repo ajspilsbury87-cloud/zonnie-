@@ -13920,18 +13920,17 @@
   },
   {
     "id": 1308,
-    "name": "Coffee and cakes Amsterdam | Tea | Matcha | Chai | WIFI | Muffin",
-    "lat": 52.369185300000005,
-    "lng": 4.8882686,
-    "area": "Centrum",
+    "name": "Catcha",
+    "lat": 52.3528,
+    "lng": 4.8592,
+    "area": "Stadionbuurt",
     "facing": "S",
     "capacity": "S",
     "vibe": "Specialty coffee",
-    "address": "Singel 369, 1012 WL Amsterdam, Netherlands",
+    "address": "Amstelveenseweg 133, 1075 VX Amsterdam",
     "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T14:15:40.596Z",
-    "placeId": "ChIJq8b93QgJxkcRUECKYaqW1CQ",
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-14T14:41:53.493Z",
     "category": [
       "coffee"
     ]
