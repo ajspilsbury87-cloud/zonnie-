@@ -6,114 +6,137 @@
 <title>Zonnie — Support</title>
 <meta name="description" content="Help and FAQ for Zonnie, Amsterdam's terrace sun tracker.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /*
+   * Refreshed for v1.1 to match the in-app sand/cream/orange palette
+   * (src/theme/tokens.ts). Same content + layout, lighter mood, paired
+   * visually with index.html.
+   */
   :root {
-    --sun: #F5A623;
-    --sky: #080F1E;
-    --sky-card: rgba(255,255,255,0.045);
-    --text: #F2EEE8;
-    --muted: #7A7872;
-    --border: rgba(245,166,35,0.18);
+    --sand:        #FFF8F0;
+    --sand-deep:   #F4ECE0;
+    --cream:       #FFE5C2;
+    --peach:       #FBA85A;
+    --burnt:       #D9633E;
+    --terracotta:  #B14222;
+    --cocoa:       #7A2E14;
+    --ink:         #2A1F15;
+    --ink-soft:    #5A4A38;
+    --mist:        #E8DCC8;
+    --border:      rgba(217,99,62,0.18);
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: var(--sky);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
+    background: var(--sand);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
     min-height: 100vh;
-    line-height: 1.75;
+    line-height: 1.7;
   }
   body::before {
-    content:'';
-    position:fixed; inset:0;
-    background: radial-gradient(ellipse 90% 45% at 50% -5%, rgba(245,166,35,0.10) 0%, transparent 60%);
-    pointer-events:none; z-index:0;
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 45% at 50% -5%, rgba(232,156,90,0.22) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(244,236,224,0.7) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
   }
   .wrap {
-    position:relative; z-index:1;
-    max-width:680px; margin:0 auto;
-    padding:64px 24px 96px;
+    position: relative; z-index: 1;
+    max-width: 720px; margin: 0 auto;
+    padding: 64px 24px 96px;
   }
+
   /* Header */
-  .hdr { text-align:center; margin-bottom:56px; }
+  .hdr { text-align: center; margin-bottom: 56px; }
   .icon {
-    display:inline-flex; align-items:center; justify-content:center;
-    width:52px; height:52px; border-radius:14px;
-    background:linear-gradient(135deg,#F5A623,#D4861A);
-    font-size:26px; margin-bottom:18px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--peach), var(--burnt));
+    font-size: 28px; margin-bottom: 18px;
+    box-shadow: 0 6px 18px rgba(217,99,62,0.28);
   }
   h1 {
-    font-family:'DM Serif Display',serif;
-    font-size:clamp(1.9rem,5vw,2.8rem);
-    letter-spacing:-0.02em; margin-bottom:10px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    letter-spacing: -0.02em; margin-bottom: 10px;
+    color: var(--ink);
   }
-  .sub { color:var(--muted); font-size:0.95rem; }
+  .sub { color: var(--ink-soft); font-size: 0.98rem; }
 
   /* Section label */
   .label {
-    font-size:0.68rem; letter-spacing:0.13em;
-    text-transform:uppercase; color:var(--sun);
-    font-weight:500; margin-bottom:18px;
+    font-size: 0.72rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--burnt);
+    font-weight: 600; margin-bottom: 18px;
   }
 
   /* FAQ */
-  .faq { display:flex; flex-direction:column; gap:6px; margin-bottom:52px; }
+  .faq { display: flex; flex-direction: column; gap: 8px; margin-bottom: 52px; }
   details {
-    background:var(--sky-card);
-    border:1px solid var(--border);
-    border-radius:12px; overflow:hidden;
-    transition:background 0.2s;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+    transition: background 0.2s, border-color 0.2s;
   }
-  details[open] { background:rgba(245,166,35,0.055); }
+  details[open] {
+    background: rgba(255,255,255,0.95);
+    border-color: var(--burnt);
+  }
   summary {
-    padding:17px 20px;
-    cursor:pointer; font-size:0.93rem; font-weight:400;
-    list-style:none; display:flex;
-    justify-content:space-between; align-items:center; gap:14px;
+    padding: 17px 22px;
+    cursor: pointer; font-size: 0.95rem; font-weight: 500;
+    list-style: none; display: flex;
+    justify-content: space-between; align-items: center; gap: 14px;
+    color: var(--ink);
   }
-  summary::-webkit-details-marker { display:none; }
+  summary::-webkit-details-marker { display: none; }
   summary::after {
-    content:'+'; color:var(--sun);
-    font-size:1.15rem; font-weight:300; flex-shrink:0;
-    transition:transform 0.2s;
+    content: '+'; color: var(--burnt);
+    font-size: 1.25rem; font-weight: 400; flex-shrink: 0;
+    transition: transform 0.2s;
   }
-  details[open] summary::after { transform:rotate(45deg); }
+  details[open] summary::after { transform: rotate(45deg); }
   .ans {
-    padding:0 20px 17px;
-    color:var(--muted); font-size:0.88rem; line-height:1.78;
+    padding: 0 22px 18px;
+    color: var(--ink-soft); font-size: 0.92rem; line-height: 1.7;
   }
-  .ans a { color:var(--sun); text-decoration:none; }
-  .ans a:hover { text-decoration:underline; }
+  .ans a { color: var(--burnt); text-decoration: underline; text-underline-offset: 3px; font-weight: 500; }
+  .ans a:hover { color: var(--terracotta); }
+  .ans strong { color: var(--ink); font-weight: 600; }
 
   /* Contact */
   .cta {
-    background:var(--sky-card);
-    border:1px solid var(--border);
-    border-radius:16px; padding:36px;
-    text-align:center; margin-bottom:44px;
+    background: rgba(255,255,255,0.65);
+    border: 1px solid var(--border);
+    border-radius: 18px; padding: 36px;
+    text-align: center; margin-bottom: 44px;
   }
   .cta h2 {
-    font-family:'DM Serif Display',serif;
-    font-size:1.45rem; margin-bottom:9px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.5rem; margin-bottom: 10px;
+    color: var(--ink);
   }
-  .cta p { color:var(--muted); font-size:0.88rem; margin-bottom:22px; }
+  .cta p { color: var(--ink-soft); font-size: 0.92rem; margin-bottom: 24px; }
   .btn {
-    display:inline-block;
-    background:var(--sun); color:#080F1E;
-    font-family:'DM Sans',sans-serif; font-weight:500;
-    font-size:0.88rem; padding:11px 26px;
-    border-radius:100px; text-decoration:none;
-    letter-spacing:0.01em;
-    transition:opacity 0.18s, transform 0.14s;
+    display: inline-block;
+    background: var(--ink); color: var(--cream);
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    font-size: 0.92rem; padding: 12px 28px;
+    border-radius: 100px; text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: background 0.18s, transform 0.14s;
   }
-  .btn:hover { opacity:0.86; transform:translateY(-1px); }
+  .btn:hover { background: var(--cocoa); transform: translateY(-1px); }
 
   /* Footer */
-  footer { text-align:center; color:var(--muted); font-size:0.78rem; }
-  footer a { color:var(--muted); text-decoration:underline; text-underline-offset:3px; }
-  footer a:hover { color:var(--text); }
+  footer { text-align: center; color: var(--ink-soft); font-size: 0.82rem; padding-top: 18px; border-top: 1px solid var(--mist); }
+  footer a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; font-weight: 500; }
+  footer a:hover { color: var(--burnt); }
 </style>
 </head>
 <body>
@@ -131,12 +154,12 @@
 
     <details>
       <summary>How does the sun score work?</summary>
-      <div class="ans">Each terrace gets a score from 0–100, calculated from three things: the real position of the sun in Amsterdam's sky for the selected date and time, whether nearby buildings are casting a shadow on that spot, and current cloud cover. A sun-facing terrace with no obstructions on a clear day scores 100.</div>
+      <div class="ans">Each terrace gets a score from 0–100, calculated from three things: the real position of the sun in Amsterdam's sky for the selected date and time, whether nearby buildings are casting a shadow on that spot (using LIDAR-derived building heights from the Dutch 3D BAG open dataset), and current cloud cover. A sun-facing terrace with no obstructions on a clear day scores 100.</div>
     </details>
 
     <details>
       <summary>How accurate are the shadow predictions?</summary>
-      <div class="ans">Directional accuracy is high — the app correctly identifies which side of a street is sunny. Building height data is currently estimated by neighbourhood density, so shadow lengths are approximate. We're integrating Amsterdam's 3D BAG dataset which will make heights precise and push accuracy well above 90%.</div>
+      <div class="ans">Directional accuracy is high — the app correctly identifies which side of a street is sunny. Building heights now come from Amsterdam's <a href="https://3dbag.nl" target="_blank" rel="noopener">3D BAG</a> open dataset, so shadow lengths are precise. Edge cases (narrow streets, unusual building shapes, awnings, trees) can still throw off individual scores — please report any that look wrong.</div>
     </details>
 
     <details>
@@ -146,12 +169,12 @@
 
     <details>
       <summary>Where does the weather data come from?</summary>
-      <div class="ans">Live cloud cover comes from <a href="https://open-meteo.com" target="_blank">Open-Meteo</a>, a free and open meteorological API. Only Amsterdam's city-centre coordinates and the current date are sent — nothing that identifies you.</div>
+      <div class="ans">Live cloud cover comes from <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>, a free and open meteorological API. Only the terrace's coordinates and the current date are sent — nothing that identifies you.</div>
     </details>
 
     <details>
       <summary>My favourite terrace is missing. Can I add it?</summary>
-      <div class="ans">Yes! Email us the terrace name and address at <a href="mailto:a.j.spilsbury87@gmail.com">a.j.spilsbury87@gmail.com</a> and we'll add it to the next update. The app currently covers ~500 venues and we're expanding steadily.</div>
+      <div class="ans">Yes! Email us the terrace name and address at <a href="mailto:a.j.spilsbury87@gmail.com">a.j.spilsbury87@gmail.com</a> and we'll add it to the next update. The app currently covers 900+ venues — bars, restaurants, and specialty coffee shops — and we're expanding steadily.</div>
     </details>
 
     <details>
@@ -166,7 +189,12 @@
 
     <details>
       <summary>Is there an Android version?</summary>
-      <div class="ans">Not yet. Zonnie is currently iOS only. An Android version is on the roadmap. In the meantime the web app works well in any mobile browser.</div>
+      <div class="ans">Yes — Zonnie is available on both <a href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">iOS</a> and <a href="https://play.google.com/store/apps/details?id=com.spilsbury.zonnie" target="_blank" rel="noopener">Android</a>. Both versions share the same data and features (the iOS home-screen widget is iOS-only).</div>
+    </details>
+
+    <details>
+      <summary>What's a specialty coffee shop vs a "café"?</summary>
+      <div class="ans">In Amsterdam "café" usually means a <em>bruine kroeg</em> — a brown bar serving beer. Specialty coffee shops are different: third-wave roasters and brew bars (Lot Sixty One, White Label Coffee, Bocca, Toki, etc). Zonnie tags them separately under the ☕ Coffee filter chip so you can find one without wading through bars.</div>
     </details>
 
   </div>
@@ -178,7 +206,7 @@
   </div>
 
   <footer>
-    <a href="PRIVACY-POLICY.md">Privacy Policy</a> &nbsp;·&nbsp; © 2026 Zonnie &nbsp;·&nbsp; Made in Amsterdam ☀️
+    <a href="PRIVACY-POLICY.md">Privacy Policy</a> &nbsp;·&nbsp; <a href="index.html">Home</a> &nbsp;·&nbsp; © 2026 Andy Spilsbury &nbsp;·&nbsp; Made in Amsterdam ☀️
   </footer>
 
 </div>

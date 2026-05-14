@@ -53,9 +53,12 @@ what's necessary, and **never anything that identifies you**:
   the place ID and your IP address (the latter unavoidable in any HTTP
   request); Google's privacy policy:
   <https://policies.google.com/privacy>
-- **Apple Maps tile servers** — your map view sends standard map-tile
-  requests to Apple, the same as any iOS app using MapKit. Apple's
-  privacy policy: <https://www.apple.com/legal/privacy/>
+- **Map tile servers** — your map view sends standard map-tile
+  requests to either Apple Maps (on iOS, via MapKit) or Google Maps
+  (on Android, via the Maps SDK). Each platform's own privacy policy
+  governs that traffic, which Zonnie does not see or process.
+  - Apple's policy: <https://www.apple.com/legal/privacy/>
+  - Google's policy: <https://policies.google.com/privacy>
 
 We do **not** send your location, favourites, in-app activity, device
 ID, or any user-identifying data to any of these services.
@@ -72,17 +75,21 @@ ID, or any user-identifying data to any of these services.
 
 ## Crash reports and diagnostic data
 
-Apple's standard crash-reporting system (which only reports back to
-Apple, never to us, and only with your permission via Settings →
-Privacy → Analytics) is the only diagnostic channel. We may add a
-crash-reporting tool like Sentry in the future; if we do, we'll
-update this policy and disclose it in the app.
+The only diagnostic channel is your platform's standard
+crash-reporting system — Apple's on iOS (which only reports back to
+Apple, with your permission via Settings → Privacy → Analytics) or
+Google Play's on Android (likewise, with your permission via
+Settings → Google → Usage & diagnostics). Zonnie itself does not
+receive or read these reports. We may add an in-app crash-reporting
+tool like Sentry in the future; if we do, we'll update this policy
+and disclose it in the app before any reports are sent.
 
 ## Children
 
-The app is not directed at children under 13. The App Store age
-rating is 4+ because the content is suitable for any age, but we
-do not knowingly collect data from anyone (per the sections above).
+The app is not directed at children under 13. The App Store and
+Google Play age ratings are both 4+ / Everyone — the content is
+suitable for any age — but we do not knowingly collect data from
+anyone in any age group (per the sections above).
 
 ## Your rights
 
