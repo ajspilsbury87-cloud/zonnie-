@@ -69,4 +69,35 @@ export async function markHintSeen(name: HintName): Promise<void> {
   } catch {
     // See note above.
   }
+  // Notify any other in-flight useHint() instances so sequenced hints
+  // (e.g. "show me after pin-tap is dismissed") can re-check and
+  // appear without waiting for a remount.
+  notifyHintChange();
+}
+
+// ── Hint-change pubsub ──────────────────────────────────────────────────────
+//
+// `useHint` instances that are gated on a previous hint (`after: 'pin-tap'`)
+// need to know when that previous hint dismisses, so they can transition
+// from hidden → shown without a remount. We expose a tiny in-memory
+// subscriber set; markHintSeen calls notifyHintChange() at the end.
+//
+// Local to the JS bundle — no AsyncStorage round-trip on each notify.
+
+type HintChangeListener = () => void;
+const hintChangeListeners = new Set<HintChangeListener>();
+
+export function subscribeHintChange(listener: HintChangeListener): () => void {
+  hintChangeListeners.add(listener);
+  return () => hintChangeListeners.delete(listener);
+}
+
+function notifyHintChange(): void {
+  for (const listener of hintChangeListeners) {
+    try {
+      listener();
+    } catch {
+      // Listener exceptions shouldn't break other subscribers.
+    }
+  }
 }

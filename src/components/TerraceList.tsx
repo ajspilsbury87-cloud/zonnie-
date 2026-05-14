@@ -15,6 +15,8 @@ import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { scoreLabel } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
+import { HintBubble } from '@/src/onboarding/HintBubble';
+import { useHint } from '@/src/onboarding/useHint';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
@@ -76,6 +78,13 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   const clearAreas = useAreaStore((s) => s.clear);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const listRef = useRef<BottomSheetFlatListMethods>(null);
+
+  // Onboarding hints — show sequentially so they don't pile up. Each
+  // gates on the previous: time-scrubber waits for pin-tap to be
+  // dismissed; filters waits for time-scrubber to be dismissed. All
+  // auto-dismiss after 10s, or on tap.
+  const [showTimeHint, dismissTimeHint] = useHint('time-scrubber', { after: 'pin-tap' });
+  const [showFilterHint, dismissFilterHint] = useHint('filters', { after: 'time-scrubber' });
 
   // Context-aware empty-state messaging — the user has hit "no results"
   // for a different reason depending on which filter is active. A
@@ -203,10 +212,27 @@ export function TerraceList({ onSelect }: TerraceListProps) {
           <DatePicker />
           <TimeRangeQuickPicker />
           <WeatherStrip />
+          {/*
+            Onboarding nudges, rendered inline (not absolute-positioned)
+            so they flow with the list rather than overlay it. Each
+            hint sits just BELOW the section it's pointing at — natural
+            reading order: "here's the thing", "here's what you can do
+            with it".
+          */}
+          {showTimeHint ? (
+            <HintBubble onDismiss={dismissTimeHint} style={styles.inlineHint}>
+              ⏱ Drag the time below to plan ahead
+            </HintBubble>
+          ) : null}
           <TimeRangeFineTune />
           <SearchBox />
           <NeighborhoodFilter />
           <VenueTypeFilter />
+          {showFilterHint ? (
+            <HintBubble onDismiss={dismissFilterHint} style={styles.inlineHint}>
+              ⛛ Combine filters to narrow down
+            </HintBubble>
+          ) : null}
         </View>
       }
       ListEmptyComponent={
@@ -317,5 +343,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemibold,
     fontSize: fontSizes.sm,
     color: palette.white,
+  },
+  // Inline hint placement: override HintBubble's default `absolute`
+  // positioning so the bubble flows with the list header rather than
+  // floating over it.
+  inlineHint: {
+    position: 'relative',
+    alignSelf: 'center',
+    marginVertical: spacing.sm,
   },
 });

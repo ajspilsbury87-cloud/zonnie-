@@ -19,27 +19,63 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   markHintSeen,
   shouldShowHint,
+  subscribeHintChange,
   type HintName,
 } from '@/src/onboarding/state';
 
 /** Auto-dismiss the hint after 10s of inactivity. */
 const AUTO_DISMISS_MS = 10_000;
 
-export function useHint(name: HintName): [shown: boolean, dismiss: () => void] {
+interface UseHintOptions {
+  /**
+   * Optional gate: this hint only shows once `after` has been dismissed.
+   * Used to stagger multiple hints so they don't pile up on screen at
+   * the same time. e.g. `useHint('time-scrubber', { after: 'pin-tap' })`
+   * keeps the time-scrubber hint hidden until the user has dismissed
+   * the pin-tap hint (or it auto-timed out).
+   */
+  after?: HintName;
+}
+
+export function useHint(
+  name: HintName,
+  options?: UseHintOptions,
+): [shown: boolean, dismiss: () => void] {
   // null = "haven't checked AsyncStorage yet" → render nothing to
   // avoid a flicker between "shown briefly" and "no, you've seen this".
   const [shown, setShown] = useState<boolean | null>(null);
+  const after = options?.after;
 
   useEffect(() => {
     let cancelled = false;
-    void (async () => {
+    const recheck = async () => {
       const should = await shouldShowHint(name);
-      if (!cancelled) setShown(should);
-    })();
+      if (!should) {
+        if (!cancelled) setShown(false);
+        return;
+      }
+      // Sequencing gate: hold this hint until `after` is dismissed.
+      if (after != null) {
+        const previousStillVisible = await shouldShowHint(after);
+        if (previousStillVisible) {
+          if (!cancelled) setShown(false);
+          return;
+        }
+      }
+      if (!cancelled) setShown(true);
+    };
+    void recheck();
+    // Re-evaluate when any hint changes — necessary for sequenced
+    // hints to transition from hidden → shown the moment their
+    // predecessor dismisses.
+    const unsubscribe = subscribeHintChange(() => {
+      void recheck();
+    });
     return () => {
       cancelled = true;
+      unsubscribe();
     };
-  }, [name]);
+  }, [name, after]);
 
   const dismiss = useCallback(() => {
     setShown(false);
