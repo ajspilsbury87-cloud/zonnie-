@@ -1008,7 +1008,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:36:49.740Z",
-    "placeId": "ChIJZTMH4owJxkcReXGn3msj0nU"
+    "placeId": "ChIJZTMH4owJxkcReXGn3msj0nU",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 74,
@@ -1320,7 +1323,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:36:57.468Z",
-    "placeId": "ChIJd2X8c50JxkcRNsQhx9GbK18"
+    "placeId": "ChIJd2X8c50JxkcRNsQhx9GbK18",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 99,
@@ -1654,7 +1660,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:37:05.874Z",
-    "placeId": "ChIJEfmjb-AJxkcRqdnhOTbEetc"
+    "placeId": "ChIJEfmjb-AJxkcRqdnhOTbEetc",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 124,
@@ -4350,7 +4359,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:45:05.508Z",
-    "placeId": "ChIJW11C8LgJxkcR-X_xv39yjU0"
+    "placeId": "ChIJW11C8LgJxkcR-X_xv39yjU0",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 454,
@@ -6145,7 +6157,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:09:01.830Z",
-    "placeId": "ChIJUzDHjFgJxkcRuO5hoNuwRCQ"
+    "placeId": "ChIJUzDHjFgJxkcRuO5hoNuwRCQ",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 610,
@@ -7240,7 +7255,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:10:27.112Z",
-    "placeId": "ChIJZ161d9UJxkcRHO367_PpTH8"
+    "placeId": "ChIJZ161d9UJxkcRHO367_PpTH8",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 771,
@@ -7915,7 +7933,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:10:52.607Z",
-    "placeId": "ChIJdaxueZcOxkcRcUt50sAGMIk"
+    "placeId": "ChIJdaxueZcOxkcRcUt50sAGMIk",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 820,
@@ -12693,7 +12714,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-05T06:39:44.054Z",
-    "placeId": "ChIJ8z35rcEJxkcRDo_fje2MgiY"
+    "placeId": "ChIJ8z35rcEJxkcRDo_fje2MgiY",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 1237,
@@ -13116,5 +13140,761 @@
     "verified": true,
     "coordSource": "manual",
     "verifiedAt": "2026-05-09T06:25:39.224Z"
+  },
+  {
+    "id": 1265,
+    "name": "Dak Showroom by Dak Coffee Roasters",
+    "lat": 52.3684127,
+    "lng": 4.867310499999999,
+    "area": "De Baarsjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Bellamyplein 16H, 1053 AS Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:09.345Z",
+    "placeId": "ChIJgyZ9gPHjxUcRpA-uZn7imIw",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1266,
+    "name": "YUSU",
+    "lat": 52.3598821,
+    "lng": 4.9110865,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Andreas Bonnstraat 2, 1091 AX Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:09.771Z",
+    "placeId": "ChIJqxEvatcJxkcRXNT_dO3VtGw",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1267,
+    "name": "Caffènation Amsterdam",
+    "lat": 52.354718,
+    "lng": 4.8493189999999995,
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Warmondstraat 120, 1058 KZ Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:10.514Z",
+    "placeId": "ChIJ1QrPqRvixUcRD5U-WFCujbE",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1268,
+    "name": "Uncommon Cafe",
+    "lat": 52.3632851,
+    "lng": 4.8751823,
+    "area": "Zuid",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Eerste Constantijn Huygensstraat 63H, 1054 BT Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:10.895Z",
+    "placeId": "ChIJ_aqZcKgJxkcRg5iFALtxj5I",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1269,
+    "name": "Screaming Beans Utrechtsestraat",
+    "lat": 52.3633046,
+    "lng": 4.8986994,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Utrechtsestraat 75, 1017 VJ Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:11.253Z",
+    "placeId": "ChIJMb5MAo8JxkcRrpESbhyqkDE",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1270,
+    "name": "Elevate Coffee Lab",
+    "lat": 52.351573200000004,
+    "lng": 4.8945191999999995,
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Van der Helstplein 10H, 1072 PH Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:11.657Z",
+    "placeId": "ChIJ_ZnRTfIJxkcRmFpQxvpnimc",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1271,
+    "name": "Friedhats FUKU Cafe",
+    "lat": 52.3812737,
+    "lng": 4.855158100000001,
+    "area": "Spaarndammer",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Bos en Lommerweg 136 HS, 1055 ED Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:12.608Z",
+    "placeId": "ChIJxdi9WYbjxUcRBmM4a_wJuHI",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1272,
+    "name": "Rum Baba",
+    "lat": 52.3691337,
+    "lng": 4.8787234,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Elandsgracht 134, 1016 VC Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:13.040Z",
+    "placeId": "ChIJSQdRlmMJxkcRoWwD7y12alU",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1273,
+    "name": "Bocca Coffee",
+    "lat": 52.3643905,
+    "lng": 4.8868164,
+    "area": "De Baarsjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Kerkstraat 96H, 1017 GP Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:13.495Z",
+    "placeId": "ChIJ18bKQdwJxkcReqmMFkEeavw",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1274,
+    "name": "taal.coffee",
+    "lat": 52.3600735,
+    "lng": 4.8581158,
+    "area": "Bos en Lommer",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "J.J. Cremerplein 34H, 1054 TL Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:13.869Z",
+    "placeId": "ChIJeZ_S83vjxUcRRDgeQZ41kSM",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1275,
+    "name": "Badeta Koffiebranders Watergraafsmeer",
+    "lat": 52.3505682,
+    "lng": 4.9385593,
+    "area": "Indische Buurt",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Helmholtzstraat 37, 1098 LD Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:14.787Z",
+    "placeId": "ChIJQz5V1WsJxkcRuv1uv4BQLjI",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1276,
+    "name": "Clapham Specialty Coffee",
+    "lat": 52.3562255,
+    "lng": 4.8710219,
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Willemsparkweg 152H, 1071 HS Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:15.893Z",
+    "placeId": "ChIJDfkNWF4JxkcRF-6MgKtepW8",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1277,
+    "name": "Margo's Amsterdam",
+    "lat": 52.3777616,
+    "lng": 4.8835489999999995,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Eerste Tuindwarsstraat 2A, 1015 RV Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:16.618Z",
+    "placeId": "ChIJw-ZqkUsJxkcRUMZjZKnaqvI",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1278,
+    "name": "Esthétique cafe",
+    "lat": 52.350439099999996,
+    "lng": 4.8602669999999994,
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Cornelis Krusemanstraat 55, 1075 NG Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:17.866Z",
+    "placeId": "ChIJcc2iBb3jxUcRr57qF1NBcSo",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1279,
+    "name": "Back to Black",
+    "lat": 52.379399299999996,
+    "lng": 4.8714727,
+    "area": "Westerpark",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Van Hallstraat 268, 1051 HM Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:18.385Z",
+    "placeId": "ChIJPUPg69cJxkcRnCp4ei02RiY",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1280,
+    "name": "Badeta Coffee Van Wou/ Albert Cuyp Market",
+    "lat": 52.3569733,
+    "lng": 4.8994519,
+    "area": "De Pijp",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Van Woustraat 14, 1073 LL Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:18.800Z",
+    "placeId": "ChIJn6jUnxUJxkcRl7RrXDFbqts",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1281,
+    "name": "NU koffie & delicatessen",
+    "lat": 52.37659310000001,
+    "lng": 4.8822931,
+    "area": "Houthavens",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Tweede Egelantiersdwarsstraat 13H, 1015 SB Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:19.543Z",
+    "placeId": "ChIJS9DrlHUJxkcRqi2v2XePT2o",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1282,
+    "name": "Five Ways Coffee Roasters",
+    "lat": 52.3598712,
+    "lng": 4.9123059,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Boerhaaveplein 3, 1091 DH Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:19.960Z",
+    "placeId": "ChIJ363faggJxkcReaBzKBaPCnQ",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1283,
+    "name": "Alpha coffee Amsterdam",
+    "lat": 52.3662631,
+    "lng": 4.9018763,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Amstel 47, 1011 PW Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:20.368Z",
+    "placeId": "ChIJ2cwu6PkJxkcRv7_mfQYFNUU",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1284,
+    "name": "Harmani Coffee & Brunch",
+    "lat": 52.354886799999996,
+    "lng": 4.888565,
+    "area": "De Pijp",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Frans Halsstraat 89, 1072 BP Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:20.748Z",
+    "placeId": "ChIJsShppc4JxkcRkSBXtS5EuF0",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1285,
+    "name": "Cafecito | Nassaukade | ℃ Coffeebar",
+    "lat": 52.3683996,
+    "lng": 4.8759174,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Nassaukade 330 H, 1053 LT Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:21.148Z",
+    "placeId": "ChIJezBeBnAJxkcRIy8adRCxp70",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1286,
+    "name": "Monks Coffee Roasters",
+    "lat": 52.3712151,
+    "lng": 4.8702463,
+    "area": "Oud-West",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Bilderdijkstraat 46H, 1052 NB Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:21.513Z",
+    "placeId": "ChIJnQms098JxkcR2yqRLNCFw1E",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1287,
+    "name": "white label coffee",
+    "lat": 52.370430999999996,
+    "lng": 4.851578,
+    "area": "De Baarsjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Jan Evertsenstraat 136, 1056 EK Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:21.979Z",
+    "placeId": "ChIJ25B742zixUcRkukMA3FMW6s",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1288,
+    "name": "Wakuli Coffee | Vijzelgracht",
+    "lat": 52.3608019,
+    "lng": 4.8914608,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Vijzelgracht 37, 1017 HP Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:22.494Z",
+    "placeId": "ChIJ_Zq30RIJxkcRQbW4rPYpe5w",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1289,
+    "name": "Priesthood",
+    "lat": 52.376584,
+    "lng": 4.899513,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Prins Hendrikkade 51, 1012 AC Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:23.229Z",
+    "placeId": "ChIJqe6uPLMJxkcRy5QWrwm4V_Q",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1290,
+    "name": "Haku Specialty Coffee",
+    "lat": 52.373287999999995,
+    "lng": 4.880800499999999,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Rozengracht 69, 1016 LT Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:23.738Z",
+    "placeId": "ChIJsTHDhlcJxkcRCnAHjYMBalU",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1291,
+    "name": "Fournos Greek Coffee Bakery",
+    "lat": 52.376127,
+    "lng": 4.8928104999999995,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Nieuwezijds Voorburgwal 78 M, 1012 SE Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:24.130Z",
+    "placeId": "ChIJuQX3XowJxkcRYnLICaOtpsU",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1292,
+    "name": "Good Beans",
+    "lat": 52.382381,
+    "lng": 4.887274199999999,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Binnen Oranjestraat 4, 1013 JA Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:24.530Z",
+    "placeId": "ChIJg6hgLd0JxkcRxcqt-BR2lPo",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1293,
+    "name": "Maracuyá",
+    "lat": 52.363878199999995,
+    "lng": 4.8634461,
+    "area": "De Baarsjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Jan Pieter Heijestraat 95, 1053 GM Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:25.140Z",
+    "placeId": "ChIJBW-ujirjxUcR7y1PRv0ty7Y",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1294,
+    "name": "Skina",
+    "lat": 52.3688481,
+    "lng": 4.8713153,
+    "area": "De Baarsjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Bilderdijkstraat 113, 1053 XV Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:25.487Z",
+    "placeId": "ChIJi73HWLkJxkcRHeSlxUs0aXs",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1295,
+    "name": "a Sense of Place - Hi-Fidelity Coffee",
+    "lat": 52.380877999999996,
+    "lng": 4.8826239,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Willemsstraat 141, 1015 JC Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:25.865Z",
+    "placeId": "ChIJ71t1Z5sJxkcRZyvIUTMWEzE",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1296,
+    "name": "Cafecito Overtoom | Specialty Coffee & Matcha",
+    "lat": 52.358904499999994,
+    "lng": 4.8606422,
+    "area": "De Baarsjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Overtoom 429H, 1054 KE Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:26.296Z",
+    "placeId": "ChIJrxVatT_jxUcR-d6oCwmg0jo",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1297,
+    "name": "Black Gold Amsterdam",
+    "lat": 52.371787999999995,
+    "lng": 4.9030432,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Korte Koningsstraat 13 H, 1011 EX Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:26.716Z",
+    "placeId": "ChIJXzhr4tUJxkcRe35UyYT1wr8",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1298,
+    "name": "Cafecito",
+    "lat": 52.3492805,
+    "lng": 4.8778543999999995,
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Beethovenstraat 19, 1077 HM Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:27.490Z",
+    "placeId": "ChIJVZZt4rkJxkcRDhgoHjT7ssc",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1299,
+    "name": "Back to Black",
+    "lat": 52.361076999999995,
+    "lng": 4.888494,
+    "area": "De Baarsjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Weteringstraat 48, 1017 RN Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:27.845Z",
+    "placeId": "ChIJc5vMcuwJxkcRBl98RxpjxI4",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1300,
+    "name": "SAINT-JEAN Bakery",
+    "lat": 52.3803056,
+    "lng": 4.884282400000001,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Lindengracht 158h, 1015 KK Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:28.276Z",
+    "placeId": "ChIJN7y6C78JxkcRIKsx9uAn4g4",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1301,
+    "name": "Toki",
+    "lat": 52.3829109,
+    "lng": 4.885517500000001,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Binnen Dommersstraat 15, 1013 HK Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:28.635Z",
+    "placeId": "ChIJ88qyC84JxkcRBJ32CMRtCgQ",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1302,
+    "name": "Gentle Place Coffee",
+    "lat": 52.394723000000006,
+    "lng": 4.8998311,
+    "area": "Noord",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Distelweg 409, 1031 HK Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:29.459Z",
+    "placeId": "ChIJe3b1dJoJxkcR8xgq5_KOdKM",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1303,
+    "name": "Trakteren",
+    "lat": 52.3626072,
+    "lng": 4.8642517,
+    "area": "Oud-West",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Jan Pieter Heijestraat 119-Ah, 1054 MD Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:31.471Z",
+    "placeId": "ChIJdSk9gQnixUcRJmrH5B12-Ks",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1304,
+    "name": "Barmhartig Koffie",
+    "lat": 52.374092,
+    "lng": 4.938664999999999,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Veemkade 1288, 1019 CZ Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:31.823Z",
+    "placeId": "ChIJGWhxXhAJxkcRL-G650CLIW8",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1305,
+    "name": "Coffee District Willemsparkweg",
+    "lat": 52.3580214,
+    "lng": 4.8776462,
+    "area": "Oud-West",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Willemsparkweg 8h, 1071 HD Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:32.216Z",
+    "placeId": "ChIJGQgcWXUJxkcRnYzqd3MMzSM",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1306,
+    "name": "Cafecito",
+    "lat": 52.3542065,
+    "lng": 4.8816198,
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Van Baerlestraat 83, 1071 AS Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T08:13:32.630Z",
+    "placeId": "ChIJ00q9ZYgJxkcRw2ZA_4MHFu8",
+    "category": [
+      "coffee"
+    ]
   }
 ]
