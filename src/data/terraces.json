@@ -14079,5 +14079,22 @@
     "category": [
       "coffee"
     ]
+  },
+  {
+    "id": 1317,
+    "name": "LOT61 Coffee Roasters",
+    "lat": 52.3475,
+    "lng": 4.8626,
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Hendrik Jacobszstraat 18, 1075 PD Amsterdam",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-05-14T14:28:53.456Z",
+    "category": [
+      "coffee"
+    ]
   }
 ]
