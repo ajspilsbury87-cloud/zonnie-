@@ -1308,7 +1308,10 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:36:57.140Z",
-    "placeId": "ChIJt6DQt3AJxkcRwSOPcHVUxbw"
+    "placeId": "ChIJt6DQt3AJxkcRwSOPcHVUxbw",
+    "category": [
+      "coffee"
+    ]
   },
   {
     "id": 97,
@@ -13893,6 +13896,186 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-05-14T08:13:32.630Z",
     "placeId": "ChIJ00q9ZYgJxkcRw2ZA_4MHFu8",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1307,
+    "name": "Luuk's Coffee Noordermarkt",
+    "lat": 52.378763899999996,
+    "lng": 4.8862575,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Westerstraat 3, 1015 LT Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:17.027Z",
+    "placeId": "ChIJYwCkFOgJxkcREFF7URu9Spk",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1308,
+    "name": "Coffee and cakes Amsterdam | Tea | Matcha | Chai | WIFI | Muffin",
+    "lat": 52.369185300000005,
+    "lng": 4.8882686,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Singel 369, 1012 WL Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:40.596Z",
+    "placeId": "ChIJq8b93QgJxkcRUECKYaqW1CQ",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1309,
+    "name": "The Coffee Virus",
+    "lat": 52.384204999999994,
+    "lng": 4.902947999999999,
+    "area": "Noord",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Overhoeksplein 2, 1031 KS Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:41.531Z",
+    "placeId": "ChIJEVveaLQJxkcRjImHlRfdFw8",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1310,
+    "name": "Werkplaats",
+    "lat": 52.3535816,
+    "lng": 4.9120349,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Wibautstraat 150, 1091 GR Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:43.202Z",
+    "placeId": "ChIJAQAQmYQJxkcRGlhfd3fj8rg",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1311,
+    "name": "KOF Amsterdam Coffee Roasters",
+    "lat": 52.368895599999995,
+    "lng": 4.8851448,
+    "area": "9 Straatjes",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Huidenstraat 30I, 1016 ET Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:43.662Z",
+    "placeId": "ChIJ46iDrTkJxkcR-xNXdOzsHLI",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1312,
+    "name": "CoffeeConcepts",
+    "lat": 52.3577782,
+    "lng": 4.874293199999999,
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Jacob Obrechtstraat 5, 1071 KC Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:44.475Z",
+    "placeId": "ChIJ2RwuuuQJxkcROVNf25dGhqQ",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1313,
+    "name": "Bakers & Roasters",
+    "lat": 52.3701953,
+    "lng": 4.9126142,
+    "area": "Plantage",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Kadijksplein 16, 1018 AC Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:44.874Z",
+    "placeId": "ChIJ4S8JmqMJxkcR64Ym9WhK7pE",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1314,
+    "name": "Coffee & Coconuts Zuidas | Specialty Coffee Bar | Pastry | Matcha | Food to go",
+    "lat": 52.337125,
+    "lng": 4.87311,
+    "area": "Zuidas",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Gustav Mahlerplein 20, 1082 MA Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:45.294Z",
+    "placeId": "ChIJ16lL5x8LxkcRsNDtFLZ6xTs",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1315,
+    "name": "Drovers Dog Atjehstraat",
+    "lat": 52.3625098,
+    "lng": 4.9348415999999995,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Eerste Atjehstraat 62, 1094 KP Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:45.663Z",
+    "placeId": "ChIJc-Jidm0JxkcReD0wXBo8_co",
+    "category": [
+      "coffee"
+    ]
+  },
+  {
+    "id": 1316,
+    "name": "Fanke Coffee Amsterdam",
+    "lat": 52.3731553,
+    "lng": 4.8803854,
+    "area": "Jordaan",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Specialty coffee",
+    "address": "Rozengracht 91, 1016 LT Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-05-14T14:15:46.890Z",
+    "placeId": "ChIJd14j0gIJxkcR2Lsku_i6EAw",
     "category": [
       "coffee"
     ]
