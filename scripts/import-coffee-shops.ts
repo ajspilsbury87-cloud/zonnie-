@@ -454,9 +454,17 @@ async function main(): Promise<void> {
     console.log(`  ${k.padEnd(22)} ${n}`);
   }
 
+  // Write the per-candidate log regardless of --apply, so dry-runs are
+  // also inspectable. The log is purely diagnostic.
+  const stamp = new Date().toISOString();
+  for (const o of outcomes) {
+    appendFileSync(LOG_PATH, JSON.stringify({ stamp, ...o }) + '\n');
+  }
+  console.log(`Appended ${outcomes.length} outcomes to ${LOG_PATH}`);
+
   if (!args.apply) {
-    console.log('\n(dry run — no files written)');
-    console.log('Re-run with --apply to write the changes.');
+    console.log('\n(dry run — no terraces.json writes)');
+    console.log('Re-run with --apply to commit imports + annotations.');
     return;
   }
 
@@ -479,11 +487,7 @@ async function main(): Promise<void> {
       `(+${newEntries.length} new, ${existingCategoryAdditions.size} annotated)`,
   );
 
-  const stamp = new Date().toISOString();
-  for (const o of outcomes) {
-    appendFileSync(LOG_PATH, JSON.stringify({ stamp, ...o }) + '\n');
-  }
-  console.log(`Appended ${outcomes.length} outcomes to ${LOG_PATH}`);
+  // Log already appended above (before the --apply early-return check).
 }
 
 void main().catch((err) => {
