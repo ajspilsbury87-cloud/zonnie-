@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 
 import { DatePicker } from '@/src/components/DatePicker';
+import { MoreFiltersToggle } from '@/src/components/MoreFiltersToggle';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
 import { SearchBox } from '@/src/components/SearchBox';
 import {
@@ -79,12 +80,25 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   const selectedId = useSelectionStore((s) => s.selectedId);
   const listRef = useRef<BottomSheetFlatListMethods>(null);
 
-  // Onboarding hints — show sequentially so they don't pile up. Each
-  // gates on the previous: time-scrubber waits for pin-tap to be
-  // dismissed; filters waits for time-scrubber to be dismissed. All
-  // auto-dismiss after 10s, or on tap.
-  const [showTimeHint, dismissTimeHint] = useHint('time-scrubber', { after: 'pin-tap' });
-  const [showFilterHint, dismissFilterHint] = useHint('filters', { after: 'time-scrubber' });
+  // Secondary filter section (time sliders / search / neighborhood
+  // chips) is hidden by default to give the terrace list more screen
+  // space. Tap the "More filters" toggle row to expand. The
+  // always-visible row above (date / time presets / weather / venue
+  // type chips) covers the highest-traffic interactions; refine
+  // controls are an opt-in.
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const toggleFiltersExpanded = useCallback(
+    () => setFiltersExpanded((x) => !x),
+    [],
+  );
+
+  // Onboarding hints — show sequentially so they don't pile up.
+  // pin-tap fires first (on the map). Once dismissed, the filters
+  // hint appears on the More-filters toggle to nudge discovery of
+  // the refine controls. The previous "time-scrubber" hint has been
+  // dropped now that the slider lives behind the toggle — the intro
+  // carousel already covers "plan ahead" via the QuickPicker presets.
+  const [showFilterHint, dismissFilterHint] = useHint('filters', { after: 'pin-tap' });
 
   // Context-aware empty-state messaging — the user has hit "no results"
   // for a different reason depending on which filter is active. A
@@ -203,35 +217,35 @@ export function TerraceList({ onSelect }: TerraceListProps) {
       ListHeaderComponent={
         <View style={styles.header}>
           {/*
-            Header order matters — the bottom-sheet peek snap cuts at
-            ~260px, so anything above that line is visible without
-            expanding the sheet. Keep the *decision* tools above the
-            cut (date / time presets / hourly weather) and the *fine-
-            tune / refine* tools below it (sliders / search / filters).
+            Two-tier header layout (v1.1 polish):
+              Tier 1 — ALWAYS VISIBLE. Decision tools the average user
+                       needs every time: which day, which time window,
+                       what's the weather, which venue type.
+              Tier 2 — COLLAPSED BEHIND TOGGLE. Refine tools used less
+                       often: time fine-tune sliders, free-text search,
+                       neighborhood multi-select.
+            User feedback was the all-expanded layout crowded the list
+            out — Tier 2 hidden by default reclaims ~190px for terraces.
           */}
           <DatePicker />
           <TimeRangeQuickPicker />
           <WeatherStrip />
-          {/*
-            Onboarding nudges, rendered inline (not absolute-positioned)
-            so they flow with the list rather than overlay it. Each
-            hint sits just BELOW the section it's pointing at — natural
-            reading order: "here's the thing", "here's what you can do
-            with it".
-          */}
-          {showTimeHint ? (
-            <HintBubble onDismiss={dismissTimeHint} style={styles.inlineHint}>
-              ⏱ Drag the time below to plan ahead
+          <VenueTypeFilter />
+          <MoreFiltersToggle
+            expanded={filtersExpanded}
+            onToggle={toggleFiltersExpanded}
+          />
+          {showFilterHint && !filtersExpanded ? (
+            <HintBubble onDismiss={dismissFilterHint} style={styles.inlineHint}>
+              ⛛ Tap to refine by area or name
             </HintBubble>
           ) : null}
-          <TimeRangeFineTune />
-          <SearchBox />
-          <NeighborhoodFilter />
-          <VenueTypeFilter />
-          {showFilterHint ? (
-            <HintBubble onDismiss={dismissFilterHint} style={styles.inlineHint}>
-              ⛛ Combine filters to narrow down
-            </HintBubble>
+          {filtersExpanded ? (
+            <View style={styles.refinePanel}>
+              <TimeRangeFineTune />
+              <SearchBox />
+              <NeighborhoodFilter />
+            </View>
           ) : null}
         </View>
       }
@@ -351,5 +365,11 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignSelf: 'center',
     marginVertical: spacing.sm,
+  },
+  // Container for the collapsed-by-default refine controls. Plain
+  // wrapper — visual divider lives inside MoreFiltersToggle above it.
+  refinePanel: {
+    backgroundColor: palette.white,
+    paddingBottom: spacing.sm,
   },
 });
