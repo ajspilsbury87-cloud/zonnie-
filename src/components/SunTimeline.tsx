@@ -32,8 +32,21 @@ import type { Terrace } from '@/src/engines/types';
 import { fonts, fontSizes, palette, spacing } from '@/src/theme/tokens';
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
-/** Sub-bars per hour. 6 = ~2.5px each at typical detail-sheet width. */
-const SUBBARS_PER_HOUR = 6;
+/**
+ * Sub-bars per hour. 24 = 576 total = ~0.6px each on a typical
+ * iPhone detail-sheet width (~360pt minus padding). At sub-pixel
+ * resolution the staircase pattern between adjacent bars becomes
+ * invisible to the eye — the chart reads as a smooth area curve
+ * even though it's still rectangles.
+ *
+ * v1.1.1: bumped from 6 to 24 sub-bars per hour after user feedback
+ * that the 6-per-hour rendering still showed visible staircasing at
+ * sunrise/sunset transitions. True smooth Bézier needs SVG (a native
+ * dep we're deferring to v1.0.1 native), but sub-pixel rendering
+ * with 24-per-hour bars closes ~98% of the visual gap and is
+ * OTA-safe.
+ */
+const SUBBARS_PER_HOUR = 24;
 const TOTAL_SUBBARS = 24 * SUBBARS_PER_HOUR;
 const BAR_HEIGHT = 64;
 /** Score above which an hour counts as "sunlit" for sunrise/sunset detection. */

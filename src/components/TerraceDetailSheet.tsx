@@ -359,10 +359,10 @@ export function TerraceDetailSheet() {
                 >
                   <Text style={styles.infoChipText}>
                     {sunTrend === 'rising'
-                      ? '↑ Sun rising'
+                      ? '↑ Sun building'
                       : sunTrend === 'falling'
                         ? '↓ Sun fading'
-                        : '→ Sun steady'}
+                        : '→ Sun holding'}
                   </Text>
                 </View>
               ) : null}
@@ -610,6 +610,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   infoChip: {
+    // flexDirection + alignItems centers the text within the chip.
+    // Without these, iOS's asymmetric font metrics (descent > ascent)
+    // push the glyph above geometric center, which Andy reported as
+    // "text near the top of the label button".
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radii.pill,
@@ -633,6 +639,10 @@ const styles = StyleSheet.create({
   infoChipText: {
     fontFamily: fonts.bodyMedium,
     fontSize: fontSizes.xs,
+    // Explicit lineHeight matched ~1.3× to font size gives RN consistent
+    // glyph placement across iOS/Android — without it, iOS leaves the
+    // text above center (descent > ascent in the font metrics).
+    lineHeight: Math.round(fontSizes.xs * 1.3),
     color: palette.inkSoft,
   },
   infoChipTextBrand: {

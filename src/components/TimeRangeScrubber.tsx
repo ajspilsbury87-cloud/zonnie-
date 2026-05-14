@@ -39,7 +39,7 @@ import {
   AMSTERDAM_LNG,
   AMSTERDAM_TZ,
 } from '@/src/engines/scoring';
-import { sunsetHour } from '@/src/engines/solar';
+import { sunriseHour, sunsetHour } from '@/src/engines/solar';
 import { haptics } from '@/src/lib/haptics';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -233,9 +233,15 @@ export function TimeRangeFineTune() {
   const setToHour = useTimeStore((s) => s.setToHour);
   const dateOffset = useTimeStore((s) => s.dateOffset);
 
-  const sunset = useMemo(() => {
+  // Date-aware sunrise/sunset bounds. Pre-sunrise and post-sunset
+  // hours score zero everywhere, so the sliders clamp to the live-sun
+  // window. Tight in winter (~8-17), wide in summer (~5-22).
+  const { sunrise, sunset } = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
-    return sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+    return {
+      sunrise: sunriseHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ),
+      sunset: sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ),
+    };
   }, [dateOffset]);
 
   return (
@@ -245,15 +251,15 @@ export function TimeRangeFineTune() {
         <View style={styles.slidersOverlay}>
           <RangeSlider
             label="From"
-            value={fromHour}
-            min={0}
-            max={Math.min(sunset, Math.max(0, toHour))}
+            value={Math.max(sunrise, fromHour)}
+            min={sunrise}
+            max={Math.min(sunset, Math.max(sunrise, toHour))}
             onCommit={setFromHour}
           />
           <RangeSlider
             label="To"
             value={toHour}
-            min={Math.min(sunset, fromHour)}
+            min={Math.min(sunset, Math.max(sunrise, fromHour))}
             max={sunset}
             onCommit={setToHour}
           />

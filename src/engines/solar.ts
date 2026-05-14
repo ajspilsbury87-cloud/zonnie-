@@ -111,3 +111,31 @@ export function sunsetHour(
   }
   return 12;
 }
+
+/**
+ * First hour of the day (Amsterdam local) when the sun is above the
+ * horizon at the given lat/lng. Pre-sunrise hours have zero score
+ * everywhere, so the time slider clamps to this value as its lower
+ * bound — no point letting users pick 03:00 in May, the slider just
+ * wastes space at the low end.
+ *
+ * Searches upward from 0 to find the earliest hour with positive
+ * altitude. Falls back to 12 if the sun never rises (won't happen at
+ * Amsterdam's latitude; guard is cheap).
+ *
+ * Pure deterministic; memo by dateStr at the caller.
+ */
+export function sunriseHour(
+  dateStr: string,
+  lat: number,
+  lng: number,
+  tz: string,
+): number {
+  for (let h = 0; h <= 12; h++) {
+    const local = `${dateStr}T${h.toString().padStart(2, '0')}:00:00`;
+    const utc = fromZonedTime(local, tz);
+    const pos = solarPosition(utc, lat, lng);
+    if (pos.altitude > 0) return h;
+  }
+  return 12;
+}
