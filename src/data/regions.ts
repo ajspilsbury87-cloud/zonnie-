@@ -43,6 +43,7 @@ export const AREA_TO_REGION: Readonly<Record<string, Region>> = {
   'Zuidas': 'Zuid',
   'Rivierenbuurt': 'Zuid',
   'Stadionbuurt': 'Zuid',
+  'Buitenveldert': 'Zuid',
 
   // Oost
   'Oost': 'Oost',
@@ -61,6 +62,7 @@ export const AREA_TO_REGION: Readonly<Record<string, Region>> = {
   'Spaarndammer': 'West',
   'Houthavens': 'West',
   'Bos en Lommer': 'West',
+  'Nieuw-West': 'West',
 
   // Centrum (historic core + canal belt)
   'Centrum': 'Centrum',

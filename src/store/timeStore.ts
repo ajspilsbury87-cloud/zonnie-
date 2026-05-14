@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { AMSTERDAM_TZ } from '@/src/engines/scoring';
+import { AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ } from '@/src/engines/scoring';
+import { sunriseHour, sunsetHour } from '@/src/engines/solar';
 import type { WeatherProfile } from '@/src/engines/types';
 
 /** Maximum days into the future the date picker offers — Open-Meteo's reliable horizon. */
@@ -40,6 +41,39 @@ function nowAmsterdamHour(): number {
   return hh ?? 12;
 }
 
+/**
+ * Cold-start defaults that exactly match the "Now" QuickPicker preset.
+ *
+ * The QuickPicker computes its "Now" range as
+ *     from = min(nowHour, sunset)
+ *     to   = min(nowHour + 2, sunset)
+ * and the preset's "active" indicator only highlights when the store's
+ * fromHour/toHour match that. If we initialise the store with
+ * `toHour: now + 2` without clamping to sunset, late-evening cold starts
+ * (e.g., 20:30 in May when sunset is 21) end up with `toHour: 22` while
+ * "Now" computes `to: 21` — the pill doesn't light up because they
+ * disagree by one hour.
+ *
+ * Computing sunset here matches the picker exactly, so "Now" is always
+ * active on cold launch regardless of time of day or season.
+ *
+ * Pure deterministic call once per app launch; cost is negligible.
+ */
+function initialFromTo(): { fromHour: number; toHour: number } {
+  const dateStr = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'yyyy-MM-dd');
+  const sunrise = sunriseHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+  const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+  const now = nowAmsterdamHour();
+  // Clamp current hour into [sunrise, sunset] so pre-dawn / post-dusk
+  // cold starts still land inside the live-sun window. The "Now" preset
+  // does the same clamp.
+  const clampedNow = Math.max(sunrise, Math.min(now, sunset));
+  return {
+    fromHour: clampedNow,
+    toHour: Math.min(clampedNow + 2, sunset),
+  };
+}
+
 function clampHour(h: number): number {
   if (h < 0) return 0;
   if (h > 23) return 23;
@@ -54,8 +88,7 @@ function clampOffset(o: number): number {
 
 export const useTimeStore = create<TimeState>((set, get) => ({
   dateOffset: 0,
-  fromHour: nowAmsterdamHour(),
-  toHour: Math.min(nowAmsterdamHour() + 2, 23),
+  ...initialFromTo(),
   weatherProfile: 'sunny',
   setDateOffset: (offset) => set({ dateOffset: clampOffset(offset) }),
   setFromHour: (h) => {
@@ -83,8 +116,7 @@ export const useTimeStore = create<TimeState>((set, get) => ({
     set({ fromHour: Math.min(f, t), toHour: Math.max(f, t) });
   },
   resetToNow: () => {
-    const now = nowAmsterdamHour();
-    set({ dateOffset: 0, fromHour: now, toHour: Math.min(now + 2, 23) });
+    set({ dateOffset: 0, ...initialFromTo() });
   },
 }));
 

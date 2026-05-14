@@ -16,6 +16,7 @@
     "generate-screenshots": "tsx scripts/generate-screenshots.ts",
     "compose-screenshots": "tsx scripts/compose-screenshots.ts",
     "import-coffee": "tsx scripts/import-coffee-shops.ts",
+    "import-coffee-v2": "tsx scripts/import-coffee-shops-v2.ts",
     "import-venues": "tsx scripts/import-competitor-venues.ts",
     "infer-facing": "tsx scripts/infer-facing.ts",
     "fetch-osm-buildings": "tsx scripts/fetch-osm-buildings.ts",

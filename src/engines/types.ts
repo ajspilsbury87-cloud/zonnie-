@@ -69,6 +69,19 @@ export interface Terrace {
    */
   category?: string[];
   /**
+   * Google Maps rating for this venue (0.0–5.0). Imported alongside
+   * place details; static until the next data refresh. Display in the
+   * detail sheet is best-effort — missing values just hide the rating
+   * chip rather than rendering "0 stars".
+   */
+  googleRating?: number;
+  /**
+   * Number of Google reviews backing the rating. Useful to qualify the
+   * rating: 5.0 over 12 reviews is a different signal than 4.6 over
+   * 6,000. Missing → unknown, treat as "few reviews" in UI.
+   */
+  googleReviewCount?: number;
+  /**
    * Number of outdoor TV screens visible from the terrace seating area.
    * Absent or 0 = no outdoor TVs. 1 = a single screen. 2+ = a multi-
    * screen sports-bar setup. Indoor-only TVs are intentionally NOT
