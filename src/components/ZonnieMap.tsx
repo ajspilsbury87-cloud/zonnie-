@@ -9,6 +9,8 @@ import type { Region } from '@/src/data/regions';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { haptics } from '@/src/lib/haptics';
+import { HintBubble } from '@/src/onboarding/HintBubble';
+import { useHint } from '@/src/onboarding/useHint';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { palette, radii, spacing } from '@/src/theme/tokens';
 
@@ -172,6 +174,10 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     setVisibleRegion((prev) => (prev === r ? prev : r));
   }, []);
 
+  // First-run hint pointing users at the primary interaction.
+  // Auto-dismisses after 10s or on first pin tap below.
+  const [showPinHint, dismissPinHint] = useHint('pin-tap');
+
   const handlePillPress = useCallback((region: Region | null) => {
     if (region == null) {
       // Zoomed-out view — recentre on the whole city.
@@ -330,6 +336,9 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
             description={item.terrace.vibe}
             onPress={() => {
               haptics.light();
+              // Tapping any pin satisfies the "pin-tap" hint — dismiss
+              // it so it doesn't reappear next session.
+              if (showPinHint) dismissPinHint();
               onSelect?.(item);
             }}
           />
@@ -342,6 +351,16 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         region's centroid (or on the whole city when zoomed out).
       */}
       <MapRegionPill region={visibleRegion} onPress={handlePillPress} />
+      {/*
+        First-run hint: anchored above the bottom-sheet peek line so
+        the user sees it on the visible map area when the app opens.
+        Auto-dismisses on first pin tap, or after 10s timeout.
+      */}
+      {showPinHint ? (
+        <HintBubble onDismiss={dismissPinHint} style={styles.pinHint}>
+          📍 Tap a pin to see hourly sun
+        </HintBubble>
+      ) : null}
       {/*
         Floating "locate me" button. We ship our own (rather than using
         MapView's `showsMyLocationButton`) because:
@@ -392,5 +411,13 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: palette.ink,
     lineHeight: 24,
+  },
+  // Sits above the bottom-sheet peek line (the sheet peeks at ~260px
+  // from the bottom of the screen). 300px from bottom puts the hint
+  // comfortably in the visible map strip without colliding with the
+  // sheet's handle.
+  pinHint: {
+    bottom: 300,
+    alignSelf: 'center',
   },
 });

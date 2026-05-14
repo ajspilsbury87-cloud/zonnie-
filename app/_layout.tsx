@@ -20,6 +20,8 @@ import { LandingPage } from '@/src/components/LandingPage';
 import { NotificationPrompt } from '@/src/components/NotificationPrompt';
 import { shouldShowPrompt } from '@/src/notifications/permission';
 import { useDailyForecastNotification } from '@/src/notifications/useDailyForecastNotification';
+import { OnboardingIntro } from '@/src/onboarding/OnboardingIntro';
+import { shouldShowIntro } from '@/src/onboarding/state';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
 import { useWidgetSync } from '@/src/widget/useWidgetSync';
 
@@ -54,6 +56,26 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
+
+  // First-run onboarding intro — 2-slide carousel that establishes
+  // the app's purpose and primary gesture before the user sees the
+  // live UI. Shown only on the first launch (persisted via
+  // `onboarding:intro-v1` in AsyncStorage). Sits ABOVE the landing
+  // page; dismissing the intro reveals the landing page underneath.
+  // Initial state `null` = "haven't checked yet" — we don't want to
+  // flash a "no intro" frame before the AsyncStorage read resolves.
+  const [showIntro, setShowIntro] = useState<boolean | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const should = await shouldShowIntro();
+      if (!cancelled) setShowIntro(should);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const handleIntroDismiss = useCallback(() => setShowIntro(false), []);
 
   // Branded landing page — sits above the app surface on launch with
   // the brand sun-and-rays moment + top 3 sunny terraces "right now"
@@ -102,6 +124,9 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }} />
         {showLanding ? (
           <LandingPage onContinue={handleLandingContinue} />
+        ) : null}
+        {showIntro ? (
+          <OnboardingIntro onDismiss={handleIntroDismiss} />
         ) : null}
         {showNotifPrompt ? (
           <NotificationPrompt onDismiss={handleNotifPromptDismiss} />
