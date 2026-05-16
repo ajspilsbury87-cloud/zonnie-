@@ -76,8 +76,8 @@
     display: inline-flex; align-items: center; gap: 6px;
   }
   nav a.dl:hover { background: var(--cocoa); transform: translateY(-1px); }
-  nav a.dl.android { background: var(--burnt); color: var(--cream); }
-  nav a.dl.android:hover { background: var(--terracotta); }
+  nav a.dl.android { background: var(--mist); color: var(--ink-soft); cursor: default; pointer-events: none; }
+  nav a.dl.android:hover { background: var(--mist); }
   /* Hide nav buttons on narrow screens — hero buttons cover the CTA. */
   @media (max-width: 640px) {
     nav .nav-cta { display: none; }
@@ -348,21 +348,21 @@
   <div class="nav-logo"><span>☀️</span> Zonnie</div>
   <div class="nav-cta">
     <a class="dl" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">iOS</a>
-    <a class="dl android" href="https://play.google.com/store/apps/details?id=com.spilsbury.zonnie" target="_blank" rel="noopener">Android</a>
+    <a class="dl android">Android — coming soon</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="badge">Amsterdam · Free · No account needed</div>
+  <div class="badge">Amsterdam · iOS · Free to download</div>
   <h1>Find the <em>sunny</em><br>terrace. Every time.</h1>
   <p>Stop wandering. Zonnie calculates exactly which Amsterdam terraces are in the sun — right now, or at any hour today.</p>
   <div class="hero-btns">
     <a class="btn-primary" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">
       <span class="platform-icon">📱</span> Download on iOS
     </a>
-    <a class="btn-primary android" href="https://play.google.com/store/apps/details?id=com.spilsbury.zonnie" target="_blank" rel="noopener">
-      <span class="platform-icon">🤖</span> Get it on Android
+    <a class="btn-primary android" style="background:var(--mist);color:var(--ink-soft);cursor:default;pointer-events:none;">
+      <span class="platform-icon">🤖</span> Android — coming soon
     </a>
     <a class="btn-ghost" href="support.html">Support &amp; FAQ</a>
   </div>
@@ -418,7 +418,7 @@
     </div>
     <div class="feat">
       <div class="feat-icon">📍</div>
-      <h3>900+ terraces</h3>
+      <h3>1,000+ terraces</h3>
       <p>Bars, restaurants, and specialty coffee shops — curated by hand across every Amsterdam neighbourhood.</p>
     </div>
     <div class="feat">
@@ -442,7 +442,7 @@
       <div class="step">
         <div class="step-num">01</div>
         <h3>Pick a time</h3>
-        <p>Use the time scrubber to set any hour today, or let it default to now.</p>
+        <p>Use the preset chips (Now, Afternoon, Evening) or upgrade to Pro to drag to any exact hour.</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>
