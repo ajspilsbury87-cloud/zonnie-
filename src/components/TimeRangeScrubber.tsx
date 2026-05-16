@@ -1,35 +1,14 @@
 /**
  * Time-window controls. Split into two sibling components so the
- * hourly weather strip can sit between them — visually the layout is:
+ * hourly weather strip can sit between them.
  *
- *   ┌──── TimeRangeQuickPicker ────┐  ← peek-visible
- *   │ Visiting HH:00 – HH:00       │
- *   │ [Now][Afternoon][Evening][All day]│
- *   └──────────────────────────────┘
- *   ┌──── WeatherStrip (hourly) ───┐  ← peek-visible
- *   └──────────────────────────────┘
- *   ┌──── TimeRangeFineTune ───────┐  ← mid-snap+
- *   │ FROM ●─── 14:00              │
- *   │ TO   ──●── 16:00             │
- *   └──────────────────────────────┘
- *
- * Why split: when the scrubber was a single component, the hourly
- * weather strip was forced below it — invisible at the peek snap.
- * Splitting lets us reorder the elements in TerraceList's header so
- * the hourly read sits within the peek window.
- *
- * Both halves pull from `timeStore` independently. Dragging a slider
- * commits on `onSlidingComplete` only (one store write per gesture)
- * to avoid cascading score recomputes during the drag.
- *
- * Sunset cap: the `To` end of every preset and the `To` slider's max
- * are capped at sunset hour for the selected date. Past sunset every
- * terrace scores zero, so letting users pick e.g. 23:00 in December
- * (when sunset is 16:30) wastes everyone's time.
+ *   TimeRangeQuickPicker  ← peek-visible: WHEN card + 4 preset chips
+ *   WeatherStrip          ← hourly forecast row
+ *   TimeRangeFineTune     ← mid-snap+: FROM/TO sliders (Pro)
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -42,28 +21,23 @@ import {
 import { sunriseHour, sunsetHour } from '@/src/engines/solar';
 import { haptics } from '@/src/lib/haptics';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
+import { usePurchaseStore } from '@/src/store/purchaseStore';
+import { useProPaywallStore } from '@/src/components/ProPaywall';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
 
-/**
- * Preset definitions. "now" computes its range relative to the current
- * Amsterdam hour at apply-time, so it always means "right now → 2h from
- * now". The others are fixed time windows. Both fixed and computed
- * ranges are clamped at sunset by the caller.
- */
-type PresetKey = 'now' | 'afternoon' | 'evening' | 'allday';
+type PresetKey = 'now' | 'morning' | 'afternoon' | 'evening';
 interface Preset {
   key: PresetKey;
   label: string;
-  /** Fixed window, or null for "compute from current hour". */
   fixed: { from: number; to: number } | null;
 }
 const PRESETS: Preset[] = [
-  { key: 'now', label: 'Now', fixed: null },
+  { key: 'now',       label: 'Now',       fixed: null },
+  { key: 'morning',   label: 'Morning',   fixed: { from: 9,  to: 12 } },
   { key: 'afternoon', label: 'Afternoon', fixed: { from: 13, to: 17 } },
-  { key: 'evening', label: 'Evening', fixed: { from: 18, to: 22 } },
-  { key: 'allday', label: 'All day', fixed: { from: 10, to: 20 } },
+  { key: 'evening',   label: 'Evening',   fixed: { from: 18, to: 22 } },
 ];
 
 function nowHourLocal(): number {
@@ -75,41 +49,34 @@ function presetRange(p: Preset, sunset: number): { from: number; to: number } {
   if (p.fixed) {
     return {
       from: Math.min(p.fixed.from, sunset),
-      to: Math.min(p.fixed.to, sunset),
+      to:   Math.min(p.fixed.to,   sunset),
     };
   }
   const h = nowHourLocal();
   return {
-    from: Math.min(h, sunset),
-    to: Math.min(h + 2, sunset),
+    from: Math.min(h,     sunset),
+    to:   Math.min(h + 2, 23),
   };
 }
 
 function formatHour(h: number): string {
-  const i = Math.round(h);
-  return `${i.toString().padStart(2, '0')}:00`;
+  return `${Math.round(h).toString().padStart(2, '0')}:00`;
 }
 
-// ─── Quick picker (peek-visible) ──────────────────────────────────────
+// ─── Quick picker ─────────────────────────────────────────────────────
 
 export function TimeRangeQuickPicker() {
-  const fromHour = useTimeStore((s) => s.fromHour);
-  const toHour = useTimeStore((s) => s.toHour);
-  const setRange = useTimeStore((s) => s.setRange);
+  const fromHour      = useTimeStore((s) => s.fromHour);
+  const toHour        = useTimeStore((s) => s.toHour);
+  const setRange      = useTimeStore((s) => s.setRange);
   const setDateOffset = useTimeStore((s) => s.setDateOffset);
-  const dateOffset = useTimeStore((s) => s.dateOffset);
+  const dateOffset    = useTimeStore((s) => s.dateOffset);
 
   const sunset = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
     return sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
   }, [dateOffset]);
 
-  /**
-   * Which preset (if any) matches the current store state? "Now" only
-   * counts when we're on today AND the from/to is exactly now → now+2.
-   * Drift away from any preset (e.g., user drags a slider) leaves all
-   * pills inactive — the right signal that the user has gone custom.
-   */
   const activePresetKey = useMemo<PresetKey | null>(() => {
     for (const p of PRESETS) {
       const { from, to } = presetRange(p, sunset);
@@ -127,55 +94,50 @@ export function TimeRangeQuickPicker() {
   };
 
   return (
-    <View style={styles.quickRoot}>
-      <Text style={styles.title}>
-        Visiting{' '}
-        <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text>
-        {' '}–{' '}
-        <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
-      </Text>
+    <View style={styles.outerPad}>
+      <View style={styles.card}>
+        {/* Card header row: label left, live time right */}
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardLabel}>WHEN</Text>
+          <Text style={styles.timeDisplay}>
+            <Text style={styles.timeBold}>{formatHour(fromHour)}</Text>
+            <Text style={styles.timeSep}> – </Text>
+            <Text style={styles.timeBold}>{formatHour(toHour)}</Text>
+          </Text>
+        </View>
 
-      <View style={styles.presetRow}>
-        {PRESETS.map((p) => {
-          const active = activePresetKey === p.key;
-          return (
-            <TouchableOpacity
-              key={p.key}
-              onPress={() => applyPreset(p)}
-              activeOpacity={0.7}
-              style={[styles.presetChip, active && styles.presetChipActive]}
-            >
-              <Text
-                style={[
-                  styles.presetChipText,
-                  active && styles.presetChipTextActive,
-                ]}
+        {/* Preset chips */}
+        <View style={styles.chipRow}>
+          {PRESETS.map((p) => {
+            const active = activePresetKey === p.key;
+            return (
+              <TouchableOpacity
+                key={p.key}
+                onPress={() => applyPreset(p)}
+                activeOpacity={0.7}
+                style={[styles.chip, active && styles.chipActive]}
               >
-                {p.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                <Text
+                  style={[styles.chipText, active && styles.chipTextActive]}
+                  numberOfLines={1}
+                >
+                  {p.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     </View>
   );
 }
 
-// ─── Fine-tune sliders (mid-snap+) ────────────────────────────────────
+// ─── Fine-tune sliders ────────────────────────────────────────────────
 
-/**
- * Day/night track background. We render a row of 24 narrow segments
- * tinted by time-of-day brightness — dawn ramp, midday peak, dusk ramp,
- * night dim. The slider thumb glides over this so the user sees where
- * they're scrubbing without reading numbers. Cheap pure-View render,
- * no gradient library needed.
- */
 function DayNightTrack() {
   const segments = Array.from({ length: HOURS }, (_, h) => {
-    // Brightness curve: peak at 13, low at 1 and 23.
-    // f(h) = max(0, sin((h-6) * π/12)) gives 0 at sunrise(6)/sunset(18), 1 at noon(12)
     const x = Math.max(0, Math.sin(((h - 6) * Math.PI) / 12));
-    const r = Math.round(40 + (244 - 40) * x); // ink → mustard R
+    const r = Math.round(40 + (244 - 40) * x);
     const g = Math.round(31 + (213 - 31) * x);
     const b = Math.round(21 + (141 - 21) * x);
     return { h, color: `rgb(${r},${g},${b})` };
@@ -198,8 +160,6 @@ interface RangeSliderProps {
 }
 
 function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
-  // Local mirror — updates during drag for live label feedback. Only
-  // pushes to the store on drag-end via `onSlidingComplete`.
   const [local, setLocal] = useState(value);
   useEffect(() => setLocal(value), [value]);
 
@@ -214,10 +174,7 @@ function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
         step={1}
         value={value}
         onValueChange={setLocal}
-        onSlidingComplete={(h) => {
-          haptics.light();
-          onCommit(h);
-        }}
+        onSlidingComplete={(h) => { haptics.light(); onCommit(h); }}
         minimumTrackTintColor={palette.burnt}
         maximumTrackTintColor={palette.mistDeep}
         thumbTintColor={palette.peach}
@@ -227,20 +184,19 @@ function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
 }
 
 export function TimeRangeFineTune() {
-  const fromHour = useTimeStore((s) => s.fromHour);
-  const toHour = useTimeStore((s) => s.toHour);
+  const fromHour    = useTimeStore((s) => s.fromHour);
+  const toHour      = useTimeStore((s) => s.toHour);
   const setFromHour = useTimeStore((s) => s.setFromHour);
-  const setToHour = useTimeStore((s) => s.setToHour);
-  const dateOffset = useTimeStore((s) => s.dateOffset);
+  const setToHour   = useTimeStore((s) => s.setToHour);
+  const dateOffset  = useTimeStore((s) => s.dateOffset);
+  const isPro       = usePurchaseStore((s) => s.isPro);
+  const showPaywall = useProPaywallStore((s) => s.show);
 
-  // Date-aware sunrise/sunset bounds. Pre-sunrise and post-sunset
-  // hours score zero everywhere, so the sliders clamp to the live-sun
-  // window. Tight in winter (~8-17), wide in summer (~5-22).
   const { sunrise, sunset } = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
     return {
       sunrise: sunriseHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ),
-      sunset: sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ),
+      sunset:  sunsetHour(dateStr,  AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ),
     };
   }, [dateOffset]);
 
@@ -248,7 +204,7 @@ export function TimeRangeFineTune() {
     <View style={styles.fineTuneRoot}>
       <View style={styles.scrubberArea}>
         <DayNightTrack />
-        <View style={styles.slidersOverlay}>
+        <View style={[styles.slidersOverlay, !isPro && styles.slidersLocked]}>
           <RangeSlider
             label="From"
             value={Math.max(sunrise, fromHour)}
@@ -264,55 +220,102 @@ export function TimeRangeFineTune() {
             onCommit={setToHour}
           />
         </View>
+        {!isPro ? (
+          <Pressable
+            onPress={() => { haptics.light(); showPaywall('time_scrubber'); }}
+            style={styles.lockOverlay}
+            accessibilityLabel="Unlock custom time scrubber with Pro"
+          >
+            <View style={styles.lockBadge}>
+              <Text style={styles.lockBadgeText}>🔒 Set exact hours — Pro</Text>
+            </View>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────
+
+// Chip height: explicit so WHEN and WHAT chips are pixel-identical
+const CHIP_H = 36;
+
 const styles = StyleSheet.create({
-  quickRoot: {
+  // ── WHEN card ─────────────────────────────────────────────────────
+  outerPad: {
     paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+    paddingBottom: 0,        // no gap between WHEN and WHAT cards
+  },
+  card: {
+    backgroundColor: palette.sandDeep,
+    borderRadius: radii.lg,
+    paddingHorizontal: spacing.md,
     paddingTop: spacing.sm,
     paddingBottom: spacing.sm,
+    gap: spacing.xs,
   },
-  fineTuneRoot: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2,
   },
-  title: {
-    fontFamily: fonts.body,
-    fontSize: fontSizes.md,
-    color: palette.inkSoft,
-    marginBottom: spacing.sm,
+  cardLabel: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.xs,
+    color: palette.mistDeep,
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
   },
-  titleStrong: {
+  timeDisplay: {
+    // container for the nested Text nodes
+  },
+  timeBold: {
     fontFamily: fonts.displayBold,
     fontSize: fontSizes.lg,
     color: palette.ink,
   },
-  presetRow: {
+  timeSep: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.md,
+    color: palette.mistDeep,
+  },
+
+  // ── Chips (shared by WHEN — WHAT uses same values) ─────────────────
+  chipRow: {
     flexDirection: 'row',
     gap: spacing.xs,
   },
-  presetChip: {
+  chip: {
     flex: 1,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xs,
-    borderRadius: radii.pill,
-    backgroundColor: palette.sandDeep,
+    minWidth: 0,       // allow flex to shrink below text's natural width
+    height: CHIP_H,
+    borderRadius: radii.md,
+    backgroundColor: palette.white,
     alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
-  presetChipActive: {
-    backgroundColor: palette.amber,
+  chipActive: {
+    backgroundColor: palette.burnt,
   },
-  presetChipText: {
+  chipText: {
     fontFamily: fonts.bodySemibold,
     fontSize: fontSizes.sm,
     color: palette.inkSoft,
+    textAlign: 'center',
   },
-  presetChipTextActive: {
-    color: palette.white,
+  chipTextActive: {
+    color: palette.cream,
+  },
+
+  // ── Fine-tune ───────────────────────────────────────────────────────
+  fineTuneRoot: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.md,
   },
   scrubberArea: {
     position: 'relative',
@@ -334,6 +337,28 @@ const styles = StyleSheet.create({
   },
   slidersOverlay: {
     gap: spacing.xs,
+  },
+  slidersLocked: {
+    opacity: 0.35,
+  },
+  lockOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  lockBadge: {
+    backgroundColor: palette.sandDeep,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderWidth: 1,
+    borderColor: palette.mistDeep,
+  },
+  lockBadgeText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
   },
   sliderRow: {
     flexDirection: 'row',

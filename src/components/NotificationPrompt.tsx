@@ -56,11 +56,11 @@ export function NotificationPrompt({ onDismiss }: NotificationPromptProps) {
     <View style={styles.scrim}>
       <View style={styles.card}>
         <Text style={styles.glyph}>☀️</Text>
-        <Text style={styles.title}>Catch the next sunny day</Text>
+        <Text style={styles.title}>Never miss a sunny terrace</Text>
         <Text style={styles.body}>
-          We'll send you a heads-up the morning of any day with a good
-          stretch of sunny weather forecast — so you can plan your
-          terrace stop before the rest of Amsterdam does.
+          Get a morning heads-up when your favourite terraces are forecast
+          to be sunny — plus a daily alert on any day with a great stretch
+          of terrace weather across Amsterdam.
         </Text>
         <Pressable
           onPress={handleEnable}

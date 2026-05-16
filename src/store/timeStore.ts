@@ -42,36 +42,32 @@ function nowAmsterdamHour(): number {
 }
 
 /**
- * Cold-start defaults that exactly match the "Now" QuickPicker preset.
+ * Sensible from/to defaults for a given date.
  *
- * The QuickPicker computes its "Now" range as
- *     from = min(nowHour, sunset)
- *     to   = min(nowHour + 2, sunset)
- * and the preset's "active" indicator only highlights when the store's
- * fromHour/toHour match that. If we initialise the store with
- * `toHour: now + 2` without clamping to sunset, late-evening cold starts
- * (e.g., 20:30 in May when sunset is 21) end up with `toHour: 22` while
- * "Now" computes `to: 21` — the pill doesn't light up because they
- * disagree by one hour.
- *
- * Computing sunset here matches the picker exactly, so "Now" is always
- * active on cold launch regardless of time of day or season.
- *
- * Pure deterministic call once per app launch; cost is negligible.
+ * - Today: "Now" window — current hour to current hour + 2, uncapped
+ *   at sunset so the weather strip always shows 2 hours.
+ * - Future dates: afternoon window (13:00–17:00) since "now" is
+ *   meaningless for tomorrow. Matches the Afternoon preset.
  */
+function defaultRangeForDate(dateOffset: number): { fromHour: number; toHour: number } {
+  if (dateOffset === 0) {
+    // Today — use current Amsterdam hour, uncapped at sunset.
+    const dateStr = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'yyyy-MM-dd');
+    const sunrise = sunriseHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+    const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+    const now = nowAmsterdamHour();
+    const clampedNow = Math.max(sunrise, Math.min(now, sunset));
+    return {
+      fromHour: clampedNow,
+      toHour: Math.min(clampedNow + 2, 23),
+    };
+  }
+  // Future date — default to afternoon.
+  return { fromHour: 13, toHour: 17 };
+}
+
 function initialFromTo(): { fromHour: number; toHour: number } {
-  const dateStr = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'yyyy-MM-dd');
-  const sunrise = sunriseHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
-  const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
-  const now = nowAmsterdamHour();
-  // Clamp current hour into [sunrise, sunset] so pre-dawn / post-dusk
-  // cold starts still land inside the live-sun window. The "Now" preset
-  // does the same clamp.
-  const clampedNow = Math.max(sunrise, Math.min(now, sunset));
-  return {
-    fromHour: clampedNow,
-    toHour: Math.min(clampedNow + 2, sunset),
-  };
+  return defaultRangeForDate(0);
 }
 
 function clampHour(h: number): number {
@@ -90,7 +86,12 @@ export const useTimeStore = create<TimeState>((set, get) => ({
   dateOffset: 0,
   ...initialFromTo(),
   weatherProfile: 'sunny',
-  setDateOffset: (offset) => set({ dateOffset: clampOffset(offset) }),
+  setDateOffset: (offset) => {
+    const clamped = clampOffset(offset);
+    // Reset the visit window whenever the date changes so users don't
+    // land on tomorrow with tonight's 21:00–21:00 range still set.
+    set({ dateOffset: clamped, ...defaultRangeForDate(clamped) });
+  },
   setFromHour: (h) => {
     // Clamp From to <= current To, but never PUSH To. Reason: the iOS
     // native Slider reports the user's finger position on release (not

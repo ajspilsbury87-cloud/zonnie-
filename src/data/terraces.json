@@ -171,7 +171,7 @@
     "address": "Oosterdoksstraat 4",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:28.540Z",
+    "verifiedAt": "2026-05-02T11:36:28.54Z",
     "placeId": "ChIJ3X7KShgJxkcRNJ6P783NB88"
   },
   {
@@ -186,7 +186,7 @@
     "address": "Rozenboomsteeg 4",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:28.890Z",
+    "verifiedAt": "2026-05-02T11:36:28.89Z",
     "placeId": "ChIJ4TgZpsEJxkcRAXqk2eVrggk"
   },
   {
@@ -231,7 +231,7 @@
     "address": "Nieuwe Doelenstraat 4",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:30.090Z",
+    "verifiedAt": "2026-05-02T11:36:30.09Z",
     "placeId": "ChIJfZH2DsAJxkcRDuCPJeAvw9I"
   },
   {
@@ -246,7 +246,7 @@
     "address": "Martelaarsgracht 2",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:30.440Z",
+    "verifiedAt": "2026-05-02T11:36:30.44Z",
     "placeId": "ChIJHzJL4rcJxkcR2lG19jD66D4"
   },
   {
@@ -396,7 +396,7 @@
     "address": "Haarlemmerdijk 108",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:34.040Z",
+    "verifiedAt": "2026-05-02T11:36:34.04Z",
     "placeId": "ChIJ0ZDLaesJxkcRmb6mc0uKHAc"
   },
   {
@@ -441,7 +441,7 @@
     "address": "Leidsekade 97",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:35.140Z",
+    "verifiedAt": "2026-05-02T11:36:35.14Z",
     "placeId": "ChIJhd_mnOgJxkcR7oNxp_ZYz6U"
   },
   {
@@ -456,7 +456,7 @@
     "address": "Reguliersdwarsstraat 74",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:35.490Z",
+    "verifiedAt": "2026-05-02T11:36:35.49Z",
     "placeId": "ChIJswl2sOoJxkcR8VOtTz4vkB0"
   },
   {
@@ -566,7 +566,7 @@
     "address": "Rembrandtplein 11",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:38.490Z",
+    "verifiedAt": "2026-05-02T11:36:38.49Z",
     "placeId": "ChIJB7T9YJUJxkcR8dtTreJe6Zo"
   },
   {
@@ -656,7 +656,7 @@
     "address": "Nieuwe Leliestraat 34",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:40.740Z",
+    "verifiedAt": "2026-05-02T11:36:40.74Z",
     "placeId": "ChIJT0DD4doJxkcRAKSrXeQjixs"
   },
   {
@@ -716,7 +716,7 @@
     "address": "Tweede Tuindwarsstraat 53",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:42.190Z",
+    "verifiedAt": "2026-05-02T11:36:42.19Z",
     "placeId": "ChIJB8x7vNoJxkcRB_tJJdcvNsc"
   },
   {
@@ -746,7 +746,7 @@
     "address": "Tweede Tuindwarsstraat 13",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:42.940Z",
+    "verifiedAt": "2026-05-02T11:36:42.94Z",
     "placeId": "ChIJvcGfvNoJxkcRuEDjBok_tyw"
   },
   {
@@ -940,7 +940,7 @@
   },
   {
     "id": 68,
-    "name": "Bakers & Roasters",
+    "name": "Bakers & Roasters (De Pijp)",
     "lat": 52.35729,
     "lng": 4.88986,
     "area": "De Pijp",
@@ -950,7 +950,7 @@
     "address": "Eerste Jacob van Campenstraat 54",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:47.990Z",
+    "verifiedAt": "2026-05-02T11:36:47.99Z",
     "placeId": "ChIJCX5FdO0JxkcRor975fXq3lA",
     "category": [
       "coffee"
@@ -970,7 +970,7 @@
     "address": "Ceintuurbaan 282",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:48.340Z",
+    "verifiedAt": "2026-05-02T11:36:48.34Z",
     "placeId": "ChIJE7ZOMPMJxkcR66R6FxsNWSs"
   },
   {
@@ -997,7 +997,7 @@
     "address": "Stadhouderskade 77",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:49.040Z",
+    "verifiedAt": "2026-05-02T11:36:49.04Z",
     "placeId": "ChIJU9ZPEO0JxkcRudfaJ9vs7Oo"
   },
   {
@@ -1027,7 +1027,7 @@
     "address": "Sarphatipark 34",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:49.740Z",
+    "verifiedAt": "2026-05-02T11:36:49.74Z",
     "placeId": "ChIJZTMH4owJxkcReXGn3msj0nU",
     "category": [
       "coffee"
@@ -1075,7 +1075,7 @@
     "address": "Eerste Sweelinckstraat 19f",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:50.740Z",
+    "verifiedAt": "2026-05-02T11:36:50.74Z",
     "placeId": "ChIJNxPl9Y0JxkcRiXF6kIukt5o"
   },
   {
@@ -1162,7 +1162,7 @@
     "address": "Gerard Doustraat 69",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:52.990Z",
+    "verifiedAt": "2026-05-02T11:36:52.99Z",
     "placeId": "ChIJV_L7VY0JxkcR_W9xiqv6mcM"
   },
   {
@@ -1177,7 +1177,7 @@
     "address": "Nicolaas Beetsstraat 82",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:53.340Z",
+    "verifiedAt": "2026-05-02T11:36:53.34Z",
     "placeId": "ChIJZQ4JBOIJxkcRC_bkTW7Aco4"
   },
   {
@@ -1222,7 +1222,7 @@
     "address": "Linnaeusstraat 29",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:54.490Z",
+    "verifiedAt": "2026-05-02T11:36:54.49Z",
     "placeId": "ChIJMVoEUXQJxkcRaEBZ7Kl4pyM"
   },
   {
@@ -1252,7 +1252,7 @@
     "address": "Wibautstraat 150",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:55.190Z",
+    "verifiedAt": "2026-05-02T11:36:55.19Z",
     "placeId": "ChIJVRJRnoQJxkcR7AzzTwwCCpQ"
   },
   {
@@ -1322,7 +1322,7 @@
   },
   {
     "id": 96,
-    "name": "Rum Baba",
+    "name": "Rum Baba (Oost)",
     "lat": 52.35599,
     "lng": 4.92654,
     "area": "Oost",
@@ -1332,7 +1332,7 @@
     "address": "Eerste Atjehstraat 95",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:57.140Z",
+    "verifiedAt": "2026-05-02T11:36:57.14Z",
     "placeId": "ChIJt6DQt3AJxkcRwSOPcHVUxbw",
     "category": [
       "coffee"
@@ -1415,7 +1415,7 @@
     "address": "Polderweg 648",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:58.890Z",
+    "verifiedAt": "2026-05-02T11:36:58.89Z",
     "placeId": "ChIJNeQBWm4JxkcR-VGEHgmVmOQ"
   },
   {
@@ -1544,7 +1544,7 @@
     "address": "Mt. Ondinaweg 15",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:02.240Z",
+    "verifiedAt": "2026-05-02T11:37:02.24Z",
     "placeId": "ChIJnW2XqjsIxkcRsTdHXEPi0AQ"
   },
   {
@@ -1861,7 +1861,7 @@
   },
   {
     "id": 135,
-    "name": "Back to Black",
+    "name": "Back to Black (Witte de Withstraat)",
     "lat": 52.36748,
     "lng": 4.85048,
     "area": "De Baarsjes",
@@ -2176,7 +2176,7 @@
     "address": "Hobbemastraat 18",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:17.840Z",
+    "verifiedAt": "2026-05-02T11:37:17.84Z",
     "placeId": "ChIJ1RwvWe4JxkcRRDkroDqK3I8"
   },
   {
@@ -2901,7 +2901,7 @@
     "address": "Admiraal de Ruijterweg 179",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:37.640Z",
+    "verifiedAt": "2026-05-02T11:37:37.64Z",
     "placeId": "ChIJxfmdNGYJxkcRZFuQNMsdX4I"
   },
   {
@@ -3920,7 +3920,7 @@
     "address": "",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:28.990Z",
+    "verifiedAt": "2026-05-02T11:38:28.99Z",
     "placeId": "ChIJq6hhWMAJxkcR0dLgPLP0f0o"
   },
   {
@@ -3995,7 +3995,7 @@
     "address": "",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:32.390Z",
+    "verifiedAt": "2026-05-02T11:38:32.39Z",
     "placeId": "ChIJR63G4NwJxkcR6eBhDUBkrDw"
   },
   {
@@ -4352,7 +4352,7 @@
     "address": "",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:45:03.690Z",
+    "verifiedAt": "2026-05-02T11:45:03.69Z",
     "placeId": "ChIJH6FjfPIJxkcREkFPHLJiRFM"
   },
   {
@@ -4892,7 +4892,7 @@
     "address": "Veldbiesstraat 10, 1032 LJ Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:18.630Z",
+    "verifiedAt": "2026-05-05T06:08:18.63Z",
     "placeId": "ChIJq8KuZ9MJxkcRwp84rWZrMXM"
   },
   {
@@ -5027,7 +5027,7 @@
     "address": "Timorplein 62, 1094 CC Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:22.240Z",
+    "verifiedAt": "2026-05-05T06:08:22.24Z",
     "placeId": "ChIJ--rLyxIJxkcRcdcvOt9HCN4"
   },
   {
@@ -5194,7 +5194,7 @@
     "address": "Vondelpark 3, 1071 AA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:30.830Z",
+    "verifiedAt": "2026-05-05T06:08:30.83Z",
     "placeId": "ChIJtYtcFOQJxkcRBtgJz6rYTLg"
   },
   {
@@ -5544,7 +5544,7 @@
     "address": "Laan der Hesperiden 66, 1076 DN Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:41.330Z",
+    "verifiedAt": "2026-05-05T06:08:41.33Z",
     "placeId": "ChIJeQ5DFvThxUcR2WoTWfqDC7M"
   },
   {
@@ -5574,7 +5574,7 @@
     "address": "Revaleiland 1, 1014 ZG Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:42.180Z",
+    "verifiedAt": "2026-05-05T06:08:42.18Z",
     "placeId": "ChIJT0wxaGwJxkcRpBEwSeATkBs"
   },
   {
@@ -5634,7 +5634,7 @@
     "address": "Schellingwouderdijk 339, 1023 NK Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:43.830Z",
+    "verifiedAt": "2026-05-05T06:08:43.83Z",
     "placeId": "ChIJwe6MGCkJxkcRp7AtrYz-aNI"
   },
   {
@@ -5724,7 +5724,7 @@
     "address": "Bert Haanstrakade 1074, 1087 HJ Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:46.430Z",
+    "verifiedAt": "2026-05-05T06:08:46.43Z",
     "placeId": "ChIJU_koI2MPxkcRYhHX0bCQVTg"
   },
   {
@@ -5739,7 +5739,7 @@
     "address": "Cruquiusweg 67, 1019 AT Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:46.880Z",
+    "verifiedAt": "2026-05-05T06:08:46.88Z",
     "placeId": "ChIJ8zO8HT4JxkcRLnQyvvipu6c"
   },
   {
@@ -5769,7 +5769,7 @@
     "address": "Weesperzijde 135, 1091 ES Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:47.730Z",
+    "verifiedAt": "2026-05-05T06:08:47.73Z",
     "placeId": "ChIJhaWQJPwJxkcR54jGw_3fFLE"
   },
   {
@@ -5799,7 +5799,7 @@
     "address": "Aambeeldstraat 10, 1021 KB Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:48.580Z",
+    "verifiedAt": "2026-05-05T06:08:48.58Z",
     "placeId": "ChIJMbssDXsJxkcReBxQmvwXycc"
   },
   {
@@ -5844,7 +5844,7 @@
     "address": "Gedempt Hamerkanaal 42, 1021 KM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:49.810Z",
+    "verifiedAt": "2026-05-05T06:08:49.81Z",
     "placeId": "ChIJ17BJEwAJxkcRNpxD7d-0x2M"
   },
   {
@@ -5859,7 +5859,7 @@
     "address": "De Clercqstraat 32, 1052 NE Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:50.230Z",
+    "verifiedAt": "2026-05-05T06:08:50.23Z",
     "placeId": "ChIJyZn01mLhxUcRYmCRrTayXmw"
   },
   {
@@ -5996,12 +5996,12 @@
     "address": "Prins Hendrikkade 20A, 1012 TL Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:54.780Z",
+    "verifiedAt": "2026-05-05T06:08:54.78Z",
     "placeId": "ChIJVTppHsgJxkcR83cPw5DLHQ8"
   },
   {
     "id": 596,
-    "name": "Spaghetteria Pasta-bar",
+    "name": "Spaghetteria Pasta-bar (Daniël Stalpertstraat)",
     "lat": 52.356221999999995,
     "lng": 4.891716,
     "area": "De Pijp",
@@ -6086,7 +6086,7 @@
     "address": "Leidsekade 90, 1017 PN Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:57.680Z",
+    "verifiedAt": "2026-05-05T06:08:57.68Z",
     "placeId": "ChIJEZI3L-YJxkcRLnb1rFsFvAs"
   },
   {
@@ -6206,7 +6206,7 @@
     "address": "Waterlooplein 129, 1011 PG Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:01.830Z",
+    "verifiedAt": "2026-05-05T06:09:01.83Z",
     "placeId": "ChIJUzDHjFgJxkcRuO5hoNuwRCQ",
     "category": [
       "coffee"
@@ -6239,7 +6239,7 @@
     "address": "Postjesweg 122-H, 1057 EH Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:03.080Z",
+    "verifiedAt": "2026-05-05T06:09:03.08Z",
     "placeId": "ChIJp34jNhLixUcRkqzOpQzcdmI"
   },
   {
@@ -6254,7 +6254,7 @@
     "address": "Overtoom 52, 1054 HK Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:03.480Z",
+    "verifiedAt": "2026-05-05T06:09:03.48Z",
     "placeId": "ChIJcU1qjeYJxkcRL6UBGcSg7sk"
   },
   {
@@ -6299,7 +6299,7 @@
     "address": "Willem de Zwijgerlaan 338B, 1055 RD Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:04.780Z",
+    "verifiedAt": "2026-05-05T06:09:04.78Z",
     "placeId": "ChIJY9lITH_jxUcRLr-f4KDyP8U"
   },
   {
@@ -6359,7 +6359,7 @@
     "address": "Keizersgracht 465A, 1017 DK Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:07.230Z",
+    "verifiedAt": "2026-05-05T06:09:07.23Z",
     "placeId": "ChIJGWKE78YJxkcRmMVMrRoITbc"
   },
   {
@@ -6649,7 +6649,7 @@
     "address": "Rapenburgerplein 1, 1011 VA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:16.980Z",
+    "verifiedAt": "2026-05-05T06:09:16.98Z",
     "placeId": "ChIJqVdCcaMJxkcRPMUJwfpw2UA"
   },
   {
@@ -6724,7 +6724,7 @@
     "address": "Nieuw Amsterdam, Hoekenrode 5, 1102 BR Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:19.930Z",
+    "verifiedAt": "2026-05-05T06:09:19.93Z",
     "placeId": "ChIJk2DaRJALxkcRzvtkj5gQH08"
   },
   {
@@ -6739,7 +6739,7 @@
     "address": "Leen Jongewaardkade 41, 1031 HS Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:20.330Z",
+    "verifiedAt": "2026-05-05T06:09:20.33Z",
     "placeId": "ChIJG6r3CIEJxkcR8Ixl1hYOCF4"
   },
   {
@@ -6769,7 +6769,7 @@
     "address": "Erasmuspark 1, 1056 LE Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:21.130Z",
+    "verifiedAt": "2026-05-05T06:09:21.13Z",
     "placeId": "ChIJbQUFpm7ixUcRK5Oo2vHXoZ4"
   },
   {
@@ -6954,7 +6954,7 @@
     "address": "Hoekenrode 2, 1102 BR Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:27.080Z",
+    "verifiedAt": "2026-05-05T06:09:27.08Z",
     "placeId": "ChIJE5NsV5ALxkcRTf6QVW4ZfnU"
   },
   {
@@ -7014,7 +7014,7 @@
     "address": "Jan Evertsenstraat 135, 1057 BV Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:28.730Z",
+    "verifiedAt": "2026-05-05T06:09:28.73Z",
     "placeId": "ChIJVwUIjbfjxUcR9cvwI7AWnqU"
   },
   {
@@ -8365,7 +8365,7 @@
     "address": "Oudezijds Voorburgwal 2a, 1012 GD Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:27:48.360Z",
+    "verifiedAt": "2026-05-05T06:27:48.36Z",
     "placeId": "ChIJvykxtrkJxkcRye756jkvI6k"
   },
   {
@@ -8425,7 +8425,7 @@
     "address": "Noordermarkt 34, 1015 NA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:27:50.060Z",
+    "verifiedAt": "2026-05-05T06:27:50.06Z",
     "placeId": "ChIJe--HpM8JxkcRNtWl5BKigq4"
   },
   {
@@ -8502,7 +8502,7 @@
     "address": "Hoofddorpplein 29 h, 1059 CW Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:27:52.660Z",
+    "verifiedAt": "2026-05-05T06:27:52.66Z",
     "placeId": "ChIJBxI7PlbjxUcR8wxPdtPcLcY"
   },
   {
@@ -8532,7 +8532,7 @@
     "address": "Thorbeckeplein 20, 1017 CS Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:27:53.560Z",
+    "verifiedAt": "2026-05-05T06:27:53.56Z",
     "placeId": "ChIJG2B3P5UJxkcRWY-7duYvcEE"
   },
   {
@@ -8547,7 +8547,7 @@
     "address": "Daguerrestraat 51, 1087 BR Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:27:53.960Z",
+    "verifiedAt": "2026-05-05T06:27:53.96Z",
     "placeId": "ChIJ73PHQrkOxkcR64vLSO5p2x8"
   },
   {
@@ -8637,7 +8637,7 @@
     "address": "Rokin 103, 1012 KM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:27:56.910Z",
+    "verifiedAt": "2026-05-05T06:27:56.91Z",
     "placeId": "ChIJxQMt98AJxkcRh7kMnbhcQyc"
   },
   {
@@ -9057,7 +9057,7 @@
     "address": "Geldersekade 123, 1011 EN Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:28:13.930Z",
+    "verifiedAt": "2026-05-05T06:28:13.93Z",
     "placeId": "ChIJUQbHQ7kJxkcRhGvmZfXVAaM"
   },
   {
@@ -9117,7 +9117,7 @@
     "address": "Ringdijk 23, 1097 AB Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:28:15.580Z",
+    "verifiedAt": "2026-05-05T06:28:15.58Z",
     "placeId": "ChIJ1d1sDHoJxkcRRjPnE_whmHU"
   },
   {
@@ -9162,7 +9162,7 @@
     "address": "Rietlandpark 373, 1019 EM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:28:17.180Z",
+    "verifiedAt": "2026-05-05T06:28:17.18Z",
     "placeId": "ChIJZfDaF7AJxkcRYyLHdmokfWQ"
   },
   {
@@ -9297,7 +9297,7 @@
     "address": "Thorbeckeplein 8-12, 1017 CS Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:28:21.780Z",
+    "verifiedAt": "2026-05-05T06:28:21.78Z",
     "placeId": "ChIJJYouQZUJxkcRPLnmL3YVm6o"
   },
   {
@@ -9467,7 +9467,7 @@
     "address": "Dapperstraat 26, 1093 BW Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:49.330Z",
+    "verifiedAt": "2026-05-05T06:37:49.33Z",
     "placeId": "ChIJhxL5e70JxkcR5E_Im7dm294"
   },
   {
@@ -9542,7 +9542,7 @@
     "address": "Gedempt Hamerkanaal 79, 1021 KP Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:51.580Z",
+    "verifiedAt": "2026-05-05T06:37:51.58Z",
     "placeId": "ChIJ6dCrSgwJxkcRYh0z4saEZxQ"
   },
   {
@@ -9557,7 +9557,7 @@
     "address": "Stromarkt 4, 1012 SW Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:52.380Z",
+    "verifiedAt": "2026-05-05T06:37:52.38Z",
     "placeId": "ChIJm31jpYkJxkcRmaWzTDHyjBo"
   },
   {
@@ -9572,7 +9572,7 @@
     "address": "Scheldestraat 77, 1078 GH Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:52.780Z",
+    "verifiedAt": "2026-05-05T06:37:52.78Z",
     "placeId": "ChIJLzS2ACAKxkcR3_gGNmC4CjI"
   },
   {
@@ -9587,7 +9587,7 @@
     "address": "Eerste Sweelinckstraat 11H, 1073 CK Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:53.180Z",
+    "verifiedAt": "2026-05-05T06:37:53.18Z",
     "placeId": "ChIJaXuNl1cJxkcR_RSGoBaPNz0"
   },
   {
@@ -9662,7 +9662,7 @@
     "address": "Amstelplein 4, 1096 BC Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:55.780Z",
+    "verifiedAt": "2026-05-05T06:37:55.78Z",
     "placeId": "ChIJPanh_38JxkcReoTjRXFg3JU"
   },
   {
@@ -9692,7 +9692,7 @@
     "address": "Oudezijds Achterburgwal 22, 1012 DM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:56.630Z",
+    "verifiedAt": "2026-05-05T06:37:56.63Z",
     "placeId": "ChIJC83Lp7kJxkcR6e4dkMmc6fQ"
   },
   {
@@ -9797,7 +9797,7 @@
     "address": "Scheldestraat 99-H, 1078 GJ Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:37:59.530Z",
+    "verifiedAt": "2026-05-05T06:37:59.53Z",
     "placeId": "ChIJZ036AiAKxkcRtSob54dGkOE"
   },
   {
@@ -9957,7 +9957,7 @@
     "address": "Elandsgracht 45, 1016 TN Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:05.630Z",
+    "verifiedAt": "2026-05-05T06:38:05.63Z",
     "placeId": "ChIJm_p73sMJxkcRvQGH0Rjb4nI"
   },
   {
@@ -10067,7 +10067,7 @@
     "address": "Cruquiusweg 108, 1019 AK Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:09.380Z",
+    "verifiedAt": "2026-05-05T06:38:09.38Z",
     "placeId": "ChIJl437E74JxkcRCeOYcI2lwvc"
   },
   {
@@ -10142,7 +10142,7 @@
     "address": "Gustav Mahlerplein 110, 1082 MA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:11.480Z",
+    "verifiedAt": "2026-05-05T06:38:11.48Z",
     "placeId": "ChIJk5yydAUKxkcRg2nwoXCVZaw"
   },
   {
@@ -10292,7 +10292,7 @@
     "address": "Tweede Hugo de Grootstraat 19, 1052 LA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:16.530Z",
+    "verifiedAt": "2026-05-05T06:38:16.53Z",
     "placeId": "ChIJj6p6FdkJxkcRcYce7_kfEaM"
   },
   {
@@ -10457,7 +10457,7 @@
     "address": "Gerard Doustraat 98, 1072 VS Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:22.030Z",
+    "verifiedAt": "2026-05-05T06:38:22.03Z",
     "placeId": "ChIJVbEyxQQJxkcRg8lqoH_Lz3M"
   },
   {
@@ -10532,7 +10532,7 @@
     "address": "Derde Goudsbloemdwarsstraat 2, 1015 KA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:25.430Z",
+    "verifiedAt": "2026-05-05T06:38:25.43Z",
     "placeId": "ChIJt6J7NNAJxkcRdZt1gEvc5ac"
   },
   {
@@ -10577,7 +10577,7 @@
     "address": "Barentszstraat 171, 1013 NM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:27.230Z",
+    "verifiedAt": "2026-05-05T06:38:27.23Z",
     "placeId": "ChIJoQ9GfAAJxkcR4i1LEGIiXDE"
   },
   {
@@ -11072,7 +11072,7 @@
     "address": "Atlantisplein 1, 1093 NE Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:44.450Z",
+    "verifiedAt": "2026-05-05T06:38:44.45Z",
     "placeId": "ChIJ4TMGsXEJxkcRqqlFZxaONwM"
   },
   {
@@ -11314,7 +11314,7 @@
     "address": "Thorbeckeplein 16, 1017 CS Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:52.150Z",
+    "verifiedAt": "2026-05-05T06:38:52.15Z",
     "placeId": "ChIJJ263bBIJxkcRwuOlxmugkxs"
   },
   {
@@ -11374,7 +11374,7 @@
     "address": "Eerste Sweelinckstraat 12, 1073 CM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:53.800Z",
+    "verifiedAt": "2026-05-05T06:38:53.8Z",
     "placeId": "ChIJD1u07LsJxkcR1sGaDsiU_Bk"
   },
   {
@@ -11389,7 +11389,7 @@
     "address": "Beethovenstraat 58, 1077 JK Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:54.600Z",
+    "verifiedAt": "2026-05-05T06:38:54.6Z",
     "placeId": "ChIJ03CpRCYJxkcR9Z9yNtcpRdY"
   },
   {
@@ -11404,7 +11404,7 @@
     "address": "Wenslauerstraat 2a, 1053 BA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:55.050Z",
+    "verifiedAt": "2026-05-05T06:38:55.05Z",
     "placeId": "ChIJ941uywrixUcRNOwxzXzRmf4"
   },
   {
@@ -11419,7 +11419,7 @@
     "address": "Jan van Galenstraat 219, 1056 TG Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:55.470Z",
+    "verifiedAt": "2026-05-05T06:38:55.47Z",
     "placeId": "ChIJhZTi2W3ixUcRJM-4I8Eu858"
   },
   {
@@ -11479,7 +11479,7 @@
     "address": "Spuistraat 223a, 1012 VN Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:57.700Z",
+    "verifiedAt": "2026-05-05T06:38:57.7Z",
     "placeId": "ChIJjaTY9I8JxkcRPQ75vwWS0CU"
   },
   {
@@ -11509,7 +11509,7 @@
     "address": "Korte Leidsedwarsstraat 203, 1017 RB Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:58.550Z",
+    "verifiedAt": "2026-05-05T06:38:58.55Z",
     "placeId": "ChIJkxQLT-kJxkcRL84p6aY2lGA"
   },
   {
@@ -11539,7 +11539,7 @@
     "address": "Cornelis Schuytstraat 8-10, 1071 JH Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:38:59.850Z",
+    "verifiedAt": "2026-05-05T06:38:59.85Z",
     "placeId": "ChIJs-qtwfwJxkcR4-6lQTbCXw0"
   },
   {
@@ -12234,7 +12234,7 @@
     "address": "Nieuwendammerdijk 413, 1023 BL Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:39:23.270Z",
+    "verifiedAt": "2026-05-05T06:39:23.27Z",
     "placeId": "ChIJowzf3fQJxkcRKkF0lwWh94Q"
   },
   {
@@ -12624,7 +12624,7 @@
     "address": "Azartplein 2-A, 1019 PD Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:39:37.720Z",
+    "verifiedAt": "2026-05-05T06:39:37.72Z",
     "placeId": "ChIJKduvvxoJxkcRjx5rdkS8uKY"
   },
   {
@@ -12971,7 +12971,7 @@
   },
   {
     "id": 1247,
-    "name": "Spaghetteria Pasta-bar",
+    "name": "Spaghetteria Pasta-bar (Olympiaplein)",
     "lat": 52.346115600000005,
     "lng": 4.866899,
     "area": "De Pijp",
@@ -13076,7 +13076,7 @@
     "address": "Nieuwe Leliestraat 2, 1015 SP Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:39:53.110Z",
+    "verifiedAt": "2026-05-05T06:39:53.11Z",
     "placeId": "ChIJ8eqzO8UJxkcRnaqZbdTHTL0"
   },
   {
@@ -13203,7 +13203,7 @@
     "address": "Vondelpark 7",
     "verified": true,
     "coordSource": "manual",
-    "verifiedAt": "2026-05-07T21:38:49.660Z",
+    "verifiedAt": "2026-05-07T21:38:49.66Z",
     "outdoorScreens": 1,
     "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
@@ -13219,7 +13219,7 @@
     "address": "Pazzanistraat 3",
     "verified": true,
     "coordSource": "manual",
-    "verifiedAt": "2026-05-07T21:38:49.660Z",
+    "verifiedAt": "2026-05-07T21:38:49.66Z",
     "outdoorScreens": 1,
     "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
   },
@@ -13387,7 +13387,7 @@
   },
   {
     "id": 1272,
-    "name": "Rum Baba",
+    "name": "Rum Baba (Jordaan)",
     "lat": 52.3691337,
     "lng": 4.8787234,
     "area": "Jordaan",
@@ -13397,7 +13397,7 @@
     "address": "Elandsgracht 134, 1016 VC Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:13.040Z",
+    "verifiedAt": "2026-05-14T08:13:13.04Z",
     "placeId": "ChIJSQdRlmMJxkcRoWwD7y12alU",
     "category": [
       "coffee"
@@ -13515,7 +13515,7 @@
   },
   {
     "id": 1279,
-    "name": "Back to Black",
+    "name": "Back to Black (Westerpark)",
     "lat": 52.379399299999996,
     "lng": 4.8714727,
     "area": "Westerpark",
@@ -13545,7 +13545,7 @@
     "address": "Van Woustraat 14, 1073 LL Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:18.800Z",
+    "verifiedAt": "2026-05-14T08:13:18.8Z",
     "placeId": "ChIJn6jUnxUJxkcRl7RrXDFbqts",
     "category": [
       "coffee"
@@ -13585,7 +13585,7 @@
     "address": "Boerhaaveplein 3, 1091 DH Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:19.960Z",
+    "verifiedAt": "2026-05-14T08:13:19.96Z",
     "placeId": "ChIJ363faggJxkcReaBzKBaPCnQ",
     "category": [
       "coffee"
@@ -13757,7 +13757,7 @@
     "address": "Nieuwezijds Voorburgwal 78 M, 1012 SE Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:24.130Z",
+    "verifiedAt": "2026-05-14T08:13:24.13Z",
     "placeId": "ChIJuQX3XowJxkcRYnLICaOtpsU",
     "category": [
       "coffee"
@@ -13775,7 +13775,7 @@
     "address": "Binnen Oranjestraat 4, 1013 JA Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:24.530Z",
+    "verifiedAt": "2026-05-14T08:13:24.53Z",
     "placeId": "ChIJg6hgLd0JxkcRxcqt-BR2lPo",
     "category": [
       "coffee"
@@ -13793,7 +13793,7 @@
     "address": "Jan Pieter Heijestraat 95, 1053 GM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:25.140Z",
+    "verifiedAt": "2026-05-14T08:13:25.14Z",
     "placeId": "ChIJBW-ujirjxUcR7y1PRv0ty7Y",
     "category": [
       "coffee"
@@ -13879,7 +13879,7 @@
   },
   {
     "id": 1298,
-    "name": "Cafecito",
+    "name": "Cafecito (Beethovenstraat)",
     "lat": 52.3492805,
     "lng": 4.8778543999999995,
     "area": "Oud-Zuid",
@@ -13889,7 +13889,7 @@
     "address": "Beethovenstraat 19, 1077 HM Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:27.490Z",
+    "verifiedAt": "2026-05-14T08:13:27.49Z",
     "placeId": "ChIJVZZt4rkJxkcRDhgoHjT7ssc",
     "category": [
       "coffee"
@@ -13897,7 +13897,7 @@
   },
   {
     "id": 1299,
-    "name": "Back to Black",
+    "name": "Back to Black (Weteringstraat)",
     "lat": 52.361076999999995,
     "lng": 4.888494,
     "area": "De Baarsjes",
@@ -14025,7 +14025,7 @@
   },
   {
     "id": 1306,
-    "name": "Cafecito",
+    "name": "Cafecito (Van Baerlestraat)",
     "lat": 52.3542065,
     "lng": 4.8816198,
     "area": "Oud-Zuid",
@@ -14035,7 +14035,7 @@
     "address": "Van Baerlestraat 83, 1071 AS Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T08:13:32.630Z",
+    "verifiedAt": "2026-05-14T08:13:32.63Z",
     "placeId": "ChIJ00q9ZYgJxkcRw2ZA_4MHFu8",
     "category": [
       "coffee"
@@ -14154,7 +14154,7 @@
   },
   {
     "id": 1313,
-    "name": "Bakers & Roasters",
+    "name": "Bakers & Roasters (Plantage)",
     "lat": 52.3701953,
     "lng": 4.9126142,
     "area": "Plantage",
@@ -14222,7 +14222,7 @@
     "address": "Rozengracht 91, 1016 LT Amsterdam, Netherlands",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T14:15:46.890Z",
+    "verifiedAt": "2026-05-14T14:15:46.89Z",
     "placeId": "ChIJd14j0gIJxkcR2Lsku_i6EAw",
     "category": [
       "coffee"
@@ -14232,7 +14232,7 @@
   },
   {
     "id": 1317,
-    "name": "LOT61 Coffee Roasters",
+    "name": "LOT61 Coffee Roasters (Stadionbuurt)",
     "lat": 52.3475,
     "lng": 4.8626,
     "area": "Stadionbuurt",
@@ -14278,7 +14278,7 @@
     "address": "Potgieterstraat 47 HS, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.260Z",
+    "verifiedAt": "2026-05-14T16:08:47.26Z",
     "category": [
       "coffee"
     ],
@@ -14449,7 +14449,7 @@
     "address": "Amstel 102, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.270Z",
+    "verifiedAt": "2026-05-14T16:08:47.27Z",
     "category": [
       "coffee"
     ],
@@ -14810,7 +14810,7 @@
     "address": "Eerste Jacob van Campenstraat 47H, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.280Z",
+    "verifiedAt": "2026-05-14T16:08:47.28Z",
     "category": [
       "coffee"
     ],
@@ -14829,7 +14829,7 @@
     "address": "Galileiplantsoen 94, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.280Z",
+    "verifiedAt": "2026-05-14T16:08:47.28Z",
     "category": [
       "coffee"
     ],
@@ -14952,7 +14952,7 @@
   },
   {
     "id": 1355,
-    "name": "LOT61 Coffee Roasters",
+    "name": "LOT61 Coffee Roasters (Oud-West)",
     "lat": 52.3668272,
     "lng": 4.870314,
     "area": "Oud-West",
@@ -15152,7 +15152,7 @@
     "address": "Oosterdoksstraat 4, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.290Z",
+    "verifiedAt": "2026-05-14T16:08:47.29Z",
     "category": [
       "coffee"
     ],
@@ -15171,7 +15171,7 @@
     "address": "Oudekerksplein 4, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.290Z",
+    "verifiedAt": "2026-05-14T16:08:47.29Z",
     "category": [
       "coffee"
     ],
@@ -15190,7 +15190,7 @@
     "address": "Oude Hoogstraat 22, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.290Z",
+    "verifiedAt": "2026-05-14T16:08:47.29Z",
     "category": [
       "coffee"
     ],
@@ -15304,7 +15304,7 @@
     "address": "Beukenplein 22, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.300Z",
+    "verifiedAt": "2026-05-14T16:08:47.3Z",
     "category": [
       "coffee"
     ],
@@ -15323,7 +15323,7 @@
     "address": "Barbara Strozzilaan 336, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.300Z",
+    "verifiedAt": "2026-05-14T16:08:47.3Z",
     "category": [
       "coffee"
     ],
@@ -15342,7 +15342,7 @@
     "address": "Nieuwe Herengracht 18a, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.300Z",
+    "verifiedAt": "2026-05-14T16:08:47.3Z",
     "category": [
       "coffee"
     ],

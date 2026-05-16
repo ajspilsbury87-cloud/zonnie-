@@ -263,6 +263,74 @@ export function computeRangeScore(
   return count > 0 ? sum / count : 0;
 }
 
+export interface BestWindow {
+  /** Start hour (Amsterdam local, inclusive). */
+  fromHour: number;
+  /** End hour (Amsterdam local, inclusive). */
+  toHour: number;
+  /** Average score across the window, 0–1. */
+  avgScore: number;
+  /** Peak (highest single-hour) score within the window, 0–1. */
+  peakScore: number;
+}
+
+/**
+ * Find the best contiguous sunny window for a terrace on a given day.
+ *
+ * Accepts a pre-computed array of 24 hourly scores (one per hour 0–23)
+ * so callers that already have the hourly array (e.g. SunTimeline, the
+ * detail sheet) don't trigger a redundant scoring pass.
+ *
+ * Algorithm: sliding window of `windowHours` hours, scored by average.
+ * Ties broken by earlier start time. Returns null if no window has an
+ * average score above `minScore`.
+ *
+ * @param hourlyScores  Array of 24 scores, index = Amsterdam local hour.
+ * @param windowHours   Width of the window in hours (default 2).
+ * @param minScore      Minimum average to qualify (default 0.35 = Partial Sun).
+ * @param searchFrom    Earliest start hour to consider (default 8).
+ * @param searchTo      Latest end hour to consider (default 21).
+ */
+export function findBestWindow(
+  hourlyScores: readonly number[],
+  windowHours = 2,
+  minScore = 0.35,
+  searchFrom = 8,
+  searchTo = 21,
+): BestWindow | null {
+  if (hourlyScores.length < 24) return null;
+
+  let bestAvg = -1;
+  let bestFrom = -1;
+
+  for (let start = searchFrom; start + windowHours - 1 <= searchTo; start++) {
+    let sum = 0;
+    for (let h = start; h < start + windowHours; h++) {
+      sum += hourlyScores[h] ?? 0;
+    }
+    const avg = sum / windowHours;
+    if (avg > bestAvg) {
+      bestAvg = avg;
+      bestFrom = start;
+    }
+  }
+
+  if (bestFrom < 0 || bestAvg < minScore) return null;
+
+  const toHour = bestFrom + windowHours - 1;
+  let peak = 0;
+  for (let h = bestFrom; h <= toHour; h++) {
+    peak = Math.max(peak, hourlyScores[h] ?? 0);
+  }
+
+  return {
+    fromHour: bestFrom,
+    toHour,
+    avgScore: bestAvg,
+    peakScore: peak,
+  };
+}
+
 export function scoreLabel(score: number): string {
   if (score > 0.7) return 'Full Sun';
   if (score > 0.5) return 'Mostly Sunny';

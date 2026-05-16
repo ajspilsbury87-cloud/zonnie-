@@ -8,6 +8,10 @@
  * Behaviour:
  *   - `toggle(id)` flips membership and writes async; UI updates
  *     optimistically.
+ *   - Free users can save exactly 1 favourite. Attempting to add a second
+ *     returns `'paywall'` so the caller can open ProPaywall. Removing a
+ *     favourite always succeeds regardless of Pro status.
+ *   - Pro users have unlimited favourites.
  *   - `hydrate()` is called once at app launch by `app/_layout.tsx` to
  *     load the persisted set. Until it resolves, `selectedIds` is empty
  *     — that's fine; first paint never has favorites yet anyway.
@@ -17,8 +21,12 @@
 
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { usePurchaseStore } from '@/src/store/purchaseStore';
 
 const STORAGE_KEY = 'zonnie:favorites:v1';
+
+/** How many favourites a free user may save. */
+const FREE_TIER_LIMIT = 3;
 
 interface FavoritesState {
   /** Terrace IDs the user has favorited. */
@@ -26,7 +34,16 @@ interface FavoritesState {
   /** True after the persisted set has been loaded from disk. */
   hydrated: boolean;
   hydrate: () => Promise<void>;
-  toggle: (id: number) => void;
+  /**
+   * Toggle a favourite on or off.
+   *
+   * Returns:
+   *   `'added'`   — terrace was added successfully
+   *   `'removed'` — terrace was removed
+   *   `'paywall'` — free-tier limit reached; terrace was NOT added.
+   *                 The caller should open ProPaywall('favourites').
+   */
+  toggle: (id: number) => 'added' | 'removed' | 'paywall';
   isFavorite: (id: number) => boolean;
   clear: () => void;
 }
@@ -60,11 +77,29 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
     set({ hydrated: true });
   },
   toggle: (id) => {
-    const next = new Set(get().favoriteIds);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
+    const current = get().favoriteIds;
+
+    // Removing always succeeds — never gate a removal.
+    if (current.has(id)) {
+      const next = new Set(current);
+      next.delete(id);
+      set({ favoriteIds: next });
+      void persist(next);
+      return 'removed';
+    }
+
+    // Adding: check free-tier limit for non-Pro users.
+    const isPro = usePurchaseStore.getState().isPro;
+    if (!isPro && current.size >= FREE_TIER_LIMIT) {
+      // Do NOT mutate state — caller must open the paywall.
+      return 'paywall';
+    }
+
+    const next = new Set(current);
+    next.add(id);
     set({ favoriteIds: next });
     void persist(next);
+    return 'added';
   },
   isFavorite: (id) => get().favoriteIds.has(id),
   clear: () => {

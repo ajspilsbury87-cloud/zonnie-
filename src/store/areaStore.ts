@@ -38,6 +38,13 @@ interface AreaState {
    * other filters.
    */
   matchModeOnly: boolean;
+  /**
+   * When true, sort order blends sun score with distance from the user's
+   * current GPS position — nearest sunny terraces surface first.
+   * Does NOT filter; all terraces remain visible, just reordered.
+   * Falls back to pure sun-score sort if location is unavailable.
+   */
+  sortByDistance: boolean;
   toggle: (region: Region) => void;
   toggleCategory: (cat: VenueCategory) => void;
   setAll: (regions: Region[]) => void;
@@ -46,6 +53,8 @@ interface AreaState {
   toggleFavoritesOnly: () => void;
   setMatchModeOnly: (on: boolean) => void;
   toggleMatchModeOnly: () => void;
+  setSortByDistance: (on: boolean) => void;
+  toggleSortByDistance: () => void;
 }
 
 export const useAreaStore = create<AreaState>((set, get) => ({
@@ -53,6 +62,7 @@ export const useAreaStore = create<AreaState>((set, get) => ({
   selectedCategories: new Set<VenueCategory>(),
   favoritesOnly: false,
   matchModeOnly: false,
+  sortByDistance: false,
   toggle: (region) =>
     set((s) => {
       const next = new Set(s.selectedRegions);
@@ -74,9 +84,12 @@ export const useAreaStore = create<AreaState>((set, get) => ({
       selectedCategories: new Set(),
       favoritesOnly: false,
       matchModeOnly: false,
+      sortByDistance: false,
     }),
   setFavoritesOnly: (on) => set({ favoritesOnly: on }),
   toggleFavoritesOnly: () => set({ favoritesOnly: !get().favoritesOnly }),
   setMatchModeOnly: (on) => set({ matchModeOnly: on }),
   toggleMatchModeOnly: () => set({ matchModeOnly: !get().matchModeOnly }),
+  setSortByDistance: (on) => set({ sortByDistance: on }),
+  toggleSortByDistance: () => set({ sortByDistance: !get().sortByDistance }),
 }));

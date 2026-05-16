@@ -48,7 +48,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { TERRACES } from '@/src/data/terraces';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
-import { AMSTERDAM_TZ, computeSunScore } from '@/src/engines/scoring';
+import { AMSTERDAM_TZ, computeRangeScore } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { todayAmsterdamDateStr } from '@/src/store/timeStore';
@@ -106,7 +106,12 @@ function pickTopByRegion(
   const hour = nowAmsterdamHour();
   const entry = weatherByDate[dateStr];
   const hourly = entry?.status === 'ready' ? entry.data : undefined;
-  const w = hourly?.[hour];
+
+  // Use a 2-hour window centred on now — identical to the main app's
+  // default "Now" preset. This ensures landing page scores match what
+  // the user sees when they tap "See all terraces".
+  const fromHour = hour;
+  const toHour = Math.min(hour + 2, 23);
 
   // One scoring pass for all terraces, then group by region.
   const scoredByRegion = new Map<Region, TopVenue[]>();
@@ -114,9 +119,9 @@ function pickTopByRegion(
     const region = regionForArea(t.area);
     if (region == null) continue;
     const buildings = getBuildingsForTerrace(t.id);
-    const r = computeSunScore(t, buildings, hour, dateStr, 'sunny', w);
+    const score = computeRangeScore(t, buildings, fromHour, toHour, dateStr, 'sunny', hourly);
     const list = scoredByRegion.get(region) ?? [];
-    list.push({ terrace: t, score: r.score, featured: false });
+    list.push({ terrace: t, score, featured: false });
     scoredByRegion.set(region, list);
   }
 

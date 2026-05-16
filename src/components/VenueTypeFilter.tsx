@@ -1,30 +1,15 @@
 /**
- * Horizontal chip row of venue filters.
+ * Venue + mode filter — WHAT card.
  *
- * Bar / Restaurant / Coffee chips: multi-select with OR semantics
- * (selecting Bar+Restaurant shows the union). Empty = no category
- * filter.
- *
- * Coffee-only auto-shifts the visiting time window to morning
- * (09:00–12:00) when the user is currently looking at an afternoon
- * window — coffee shops live morning-to-late-afternoon, and the
- * default "now → +2h" range unfairly demotes them when the user
- * opens the app at 16:00. Only fires when the toggle results in
- * coffee being the SOLE active category, so a Bar+Coffee multi-
- * select doesn't drag the time around. We never shift back when
- * the user un-toggles coffee — preserves any manual time edits.
- *
- * ⚽ Outdoor Screen chip: standalone toggle, ANDs with the others.
- * Shows only terraces with `outdoorScreens > 0` — designed for the
- * World Cup 2026 launch ("watch the match in the sun"). Football
- * icon hooks the World Cup framing, while the label describes the
- * literal feature ("outdoor screen") so it's still useful outside
- * tournament season. Visually emphasised with a different active
- * colour (palette.burnt) so it doesn't look like just another
- * venue type.
+ * Visually matches the WHEN card in TimeRangeQuickPicker:
+ *   - Same sandDeep card background, radii.lg corners
+ *   - Same paddingHorizontal: spacing.lg on the outer wrapper (aligns card edges)
+ *   - Same white chip background, radii.md chips, height 36, burnt active
+ *   - Row 1: Bar / Restaurant / Coffee — flex:1 equal-width
+ *   - Row 2: Outdoor Screen / Near me — natural-width, same height
  */
 
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
 
@@ -40,109 +25,167 @@ import { useAreaStore } from '@/src/store/areaStore';
 import { useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
-/** Coffee-shop visit window — wide enough to cover morning + late-morning. */
 const COFFEE_FROM_HOUR = 9;
 const COFFEE_TO_HOUR = 12;
-
-/** Below this hour (Amsterdam local time) we don't auto-shift — the
- *  user's existing morning window is already coffee-friendly. */
 const COFFEE_AUTO_SHIFT_THRESHOLD = 12;
 
+const CHIP_H = 36;
+
 export function VenueTypeFilter() {
-  const selectedCategories = useAreaStore((s) => s.selectedCategories);
-  const toggleCategory = useAreaStore((s) => s.toggleCategory);
-  const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
-  const toggleMatchModeOnly = useAreaStore((s) => s.toggleMatchModeOnly);
+  const selectedCategories   = useAreaStore((s) => s.selectedCategories);
+  const toggleCategory       = useAreaStore((s) => s.toggleCategory);
+  const matchModeOnly        = useAreaStore((s) => s.matchModeOnly);
+  const toggleMatchModeOnly  = useAreaStore((s) => s.toggleMatchModeOnly);
+  const sortByDistance       = useAreaStore((s) => s.sortByDistance);
+  const toggleSortByDistance = useAreaStore((s) => s.toggleSortByDistance);
 
   const handleToggleCategory = (cat: VenueCategory) => {
     haptics.selection();
     toggleCategory(cat);
 
-    // Coffee-only auto-shift: predict the post-toggle state to decide
-    // whether this tap *just made coffee the only active category*.
-    // Toggling coffee on (when nothing else is selected) → shift.
-    // Toggling on a 2nd category → no shift. Toggling coffee off → no
-    // shift. This runs from the chip onPress (not a store subscriber)
-    // so we don't trample the user's manual time picks on every store
-    // change.
     if (cat !== 'coffee') return;
-    const willBeActive = !selectedCategories.has('coffee');
+    const willBeActive  = !selectedCategories.has('coffee');
     const otherSelected = Array.from(selectedCategories).some((c) => c !== 'coffee');
     if (!willBeActive || otherSelected) return;
 
-    const nowHour = parseInt(
-      formatInTimeZone(new Date(), AMSTERDAM_TZ, 'HH'),
-      10,
-    );
+    const nowHour = parseInt(formatInTimeZone(new Date(), AMSTERDAM_TZ, 'HH'), 10);
     if (nowHour >= COFFEE_AUTO_SHIFT_THRESHOLD) {
       useTimeStore.getState().setRange(COFFEE_FROM_HOUR, COFFEE_TO_HOUR);
     }
   };
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.scroll}
-    >
-      {CATEGORIES_ORDERED.map((cat) => {
-        const active = selectedCategories.has(cat);
-        return (
+    <View style={styles.outerPad}>
+      <View style={styles.card}>
+        {/* Card label */}
+        <Text style={styles.cardLabel}>WHAT</Text>
+
+        {/* Row 1: Bar / Restaurant / Coffee — equal-width */}
+        <View style={styles.chipRow}>
+          {CATEGORIES_ORDERED.map((cat) => {
+            const active = selectedCategories.has(cat);
+            return (
+              <TouchableOpacity
+                key={cat}
+                onPress={() => handleToggleCategory(cat)}
+                activeOpacity={0.7}
+                style={[styles.chip, active && styles.chipActive]}
+              >
+                <Text
+                  style={[styles.chipText, active && styles.chipTextActive]}
+                  numberOfLines={1}
+                >
+                  {CATEGORY_GLYPHS[cat]} {CATEGORY_LABELS[cat]}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Row 2: mode toggles — natural-width, same height as Row 1 chips */}
+        <View style={styles.modeRow}>
           <TouchableOpacity
-            key={cat}
-            onPress={() => handleToggleCategory(cat)}
+            onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
             activeOpacity={0.7}
-            style={[styles.chip, active && styles.chipActive]}
+            style={[styles.modeChip, matchModeOnly && styles.modeChipMatch]}
+            accessibilityLabel="Show only terraces with outdoor screens"
           >
-            <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>
-              {CATEGORY_GLYPHS[cat]} {CATEGORY_LABELS[cat]}
+            <Text
+              style={[styles.chipText, matchModeOnly && styles.chipTextActive]}
+              numberOfLines={1}
+            >
+              ⚽ Outdoor Screen
             </Text>
           </TouchableOpacity>
-        );
-      })}
-      <TouchableOpacity
-        onPress={() => {
-          haptics.selection();
-          toggleMatchModeOnly();
-        }}
-        activeOpacity={0.7}
-        style={[styles.chip, matchModeOnly && styles.chipMatchActive]}
-        accessibilityLabel="Show only terraces with outdoor screens"
-      >
-        <Text style={[styles.chipLabel, matchModeOnly && styles.chipLabelActive]}>
-          ⚽ Outdoor Screen
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
+          <TouchableOpacity
+            onPress={() => { haptics.selection(); toggleSortByDistance(); }}
+            activeOpacity={0.7}
+            style={[styles.modeChip, sortByDistance && styles.modeChipNearMe]}
+            accessibilityLabel="Sort by nearest sunny terrace"
+          >
+            <Text
+              style={[styles.chipText, sortByDistance && styles.chipTextActive]}
+              numberOfLines={1}
+            >
+              📍 Near me
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: {
+  // Outer wrapper — same paddingHorizontal as WHEN card so left/right edges align
+  outerPad: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.xs,
+    paddingTop: spacing.xs,   // small gap between WHEN card above
+    paddingBottom: spacing.sm,
+  },
+  card: {
+    backgroundColor: palette.sandDeep,
+    borderRadius: radii.lg,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+    gap: spacing.xs,
+  },
+  cardLabel: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.xs,
+    color: palette.mistDeep,
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+
+  // ── Row 1: equal-width venue chips ────────────────────────────────
+  chipRow: {
+    flexDirection: 'row',
     gap: spacing.xs,
   },
   chip: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radii.pill,
-    backgroundColor: palette.sandDeep,
+    flex: 1,
+    minWidth: 0,
+    height: CHIP_H,
+    borderRadius: radii.md,
+    backgroundColor: palette.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   chipActive: {
-    backgroundColor: palette.peach,
-  },
-  // Distinct active colour for the match-mode chip so it reads as a
-  // mode/feature toggle rather than just another venue category.
-  chipMatchActive: {
     backgroundColor: palette.burnt,
   },
-  chipLabel: {
-    fontFamily: fonts.bodyMedium,
+  chipText: {
+    fontFamily: fonts.bodySemibold,
     fontSize: fontSizes.sm,
     color: palette.inkSoft,
+    textAlign: 'center',
   },
-  chipLabelActive: {
+  chipTextActive: {
     color: palette.cream,
+  },
+
+  // ── Row 2: natural-width mode toggles, same height ─────────────────
+  modeRow: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+  },
+  modeChip: {
+    height: CHIP_H,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: palette.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 1,
+  },
+  modeChipMatch: {
+    backgroundColor: palette.burnt,
+  },
+  modeChipNearMe: {
+    backgroundColor: palette.leaf,
   },
 });

@@ -21,6 +21,7 @@ const PLACES_DETAIL_URL = 'https://places.googleapis.com/v1/places';
 
 // Basic SKU fields ($0.005/req). Add Atmosphere fields (rating, reviews)
 // for Pro SKU at $0.017/req. Keeping it on Basic for now.
+// `photos` is a Basic field — no billing uplift for including it here.
 const FIELD_MASK = [
   'id',
   'displayName',
@@ -32,6 +33,7 @@ const FIELD_MASK = [
   'internationalPhoneNumber',
   'websiteUri',
   'googleMapsUri',
+  'photos',
 ].join(',');
 
 export interface PlaceDetails {
@@ -52,6 +54,12 @@ export interface PlaceDetails {
   websiteUrl?: string;
   /** Canonical https://maps.google.com/?cid=... URL Google provides. */
   googleMapsUrl?: string;
+  /**
+   * Up to 3 photo resource names (e.g. "places/ChIJ.../photos/Aap_...").
+   * Pass each to `buildPhotoUrl()` to get a displayable image URL.
+   * Empty array = place has no photos or photos field not returned.
+   */
+  photoNames: string[];
 }
 
 interface PlacesResponse {
@@ -68,10 +76,12 @@ interface PlacesResponse {
   internationalPhoneNumber?: string;
   websiteUri?: string;
   googleMapsUri?: string;
+  /** Up to 10 photo objects returned by the API; we only use the first 3. */
+  photos?: Array<{ name?: string }>;
 }
 
 const apiKey = (): string | null => {
-  const key = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const key = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? 'REDACTED_GOOGLE_MAPS_KEY';
   return key && key.length > 0 ? key : null;
 };
 
@@ -131,7 +141,38 @@ export async function fetchPlaceDetails(placeId: string): Promise<PlaceDetails |
     phone: data.internationalPhoneNumber,
     websiteUrl: data.websiteUri,
     googleMapsUrl: data.googleMapsUri,
+    // Collect up to 3 photo resource names. The API returns up to 10;
+    // we cap at 3 to keep the strip compact and avoid over-fetching.
+    photoNames: (data.photos ?? [])
+      .slice(0, 3)
+      .map((p) => p.name ?? '')
+      .filter(Boolean),
   };
+}
+
+/**
+ * Build a Places API (New) photo media URL from a photo resource name.
+ *
+ * The resource name comes from `PlaceDetails.photoNames[]` — it looks like
+ * "places/ChIJ.../photos/Aap_uEA...". The media endpoint returns the image
+ * directly (JPEG) when the key is valid.
+ *
+ * `maxWidthPx` defaults to 800 — wide enough for the 160dp strip tiles on
+ * a 3× screen (480px) with a margin for crop. Keeping it under 1000 avoids
+ * the large-image billing tier.
+ *
+ * Returns null when no API key is configured — callers should hide the strip.
+ */
+export function buildPhotoUrl(
+  photoName: string,
+  maxWidthPx = 800,
+): string | null {
+  const key = apiKey();
+  if (!key || !photoName) return null;
+  return (
+    `https://places.googleapis.com/v1/${photoName}/media` +
+    `?key=${encodeURIComponent(key)}&maxWidthPx=${maxWidthPx}`
+  );
 }
 
 /** Convert a `priceLevel` enum to a "$$$" display. */

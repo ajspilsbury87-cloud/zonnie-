@@ -14,6 +14,7 @@ import {
 import { VenueTypeFilter } from '@/src/components/VenueTypeFilter';
 import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
+import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { scoreLabel } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { HintBubble } from '@/src/onboarding/HintBubble';
@@ -34,12 +35,19 @@ interface RowProps {
   item: ScoredTerrace;
   isSelected: boolean;
   onPress?: (item: ScoredTerrace) => void;
+  showDistance?: boolean;
 }
 
-const Row = memo(function Row({ rank, item, isSelected, onPress }: RowProps) {
-  const { terrace, score } = item;
+const Row = memo(function Row({ rank, item, isSelected, onPress, showDistance }: RowProps) {
+  const { terrace, score, distanceM } = item;
   const pct = Math.round(score * 100);
   const color = scoreToColor(score);
+
+  const distLabel = showDistance && distanceM != null
+    ? distanceM < 1000
+      ? `${Math.round(distanceM)} m`
+      : `${(distanceM / 1000).toFixed(1)} km`
+    : null;
   return (
     <TouchableOpacity
       onPress={() => {
@@ -59,7 +67,7 @@ const Row = memo(function Row({ rank, item, isSelected, onPress }: RowProps) {
             were too noisy for the row; the score chip on the right
             already conveys the sun band. */}
         <Text style={styles.subtitle} numberOfLines={1}>
-          📍 {terrace.area} · {scoreLabel(score)}
+          {distLabel ? `📍 ${distLabel} · ` : '📍 '}{terrace.area} · {scoreLabel(score)}
         </Text>
       </View>
       <View style={[styles.scoreChip, { backgroundColor: color }]}>
@@ -74,7 +82,12 @@ interface TerraceListProps {
 }
 
 export function TerraceList({ onSelect }: TerraceListProps) {
-  const ranked = useScoredTerraces();
+  // Get user location — used for "Near me" sort mode. The hook asks for
+  // foreground permission once, resolves a single low-accuracy fix, and
+  // never subscribes. Returns null if denied or unavailable; the sort
+  // falls back to pure sun-score order silently.
+  const { coord } = useUserLocation();
+  const ranked = useScoredTerraces(coord);
   const clearSearch = useSearchStore((s) => s.clear);
   const clearAreas = useAreaStore((s) => s.clear);
   const selectedId = useSelectionStore((s) => s.selectedId);
@@ -107,6 +120,7 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   // narrowest), so we surface the most likely-to-be-the-cause filter.
   const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
   const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
+  const sortByDistance = useAreaStore((s) => s.sortByDistance);
   const query = useSearchStore((s) => s.query);
   const emptyState = (() => {
     if (matchModeOnly) {
@@ -193,9 +207,10 @@ export function TerraceList({ onSelect }: TerraceListProps) {
         item={item}
         isSelected={item.terrace.id === stickySelectedId}
         onPress={onSelect}
+        showDistance={sortByDistance && coord != null}
       />
     ),
-    [onSelect, stickySelectedId],
+    [onSelect, stickySelectedId, sortByDistance, coord],
   );
 
   // BottomSheetFlatList integrates with Gorhom's gesture system so the list
@@ -228,8 +243,8 @@ export function TerraceList({ onSelect }: TerraceListProps) {
             out — Tier 2 hidden by default reclaims ~190px for terraces.
           */}
           <DatePicker />
-          <TimeRangeQuickPicker />
           <WeatherStrip />
+          <TimeRangeQuickPicker />
           <VenueTypeFilter />
           <MoreFiltersToggle
             expanded={filtersExpanded}

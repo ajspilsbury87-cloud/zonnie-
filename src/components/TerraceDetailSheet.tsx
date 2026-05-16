@@ -20,7 +20,8 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
@@ -30,18 +31,22 @@ import { TERRACES } from '@/src/data/terraces';
 import {
   buildGoogleMapsNavigationUrl,
   buildGoogleMapsViewUrl,
+  buildPhotoUrl,
   priceLevelToDollars,
   type PlaceDetails,
 } from '@/src/data/places';
 import { SunTimeline } from '@/src/components/SunTimeline';
-import { computeRangeScore, computeSunScore, scoreLabel } from '@/src/engines/scoring';
+import { computeRangeScore, computeSunScore, findBestWindow, scoreLabel } from '@/src/engines/scoring';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { usePlacesStore } from '@/src/store/placesStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
+import { usePurchaseStore } from '@/src/store/purchaseStore';
+import { useProPaywallStore } from '@/src/components/ProPaywall';
 import { haptics } from '@/src/lib/haptics';
+import { shareTerraceCard } from '@/src/lib/shareCard';
 import {
   fonts,
   fontSizes,
@@ -73,6 +78,8 @@ export function TerraceDetailSheet() {
   const ref = useRef<BottomSheet>(null);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const clear = useSelectionStore((s) => s.clear);
+  const isPro = usePurchaseStore((s) => s.isPro);
+  const showPaywall = useProPaywallStore((s) => s.show);
   const setPanTo = useSelectionStore((s) => s.setPanTo);
   const dateOffset = useTimeStore((s) => s.dateOffset);
   const fromHour = useTimeStore((s) => s.fromHour);
@@ -215,6 +222,71 @@ export function TerraceDetailSheet() {
     return fromHour === toHour ? `at ${f}:00` : `${f}:00 – ${t}:00`;
   }, [fromHour, toHour]);
 
+  /**
+   * Best 2-hour sunny window for this terrace today.
+   *
+   * Computed from the same 24-hour hourly scores used by SunTimeline so
+   * the number always matches what the chart shows. We use a 2-hour
+   * window because that's a natural terrace visit duration — enough to
+   * eat, have a drink, and not feel rushed. The result powers the
+   * "Best time to visit" banner below the timeline.
+   *
+   * Returns null when no 2-hour window reaches Partial Sun (0.35) —
+   * e.g. a north-facing terrace on an overcast day. In that case the
+   * banner is hidden entirely.
+   */
+  const bestWindow = useMemo(() => {
+    if (!terrace) return null;
+    const buildings = getBuildingsForTerrace(terrace.id);
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    // Compute the full 24-hour score array (same as SunTimeline does internally).
+    const hourlyScores = Array.from({ length: 24 }, (_, h) =>
+      computeSunScore(
+        terrace,
+        buildings,
+        h,
+        dateStr,
+        weatherProfile,
+        hourlyWeather?.[h],
+      ).score,
+    );
+    return findBestWindow(hourlyScores);
+  }, [terrace, dateOffset, weatherProfile, weatherByDate]);
+
+  const setRange = useTimeStore((s) => s.setRange);
+
+  /** Tapping the best-window banner focuses the timeline on those hours. */
+  const handleJumpToBestWindow = useCallback(() => {
+    if (!bestWindow) return;
+    haptics.selection();
+    setRange(bestWindow.fromHour, bestWindow.toHour);
+  }, [bestWindow, setRange]);
+
+  /**
+   * Share button handler — fires the native share sheet with a pre-composed
+   * message. Prefers the best window time (most impressive / most useful to
+   * the recipient); falls back to the current visit window.
+   */
+  const handleShare = useCallback(() => {
+    if (!terrace) return;
+    haptics.light();
+    const shareFrom = bestWindow?.fromHour ?? fromHour;
+    const shareTo   = bestWindow?.toHour   ?? toHour;
+    const shareScore = bestWindow?.avgScore ?? score;
+    shareTerraceCard({
+      name:     terrace.name,
+      area:     terrace.area,
+      score:    shareScore,
+      fromHour: shareFrom,
+      toHour:   shareTo,
+    }).catch(() => {
+      // Share.share rejects if the user dismisses without choosing a
+      // destination on some Android versions — swallow silently.
+    });
+  }, [terrace, bestWindow, fromHour, toHour, score]);
+
   const renderBackdrop = useCallback(
     (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
       <BottomSheetBackdrop
@@ -306,11 +378,17 @@ export function TerraceDetailSheet() {
               <Pressable
                 onPress={() => {
                   if (!terrace) return;
-                  // Success haptic when adding to favourites; lighter
-                  // tick when removing.
-                  if (isFavorite) haptics.selection();
+                  const result = toggleFavorite(terrace.id);
+                  if (result === 'paywall') {
+                    // Free-tier limit reached — open paywall instead of
+                    // adding. No haptic: the tap failed silently before
+                    // the sheet animates up, which feels natural.
+                    showPaywall('favourites');
+                    return;
+                  }
+                  // Success haptic when adding; lighter tick when removing.
+                  if (result === 'removed') haptics.selection();
                   else haptics.success();
-                  toggleFavorite(terrace.id);
                 }}
                 style={({ pressed }) => [
                   styles.favoriteButton,
@@ -335,11 +413,23 @@ export function TerraceDetailSheet() {
               </View>
             </View>
 
-            {/* Google Places card — rating, hours, price */}
+            {/* Google Places card — rating (Pro), price, hours */}
             <PlacesCard
               loading={placeEntry?.status === 'loading'}
               hasPlaceId={!!terrace.placeId}
               details={placeDetails}
+              isPro={isPro}
+              onRatingLockPress={() => showPaywall('ratings')}
+            />
+
+            {/* Photo strip — up to 3 terrace photos from Google Places,
+                shown when the fetch has landed and photos are available.
+                Rides edge-to-edge (negative margin to escape the sheet's
+                horizontal padding) so images feel immersive rather than
+                being clipped in a small box. */}
+            <PhotoStrip
+              photoNames={placeDetails?.photoNames ?? []}
+              loading={placeEntry?.status === 'loading'}
             />
 
             <Text style={styles.sectionLabel}>Sun today</Text>
@@ -347,6 +437,39 @@ export function TerraceDetailSheet() {
             <Text style={styles.scoreLabelText}>
               {rangeLabel}: <Text style={styles.scoreLabelStrong}>{scoreLabel(score)}</Text>
             </Text>
+
+            {/* Best-window banner — the single most actionable insight
+                in the detail sheet. Answers "when should I go?" with a
+                tappable card that also jumps the timeline to those hours.
+                Hidden when no qualifying window exists (overcast / shaded). */}
+            {bestWindow ? (
+              <Pressable
+                onPress={handleJumpToBestWindow}
+                style={({ pressed }) => [
+                  styles.bestWindowCard,
+                  pressed && styles.bestWindowCardPressed,
+                ]}
+                accessibilityLabel={`Best time to visit: ${bestWindow.fromHour.toString().padStart(2, '0')}:00 to ${bestWindow.toHour.toString().padStart(2, '0')}:00`}
+              >
+                <View style={styles.bestWindowLeft}>
+                  <Text style={styles.bestWindowLabel}>Best time to visit</Text>
+                  <Text style={styles.bestWindowTime}>
+                    {bestWindow.fromHour.toString().padStart(2, '0')}:00
+                    {' – '}
+                    {bestWindow.toHour.toString().padStart(2, '0')}:00
+                  </Text>
+                </View>
+                <View style={[
+                  styles.bestWindowScore,
+                  { backgroundColor: scoreToColor(bestWindow.avgScore) },
+                ]}>
+                  <Text style={styles.bestWindowScoreText}>
+                    {Math.round(bestWindow.avgScore * 100)}
+                  </Text>
+                  <Text style={styles.bestWindowScoreUnit}>%</Text>
+                </View>
+              </Pressable>
+            ) : null}
 
             <View style={styles.infoChipRow}>
               {sunTrend ? (
@@ -440,6 +563,17 @@ export function TerraceDetailSheet() {
             </View>
 
             <Pressable
+              onPress={handleShare}
+              style={({ pressed }) => [
+                styles.actionShare,
+                pressed && styles.actionPressed,
+              ]}
+              accessibilityLabel="Share this terrace"
+            >
+              <Text style={styles.actionShareText}>Share ☀️</Text>
+            </Pressable>
+
+            <Pressable
               onPress={handleNavigate}
               style={({ pressed }) => [
                 styles.actionPrimary,
@@ -459,15 +593,77 @@ interface PlacesCardProps {
   loading: boolean;
   hasPlaceId: boolean;
   details: PlaceDetails | undefined;
+  isPro: boolean;
+  onRatingLockPress: () => void;
 }
 
 /**
- * Google Places summary line. Renders rating · price · today's hours
- * if details have loaded. Renders nothing if there's no placeId on the
- * terrace, or if the API key is unset (graceful degradation).
+ * Horizontally scrollable strip of up to 3 terrace photos from Google Places.
+ *
+ * Each tile is 160×120 dp — wide enough to see the terrace ambience but short
+ * enough to not dominate the sheet. The strip bleeds edge-to-edge (negative
+ * horizontal margin) to escape the sheet's 16 dp padding, giving images room
+ * to breathe. `expo-image` handles caching, progressive decode, and the
+ * loading shimmer automatically.
+ *
+ * Renders nothing when:
+ *   - The Places fetch hasn't landed yet (loading=true)
+ *   - No photos came back (photoNames is empty)
+ *   - The API key is not configured (buildPhotoUrl returns null)
  */
-function PlacesCard({ loading, hasPlaceId, details }: PlacesCardProps) {
+interface PhotoStripProps {
+  photoNames: string[];
+  loading: boolean;
+}
+
+function PhotoStrip({ photoNames, loading }: PhotoStripProps) {
+  if (loading || photoNames.length === 0) return null;
+
+  const urls = photoNames
+    .map((name) => buildPhotoUrl(name))
+    .filter((url): url is string => url !== null);
+
+  if (urls.length === 0) return null;
+
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      // Negative margin to escape the sheet's horizontal padding so photos
+      // run flush to the sheet edges. paddingHorizontal re-adds a small
+      // inset so the first tile doesn't sit hard against the screen edge.
+      style={styles.photoStrip}
+      contentContainerStyle={styles.photoStripContent}
+    >
+      {urls.map((url, i) => (
+        <Image
+          key={i}
+          source={{ uri: url }}
+          style={styles.photoTile}
+          contentFit="cover"
+          // Smooth crossfade as image loads — prevents hard pop-in.
+          transition={200}
+          accessibilityLabel="Terrace photo"
+        />
+      ))}
+    </ScrollView>
+  );
+}
+
+/**
+ * Google Places summary card.
+ *
+ * Rating is Pro-gated:
+ *   - Free users: a tappable "★ ?.? 🔒 Pro" chip that opens the paywall.
+ *   - Pro users: real "★ 4.3 (127)" text.
+ *
+ * Price level and open/now status remain free — they're useful context
+ * but not decision-changing enough to anchor a paywall on their own.
+ * Hours remain free for the same reason.
+ */
+function PlacesCard({ loading, hasPlaceId, details, isPro, onRatingLockPress }: PlacesCardProps) {
   if (!hasPlaceId) return null;
+
   if (loading) {
     return (
       <View style={styles.placesCard}>
@@ -475,28 +671,70 @@ function PlacesCard({ loading, hasPlaceId, details }: PlacesCardProps) {
       </View>
     );
   }
+
+  // If Places fetch failed or API key missing, still show the rating
+  // lock for free users — they should see what Pro unlocks even when
+  // the underlying data is unavailable. Pro users see nothing (graceful).
   if (!details) {
-    // API key missing or fetch failed — silently skip.
-    return null;
+    if (isPro) return null;
+    return (
+      <View style={styles.placesCard}>
+        <View style={styles.placesRow}>
+          <Pressable
+            onPress={onRatingLockPress}
+            style={({ pressed }) => [styles.ratingLock, pressed && styles.ratingLockPressed]}
+            accessibilityLabel="See Google rating — unlock with Pro"
+            hitSlop={6}
+          >
+            <Text style={styles.ratingLockText}>★ ?.?  🔒 Pro</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
   }
 
-  const segments: string[] = [];
-  if (details.rating) {
-    const stars = '★'.repeat(Math.round(details.rating));
-    const count = details.ratingCount ? ` (${details.ratingCount})` : '';
-    segments.push(`${stars} ${details.rating.toFixed(1)}${count}`);
-  }
+  // Non-gated segments — price and open status are always shown free.
+  const freeSegments: string[] = [];
   const price = priceLevelToDollars(details.priceLevel);
-  if (price) segments.push(price);
+  if (price) freeSegments.push(price);
   if (details.openNow != null) {
-    segments.push(details.openNow ? 'Open now' : 'Closed now');
+    freeSegments.push(details.openNow ? 'Open now' : 'Closed now');
   }
 
   return (
     <View style={styles.placesCard}>
-      {segments.length > 0 ? (
-        <Text style={styles.placesSummary}>{segments.join('  ·  ')}</Text>
-      ) : null}
+      <View style={styles.placesRow}>
+
+        {/* Rating — gated */}
+        {details.rating != null ? (
+          isPro ? (
+            // Pro: real rating
+            <Text style={styles.placesSummary}>
+              {'★ '}{details.rating.toFixed(1)}
+              {details.ratingCount ? `  (${details.ratingCount})` : ''}
+            </Text>
+          ) : (
+            // Free: locked chip — tapping opens the paywall
+            <Pressable
+              onPress={onRatingLockPress}
+              style={({ pressed }) => [styles.ratingLock, pressed && styles.ratingLockPressed]}
+              accessibilityLabel="See Google rating — unlock with Pro"
+              hitSlop={6}
+            >
+              <Text style={styles.ratingLockText}>★ ?.?  🔒 Pro</Text>
+            </Pressable>
+          )
+        ) : null}
+
+        {/* Free segments — price · open status */}
+        {freeSegments.length > 0 ? (
+          <Text style={[styles.placesSummary, details.rating != null && styles.placesSummaryAfterRating]}>
+            {(details.rating != null ? '  ·  ' : '') + freeSegments.join('  ·  ')}
+          </Text>
+        ) : null}
+
+      </View>
+
       {details.todayHours ? (
         <Text style={styles.placesHours}>{details.todayHours}</Text>
       ) : null}
@@ -664,6 +902,11 @@ const styles = StyleSheet.create({
     backgroundColor: palette.sandDeep,
     borderRadius: radii.md,
   },
+  placesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
   placesPlaceholder: {
     fontFamily: fonts.body,
     fontSize: fontSizes.sm,
@@ -674,6 +917,29 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodyMedium,
     fontSize: fontSizes.sm,
     color: palette.ink,
+  },
+  placesSummaryAfterRating: {
+    // When shown after the rating chip the separator "  ·  " is part of
+    // the string so no extra margin is needed — this style is a no-op
+    // intentionally kept as a named slot for future tweaks.
+  },
+  // Locked rating chip — tappable, opens the paywall.
+  ratingLock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: palette.mist,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+  },
+  ratingLockPressed: {
+    opacity: 0.7,
+  },
+  ratingLockText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.xs,
+    color: palette.inkSoft,
+    lineHeight: Math.round(fontSizes.xs * 1.3),
   },
   placesHours: {
     fontFamily: fonts.body,
@@ -719,5 +985,92 @@ const styles = StyleSheet.create({
   },
   actionTextSecondary: {
     color: palette.ink,
+  },
+  // Best-window card — tappable, jumps the timeline to the best hours.
+  bestWindowCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing.sm,
+    marginHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: palette.cream,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: palette.peach,
+  },
+  bestWindowCardPressed: {
+    opacity: 0.75,
+  },
+  bestWindowLeft: {
+    flex: 1,
+    minWidth: 0,
+  },
+  bestWindowLabel: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.xs,
+    color: palette.inkSoft,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    marginBottom: 2,
+  },
+  bestWindowTime: {
+    fontFamily: fonts.displayBold,
+    fontSize: fontSizes.lg,
+    color: palette.ink,
+  },
+  bestWindowScore: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.md,
+    marginLeft: spacing.md,
+  },
+  bestWindowScoreText: {
+    fontFamily: fonts.displayBold,
+    fontSize: fontSizes.xl,
+    color: palette.white,
+  },
+  bestWindowScoreUnit: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.white,
+    marginLeft: 1,
+    marginBottom: 2,
+  },
+  // Share button — full-width secondary, sits between the two-up row and
+  // the primary "Get Directions" CTA. Peach border + ink text so it reads
+  // as brand-adjacent without competing with the amber primary.
+  actionShare: {
+    borderWidth: 1.5,
+    borderColor: palette.peach,
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  actionShareText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.md,
+    color: palette.burnt,
+  },
+  // Photo strip — bleeds edge-to-edge by negating the sheet's horizontal
+  // padding. paddingHorizontal on the content container adds a small
+  // leading inset so the first tile doesn't sit hard against the edge.
+  photoStrip: {
+    marginHorizontal: -spacing.lg,
+    marginTop: spacing.md,
+  },
+  photoStripContent: {
+    paddingHorizontal: spacing.sm,
+    gap: spacing.xs,
+  },
+  photoTile: {
+    width: 160,
+    height: 120,
+    borderRadius: radii.md,
+    backgroundColor: palette.sandDeep, // placeholder while loading
   },
 });

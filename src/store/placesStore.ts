@@ -34,9 +34,10 @@ export const usePlacesStore = create<PlacesState>((set, get) => ({
   byPlaceId: {},
   ensure: (placeId) => {
     const existing = get().byPlaceId[placeId];
-    if (existing && (existing.status === 'loading' || existing.status === 'ready')) {
-      return;
-    }
+    if (existing?.status === 'loading') return;
+    // Re-fetch if ready but photoNames is missing or empty — could be
+    // cached before photos were added to the API field mask.
+    if (existing?.status === 'ready' && existing.data?.photoNames?.length) return;
     set((s) => ({
       byPlaceId: { ...s.byPlaceId, [placeId]: { status: 'loading' } },
     }));

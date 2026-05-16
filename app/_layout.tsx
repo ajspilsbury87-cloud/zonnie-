@@ -15,14 +15,18 @@ import {
   Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
 import { useCallback, useEffect, useState } from 'react';
+import * as Updates from 'expo-updates';
 
 import { LandingPage } from '@/src/components/LandingPage';
 import { NotificationPrompt } from '@/src/components/NotificationPrompt';
 import { shouldShowPrompt } from '@/src/notifications/permission';
 import { useDailyForecastNotification } from '@/src/notifications/useDailyForecastNotification';
+import { useFavouritesSunnyNotifications } from '@/src/notifications/useFavouritesSunnyNotifications';
 import { OnboardingIntro } from '@/src/onboarding/OnboardingIntro';
 import { shouldShowIntro } from '@/src/onboarding/state';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
+import { usePurchaseStore } from '@/src/store/purchaseStore';
+import { useWeatherRefresh } from '@/src/hooks/useWeatherRefresh';
 import { useWidgetSync } from '@/src/widget/useWidgetSync';
 
 SplashScreen.preventAutoHideAsync();
@@ -42,14 +46,48 @@ export default function RootLayout() {
     void hydrateFavorites();
   }, [hydrateFavorites]);
 
+  // Configure RevenueCat and hydrate Pro entitlement status.
+  // Must run before any gated component renders so isPro is correct
+  // on first paint — preventing a flash of locked UI for paying users.
+  const configurePurchases = usePurchaseStore((s) => s.configure);
+  useEffect(() => {
+    void configurePurchases();
+  }, [configurePurchases]);
+
+  // Aggressively check for OTA updates on every launch and reload
+  // immediately if one is available — no waiting for next cold start.
+  useEffect(() => {
+    if (!Updates.isEnabled) return;
+    void (async () => {
+      try {
+        const result = await Updates.checkForUpdateAsync();
+        if (result.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch (_) {
+        // Network offline or server error — silent fail, use cached bundle
+      }
+    })();
+  }, []);
+
   // Keep the iOS home-screen widget's snapshot in sync with the live
   // top-3. iOS-only inside the hook; cheap no-op on Android.
   useWidgetSync();
+
+  // Keep live weather data fresh: invalidates today's forecast on
+  // foreground resume and re-fetches on a 30-minute interval.
+  useWeatherRefresh();
 
   // Daily "sunny tomorrow" notification scheduler — re-syncs whenever
   // tomorrow's weather data lands or changes. No-op until the user
   // grants notification permission via the prompt below.
   useDailyForecastNotification();
+
+  // Per-favourite terrace notifications — schedules one notification
+  // per favourited terrace that has a 2+ hour sunny block tomorrow.
+  // Re-syncs whenever favourites or tomorrow's weather changes.
+  useFavouritesSunnyNotifications();
 
   useEffect(() => {
     if (fontsLoaded || fontError) {

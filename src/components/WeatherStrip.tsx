@@ -69,7 +69,11 @@ export function WeatherStrip() {
       return { cells: null, status: 'error' as const };
     }
     const out: CellProps[] = [];
-    for (let h = fromHour; h <= toHour; h++) {
+    // Show at least 2 hours even when fromHour === toHour (e.g. "Now"
+    // preset sets both to the same hour). Also clamp to available data
+    // so we never read past index 23.
+    const displayTo = Math.min(23, Math.max(toHour, fromHour + 1));
+    for (let h = fromHour; h <= displayTo; h++) {
       const w = entry.data[h];
       if (!w) continue;
       out.push({

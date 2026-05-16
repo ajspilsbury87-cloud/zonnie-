@@ -16,6 +16,8 @@ export interface ScoredTerrace {
   terrace: Terrace;
   /** Average sun score across the visit window [fromHour..toHour], 0–1. */
   score: number;
+  /** Distance from user's location in metres, if available. */
+  distanceM?: number;
 }
 
 /**
@@ -38,26 +40,19 @@ for (const t of TERRACES) {
 
 // ─── Per-hour scoring cache ──────────────────────────────────────────────────
 //
-// Key insight for the time-change crash: every chip tap was re-running
-// `computeSunScore` for 378 terraces × every hour in the visit window, and
-// each call ray-casts against ~343 procedural buildings. ~500k operations on
-// the JS thread per tap. Rapid taps compound into multi-second blocks and
-// iOS Watchdog kills the app.
-//
 // Caching at (terrace, hour, date, weather-bucket) means time-window shifts
 // reuse most of the prior computation — going 14:00–17:00 → 15:00–18:00
 // only computes the new hour 18, the others are O(1) lookups.
 //
-// Bounded by `MAX_CACHE_SIZE`. When exceeded, the oldest 20% of entries are
-// dropped (FIFO is fine for our workload — the user's recent time selections
-// are the most-likely-to-be-revisited).
+// Bounded by MAX_CACHE_SIZE. When exceeded, the oldest 20% of entries are
+// dropped (FIFO is fine — the user's recent time selections are most likely
+// to be revisited).
 
 const HOUR_SCORE_CACHE = new Map<string, number>();
 const MAX_CACHE_SIZE = 8000;
 
 function weatherBucket(w: Weather | undefined): string {
   if (!w) return 'syn';
-  // Round to 5%-buckets so tiny forecast variations don't busts the cache.
   return `${Math.round(w.cloudCover / 5) * 5}`;
 }
 
@@ -70,19 +65,16 @@ function cachedHourScore(
   const key = `${terrace.id}|${hour}|${dateStr}|${weatherBucket(weather)}`;
   const hit = HOUR_SCORE_CACHE.get(key);
   if (hit != null) return hit;
-  // Per-terrace nearby buildings — bounded (≤30) and pre-computed at
-  // build time, so every score recompute is cheap.
   const buildings = getBuildingsForTerrace(terrace.id);
   const score = computeSunScore(
     terrace,
     buildings,
     hour,
     dateStr,
-    'sunny', // weatherProfile is unused when weather override is provided
+    'sunny',
     weather,
   ).score;
   if (HOUR_SCORE_CACHE.size >= MAX_CACHE_SIZE) {
-    // Drop the oldest 20% — Map iteration is insertion order, so this is FIFO.
     const dropCount = Math.floor(MAX_CACHE_SIZE * 0.2);
     let i = 0;
     for (const k of HOUR_SCORE_CACHE.keys()) {
@@ -94,19 +86,44 @@ function cachedHourScore(
   return score;
 }
 
+// ─── Distance helpers ────────────────────────────────────────────────────────
+
+const M_PER_DEG_LAT = 110540;
+const M_PER_DEG_LNG_AT_AMS = 111320 * Math.cos(52.37 * (Math.PI / 180));
+
+/** Flat-earth distance in metres — accurate to <0.5% within Amsterdam. */
+function distanceMetres(
+  lat1: number, lng1: number,
+  lat2: number, lng2: number,
+): number {
+  const dy = (lat2 - lat1) * M_PER_DEG_LAT;
+  const dx = (lng2 - lng1) * M_PER_DEG_LNG_AT_AMS;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 /**
- * Score every terrace by the AVERAGE sun across the user's visit window
- * (`fromHour..toHour`) on the selected date, filter by selected regions and
- * free-text query, and sort descending by score.
+ * Distance decay multiplier: maps distance → [0,1] with exponential falloff.
+ *   0 m   → 1.0
+ *   500 m → 0.78
+ *   1 km  → 0.61
+ *   2 km  → 0.37
+ *   5 km  → 0.08
  *
- * Uses a per-hour memoization cache so repeated time changes are cheap —
- * critical for stability since uncached recomputes block the JS thread for
- * long enough that iOS kills the app on rapid chip taps.
- *
- * Filters are AND-combined: a terrace must pass region AND query to appear.
- * Empty region selection or empty query = that filter is bypassed.
+ * Half-life ~1 km — a terrace 1 km away must score ~60% higher to beat
+ * one 200 m away with the same sun score.
  */
-export function useScoredTerraces(): ScoredTerrace[] {
+function distanceDecay(metres: number): number {
+  return Math.exp(-metres / 1000);
+}
+
+/**
+ * Score every terrace by average sun across the visit window, filter by
+ * active filters, and sort by score (or by nearest+sunniest if sortByDistance
+ * is on and a user coordinate is provided).
+ */
+export function useScoredTerraces(
+  userCoord?: { lat: number; lng: number } | null,
+): ScoredTerrace[] {
   const dateOffset = useTimeStore((s) => s.dateOffset);
   const fromHour = useTimeStore((s) => s.fromHour);
   const toHour = useTimeStore((s) => s.toHour);
@@ -114,9 +131,15 @@ export function useScoredTerraces(): ScoredTerrace[] {
   const selectedCategories = useAreaStore((s) => s.selectedCategories);
   const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
   const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
+  const sortByDistance = useAreaStore((s) => s.sortByDistance);
   const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
   const query = useSearchStore((s) => s.query);
   const weatherByDate = useWeatherStore((s) => s.byDate);
+
+  // Stable coord key — minor GPS jitter (~11 m at 4dp) doesn't bust the memo.
+  const coordKey = userCoord
+    ? `${userCoord.lat.toFixed(4)},${userCoord.lng.toFixed(4)}`
+    : 'none';
 
   return useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
@@ -154,16 +177,30 @@ export function useScoredTerraces(): ScoredTerrace[] {
       });
     }
 
-    // Range score = mean of cached per-hour scores.
     const span = Math.max(1, toHour - fromHour + 1);
     const scored: ScoredTerrace[] = filtered.map((terrace) => {
       let sum = 0;
       for (let h = fromHour; h <= toHour; h++) {
         sum += cachedHourScore(terrace, h, dateStr, hourlyWeather?.[h]);
       }
-      return { terrace, score: sum / span };
+      const score = sum / span;
+      const dist = userCoord
+        ? distanceMetres(userCoord.lat, userCoord.lng, terrace.lat, terrace.lng)
+        : undefined;
+      return { terrace, score, distanceM: dist };
     });
-    scored.sort((a, b) => b.score - a.score);
+
+    if (sortByDistance && userCoord) {
+      // Blended sort: sunScore × distanceDecay — nearest+sunniest wins.
+      scored.sort((a, b) => {
+        const da = distanceDecay(a.distanceM ?? 0) * a.score;
+        const db = distanceDecay(b.distanceM ?? 0) * b.score;
+        return db - da;
+      });
+    } else {
+      scored.sort((a, b) => b.score - a.score);
+    }
+
     return scored;
   }, [
     dateOffset,
@@ -174,7 +211,9 @@ export function useScoredTerraces(): ScoredTerrace[] {
     favoritesOnly,
     favoriteIds,
     matchModeOnly,
+    sortByDistance,
     query,
     weatherByDate,
+    coordKey, // eslint-disable-line react-hooks/exhaustive-deps
   ]);
 }

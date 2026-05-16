@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
 import { MainSheet } from '@/src/components/MainSheet';
+import { ProPaywall } from '@/src/components/ProPaywall';
 import { TerraceDetailSheet } from '@/src/components/TerraceDetailSheet';
 import { ZonnieMap } from '@/src/components/ZonnieMap';
 import type { ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -30,6 +31,9 @@ export default function Index() {
       </ErrorBoundary>
       <ErrorBoundary surface="TerraceDetailSheet">
         <TerraceDetailSheet />
+      </ErrorBoundary>
+      <ErrorBoundary surface="ProPaywall">
+        <ProPaywall />
       </ErrorBoundary>
     </View>
   );
