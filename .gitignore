@@ -30,8 +30,34 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# local env files — ALL .env variants, never commit any of these.
+# .env*.local was the original line, but plain .env was leaking through.
+.env
+.env.*
+
+# manual file backups (we have git, don't need these tracked)
+*.bak
+
+# personal workflow / scratch helpers — Andy's local scripts that aren't
+# part of the project's canonical npm scripts. Keep local, don't ship.
+do-*.ps1
+push-*.ps1
+eas-push*.bat
+eas-check*.bat
+
+# scratch debug output captured to file during OTA + build investigations
+eas-out.txt*
+eas-check*.log
+eas-list*.log
+eas-push*.log
+scripts/competitor-research/eas-build*.log
+scripts/competitor-research/eas-submit*.log
+scripts/competitor-research/eas-update*.log
+
+# pnpm files — project uses npm; pnpm-lock + workspace are dead artifacts
+# from a brief experiment, would only confuse future contributors.
+pnpm-lock.yaml
+pnpm-workspace.yaml
 
 # coord-validation output (large logs, contains place_ids — keep local)
 coord_corrections.jsonl

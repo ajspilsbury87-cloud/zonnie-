@@ -43,7 +43,7 @@ const config: ExpoConfig = {
   // preview-only) on 2026-05-08 when prepping for review. Future
   // submissions follow semver: 1.0.x = patch (bug fix), 1.x.0 = minor
   // (additive feature), 2.0.0 = major (breaking UX change).
-  version: '1.0.0',
+  version: '1.1.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
@@ -61,14 +61,35 @@ const config: ExpoConfig = {
   //       at this hit pod-install failures during EAS Build (no error
   //       detail), so leaving as-is until the proper fix lands.
   newArchEnabled: true,
-  // OTA updates: runtime is the app version. JS bundle changes within 0.1.0
-  // ship as OTA; native changes (new packages, plugins) require a new build
-  // and a new version. The `updates.url` points at the EAS Update server for
-  // this project — required by `expo-updates` whenever it's installed, even
-  // if we never push an update. Without it, prebuild errors out.
-  runtimeVersion: { policy: 'appVersion' },
+  // OTA updates — two changes from earlier configs:
+  //
+  //   1. runtimeVersion: switched from { policy: 'appVersion' } to
+  //      { policy: 'fingerprint' }. The appVersion policy ties OTA
+  //      eligibility to expo.version only — meaning if you add a
+  //      native module (react-native-purchases in our case) and ship
+  //      an OTA without rebuilding, the OTA *downloads* but crashes
+  //      on import because the native module isn't in the binary.
+  //      Build #7 hit exactly this: 23.7MB of orphan downloaded
+  //      bundles in iOS Documents, none applying, rollback to
+  //      embedded bundle every launch.
+  //
+  //      `policy: 'fingerprint'` hashes the native deps tree at
+  //      build time; OTAs only apply to builds with a matching
+  //      fingerprint. If we add a native module later, old builds
+  //      simply won't receive that OTA — no crash, no silent
+  //      rollback. This is the right default in 2026.
+  //
+  //   2. requestHeaders.expo-channel-name: explicitly hardcoded
+  //      'production'. Defensive — without it, the channel binding
+  //      comes from eas.json at native build time, which is
+  //      implicit and machine-dependent (changes when `expo-dev-
+  //      client` enters the dep tree). Explicit beats implicit.
+  runtimeVersion: { policy: 'fingerprint' },
   updates: {
     url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
+    requestHeaders: {
+      'expo-channel-name': 'production',
+    },
   },
   ios: {
     supportsTablet: false,
@@ -97,8 +118,13 @@ const config: ExpoConfig = {
       NSAppTransportSecurity: {
         NSAllowsArbitraryLoads: false,
       },
-      // ITSAppUsesNonExemptEncryption=false skips an export-compliance form
-      // on every TestFlight upload. Set true only if we add custom crypto.
+      // ITSAppUsesNonExemptEncryption=false skips the export-compliance
+      // form on every TestFlight upload. This is the canonical Expo /
+      // Apple way to declare no-non-exempt-encryption — it's already
+      // sufficient on its own; there's no separate top-level
+      // `infoPlistContainsExportCompliance` field on the Expo iOS
+      // config schema (had been wrongly added here previously, caused
+      // a tsc error).
       ITSAppUsesNonExemptEncryption: false,
     },
   },
