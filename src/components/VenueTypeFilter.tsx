@@ -19,6 +19,7 @@ import {
   CATEGORY_LABELS,
   type VenueCategory,
 } from '@/src/data/categories';
+import { useChipWidth } from '@/src/components/TimeRangeScrubber';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
@@ -38,6 +39,7 @@ export function VenueTypeFilter() {
   const toggleMatchModeOnly  = useAreaStore((s) => s.toggleMatchModeOnly);
   const sortByDistance       = useAreaStore((s) => s.sortByDistance);
   const toggleSortByDistance = useAreaStore((s) => s.toggleSortByDistance);
+  const chipWidth            = useChipWidth();
 
   const handleToggleCategory = (cat: VenueCategory) => {
     haptics.selection();
@@ -60,7 +62,7 @@ export function VenueTypeFilter() {
         {/* Card label */}
         <Text style={styles.cardLabel}>WHAT</Text>
 
-        {/* Row 1: Bar / Restaurant / Coffee — equal-width */}
+        {/* Row 1: Bar / Restaurant / Coffee — same fixed width as WHEN chips */}
         <View style={styles.chipRow}>
           {CATEGORIES_ORDERED.map((cat) => {
             const active = selectedCategories.has(cat);
@@ -69,7 +71,7 @@ export function VenueTypeFilter() {
                 key={cat}
                 onPress={() => handleToggleCategory(cat)}
                 activeOpacity={0.7}
-                style={[styles.chip, active && styles.chipActive]}
+                style={[styles.chip, { width: chipWidth }, active && styles.chipActive]}
               >
                 <Text
                   style={[styles.chipText, active && styles.chipTextActive]}
@@ -82,25 +84,27 @@ export function VenueTypeFilter() {
           })}
         </View>
 
-        {/* Row 2: mode toggles — natural-width, same height as Row 1 chips */}
+        {/* Row 2: mode toggles — same fixed width too. Long labels
+            ("Outdoor Screen") will truncate to fit the slot, which is
+            the trade-off for chip-size parity across all 3 rows. */}
         <View style={styles.modeRow}>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
             activeOpacity={0.7}
-            style={[styles.modeChip, matchModeOnly && styles.modeChipMatch]}
+            style={[styles.modeChip, { width: chipWidth }, matchModeOnly && styles.modeChipMatch]}
             accessibilityLabel="Show only terraces with outdoor screens"
           >
             <Text
               style={[styles.chipText, matchModeOnly && styles.chipTextActive]}
               numberOfLines={1}
             >
-              ⚽ Outdoor Screen
+              ⚽ Outdoor
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleSortByDistance(); }}
             activeOpacity={0.7}
-            style={[styles.modeChip, sortByDistance && styles.modeChipNearMe]}
+            style={[styles.modeChip, { width: chipWidth }, sortByDistance && styles.modeChipNearMe]}
             accessibilityLabel="Sort by nearest sunny terrace"
           >
             <Text
@@ -146,15 +150,11 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    // Fixed ~24% width (1/4 of row minus gap allowance) — same as
-    // WHEN card chips. With 3 chips in this row, that leaves ~24%
-    // empty on the right; the trade-off vs flex:1 is that every
-    // chip across BOTH cards is the same physical size, which Andy
-    // flagged as the bigger visual issue.
-    flexBasis: '23.5%',
-    flexGrow: 0,
-    flexShrink: 0,
-    minWidth: 0,
+    // Width injected inline via `useChipWidth()` — same canonical
+    // pixel width as the WHEN card chips. Yoga's percentage
+    // flexBasis was unreliable here (parent chain has no explicit
+    // width → falls back to content-sizing); pixel-perfect widths
+    // are the only way to guarantee chip-size parity across cards.
     height: CHIP_H,
     paddingHorizontal: spacing.xs,        // breathing room for text
     borderRadius: radii.md,
@@ -196,14 +196,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   modeChip: {
-    // Same fixed width as chip — so Row 2's "Outdoor Screen" and
-    // "Near me" are exactly the same size as Row 1's venue chips
-    // and the WHEN card's preset chips. Empty space on the right
-    // of Row 2 is the deliberate trade-off for chip-size consistency.
-    flexBasis: '23.5%',
-    flexGrow: 0,
-    flexShrink: 0,
-    minWidth: 0,
+    // Pixel width injected inline via useChipWidth() — same as
+    // Row 1 chips + WHEN preset chips. Long labels get truncated;
+    // the old "Outdoor Screen" was shortened to "⚽ Outdoor" to fit
+    // without ellipsis (the meaning carries via the football glyph).
     height: CHIP_H,
     paddingHorizontal: spacing.xs,
     borderRadius: radii.md,

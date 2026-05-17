@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable, useWindowDimensions } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -26,6 +26,30 @@ import { useProPaywallStore } from '@/src/components/ProPaywall';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
+
+/**
+ * Canonical chip width across the WHEN + WHAT cards. Computed from
+ * the screen width minus the cards' outer + inner horizontal padding,
+ * divided into 4 equal slots with `spacing.xs` gaps between.
+ *
+ * Why this exists: previously we used `flex: 1` (within-row equal)
+ * then `flexBasis: '23.5%'`. Neither produced ACROSS-row equality —
+ * yoga ignores percentage flexBasis when the parent chain has no
+ * explicit width, and falls back to content-sizing. Fixed pixel
+ * widths are the only reliable approach in RN flexbox.
+ *
+ * Both rows of WHAT (3 chips + 2 chips) use the same width, leaving
+ * empty space on the right of shorter rows — the deliberate
+ * trade-off for chip-size consistency across cards.
+ */
+export function useChipWidth(): number {
+  const { width: screenWidth } = useWindowDimensions();
+  // Outer padding from outerPad style (spacing.lg = 16, both sides).
+  // Inner padding from card style (spacing.md = 12, both sides).
+  // Gap between chips = spacing.xs (4). 4 chips, 3 gaps.
+  const rowInner = screenWidth - 2 * spacing.lg - 2 * spacing.md;
+  return Math.floor((rowInner - 3 * spacing.xs) / 4);
+}
 
 type PresetKey = 'now' | 'morning' | 'afternoon' | 'evening';
 interface Preset {
@@ -71,6 +95,7 @@ export function TimeRangeQuickPicker() {
   const setRange      = useTimeStore((s) => s.setRange);
   const setDateOffset = useTimeStore((s) => s.setDateOffset);
   const dateOffset    = useTimeStore((s) => s.dateOffset);
+  const chipWidth     = useChipWidth();
 
   const sunset = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
@@ -115,7 +140,7 @@ export function TimeRangeQuickPicker() {
                 key={p.key}
                 onPress={() => applyPreset(p)}
                 activeOpacity={0.7}
-                style={[styles.chip, active && styles.chipActive]}
+                style={[styles.chip, { width: chipWidth }, active && styles.chipActive]}
               >
                 <Text
                   style={[styles.chipText, active && styles.chipTextActive]}
@@ -289,15 +314,11 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    // Fixed ~24% width (≈ 1/4 of the row minus gap allowance) so every
-    // chip across the WHEN card AND the WHAT card is the same physical
-    // size — regardless of whether its row has 2, 3, or 4 chips. Earlier
-    // `flex: 1` produced equal-within-row widths but DIFFERENT-across-row
-    // widths: WHAT-row-2's 2 chips were visibly wider than WHEN-row's 4.
-    flexBasis: '23.5%',
-    flexGrow: 0,
-    flexShrink: 0,
-    minWidth: 0,
+    // Width is set inline via `useChipWidth()` for pixel-perfect
+    // consistency across all chip rows (WHEN + WHAT). Yoga ignores
+    // percentage flexBasis when the parent chain lacks an explicit
+    // width — that's why earlier `flexBasis: '23.5%'` rendered
+    // chips at content-width instead. Fixed pixel widths it is.
     height: CHIP_H,
     paddingHorizontal: spacing.xs,     // breathing room — text no longer kisses the edge
     borderRadius: radii.md,
