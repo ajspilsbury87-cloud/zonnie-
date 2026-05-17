@@ -19,6 +19,7 @@ import {
   CATEGORY_LABELS,
   type VenueCategory,
 } from '@/src/data/categories';
+import { useChipWidth } from '@/src/components/TimeRangeScrubber';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
@@ -38,6 +39,7 @@ export function VenueTypeFilter() {
   const toggleMatchModeOnly  = useAreaStore((s) => s.toggleMatchModeOnly);
   const sortByDistance       = useAreaStore((s) => s.sortByDistance);
   const toggleSortByDistance = useAreaStore((s) => s.toggleSortByDistance);
+  const chipWidth            = useChipWidth();
 
   const handleToggleCategory = (cat: VenueCategory) => {
     haptics.selection();
@@ -69,7 +71,7 @@ export function VenueTypeFilter() {
                 key={cat}
                 onPress={() => handleToggleCategory(cat)}
                 activeOpacity={0.7}
-                style={[styles.chip, active && styles.chipActive]}
+                style={[styles.chip, { width: chipWidth }, active && styles.chipActive]}
               >
                 <Text
                   style={[styles.chipText, active && styles.chipTextActive]}
@@ -82,28 +84,30 @@ export function VenueTypeFilter() {
           })}
         </View>
 
-        {/* Row 2: mode toggles — `flex: 1` so the 2 chips split the
-            row 50/50. Wider per-chip than Row 1's 3 chips, which
-            comfortably accommodates the longer "⚽ Outdoor Screen"
-            label without truncation. */}
+        {/* Row 2: same fixed pixel width as Row 1, so all chips
+            across the card are identical. With only 2 chips in this
+            row, ~92pt of empty space sits on the right.
+            Label "⚽ Outdoor Screen" → "⚽ Outdoor" — 14 chars don't
+            fit a 109pt slot; the football glyph carries the "sports
+            outside" meaning. */}
         <View style={styles.modeRow}>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
             activeOpacity={0.7}
-            style={[styles.modeChip, matchModeOnly && styles.modeChipMatch]}
+            style={[styles.modeChip, { width: chipWidth }, matchModeOnly && styles.modeChipMatch]}
             accessibilityLabel="Show only terraces with outdoor screens"
           >
             <Text
               style={[styles.chipText, matchModeOnly && styles.chipTextActive]}
               numberOfLines={1}
             >
-              ⚽ Outdoor Screen
+              ⚽ Outdoor
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleSortByDistance(); }}
             activeOpacity={0.7}
-            style={[styles.modeChip, sortByDistance && styles.modeChipNearMe]}
+            style={[styles.modeChip, { width: chipWidth }, sortByDistance && styles.modeChipNearMe]}
             accessibilityLabel="Sort by nearest sunny terrace"
           >
             <Text
@@ -149,12 +153,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    // flex: 1 → 3 venue chips share Row 1 equally. ~109pt each on
-    // iPhone 6.1" — comfortably fits "🍽 Restaurant" without
-    // truncation. Cross-card chips differ in width (WHEN's 4 chips
-    // are narrower) but each row is internally consistent.
-    flex: 1,
-    minWidth: 0,
+    // Width injected inline via useChipWidth() — same pixel value
+    // across both cards so chips are identical across rows.
     height: CHIP_H,
     paddingHorizontal: spacing.xs,        // breathing room for text
     borderRadius: radii.md,
@@ -196,11 +196,9 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   modeChip: {
-    // flex: 1 → 2 mode chips split Row 2 50/50. ~165pt each on
-    // iPhone 6.1" — comfortably fits "⚽ Outdoor Screen" with
-    // room to spare. Widest chips in either card.
-    flex: 1,
-    minWidth: 0,
+    // Same pixel width as chip — injected inline via useChipWidth().
+    // ~92pt empty on the right of Row 2 (deliberate trade-off for
+    // chip-size parity).
     height: CHIP_H,
     paddingHorizontal: spacing.xs,
     borderRadius: radii.md,

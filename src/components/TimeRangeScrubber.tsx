@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable, useWindowDimensions } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -27,27 +27,45 @@ import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
 
-/*
- * Chip widths use flexbox `flex: 1` (within-row equal). Each row's
- * chips are equal-width to each other, but rows with different chip
- * counts have different chip widths:
- *   - WHEN (4 chips): ~81pt each
- *   - WHAT row 1 (3 chips): ~109pt each — accommodates "Restaurant"
- *   - WHAT row 2 (2 chips): ~165pt each — accommodates "Outdoor Screen"
- * Trying to enforce identical chip widths across cards forced us to
- * either truncate "Restaurant" or drop a WHEN preset. Within-row
- * equality is the saner default.
+/**
+ * Canonical chip width across the WHEN + WHAT cards. With 3 chips
+ * per row, each gets ~109pt on iPhone 6.1" — enough to fit "🍽
+ * Restaurant" and any other 12-char label comfortably.
+ *
+ * WHAT row 2 (Outdoor + Near me) only has 2 chips. They still use
+ * this same width via inline `width: chipWidth` — leaving ~92pt of
+ * empty space on the right of that row. Trade-off for chip-size
+ * parity across the cards.
+ *
+ * Why useWindowDimensions vs flex:1 or percentage flexBasis:
+ *   - flex:1 → within-row equal, ACROSS-row different (4 vs 3 vs 2
+ *     chips per row gave different widths per row).
+ *   - flexBasis: '23.5%' → ignored by yoga when parent chain has no
+ *     explicit width; falls back to content-sizing.
+ *   - useWindowDimensions + inline pixel width → reliably renders
+ *     identical chip widths regardless of how many siblings.
  */
+export function useChipWidth(): number {
+  const { width: screenWidth } = useWindowDimensions();
+  // Outer padding from outerPad style (spacing.lg = 16, both sides).
+  // Inner padding from card style (spacing.md = 12, both sides).
+  // Gap between chips = spacing.xs (4). 3 chips, 2 gaps.
+  const rowInner = screenWidth - 2 * spacing.lg - 2 * spacing.md;
+  return Math.floor((rowInner - 2 * spacing.xs) / 3);
+}
 
-type PresetKey = 'now' | 'morning' | 'afternoon' | 'evening';
+type PresetKey = 'now' | 'afternoon' | 'evening';
 interface Preset {
   key: PresetKey;
   label: string;
   fixed: { from: number; to: number } | null;
 }
+// Dropped 'morning' (9–12) — it overlapped with 'now' for most of
+// the day and the 4-chip row prevented chip-width parity with the
+// 3-chip WHAT card. Now all chip rows have 3 slots and chips render
+// at the same pixel width across both cards.
 const PRESETS: Preset[] = [
   { key: 'now',       label: 'Now',       fixed: null },
-  { key: 'morning',   label: 'Morning',   fixed: { from: 9,  to: 12 } },
   { key: 'afternoon', label: 'Afternoon', fixed: { from: 13, to: 17 } },
   { key: 'evening',   label: 'Evening',   fixed: { from: 18, to: 22 } },
 ];
@@ -83,6 +101,7 @@ export function TimeRangeQuickPicker() {
   const setRange      = useTimeStore((s) => s.setRange);
   const setDateOffset = useTimeStore((s) => s.setDateOffset);
   const dateOffset    = useTimeStore((s) => s.dateOffset);
+  const chipWidth     = useChipWidth();
 
   const sunset = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
@@ -127,7 +146,7 @@ export function TimeRangeQuickPicker() {
                 key={p.key}
                 onPress={() => applyPreset(p)}
                 activeOpacity={0.7}
-                style={[styles.chip, active && styles.chipActive]}
+                style={[styles.chip, { width: chipWidth }, active && styles.chipActive]}
               >
                 <Text
                   style={[styles.chipText, active && styles.chipTextActive]}
@@ -301,13 +320,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    // flex: 1 → all chips in a row share the row width equally.
-    // Within-row chips become identical; rows with different chip
-    // counts have different chip widths (intentional: lets longer
-    // labels like "Restaurant" / "Outdoor Screen" fit in the
-    // wider WHAT rows without truncating).
-    flex: 1,
-    minWidth: 0,
+    // Width is injected inline via useChipWidth() — same pixel
+    // value across both cards so every chip is identical. See
+    // useChipWidth() jsdoc above for the rationale vs flex:1 +
+    // percentage flexBasis (both failed previously).
     height: CHIP_H,
     paddingHorizontal: spacing.xs,     // breathing room — text no longer kisses the edge
     borderRadius: radii.md,
