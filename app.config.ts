@@ -43,7 +43,13 @@ const config: ExpoConfig = {
   // preview-only) on 2026-05-08 when prepping for review. Future
   // submissions follow semver: 1.0.x = patch (bug fix), 1.x.0 = minor
   // (additive feature), 2.0.0 = major (breaking UX change).
-  version: '1.1.0',
+  // Bumped 1.1.0 → 1.2.0 alongside the runtime-policy revert below.
+  // 1.1.0 builds (the App Store's build #7) will no longer match new
+  // OTAs since the runtime version differs — same protection
+  // `policy: 'fingerprint'` would have given us, achieved manually
+  // by version bump. 1.1.0-runtime OTAs that fail-load on build #7
+  // are already orphan; they won't accrue further.
+  version: '1.2.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
@@ -61,30 +67,29 @@ const config: ExpoConfig = {
   //       at this hit pod-install failures during EAS Build (no error
   //       detail), so leaving as-is until the proper fix lands.
   newArchEnabled: true,
-  // OTA updates — two changes from earlier configs:
+  // OTA updates — discussion of the fix for build #7's OTA-orphan
+  // problem (23.7 MB of failed-to-apply bundles).
   //
-  //   1. runtimeVersion: switched from { policy: 'appVersion' } to
-  //      { policy: 'fingerprint' }. The appVersion policy ties OTA
-  //      eligibility to expo.version only — meaning if you add a
-  //      native module (react-native-purchases in our case) and ship
-  //      an OTA without rebuilding, the OTA *downloads* but crashes
-  //      on import because the native module isn't in the binary.
-  //      Build #7 hit exactly this: 23.7MB of orphan downloaded
-  //      bundles in iOS Documents, none applying, rollback to
-  //      embedded bundle every launch.
+  // Original plan was `runtimeVersion: { policy: 'fingerprint' }` —
+  // the canonical fix in 2026. Unfortunately the fingerprint policy
+  // failed during the "Configure expo-updates" build phase on both
+  // iOS and Android with EAS Build (UNKNOWN_ERROR). Likely a
+  // conflict between fingerprint computation and our @bacons/apple-
+  // targets widget plugin, or with the inline withGoogleMapsApiKey
+  // plugin. Worth retrying in a future SDK; for now reverting to
+  // policy: 'appVersion' which we know builds cleanly.
   //
-  //      `policy: 'fingerprint'` hashes the native deps tree at
-  //      build time; OTAs only apply to builds with a matching
-  //      fingerprint. If we add a native module later, old builds
-  //      simply won't receive that OTA — no crash, no silent
-  //      rollback. This is the right default in 2026.
+  // To still solve the OTA-orphan problem, we BUMP the app version
+  // 1.1.0 → 1.2.0 alongside this build. Result: build #7 (v1.1.0)
+  // listens for runtime "1.1.0" OTAs; build #8 (v1.2.0) listens
+  // for runtime "1.2.0". New OTAs published with current code go
+  // out as "1.2.0", which build #7 will never see. Manual version
+  // of fingerprint, same protection.
   //
-  //   2. requestHeaders.expo-channel-name: explicitly hardcoded
-  //      'production'. Defensive — without it, the channel binding
-  //      comes from eas.json at native build time, which is
-  //      implicit and machine-dependent (changes when `expo-dev-
-  //      client` enters the dep tree). Explicit beats implicit.
-  runtimeVersion: { policy: 'fingerprint' },
+  // requestHeaders.expo-channel-name is explicit, independent of
+  // the policy choice. Same reasoning — defends against implicit
+  // channel binding via eas.json drifting silently when deps change.
+  runtimeVersion: { policy: 'appVersion' },
   updates: {
     url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
     requestHeaders: {
