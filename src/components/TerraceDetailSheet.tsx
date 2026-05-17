@@ -96,17 +96,18 @@ export function TerraceDetailSheet() {
     return TERRACES.find((t) => t.id === selectedId) ?? null;
   }, [selectedId]);
 
-  // Trigger Places fetch when a terrace with a placeId is opened.
-  // Pro-gated: only Pro users incur the Google Places API call cost.
-  // Free users get the static terrace fields (name, address, vibe);
-  // Pro users additionally get rating, opening hours, photos, phone,
-  // website. This is the largest variable cost in the app, so the
-  // gate is the difference between a sustainable free tier and a
-  // Places API bill that scales linearly with downloads.
+  // Trigger Places fetch when a Pro user opens a terrace with a
+  // placeId. Free users see the STATIC terrace fields (including
+  // googleRating + googleReviewCount, which we pre-import via
+  // `scripts/import-google-ratings.ts` and bake into terraces.json
+  // — no runtime API call needed). Pro users additionally get the
+  // LIVE extras via Places API: photos, today's opening hours,
+  // phone, website. This combination keeps the variable API cost
+  // bounded to active Pro users + their cache TTL, while still
+  // showing rating universally as a decision-useful signal.
   //
-  // If the user later upgrades to Pro mid-session, the dep array
-  // re-runs and the fetch fires automatically — no need to re-open
-  // the sheet.
+  // If a free user upgrades mid-session, the dep array re-runs and
+  // the fetch fires automatically — no need to re-open the sheet.
   useEffect(() => {
     if (terrace?.placeId && isPro) ensurePlace(terrace.placeId);
   }, [terrace, ensurePlace, isPro]);
@@ -423,23 +424,29 @@ export function TerraceDetailSheet() {
               </View>
             </View>
 
-            {/* Google Places card — rating (Pro), price, hours */}
+            {/* Google Places card — rating + reviews are now FREE
+                (pre-imported into terraces.json so no runtime API cost).
+                The card's Pro lock has shifted from rating to:
+                photos, today's hours, phone, website. */}
             <PlacesCard
               loading={placeEntry?.status === 'loading'}
               hasPlaceId={!!terrace.placeId}
               details={placeDetails}
               isPro={isPro}
-              onRatingLockPress={() => showPaywall('ratings')}
+              staticRating={terrace.googleRating}
+              staticReviewCount={terrace.googleReviewCount}
+              onProLockPress={() => showPaywall('ratings')}
             />
 
-            {/* Photo strip — up to 3 terrace photos from Google Places,
-                shown when the fetch has landed and photos are available.
-                Rides edge-to-edge (negative margin to escape the sheet's
-                horizontal padding) so images feel immersive rather than
-                being clipped in a small box. */}
+            {/* Photo strip — for Pro users with photos loaded, shows
+                the carousel. For free users, shows a locked teaser
+                placeholder so the feature is discoverable. */}
             <PhotoStrip
               photoNames={placeDetails?.photoNames ?? []}
               loading={placeEntry?.status === 'loading'}
+              isPro={isPro}
+              hasPlaceId={!!terrace.placeId}
+              onProLockPress={() => showPaywall('photos')}
             />
 
             <Text style={styles.sectionLabel}>Sun today</Text>
@@ -604,7 +611,18 @@ interface PlacesCardProps {
   hasPlaceId: boolean;
   details: PlaceDetails | undefined;
   isPro: boolean;
-  onRatingLockPress: () => void;
+  /**
+   * Static rating from terraces.json (pre-imported via
+   * `import-google-ratings.ts`). Shown to all users when present —
+   * decouples the rating display from the Pro-gated Places fetch.
+   */
+  staticRating?: number;
+  staticReviewCount?: number;
+  /**
+   * Tapped when a free user clicks a locked Pro feature (hours,
+   * phone, website). Caller opens the paywall.
+   */
+  onProLockPress: () => void;
 }
 
 /**
@@ -624,10 +642,42 @@ interface PlacesCardProps {
 interface PhotoStripProps {
   photoNames: string[];
   loading: boolean;
+  isPro: boolean;
+  hasPlaceId: boolean;
+  onProLockPress: () => void;
 }
 
-function PhotoStrip({ photoNames, loading }: PhotoStripProps) {
-  if (loading || photoNames.length === 0) return null;
+function PhotoStrip({
+  photoNames,
+  loading,
+  isPro,
+  hasPlaceId,
+  onProLockPress,
+}: PhotoStripProps) {
+  if (!hasPlaceId) return null;
+  if (loading) return null;
+
+  // Free user: show a locked teaser so the feature is discoverable.
+  // Tapping opens the paywall.
+  if (!isPro) {
+    return (
+      <Pressable
+        onPress={onProLockPress}
+        style={({ pressed }) => [
+          styles.photoStripLock,
+          pressed && styles.photoStripLockPressed,
+        ]}
+        accessibilityLabel="See photos — unlock with Pro"
+      >
+        <Text style={styles.photoStripLockGlyph}>📷</Text>
+        <Text style={styles.photoStripLockText}>Photos · Pro</Text>
+        <Text style={styles.photoStripLockHint}>🔒</Text>
+      </Pressable>
+    );
+  }
+
+  // Pro user but no photos available from Places — render nothing.
+  if (photoNames.length === 0) return null;
 
   const urls = photoNames
     .map((name) => buildPhotoUrl(name))
@@ -639,9 +689,6 @@ function PhotoStrip({ photoNames, loading }: PhotoStripProps) {
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      // Negative margin to escape the sheet's horizontal padding so photos
-      // run flush to the sheet edges. paddingHorizontal re-adds a small
-      // inset so the first tile doesn't sit hard against the screen edge.
       style={styles.photoStrip}
       contentContainerStyle={styles.photoStripContent}
     >
@@ -651,7 +698,6 @@ function PhotoStrip({ photoNames, loading }: PhotoStripProps) {
           source={{ uri: url }}
           style={styles.photoTile}
           contentFit="cover"
-          // Smooth crossfade as image loads — prevents hard pop-in.
           transition={200}
           accessibilityLabel="Terrace photo"
         />
@@ -663,92 +709,111 @@ function PhotoStrip({ photoNames, loading }: PhotoStripProps) {
 /**
  * Google Places summary card.
  *
- * Rating is Pro-gated:
- *   - Free users: a tappable "★ ?.? 🔒 Pro" chip that opens the paywall.
- *   - Pro users: real "★ 4.3 (127)" text.
+ * v1.2 paywall discovery model:
+ *   - **Rating + review count: FREE for everyone.** Pulled from
+ *     `terraces.json` (pre-imported via `scripts/import-google-
+ *     ratings.ts`). No runtime API call, so no per-open cost.
+ *     Decision-useful for everyone; the most "asked-for" signal.
+ *   - **Today's hours: Pro.** Live from Places API, requires the
+ *     fetch. Free users see a locked teaser "🕐 Hours · Pro".
+ *   - **Phone + website: Pro.** Same reason. Free users see a
+ *     locked teaser "📞 Contact · Pro".
  *
- * Price level and open/now status remain free — they're useful context
- * but not decision-changing enough to anchor a paywall on their own.
- * Hours remain free for the same reason.
+ * Price-level + open/now indicators come from the live Places fetch
+ * too, so they're effectively Pro-only — shown only when `details`
+ * is present (which only happens for Pro).
  */
-function PlacesCard({ loading, hasPlaceId, details, isPro, onRatingLockPress }: PlacesCardProps) {
+function PlacesCard({
+  loading,
+  hasPlaceId,
+  details,
+  isPro,
+  staticRating,
+  staticReviewCount,
+  onProLockPress,
+}: PlacesCardProps) {
   if (!hasPlaceId) return null;
 
-  if (loading) {
-    return (
-      <View style={styles.placesCard}>
-        <Text style={styles.placesPlaceholder}>Loading details from Google…</Text>
-      </View>
-    );
-  }
+  // Rating: prefer live (Pro fetched it) over static, but always show
+  // SOMETHING if we have either source. Free users get the static
+  // rating directly — no lock here in the v1.2 model.
+  const rating = details?.rating ?? staticRating;
+  const reviewCount = details?.ratingCount ?? staticReviewCount;
 
-  // If Places fetch failed or API key missing, still show the rating
-  // lock for free users — they should see what Pro unlocks even when
-  // the underlying data is unavailable. Pro users see nothing (graceful).
-  if (!details) {
-    if (isPro) return null;
-    return (
-      <View style={styles.placesCard}>
-        <View style={styles.placesRow}>
-          <Pressable
-            onPress={onRatingLockPress}
-            style={({ pressed }) => [styles.ratingLock, pressed && styles.ratingLockPressed]}
-            accessibilityLabel="See Google rating — unlock with Pro"
-            hitSlop={6}
-          >
-            <Text style={styles.ratingLockText}>★ ?.?  🔒 Pro</Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
-  // Non-gated segments — price and open status are always shown free.
-  const freeSegments: string[] = [];
-  const price = priceLevelToDollars(details.priceLevel);
-  if (price) freeSegments.push(price);
-  if (details.openNow != null) {
-    freeSegments.push(details.openNow ? 'Open now' : 'Closed now');
+  // Pro-only segments: price + open/now status. Hidden for free users
+  // (live data they don't get).
+  const proSegments: string[] = [];
+  if (details) {
+    const price = priceLevelToDollars(details.priceLevel);
+    if (price) proSegments.push(price);
+    if (details.openNow != null) {
+      proSegments.push(details.openNow ? 'Open now' : 'Closed now');
+    }
   }
 
   return (
     <View style={styles.placesCard}>
+      {/* Top row: rating (always visible if known) + Pro-only segments */}
       <View style={styles.placesRow}>
-
-        {/* Rating — gated */}
-        {details.rating != null ? (
-          isPro ? (
-            // Pro: real rating
-            <Text style={styles.placesSummary}>
-              {'★ '}{details.rating.toFixed(1)}
-              {details.ratingCount ? `  (${details.ratingCount})` : ''}
-            </Text>
-          ) : (
-            // Free: locked chip — tapping opens the paywall
-            <Pressable
-              onPress={onRatingLockPress}
-              style={({ pressed }) => [styles.ratingLock, pressed && styles.ratingLockPressed]}
-              accessibilityLabel="See Google rating — unlock with Pro"
-              hitSlop={6}
-            >
-              <Text style={styles.ratingLockText}>★ ?.?  🔒 Pro</Text>
-            </Pressable>
-          )
-        ) : null}
-
-        {/* Free segments — price · open status */}
-        {freeSegments.length > 0 ? (
-          <Text style={[styles.placesSummary, details.rating != null && styles.placesSummaryAfterRating]}>
-            {(details.rating != null ? '  ·  ' : '') + freeSegments.join('  ·  ')}
+        {rating != null ? (
+          <Text style={styles.placesSummary}>
+            {'★ '}{rating.toFixed(1)}
+            {reviewCount ? `  (${reviewCount})` : ''}
           </Text>
         ) : null}
-
+        {proSegments.length > 0 ? (
+          <Text
+            style={[
+              styles.placesSummary,
+              rating != null && styles.placesSummaryAfterRating,
+            ]}
+          >
+            {(rating != null ? '  ·  ' : '') + proSegments.join('  ·  ')}
+          </Text>
+        ) : null}
       </View>
 
-      {details.todayHours ? (
-        <Text style={styles.placesHours}>{details.todayHours}</Text>
-      ) : null}
-      {details.phone ? <Text style={styles.placesPhone}>{details.phone}</Text> : null}
+      {/* Hours: Pro shows live, free shows locked teaser */}
+      {isPro ? (
+        loading ? (
+          <Text style={styles.placesPlaceholder}>Loading hours…</Text>
+        ) : details?.todayHours ? (
+          <Text style={styles.placesHours}>🕐  {details.todayHours}</Text>
+        ) : null
+      ) : (
+        <Pressable
+          onPress={onProLockPress}
+          style={({ pressed }) => [
+            styles.proLockRow,
+            pressed && styles.proLockRowPressed,
+          ]}
+          accessibilityLabel="See today's opening hours — unlock with Pro"
+        >
+          <Text style={styles.proLockGlyph}>🕐</Text>
+          <Text style={styles.proLockText}>Today's hours</Text>
+          <Text style={styles.proLockTag}>Pro 🔒</Text>
+        </Pressable>
+      )}
+
+      {/* Contact row: Pro shows phone (if present), free shows locked teaser */}
+      {isPro ? (
+        details?.phone ? (
+          <Text style={styles.placesPhone}>📞  {details.phone}</Text>
+        ) : null
+      ) : (
+        <Pressable
+          onPress={onProLockPress}
+          style={({ pressed }) => [
+            styles.proLockRow,
+            pressed && styles.proLockRowPressed,
+          ]}
+          accessibilityLabel="See phone and website — unlock with Pro"
+        >
+          <Text style={styles.proLockGlyph}>📞</Text>
+          <Text style={styles.proLockText}>Phone · Website</Text>
+          <Text style={styles.proLockTag}>Pro 🔒</Text>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -1082,5 +1147,67 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: radii.md,
     backgroundColor: palette.sandDeep, // placeholder while loading
+  },
+
+  // ── Pro discovery teaser rows (v1.2) ───────────────────────────
+  // Free users see these in place of the photo strip + the
+  // hours/contact rows. Each row clearly shows what Pro unlocks
+  // without pretending the user has the data, and tap-to-paywall.
+  photoStripLock: {
+    marginHorizontal: -spacing.lg,
+    marginTop: spacing.md,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: palette.sandDeep,
+    borderRadius: 0, // edge-to-edge to match the photo strip's layout
+  },
+  photoStripLockPressed: {
+    opacity: 0.7,
+  },
+  photoStripLockGlyph: {
+    fontSize: fontSizes.xl,
+  },
+  photoStripLockText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.md,
+    color: palette.ink,
+  },
+  photoStripLockHint: {
+    fontSize: fontSizes.md,
+    color: palette.burnt,
+    marginLeft: spacing.xs,
+  },
+  // Hours / phone / website locked rows inside the PlacesCard
+  proLockRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    marginTop: spacing.xs,
+    borderRadius: radii.md,
+    backgroundColor: palette.sandDeep,
+  },
+  proLockRowPressed: {
+    opacity: 0.7,
+  },
+  proLockGlyph: {
+    fontSize: fontSizes.md,
+  },
+  proLockText: {
+    flex: 1,
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.ink,
+  },
+  proLockTag: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.xs,
+    color: palette.burnt,
+    letterSpacing: 0.4,
   },
 });

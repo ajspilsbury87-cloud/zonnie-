@@ -17,6 +17,7 @@
     "compose-screenshots": "tsx scripts/compose-screenshots.ts",
     "import-coffee": "tsx scripts/import-coffee-shops.ts",
     "import-cafe-batch": "tsx scripts/import-cafe-batch.ts",
+    "import-google-ratings": "tsx scripts/import-google-ratings.ts",
     "import-coffee-v2": "tsx scripts/import-coffee-shops-v2.ts",
     "import-venues": "tsx scripts/import-competitor-venues.ts",
     "infer-facing": "tsx scripts/infer-facing.ts",

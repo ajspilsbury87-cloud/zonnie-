@@ -290,16 +290,30 @@ const styles = StyleSheet.create({
   },
   chip: {
     flex: 1,
-    minWidth: 0,       // allow flex to shrink below text's natural width
+    minWidth: 0,                       // allow flex to shrink below text's natural width
     height: CHIP_H,
+    paddingHorizontal: spacing.xs,     // breathing room — text no longer kisses the edge
     borderRadius: radii.md,
     backgroundColor: palette.white,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    // Subtle depth — chips read as raised tiles against the sandDeep
+    // card background, not as flat blobs of colour.
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   chipActive: {
     backgroundColor: palette.burnt,
+    // Active state lifts slightly — clearer visual affordance for
+    // "this one is selected" beyond just the colour change.
+    shadowOpacity: 0.16,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   chipText: {
     fontFamily: fonts.bodySemibold,

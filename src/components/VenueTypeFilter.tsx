@@ -149,14 +149,26 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     height: CHIP_H,
+    paddingHorizontal: spacing.xs,        // breathing room for text
     borderRadius: radii.md,
     backgroundColor: palette.white,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    // Subtle depth so chips read as raised tiles, not flat colour
+    // patches. Matches the WHEN card chips.
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   chipActive: {
     backgroundColor: palette.burnt,
+    shadowOpacity: 0.16,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   chipText: {
     fontFamily: fonts.bodySemibold,
@@ -168,24 +180,42 @@ const styles = StyleSheet.create({
     color: palette.cream,
   },
 
-  // ── Row 2: natural-width mode toggles, same height ─────────────────
+  // ── Row 2: equal-width mode toggles ────────────────────────────────
+  // Switched from natural-width (paddingHorizontal: md, flexShrink: 1)
+  // to flex:1 to match Row 1's rhythm — pre-fix the "Outdoor Screen"
+  // chip was visibly wider than "Near me", which read as messy.
   modeRow: {
     flexDirection: 'row',
     gap: spacing.xs,
   },
   modeChip: {
+    flex: 1,
+    minWidth: 0,
     height: CHIP_H,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.xs,
     borderRadius: radii.md,
     backgroundColor: palette.white,
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 1,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   modeChipMatch: {
     backgroundColor: palette.burnt,
+    shadowOpacity: 0.16,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   modeChipNearMe: {
     backgroundColor: palette.leaf,
+    shadowOpacity: 0.16,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
 });

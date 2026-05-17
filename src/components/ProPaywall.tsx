@@ -132,10 +132,15 @@ function triggerCopy(trigger: FeatureTrigger | undefined): TriggerCopy {
         sub: 'Scrub through the day and watch sun scores update live for every terrace.',
       };
     case 'ratings':
+      // v1.2 model: ratings are FREE (pre-imported into the static
+      // dataset). This trigger now anchors the PlacesCard's
+      // hours + phone + website lock. Renaming the union member
+      // would break OTA-shipped builds that hardcode 'ratings'
+      // as the string trigger, so keep the key, refresh the copy.
       return {
-        emoji: '⭐',
-        headline: 'See Google ratings',
-        sub: 'Star ratings and review counts shown inline — find the sunniest AND the best-rated spot.',
+        emoji: '🕐',
+        headline: "See today's hours & contact",
+        sub: 'Live opening hours, phone, and website pulled fresh from Google for every terrace.',
       };
     case 'busyness':
       return {
