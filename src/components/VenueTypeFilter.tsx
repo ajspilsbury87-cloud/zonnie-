@@ -146,7 +146,14 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    flex: 1,
+    // Fixed ~24% width (1/4 of row minus gap allowance) — same as
+    // WHEN card chips. With 3 chips in this row, that leaves ~24%
+    // empty on the right; the trade-off vs flex:1 is that every
+    // chip across BOTH cards is the same physical size, which Andy
+    // flagged as the bigger visual issue.
+    flexBasis: '23.5%',
+    flexGrow: 0,
+    flexShrink: 0,
     minWidth: 0,
     height: CHIP_H,
     paddingHorizontal: spacing.xs,        // breathing room for text
@@ -189,7 +196,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   modeChip: {
-    flex: 1,
+    // Same fixed width as chip — so Row 2's "Outdoor Screen" and
+    // "Near me" are exactly the same size as Row 1's venue chips
+    // and the WHEN card's preset chips. Empty space on the right
+    // of Row 2 is the deliberate trade-off for chip-size consistency.
+    flexBasis: '23.5%',
+    flexGrow: 0,
+    flexShrink: 0,
     minWidth: 0,
     height: CHIP_H,
     paddingHorizontal: spacing.xs,

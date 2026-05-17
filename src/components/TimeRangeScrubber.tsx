@@ -289,8 +289,15 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    flex: 1,
-    minWidth: 0,                       // allow flex to shrink below text's natural width
+    // Fixed ~24% width (≈ 1/4 of the row minus gap allowance) so every
+    // chip across the WHEN card AND the WHAT card is the same physical
+    // size — regardless of whether its row has 2, 3, or 4 chips. Earlier
+    // `flex: 1` produced equal-within-row widths but DIFFERENT-across-row
+    // widths: WHAT-row-2's 2 chips were visibly wider than WHEN-row's 4.
+    flexBasis: '23.5%',
+    flexGrow: 0,
+    flexShrink: 0,
+    minWidth: 0,
     height: CHIP_H,
     paddingHorizontal: spacing.xs,     // breathing room — text no longer kisses the edge
     borderRadius: radii.md,
