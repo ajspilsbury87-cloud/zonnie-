@@ -97,9 +97,19 @@ export function TerraceDetailSheet() {
   }, [selectedId]);
 
   // Trigger Places fetch when a terrace with a placeId is opened.
+  // Pro-gated: only Pro users incur the Google Places API call cost.
+  // Free users get the static terrace fields (name, address, vibe);
+  // Pro users additionally get rating, opening hours, photos, phone,
+  // website. This is the largest variable cost in the app, so the
+  // gate is the difference between a sustainable free tier and a
+  // Places API bill that scales linearly with downloads.
+  //
+  // If the user later upgrades to Pro mid-session, the dep array
+  // re-runs and the fetch fires automatically — no need to re-open
+  // the sheet.
   useEffect(() => {
-    if (terrace?.placeId) ensurePlace(terrace.placeId);
-  }, [terrace, ensurePlace]);
+    if (terrace?.placeId && isPro) ensurePlace(terrace.placeId);
+  }, [terrace, ensurePlace, isPro]);
 
   // Imperative open/close. The `index` prop in Gorhom v5 only drives
   // INITIAL mount; later prop changes don't reliably animate the sheet
