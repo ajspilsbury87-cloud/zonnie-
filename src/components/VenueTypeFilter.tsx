@@ -19,7 +19,6 @@ import {
   CATEGORY_LABELS,
   type VenueCategory,
 } from '@/src/data/categories';
-import { useChipWidth } from '@/src/components/TimeRangeScrubber';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
@@ -39,7 +38,6 @@ export function VenueTypeFilter() {
   const toggleMatchModeOnly  = useAreaStore((s) => s.toggleMatchModeOnly);
   const sortByDistance       = useAreaStore((s) => s.sortByDistance);
   const toggleSortByDistance = useAreaStore((s) => s.toggleSortByDistance);
-  const chipWidth            = useChipWidth();
 
   const handleToggleCategory = (cat: VenueCategory) => {
     haptics.selection();
@@ -71,7 +69,7 @@ export function VenueTypeFilter() {
                 key={cat}
                 onPress={() => handleToggleCategory(cat)}
                 activeOpacity={0.7}
-                style={[styles.chip, { width: chipWidth }, active && styles.chipActive]}
+                style={[styles.chip, active && styles.chipActive]}
               >
                 <Text
                   style={[styles.chipText, active && styles.chipTextActive]}
@@ -84,27 +82,28 @@ export function VenueTypeFilter() {
           })}
         </View>
 
-        {/* Row 2: mode toggles — same fixed width too. Long labels
-            ("Outdoor Screen") will truncate to fit the slot, which is
-            the trade-off for chip-size parity across all 3 rows. */}
+        {/* Row 2: mode toggles — `flex: 1` so the 2 chips split the
+            row 50/50. Wider per-chip than Row 1's 3 chips, which
+            comfortably accommodates the longer "⚽ Outdoor Screen"
+            label without truncation. */}
         <View style={styles.modeRow}>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
             activeOpacity={0.7}
-            style={[styles.modeChip, { width: chipWidth }, matchModeOnly && styles.modeChipMatch]}
+            style={[styles.modeChip, matchModeOnly && styles.modeChipMatch]}
             accessibilityLabel="Show only terraces with outdoor screens"
           >
             <Text
               style={[styles.chipText, matchModeOnly && styles.chipTextActive]}
               numberOfLines={1}
             >
-              ⚽ Outdoor
+              ⚽ Outdoor Screen
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleSortByDistance(); }}
             activeOpacity={0.7}
-            style={[styles.modeChip, { width: chipWidth }, sortByDistance && styles.modeChipNearMe]}
+            style={[styles.modeChip, sortByDistance && styles.modeChipNearMe]}
             accessibilityLabel="Sort by nearest sunny terrace"
           >
             <Text
@@ -150,11 +149,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   chip: {
-    // Width injected inline via `useChipWidth()` — same canonical
-    // pixel width as the WHEN card chips. Yoga's percentage
-    // flexBasis was unreliable here (parent chain has no explicit
-    // width → falls back to content-sizing); pixel-perfect widths
-    // are the only way to guarantee chip-size parity across cards.
+    // flex: 1 → 3 venue chips share Row 1 equally. ~109pt each on
+    // iPhone 6.1" — comfortably fits "🍽 Restaurant" without
+    // truncation. Cross-card chips differ in width (WHEN's 4 chips
+    // are narrower) but each row is internally consistent.
+    flex: 1,
+    minWidth: 0,
     height: CHIP_H,
     paddingHorizontal: spacing.xs,        // breathing room for text
     borderRadius: radii.md,
@@ -196,10 +196,11 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   modeChip: {
-    // Pixel width injected inline via useChipWidth() — same as
-    // Row 1 chips + WHEN preset chips. Long labels get truncated;
-    // the old "Outdoor Screen" was shortened to "⚽ Outdoor" to fit
-    // without ellipsis (the meaning carries via the football glyph).
+    // flex: 1 → 2 mode chips split Row 2 50/50. ~165pt each on
+    // iPhone 6.1" — comfortably fits "⚽ Outdoor Screen" with
+    // room to spare. Widest chips in either card.
+    flex: 1,
+    minWidth: 0,
     height: CHIP_H,
     paddingHorizontal: spacing.xs,
     borderRadius: radii.md,
