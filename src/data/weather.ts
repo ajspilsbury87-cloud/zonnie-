@@ -2,9 +2,12 @@
  * Hourly weather forecast for Amsterdam, sourced from Open-Meteo.
  *
  * Why Open-Meteo over KNMI: KNMI's open data is dataset-based (GRIB files)
- * and not consumable directly from a phone. Open-Meteo wraps the same
- * underlying ECMWF + DWD models in a phone-friendly JSON API with no key,
- * no rate limits, and 7-day forecast horizon that matches our date picker.
+ * and not consumable directly from a phone. Open-Meteo wraps multiple models
+ * including KNMI HARMONIE-Arome (the gold-standard NL micro-forecast) in a
+ * phone-friendly JSON API with no key, no rate limits, and 7-day forecast
+ * horizon that matches our date picker. We pin to HARMONIE explicitly via the
+ * `models` parameter — without it, Open-Meteo defaults to an ECMWF blend that
+ * is less accurate for Amsterdam-scale urban forecasting.
  *
  * Swap path to a different provider (KNMI proxy, OpenWeather, etc.): replace
  * `fetchHourlyForecast` here. The shape of `Weather[]` is provider-neutral.
@@ -36,6 +39,10 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
       start_date: dateStr,
       end_date: dateStr,
       timezone: 'Europe/Amsterdam',
+      // Pin to KNMI HARMONIE-Arome: higher-resolution NL model vs the
+      // default ECMWF blend. Meaningful difference for Amsterdam-scale
+      // micro-forecasting (cloud cover timing, coastal wind, sea-breeze).
+      models: 'knmi_harmonie_arome_europe',
     }).toString();
 
   // 10-second timeout via AbortController. We previously used the static

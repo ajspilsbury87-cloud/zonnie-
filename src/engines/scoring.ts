@@ -14,12 +14,13 @@
 
 import { fromZonedTime } from 'date-fns-tz';
 import { solarPosition } from './solar';
-import { shadowCoverage } from './shadow';
+import { shadowCoverage, treeShadowCoverage } from './shadow';
 import type {
   Building,
   Facing,
   ScoreResult,
   Terrace,
+  Tree,
   Weather,
   WeatherProfile,
 } from './types';
@@ -95,6 +96,30 @@ export function windShelterFactor(facing: Facing, weather: Weather): number {
   return 1.0 - penaltyMagnitude * exposure;
 }
 
+/**
+ * Temperature comfort multiplier.
+ *
+ * Even in full sun, a 10°C day on an Amsterdam terrace is noticeably less
+ * pleasant than a 25°C one. This factor shifts scores up on warm days and
+ * down on cold ones, so the ranking reflects the full outdoor experience
+ * rather than sun position alone.
+ *
+ * Baseline: 20°C (comfortable Dutch terrace weather). Linear ramp of ±15%
+ * over 10°C on each side — enough to meaningfully separate a cool noon
+ * from a warm afternoon, but small enough that the sun altitude signal
+ * always dominates.
+ *
+ *   10°C → ×0.85   (cold, most people wouldn't sit outside long)
+ *   15°C → ×0.925  (cool, fleece weather)
+ *   20°C → ×1.0    (baseline comfortable)
+ *   25°C → ×1.075  (warm, ideal terrace conditions)
+ *   30°C → ×1.15   (hot, still pleasant in the shade)
+ */
+export function temperatureFactor(temp: number): number {
+  const normalised = Math.max(-1, Math.min(1, (temp - 20) / 10));
+  return 1 + normalised * 0.15;
+}
+
 interface WeatherProfileBaseline {
   baseCloud: number;
   baseTemp: number;
@@ -153,15 +178,26 @@ export function computeSunScore(
    * engine stays runnable offline / before the fetch lands.
    */
   weatherOverride?: Weather,
+  /**
+   * Optional nearby trees from the Bomenkaart dataset. When provided,
+   * tree canopy shadow is combined with building shadow (Math.max).
+   * Pass an empty array or omit to skip tree shadow (e.g. during
+   * testing or when Bomenkaart data hasn't been fetched yet).
+   */
+  trees?: Tree[],
 ): ScoreResult {
   const utcDate = amsterdamLocalToUtc(dateStr, hour);
   const sun = solarPosition(utcDate, terrace.lat, terrace.lng);
   const weather = weatherOverride ?? getWeather(hour, weatherProfile);
-  const coverage = shadowCoverage(terrace, buildings, sun.altitude, sun.azimuth);
+  const buildingCoverage = shadowCoverage(terrace, buildings, sun.altitude, sun.azimuth);
+  const treeCoverage = trees && trees.length > 0
+    ? treeShadowCoverage(terrace, trees, sun.altitude, sun.azimuth)
+    : 0;
+  const coverage = Math.max(buildingCoverage, treeCoverage);
 
   let score = 0;
   if (sun.altitude > 0) {
-    // Altitude factor: sqrt(altitude / 90).
+    // Altitude factor: sqrt(altitude / 61).
     //
     // Earlier versions used `min(1, altitude / 60)` — physically right for
     // solar irradiance (W/m²), but it under-rated the perceived "sunniness"
@@ -170,19 +206,22 @@ export function computeSunScore(
     // experience on a W-facing terrace is bright and warm. Andy flagged
     // the top evening scores reading 28% as "Mostly Shade" which is wrong.
     //
-    // sqrt(alt / 90) gives 0.46 at 19° altitude (vs 0.32) and 0.74 at 50°
-    // (vs 1.0 capped). That:
+    // sqrt(alt / 61) calibrates the scale to Amsterdam's actual sky:
+    //   61° = 90° - 52.37° (latitude) + 23.45° (max solar declination)
+    //       = the highest the sun ever gets in Amsterdam (midsummer noon).
+    // Using 61 as the denominator means a perfect midsummer noon → score
+    // of 1.0 (100). Using the old denominator of 90 (theoretical zenith,
+    // unreachable here) permanently capped real-world scores at ~0.82
+    // (√(61/90) ≈ 0.82), which made perfect sunny afternoons read as ~76
+    // instead of the ~95+ locals expect.
+    //
+    // The sqrt curve still:
     //   - lifts evening scores into the Partial → Mostly-Sunny range
-    //   - removes the hard cap at 60° so top-tier afternoon scores spread
-    //     0.85-0.93 instead of clumping at 0.95
     //   - mirrors human perception: sun feels "sunny" across a wide
     //     altitude range, not just at noon
-    //
-    // The 90° denominator means we never hit 1.0 at Amsterdam latitude
-    // (max altitude ~61° in midsummer), reserving 100% scores for the
-    // theoretical zenith. That's fine — the labelled "Full Sun" band
-    // starts at 0.7, which is reachable at midday with a SW facing bonus.
-    score = Math.sqrt(sun.altitude / 90);
+    // Math.min(1, ...) caps the result so scores never exceed 1.0 on
+    // the rare day an altitude measurement rounds above 61°.
+    score = Math.min(1, Math.sqrt(sun.altitude / 61));
     // Continuous shadow attenuation — the multiplier ramps smoothly from 1.0
     // (no obstruction) down to 0.15 (fully blocked). Replaces the old binary
     // "in shadow → ×0.15, else ×1.0" cliff that produced bimodal score
@@ -199,16 +238,21 @@ export function computeSunScore(
       const diff = Math.abs(sun.azimuth - facingAzimuth);
       const facingDiff = Math.min(diff, 360 - diff);
       if (facingDiff < 90) {
-        // Reduced from 0.3 to 0.25 — combined with the higher altitude
-        // ceiling (60° instead of 45°), keeps S-facing midday under the
-        // cap while still being clearly the best.
+        // Sun is in front of the terrace: linear bonus from +25% (aligned)
+        // down to ×1.0 (perpendicular). Unchanged from before.
         score *= 1 + (1 - facingDiff / 90) * 0.25;
       } else {
-        // Beyond 90° from sun (e.g., N-facing at noon) the terrace is in
-        // the building's own shadow regardless of nearby buildings. Pin
-        // a 0.6 multiplier so it scores noticeably lower than even an
-        // E/W-facing one.
-        score *= 0.6;
+        // Sun is behind the terrace: the host building's own shadow falls
+        // over the seating area, reducing score. Smooth linear ramp from
+        // ×1.0 at 90° down to ×0.6 at 180°.
+        //
+        // Previously this was a flat ×0.6 for ALL diffs ≥ 90°, which
+        // created a harsh cliff: at sun-az 269° (diff=89°) a S-facing
+        // terrace scored ×1.003, but at 270° (diff=90°) it dropped to
+        // ×0.600 — a 40% jump for a 1° sun movement. The smooth ramp
+        // removes that discontinuity while preserving the ×0.6 maximum
+        // penalty at 180° (sun exactly behind the terrace).
+        score *= 1 - ((facingDiff - 90) / 90) * 0.4;
       }
     } else {
       // 'All' facing (rooftop / 360°) gets flat +15% (down from +20%).
@@ -221,6 +265,10 @@ export function computeSunScore(
     // this. Ramps in only on noticeably windy days (>8 km/h) so calm
     // afternoons aren't affected.
     score *= windShelterFactor(terrace.facing, weather);
+
+    // Temperature comfort factor: lifts warm afternoons, lowers cool mornings.
+    // Max ±15% so sun altitude stays the primary signal.
+    score *= temperatureFactor(weather.temp);
   }
 
   return {

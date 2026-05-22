@@ -109,5 +109,5 @@ export function scoreToColor(score: number): string {
   if (score > 0.5) return palette.orange; // Mostly sunny — peach
   if (score > 0.3) return palette.mustard; // Partial sun
   if (score > 0.1) return palette.cocoa; // Mostly shade
-  return palette.cocoa; // In shadow
+  return palette.ink; // In shadow
 }

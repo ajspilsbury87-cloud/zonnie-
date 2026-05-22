@@ -15,20 +15,26 @@
  * `isInShadow` is preserved as a thin wrapper that thresholds the
  * coverage at 0.5, so existing callers and tests still work.
  *
- * Geometry, per Andy's brief:
+ * Geometry:
  *   1. For each candidate building, compute distance + bearing relative
  *      to the terrace.
- *   2. Reject buildings that aren't between terrace and sun (bearing far
- *      from sun azimuth).
- *   3. The building's *apparent* height from the terrace is
- *      `atan(height / distance)`. If that's >= the sun's altitude, the
- *      building's silhouette covers the sun. Slightly-shorter buildings
- *      contribute a partial block (penumbra + adjacent obstructions).
- *   4. Take the maximum block from any candidate. Adding multiple shadows
- *      doesn't double-darken — the sun is either visible or not.
+ *   2. Reject buildings outside MAX_DISTANCE_M or inside MIN_DISTANCE_M.
+ *   3. Height check: `atan(height / distance)` gives the building's
+ *      apparent angular height. If below the sun's altitude (scaled by
+ *      HEIGHT_RATIO_FLOOR), the building can't block the sun.
+ *   4. Angular / directional check:
+ *      – Buildings WITH poly data: compute the exact angular silhouette
+ *        using all convex-hull vertex bearings. No artificial width padding.
+ *        A PENUMBRA_DEG (1°) soft edge models the narrow transition zone.
+ *        This correctly preserves gaps between adjacent buildings.
+ *      – Buildings WITHOUT poly (centroid fallback): use centroid bearing +
+ *        approximate half-width from `building.width`, capped at
+ *        MAX_HALF_WIDTH_DEG, with SOFT_BUFFER_DEG (5°) tolerance.
+ *   5. Final coverage = heightFactor × dirFactor.  Take maximum across
+ *      all buildings (shadows don't stack — the sun is either visible or not).
  */
 
-import type { Building } from './types';
+import type { Building, Tree } from './types';
 
 const DEG = Math.PI / 180;
 const RAD = 180 / Math.PI;
@@ -48,29 +54,111 @@ const MAX_DISTANCE_M = 200;
  */
 const MIN_DISTANCE_M = 8;
 /**
- * Angular tolerance applied OUTSIDE a building's geometric half-width
- * before its blocking contribution falls to zero. Models penumbra
- * and seating-area spatial extent.
+ * Below this ratio of (apparent building height / sun altitude), the
+ * building can't physically block the sun. Above 1.0 it's a full block.
+ * Between HEIGHT_RATIO_FLOOR and 1.0 we ramp linearly — covers near-edge
+ * cases where the building barely peeks above the sun's path.
+ */
+const HEIGHT_RATIO_FLOOR = 0.8;
+/**
+ * Soft penumbra width (degrees) applied at each edge of a polygon
+ * building's silhouette. 1° ≈ 1.1 m at 60 m distance — models the narrow
+ * transition zone where the building partially occludes the sun disc.
+ * Much smaller than the old SOFT_BUFFER_DEG (5°) which was needed to
+ * compensate for centroid inaccuracy; polygon edges are exact.
+ */
+const PENUMBRA_DEG = 1;
+/**
+ * Angular tolerance applied OUTSIDE a centroid-based building's geometric
+ * half-width before its blocking contribution falls to zero. Models penumbra
+ * and seating-area spatial extent. Only used for buildings without poly data.
  */
 const SOFT_BUFFER_DEG = 5;
 /**
- * Cap the geometric half-width contribution of a single building.
- * Without this, an OSM polygon centroid 8m away from a 14m-wide block
- * occupies 41° of the terrace's horizon — wide enough to "block" the
- * sun even when the sun is well off-axis from it. Cap at 15°: a
- * single building can never be "wider than 30°" from the terrace's
- * POV regardless of its real footprint. Wider blocks are typically
- * row-house terraces where the silhouette is broken up at street
- * level anyway.
+ * Cap the geometric half-width contribution of a centroid-based building.
+ * Without this, a centroid 8 m away from a 14 m-wide block occupies 41° of
+ * the terrace's horizon. Only used for buildings without poly data.
  */
 const MAX_HALF_WIDTH_DEG = 15;
+
+// ── Polygon silhouette helpers ────────────────────────────────────────────────
+
 /**
- * Below this ratio of (apparent building height / sun altitude), the
- * building can't physically block the sun. Above 1.0 it's a full block.
- * Between 0.8 and 1.0 we ramp linearly — covers near-edge cases where
- * the building barely peeks above the sun's path.
+ * Compute the angular span (clockwise arc) of a building's polygon footprint
+ * as seen from `terrace`. Uses the maximum-gap algorithm: sort vertex bearings,
+ * find the largest empty arc, the silhouette is its complement.
+ *
+ * Returns `null` for degenerate inputs (< 2 vertices, or observer inside the
+ * building footprint where the max gap would be < 180°, or all vertices
+ * collinear with observer giving a 360° gap).
  */
-const HEIGHT_RATIO_FLOOR = 0.8;
+function polyAngularSpan(
+  terrace: { lat: number; lng: number },
+  poly: [number, number][],
+): { start: number; end: number } | null {
+  if (poly.length < 2) return null;
+
+  // Bearing from terrace to each hull vertex (0 = N, 90 = E, clockwise).
+  const bearings = poly
+    .map(([lat, lng]) => {
+      const dx = (lng - terrace.lng) * METRES_PER_DEG_LNG;
+      const dy = (lat - terrace.lat) * METRES_PER_DEG_LAT;
+      return (Math.atan2(dx, dy) * RAD + 360) % 360;
+    })
+    .sort((a, b) => a - b);
+
+  // Find the maximum gap between consecutive sorted bearings (wraparound included).
+  // The building's silhouette occupies the complement of the largest gap.
+  let maxGap = 0;
+  let maxGapAfterIdx = 0; // index of the first bearing AFTER the max gap
+
+  for (let i = 0; i < bearings.length; i++) {
+    const nextIdx = (i + 1) % bearings.length;
+    const gap =
+      nextIdx === 0
+        ? bearings[0]! + 360 - bearings[bearings.length - 1]! // wrap-around gap
+        : bearings[nextIdx]! - bearings[i]!;
+    if (gap > maxGap) {
+      maxGap = gap;
+      maxGapAfterIdx = nextIdx;
+    }
+  }
+
+  // max gap < 180° → observer is inside the building (shouldn't happen in practice).
+  // max gap ≥ 359° → all vertices project to the same bearing (degenerate).
+  if (maxGap < 180 || maxGap >= 359) return null;
+
+  const start = bearings[maxGapAfterIdx]!;
+  const end = bearings[(maxGapAfterIdx - 1 + bearings.length) % bearings.length]!;
+  return { start, end };
+}
+
+/**
+ * Signed angular margin of `azimuth` relative to the clockwise arc [start, end].
+ * Negative → azimuth is INSIDE the arc (building fully covers the sun direction).
+ * Positive → azimuth is OUTSIDE; magnitude = degrees to the nearest arc edge.
+ */
+function arcMargin(start: number, end: number, azimuth: number): number {
+  const inside = arcContains(start, end, azimuth);
+  const toStart = angularDiff(azimuth, start);
+  const toEnd = angularDiff(azimuth, end);
+  const nearEdge = Math.min(toStart, toEnd);
+  return inside ? -nearEdge : nearEdge;
+}
+
+/** Minimum circular angular distance between two compass bearings (result 0–180°). */
+function angularDiff(a: number, b: number): number {
+  const diff = Math.abs(a - b) % 360;
+  return diff > 180 ? 360 - diff : diff;
+}
+
+/** Is `azimuth` within the clockwise arc from `start` to `end`? */
+function arcContains(start: number, end: number, azimuth: number): boolean {
+  if (start <= end) return azimuth >= start && azimuth <= end;
+  return azimuth >= start || azimuth <= end; // arc crosses the 0°/360° boundary
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
 
 export function shadowLength(buildingHeight: number, sunAltitude: number): number {
   if (sunAltitude <= 0) return Infinity;
@@ -115,28 +203,41 @@ export function shadowCoverage(
         ? 1
         : (heightRatio - HEIGHT_RATIO_FLOOR) / (1 - HEIGHT_RATIO_FLOOR);
 
-    // Bearing FROM TERRACE TO BUILDING in compass degrees (0=N, 90=E …).
-    const angleToBuilding = (Math.atan2(dx, dy) * RAD + 360) % 360;
+    let dirFactor: number;
 
-    // The building is between the terrace and the sun when the bearing
-    // matches the sun's azimuth (NOT shadowDirection — see PR 2 fix).
-    const angleDiff = Math.abs(angleToBuilding - sunAzimuth);
-    const normalizedDiff = Math.min(angleDiff, 360 - angleDiff);
+    if (building.poly && building.poly.length >= 3) {
+      // ── Polygon path: exact angular silhouette from convex-hull vertices ──
+      // No SOFT_BUFFER padding — polygon edges are exact. A 1° penumbra
+      // models the soft transition at building edges.
+      const span = polyAngularSpan(terrace, building.poly);
+      if (span === null) continue;
 
-    const buildingWidth = building.width ?? 15;
-    const angularHalfWidth = Math.min(
-      MAX_HALF_WIDTH_DEG,
-      Math.atan2(buildingWidth / 2, distance) * RAD,
-    );
+      const margin = arcMargin(span.start, span.end, sunAzimuth);
+      // margin ≤ 0: sun is inside the building silhouette → fully blocked.
+      // margin in (0, PENUMBRA_DEG]: penumbra zone → linear ramp to 0.
+      // margin > PENUMBRA_DEG: sun is clear of the building → skip.
+      if (margin > PENUMBRA_DEG) continue;
+      dirFactor = margin <= 0 ? 1 : 1 - margin / PENUMBRA_DEG;
+    } else {
+      // ── Centroid fallback: approximate angular half-width from building.width ──
+      // Used when poly data is absent (legacy buildings.json or generated fallback).
+      const angleToBuilding = (Math.atan2(dx, dy) * RAD + 360) % 360;
+      const angleDiff = Math.abs(angleToBuilding - sunAzimuth);
+      const normalizedDiff = Math.min(angleDiff, 360 - angleDiff);
 
-    if (normalizedDiff > angularHalfWidth + SOFT_BUFFER_DEG) continue;
+      const buildingWidth = building.width ?? 15;
+      const angularHalfWidth = Math.min(
+        MAX_HALF_WIDTH_DEG,
+        Math.atan2(buildingWidth / 2, distance) * RAD,
+      );
 
-    // Directional block: 1 inside the building's silhouette, ramping
-    // linearly to 0 across SOFT_BUFFER_DEG outside it.
-    const dirFactor =
-      normalizedDiff <= angularHalfWidth
-        ? 1
-        : 1 - (normalizedDiff - angularHalfWidth) / SOFT_BUFFER_DEG;
+      if (normalizedDiff > angularHalfWidth + SOFT_BUFFER_DEG) continue;
+
+      dirFactor =
+        normalizedDiff <= angularHalfWidth
+          ? 1
+          : 1 - (normalizedDiff - angularHalfWidth) / SOFT_BUFFER_DEG;
+    }
 
     const coverage = heightFactor * dirFactor;
     if (coverage > maxCoverage) maxCoverage = coverage;
@@ -158,6 +259,71 @@ export function isInShadow(
 ): boolean {
   if (sunAltitude <= 2) return true;
   return shadowCoverage(terrace, buildings, sunAltitude, sunAzimuth) >= 0.5;
+}
+
+/**
+ * Tree-canopy counterpart to `shadowCoverage`. Models each tree as a vertical
+ * cylinder: the crown subtends a circular arc as seen from the terrace, and
+ * blocks the sun if the sun azimuth falls inside that arc and the crown is
+ * tall enough relative to the sun's altitude.
+ *
+ * Height check: uses (tree.height - tree.trunkHeight) as the effective
+ * blocking height — the bare trunk below the crown is transparent. If
+ * trunkHeight is absent, the full tree height is used (conservative).
+ *
+ * Angular check: half-span = atan(crownRadius / distance). Same PENUMBRA_DEG
+ * soft edge as the polygon building path.
+ *
+ * Returns [0, 1] — same contract as `shadowCoverage`. Combine the two results
+ * with `Math.max` in the scoring engine.
+ */
+export function treeShadowCoverage(
+  terrace: { lat: number; lng: number },
+  trees: Tree[],
+  sunAltitude: number,
+  sunAzimuth: number,
+): number {
+  if (sunAltitude <= 0) return 1;
+  if (trees.length === 0) return 0;
+
+  let maxCoverage = 0;
+
+  for (const tree of trees) {
+    const dx = (tree.lng - terrace.lng) * METRES_PER_DEG_LNG;
+    const dy = (tree.lat - terrace.lat) * METRES_PER_DEG_LAT;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance > MAX_DISTANCE_M || distance < MIN_DISTANCE_M) continue;
+
+    // Only the crown (above trunk) blocks the sun — the bare trunk is transparent.
+    const effectiveHeight =
+      tree.trunkHeight != null ? tree.height - tree.trunkHeight : tree.height;
+    if (effectiveHeight <= 0) continue;
+
+    const angularHeight = Math.atan2(effectiveHeight, distance) * RAD;
+    const heightRatio = angularHeight / sunAltitude;
+    if (heightRatio < HEIGHT_RATIO_FLOOR) continue;
+
+    const heightFactor =
+      heightRatio >= 1
+        ? 1
+        : (heightRatio - HEIGHT_RATIO_FLOOR) / (1 - HEIGHT_RATIO_FLOOR);
+
+    // Circular arc silhouette: half-span = atan(crownRadius / distance).
+    const bearing = (Math.atan2(dx, dy) * RAD + 360) % 360;
+    const halfSpan = Math.atan2(tree.crownRadius, distance) * RAD;
+    const start = (bearing - halfSpan + 360) % 360;
+    const end = (bearing + halfSpan) % 360;
+
+    const margin = arcMargin(start, end, sunAzimuth);
+    if (margin > PENUMBRA_DEG) continue;
+    const dirFactor = margin <= 0 ? 1 : 1 - margin / PENUMBRA_DEG;
+
+    const coverage = heightFactor * dirFactor;
+    if (coverage > maxCoverage) maxCoverage = coverage;
+    if (maxCoverage >= 1) break;
+  }
+
+  return maxCoverage;
 }
 
 /**

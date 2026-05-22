@@ -108,6 +108,30 @@ export interface Building {
   height: number;
   /** Approximate footprint width in metres (used for angular-width tolerance). */
   width?: number;
+  /**
+   * Convex hull of the building's footprint in WGS84: [[lat, lng], …].
+   * Populated by `scripts/fetch-3dbag-buildings.py` from 3D BAG polygon data.
+   * When present, `shadowCoverage` uses exact polygon silhouettes for angular
+   * span calculation instead of the centroid + width approximation, enabling
+   * detection of real gaps between adjacent buildings.
+   */
+  poly?: [number, number][];
+}
+
+/**
+ * A single tree from the Amsterdam Bomenkaart municipal dataset.
+ * Used by the shadow engine to model canopy shadow alongside buildings.
+ */
+export interface Tree {
+  lat: number;
+  lng: number;
+  /** Metres — top of crown above ground. */
+  height: number;
+  /** Metres — horizontal canopy radius (half of Bomenkaart KROONDIAMETER). */
+  crownRadius: number;
+  /** Metres — height of crown base above ground. When set, only the crown
+   *  (height - trunkHeight) blocks the sun; the bare trunk is transparent. */
+  trunkHeight?: number;
 }
 
 export interface SunPosition {

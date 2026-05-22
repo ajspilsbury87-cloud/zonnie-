@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { TERRACES } from '@/src/data/terraces';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
+import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea } from '@/src/data/regions';
 import { categoriesForTerrace } from '@/src/data/categories';
 import { computeSunScore } from '@/src/engines/scoring';
@@ -66,6 +67,7 @@ function cachedHourScore(
   const hit = HOUR_SCORE_CACHE.get(key);
   if (hit != null) return hit;
   const buildings = getBuildingsForTerrace(terrace.id);
+  const trees = getTreesForTerrace(terrace.id);
   const score = computeSunScore(
     terrace,
     buildings,
@@ -73,6 +75,7 @@ function cachedHourScore(
     dateStr,
     'sunny',
     weather,
+    trees,
   ).score;
   if (HOUR_SCORE_CACHE.size >= MAX_CACHE_SIZE) {
     const dropCount = Math.floor(MAX_CACHE_SIZE * 0.2);
