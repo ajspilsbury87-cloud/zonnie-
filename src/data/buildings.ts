@@ -163,10 +163,15 @@ function ensureCaches(): void {
     for (const [k, list] of Object.entries(buildingsByTerrace)) {
       const id = Number(k);
       if (!Number.isFinite(id)) continue;
-      perTerraceCache.set(id, list);
+      // Filter out zero-height buildings — 3D BAG occasionally returns
+      // flat structures (pavements, tiny sheds) with h=0. They can't
+      // cast a shadow so there's no value in keeping them, and they
+      // break the `height > 0` invariant the shadow engine relies on.
+      const valid = list.filter((b) => b.height > 0 && (b.width ?? 0) > 0);
+      perTerraceCache.set(id, valid);
       // Flat-cache is the union — used by tests and validator that want
       // a global view. De-duplication isn't worth the complexity here.
-      allBuildings.push(...list);
+      allBuildings.push(...valid);
     }
     flatCache = allBuildings;
   } else {
