@@ -108,13 +108,13 @@ export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps
           activeOpacity={0.6}
           style={styles.toggleButton}
           accessibilityLabel={
-            expanded ? 'Hide more filters' : 'Show more filters'
+            expanded ? 'Verberg meer filters' : 'Toon meer filters'
           }
           accessibilityState={{ expanded }}
           hitSlop={8}
         >
           <Text style={styles.toggleLabel}>
-            More filters {expanded ? '▴' : '▾'}
+            Meer filters {expanded ? '▴' : '▾'}
           </Text>
         </TouchableOpacity>
       </View>

@@ -55,15 +55,15 @@ interface Slide {
 const SLIDES: ReadonlyArray<Slide> = [
   {
     glyph: '☀️',
-    headline: 'Find the sunniest terrace in Amsterdam.',
-    subhead: 'Hour by hour. By neighbourhood.',
-    cta: 'Continue →',
+    headline: 'Vind het zonnigste terras van Amsterdam.',
+    subhead: 'Uur voor uur. Per buurt.',
+    cta: 'Verder →',
   },
   {
     glyph: '📍',
-    headline: 'Tap any pin to see when sun arrives.',
-    subhead: 'Plan ahead. Filter by area. Find sun.',
-    cta: "Let's go ☀",
+    headline: 'Tik op een pin om te zien wanneer de zon schijnt.',
+    subhead: 'Plan vooruit. Filter op buurt. Zoek zon.',
+    cta: 'Ga aan de slag ☀',
   },
 ];
 
@@ -135,9 +135,9 @@ export function OnboardingIntro({ onDismiss }: OnboardingIntroProps) {
           <Pressable
             onPress={dismiss}
             hitSlop={12}
-            accessibilityLabel="Skip the intro"
+            accessibilityLabel="Sla de intro over"
           >
-            <Text style={styles.skip}>Skip</Text>
+            <Text style={styles.skip}>Overslaan</Text>
           </Pressable>
         </View>
 

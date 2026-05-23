@@ -326,6 +326,64 @@ export function treeShadowCoverage(
   return maxCoverage;
 }
 
+/** Maximum projected shadow length for map overlay rendering (metres).
+ * At very low sun altitudes (< 3°) shadow lengths exceed city blocks.
+ * Capping at 150 m keeps the overlay readable at neighbourhood zoom
+ * without distorting the visual at higher altitudes where the cap never
+ * activates (e.g. at 10°, a 10 m building casts a 57 m shadow). */
+const MAX_SHADOW_OVERLAY_M = 150;
+
+/**
+ * Compute the ground-projected shadow polygon for a building with polygon
+ * footprint data. Returns an array of `{latitude, longitude}` coordinate
+ * objects suitable for react-native-maps `<Polygon coordinates={…} />`.
+ *
+ * Algorithm:
+ *   1. Shadow direction  = (sunAzimuth + 180) % 360  [opposite of sun]
+ *   2. Shadow length     = min(height / tan(altitude), MAX_SHADOW_OVERLAY_M)
+ *   3. Offset in WGS84  = (dLng, dLat) computed from the shadow vector
+ *   4. Shadow polygon   = original footprint vertices (forward) +
+ *                          shadow-offset vertices (reversed)
+ *      → traces the outer boundary of the shadow volume in a single
+ *        closed path; react-native-maps fills the enclosed area.
+ *
+ * Returns `null` when the sun is below the horizon, when the building
+ * has no polygon data (centroid-only fallback buildings), or when the
+ * building is fewer than 3 vertices (degenerate).
+ *
+ * The caller is responsible for deduplication and viewport culling —
+ * this function is pure and stateless.
+ */
+export function computeShadowPolygon(
+  building: Building,
+  sunAltitude: number,
+  sunAzimuth: number,
+): { latitude: number; longitude: number }[] | null {
+  if (sunAltitude <= 0) return null;
+  if (!building.poly || building.poly.length < 3) return null;
+
+  const shadowDirRad = ((sunAzimuth + 180) % 360) * DEG;
+  const rawLen = building.height / Math.tan(sunAltitude * DEG);
+  const shadowLen = Math.min(rawLen, MAX_SHADOW_OVERLAY_M);
+
+  // Convert shadow vector from metres to WGS84 degree offsets.
+  const dLng = (shadowLen * Math.sin(shadowDirRad)) / METRES_PER_DEG_LNG;
+  const dLat = (shadowLen * Math.cos(shadowDirRad)) / METRES_PER_DEG_LAT;
+
+  const poly = building.poly; // [[lat, lng], …]
+  const original = poly.map(([lat, lng]) => ({ latitude: lat, longitude: lng }));
+  // Shadow-tip vertices = original footprint shifted in shadow direction.
+  const shadow = poly.map(([lat, lng]) => ({
+    latitude: lat + dLat,
+    longitude: lng + dLng,
+  }));
+
+  // Union polygon: forward through original footprint + backward through the
+  // shadow footprint. For a convex hull (which `poly` already is, per the 3D
+  // BAG fetcher), this traces the exact outer boundary of the shadow volume.
+  return [...original, ...shadow.reverse()];
+}
+
 /**
  * Procedurally generate buildings around a neighbourhood centroid.
  * Used as a last-resort fallback if no real building data is available

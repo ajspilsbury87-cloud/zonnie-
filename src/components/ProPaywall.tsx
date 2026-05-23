@@ -128,8 +128,8 @@ function triggerCopy(trigger: FeatureTrigger | undefined): TriggerCopy {
     case 'time_scrubber':
       return {
         emoji: '🕐',
-        headline: 'Drag to any hour',
-        sub: 'Scrub through the day and watch sun scores update live for every terrace.',
+        headline: 'Versleep naar elk uur',
+        sub: 'Scrol door de dag en zie de zonscores live bijwerken voor elk terras.',
       };
     case 'ratings':
       // v1.2 model: ratings are FREE (pre-imported into the static
@@ -139,56 +139,56 @@ function triggerCopy(trigger: FeatureTrigger | undefined): TriggerCopy {
       // as the string trigger, so keep the key, refresh the copy.
       return {
         emoji: '🕐',
-        headline: "See today's hours & contact",
-        sub: 'Live opening hours, phone, and website pulled fresh from Google for every terrace.',
+        headline: 'Openingstijden & contact van vandaag',
+        sub: 'Live openingstijden, telefoon en website direct van Google, voor elk terras.',
       };
     case 'busyness':
       return {
         emoji: '👥',
-        headline: 'See live busyness',
-        sub: 'Know which terraces are quiet before you leave. Sunny and empty is the goal.',
+        headline: 'Bekijk drukte in realtime',
+        sub: 'Weet welke terrassen rustig zijn voordat je vertrekt. Zonnig én leeg is het doel.',
       };
     case 'photos':
       return {
         emoji: '📸',
-        headline: 'See terrace photos',
-        sub: 'Swipe through photos before you commit to the walk.',
+        headline: "Bekijk terrasfoto's",
+        sub: 'Swipe door foto\'s voordat je de tocht onderneemt.',
       };
     case 'favourites':
       return {
         emoji: '🤍',
-        headline: 'Save unlimited favourites',
-        sub: 'Keep all your regular spots saved and get a push when they\'re about to be sunny.',
+        headline: 'Onbeperkte favorieten opslaan',
+        sub: 'Bewaar al je vaste plekken en ontvang een melding als ze op het punt staan zonnig te worden.',
       };
     case 'widget':
       return {
         emoji: '📱',
-        headline: 'Add a home screen widget',
-        sub: 'Top 3 sunniest terraces near you, always one glance away.',
+        headline: 'Widget op je beginscherm',
+        sub: 'Top 3 zonnigste terrassen dichtbij, altijd in één oogopslag.',
       };
     case 'notifications':
       return {
         emoji: '🔔',
-        headline: 'Get sunny-day alerts',
-        sub: 'A morning heads-up when tomorrow looks like a good terrace day.',
+        headline: 'Ontvang zonmeldingen',
+        sub: 'Een melding \'s ochtends als morgen een goede terrasdag wordt.',
       };
     case 'best_window':
       return {
         emoji: '✨',
-        headline: 'See the best visit window',
-        sub: 'We calculate the perfect 2–3 hour slot for each terrace so you don\'t have to scrub.',
+        headline: 'Beste bezoekmoment',
+        sub: 'We berekenen het perfecte 2–3 uurs-venster per terras, zodat jij dat niet hoeft.',
       };
     case 'share':
       return {
         emoji: '↗️',
-        headline: 'Share a terrace card',
-        sub: 'A beautiful card with the sun score, best window, and Zonnie branding. Made for Stories.',
+        headline: 'Deel een terraskaartje',
+        sub: 'Een mooi kaartje met zonscore, beste bezoekmoment en Zonnie-branding. Gemaakt voor Stories.',
       };
     default:
       return {
         emoji: '☀️',
-        headline: 'Unlock Zonnie Pro',
-        sub: 'The full Amsterdam sun experience — time scrubber, ratings, busyness, photos, widgets and more.',
+        headline: 'Zonnie Pro vrijschakelen',
+        sub: 'De volledige Amsterdam-zonervaring — tijdschuifregelaar, openingstijden, foto\'s, widget en meer.',
       };
   }
 }
@@ -196,9 +196,9 @@ function triggerCopy(trigger: FeatureTrigger | undefined): TriggerCopy {
 // ─── Pro feature list (shown in all paywall states) ───────────────────────────
 
 const PRO_FEATURES = [
-  { emoji: '🕐', label: 'Time scrubber — drag to any hour' },
-  { emoji: '⭐', label: 'Google ratings inline' },
-  { emoji: '🤍', label: 'Unlimited favourites + push alerts' },
+  { emoji: '🕐', label: 'Tijdschuifregelaar — versleep naar elk uur' },
+  { emoji: '⭐', label: 'Google-beoordelingen direct in beeld' },
+  { emoji: '🤍', label: 'Onbeperkte favorieten + pushmeldingen' },
 ] as const;
 
 // ─── Pricing fallbacks (shown while offerings load) ───────────────────────────
@@ -268,7 +268,7 @@ export function ProPaywall() {
     if (!pkg) {
       // Offerings not loaded yet — shouldn't happen since button is
       // only enabled once offerings are available, but guard anyway.
-      Alert.alert('Not available', 'Store not available right now. Please try again in a moment.');
+      Alert.alert('Niet beschikbaar', 'Winkel is nu niet beschikbaar. Probeer het zo opnieuw.');
       return;
     }
     const err = await purchasePackage(pkg);
@@ -278,8 +278,8 @@ export function ProPaywall() {
       return;
     }
     Alert.alert(
-      'Purchase failed',
-      err.message ?? 'Something went wrong. Please try again.',
+      'Aankoop mislukt',
+      err.message ?? 'Er is iets misgegaan. Probeer het opnieuw.',
       [{ text: 'OK' }],
     );
   }, [selectedType, purchasePackage, offerings]);
@@ -289,8 +289,8 @@ export function ProPaywall() {
     const err = await restorePurchases();
     if (err) {
       Alert.alert(
-        'Restore failed',
-        err.message ?? 'Could not restore purchases. Please try again.',
+        'Herstel mislukt',
+        err.message ?? 'Aankopen konden niet worden hersteld. Probeer het opnieuw.',
         [{ text: 'OK' }],
       );
       return;
@@ -299,8 +299,8 @@ export function ProPaywall() {
     // will close the sheet. If false, nothing was found — tell the user.
     if (!usePurchaseStore.getState().isPro) {
       Alert.alert(
-        'No purchases found',
-        'No previous Zonnie Pro purchase was found for this Apple ID.',
+        'Geen aankopen gevonden',
+        'Er is geen eerdere Zonnie Pro-aankoop gevonden voor dit Apple ID.',
         [{ text: 'OK' }],
       );
     }
@@ -351,7 +351,7 @@ export function ProPaywall() {
         <Pressable
           onPress={handleClose}
           style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}
-          accessibilityLabel="Close"
+          accessibilityLabel="Sluiten"
           hitSlop={12}
         >
           <Text style={styles.closeButtonText}>✕</Text>
@@ -383,13 +383,13 @@ export function ProPaywall() {
               selectedType === 'monthly' && styles.tierCardSelected,
               pressed && styles.pressed,
             ]}
-            accessibilityLabel={`Monthly plan, ${priceStringForType('monthly')} per month`}
+            accessibilityLabel={`Maandelijks abonnement, ${priceStringForType('monthly')} per maand`}
           >
-            <Text style={styles.tierName}>Monthly</Text>
+            <Text style={styles.tierName}>Maandelijks</Text>
             <Text style={[styles.tierPrice, selectedType === 'monthly' && styles.tierPriceSelected]}>
               {priceStringForType('monthly')}
             </Text>
-            <Text style={styles.tierPeriod}>per month</Text>
+            <Text style={styles.tierPeriod}>per maand</Text>
           </Pressable>
 
           {/* Yearly — highlighted */}
@@ -401,16 +401,16 @@ export function ProPaywall() {
               selectedType === 'yearly' && styles.tierCardSelected,
               pressed && styles.pressed,
             ]}
-            accessibilityLabel={`Yearly plan, ${priceStringForType('yearly')} per year, best value`}
+            accessibilityLabel={`Jaarlijks abonnement, ${priceStringForType('yearly')} per jaar, beste deal`}
           >
             <View style={styles.bestValueBadge}>
-              <Text style={styles.bestValueText}>Best value</Text>
+              <Text style={styles.bestValueText}>Beste deal</Text>
             </View>
-            <Text style={styles.tierName}>Yearly</Text>
+            <Text style={styles.tierName}>Jaarlijks</Text>
             <Text style={[styles.tierPrice, selectedType === 'yearly' && styles.tierPriceSelected]}>
               {priceStringForType('yearly')}
             </Text>
-            <Text style={styles.tierPeriod}>per year</Text>
+            <Text style={styles.tierPeriod}>per jaar</Text>
           </Pressable>
 
           {/* Lifetime */}
@@ -421,13 +421,13 @@ export function ProPaywall() {
               selectedType === 'lifetime' && styles.tierCardSelected,
               pressed && styles.pressed,
             ]}
-            accessibilityLabel={`Lifetime plan, ${priceStringForType('lifetime')} once`}
+            accessibilityLabel={`Eenmalig, ${priceStringForType('lifetime')}`}
           >
-            <Text style={styles.tierName}>Lifetime</Text>
+            <Text style={styles.tierName}>Eenmalig</Text>
             <Text style={[styles.tierPrice, selectedType === 'lifetime' && styles.tierPriceSelected]}>
               {priceStringForType('lifetime')}
             </Text>
-            <Text style={styles.tierPeriod}>once</Text>
+            <Text style={styles.tierPeriod}>eenmalig</Text>
           </Pressable>
 
         </View>
@@ -441,32 +441,36 @@ export function ProPaywall() {
             (isLoading || !offersLoaded) && styles.buyButtonDisabled,
             pressed && styles.pressed,
           ]}
-          accessibilityLabel={`Continue with ${selectedType} plan`}
+          accessibilityLabel={
+            selectedType === 'yearly'  ? 'Doorgaan met jaarlijks abonnement' :
+            selectedType === 'monthly' ? 'Doorgaan met maandelijks abonnement' :
+                                         'Eenmalig kopen'
+          }
         >
           {isLoading ? (
             <ActivityIndicator color={palette.cream} />
           ) : (
             <Text style={styles.buyButtonText}>
-              {selectedType === 'yearly'   ? `Start for ${priceStringForType('yearly')}/yr` :
-               selectedType === 'monthly'  ? `Start for ${priceStringForType('monthly')}/mo` :
-                                             `Buy lifetime — ${priceStringForType('lifetime')}`}
+              {selectedType === 'yearly'   ? `Begin voor ${priceStringForType('yearly')}/jr` :
+               selectedType === 'monthly'  ? `Begin voor ${priceStringForType('monthly')}/mnd` :
+                                             `Eenmalig kopen — ${priceStringForType('lifetime')}`}
             </Text>
           )}
         </Pressable>
 
         {/* ── Legal / restore ── */}
         <Text style={styles.legal}>
-          Subscriptions renew automatically. Cancel anytime in Settings.
-          Payment charged to your Apple ID at confirmation.
+          Abonnementen worden automatisch verlengd. Annuleer altijd via Instellingen.
+          Betaling wordt in rekening gebracht via je Apple ID bij bevestiging.
         </Text>
 
         <Pressable
           onPress={handleRestore}
           disabled={isLoading}
           style={({ pressed }) => [styles.restoreButton, pressed && styles.pressed]}
-          accessibilityLabel="Restore previous purchases"
+          accessibilityLabel="Eerdere aankopen herstellen"
         >
-          <Text style={styles.restoreText}>Restore purchases</Text>
+          <Text style={styles.restoreText}>Aankopen herstellen</Text>
         </Pressable>
 
         {/* Bottom padding for home indicator */}
