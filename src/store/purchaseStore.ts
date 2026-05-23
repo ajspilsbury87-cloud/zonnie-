@@ -75,7 +75,7 @@ import { Platform } from 'react-native';
 
 // ─── Public entitlement ID ────────────────────────────────────────────────────
 // Must match the entitlement ID in your RevenueCat dashboard exactly.
-const ENTITLEMENT_ID = 'pro';
+const ENTITLEMENT_ID = 'Zonnie Pro';
 
 // ─── Error shape ──────────────────────────────────────────────────────────────
 export type PurchaseErrorCode =

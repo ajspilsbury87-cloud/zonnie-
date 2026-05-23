@@ -273,7 +273,8 @@ export function TerraceList({ onSelect }: TerraceListProps) {
           </TouchableOpacity>
         </View>
       }
-      stickyHeaderIndices={[0]}
+      // Header scrolls with the list so users can scroll past the filters
+      // to see more terraces. stickyHeaderIndices removed intentionally.
       // 378 rows × ~70px = comfortably fast as a windowed FlatList; no need
       // for heroics with FlashList until the dataset grows past ~2k.
       windowSize={5}

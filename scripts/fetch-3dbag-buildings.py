@@ -29,7 +29,7 @@ USAGE (PowerShell from the SunBae folder):
     python -u -X utf8 scripts/fetch-3dbag-buildings.py
 
 OUTPUT:
-    src/data/buildings.json   — { "<terraceId>": [{lat,lng,height,width}, ...] }
+    src/data/buildings.json   — { "<terraceId>": [{lat,lng,height,width,poly}, ...] }
 
 COST: Free. 3D BAG is a public Dutch government dataset, no API key needed.
 """
@@ -107,6 +107,39 @@ def dist_m(lat1, lng1, lat2, lng2) -> float:
     dx = (lng2 - lng1) * M_PER_DEG_LNG
     dy = (lat2 - lat1) * M_PER_DEG_LAT
     return math.sqrt(dx * dx + dy * dy)
+
+
+# ── 2D convex hull (Andrew's monotone chain) ─────────────────────────────────
+
+def convex_hull_2d(points: list) -> list:
+    """
+    Compute the 2D convex hull of a point set using Andrew's monotone chain.
+    Returns hull vertices in counter-clockwise order.
+    `points` is a list of (x, y) tuples (duplicates are handled gracefully).
+    """
+    pts = sorted(set(map(tuple, points)))   # dedup + sort by (x, y)
+    if len(pts) < 2:
+        return list(pts)
+
+    def cross(O, A, B):
+        return (A[0] - O[0]) * (B[1] - O[1]) - (A[1] - O[1]) * (B[0] - O[0])
+
+    # Build lower hull (left → right)
+    lower: list = []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+
+    # Build upper hull (right → left)
+    upper: list = []
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+
+    # Last point of each half is the first of the other — omit it.
+    return lower[:-1] + upper[:-1]
 
 
 # ── CityJSON vertex index collector ──────────────────────────────────────────
@@ -251,11 +284,21 @@ def extract_building(feature: dict, transform: dict) -> dict | None:
     ys = [c[1] for c in coords]
     width = max(5.0, min(60.0, min(max(xs) - min(xs), max(ys) - min(ys))))
 
+    # Convex hull of footprint vertices → store as WGS84 polygon.
+    # The shadow engine uses these exact corner bearings to compute the
+    # building's angular silhouette, preserving real gaps between buildings.
+    hull_rd = convex_hull_2d(coords)
+    poly_wgs84: list[list[float]] = []
+    for (hx, hy) in hull_rd:
+        hlat, hlng = rd_to_wgs84(hx, hy)
+        poly_wgs84.append([round(hlat, 5), round(hlng, 5)])
+
     return {
         "lat":    round(lat, 6),
         "lng":    round(lng, 6),
         "height": round(float(height), 1),
         "width":  round(width, 1),
+        "poly":   poly_wgs84,
     }
 
 
@@ -297,7 +340,9 @@ def debug_feature_structure():
             print(f"    lod={g.get('lod')}  type={g.get('type')}  boundaries[:1]={str(b)[:80]}")
 
     # Attempt to parse the building and show result
-    b = extract_building(feat)
+    metadata_dbg = data.get("metadata") or {}
+    transform_dbg = metadata_dbg.get("transform") or {}
+    b = extract_building(feat, transform_dbg)
     print(f"\nParsed building: {b}")
     if b:
         print(f"  → RD centroid approx: {wgs84_to_rd(b['lat'], b['lng'])}")

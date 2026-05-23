@@ -779,7 +779,9 @@ function PlacesCard({
           <Text style={styles.placesPlaceholder}>Loading hours…</Text>
         ) : details?.todayHours ? (
           <Text style={styles.placesHours}>🕐  {details.todayHours}</Text>
-        ) : null
+        ) : (
+          <Text style={styles.placesPlaceholder}>Hours unavailable</Text>
+        )
       ) : (
         <Pressable
           onPress={onProLockPress}
@@ -797,7 +799,7 @@ function PlacesCard({
 
       {/* Contact row: Pro shows phone (if present), free shows locked teaser */}
       {isPro ? (
-        details?.phone ? (
+        loading ? null : details?.phone ? (
           <Text style={styles.placesPhone}>📞  {details.phone}</Text>
         ) : null
       ) : (

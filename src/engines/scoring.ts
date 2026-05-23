@@ -271,8 +271,43 @@ export function computeSunScore(
     score *= temperatureFactor(weather.temp);
   }
 
+  // ── Score normalisation ────────────────────────────────────────────────────
+  //
+  // The multiplicative chain can exceed 1.0 well before the clamp, because
+  // Amsterdam's summer sun regularly reaches 55–58° altitude — which gives an
+  // altFactor of 0.95–0.975 — and the facing bonus (×1.25 max) together with
+  // the temperature factor (×1.15 max) combine to:
+  //
+  //   0.975 × 1.25 × 1.15 = 1.40  (raw score on a hot clear afternoon)
+  //
+  // Math.min(1, ...) silently discards that excess. On any warm, sunny day
+  // this locks 50–100+ terraces to exactly 1.0, causing two visible bugs:
+  //
+  //   (a) All well-facing terraces display "99" regardless of their actual
+  //       shadow, orientation, or distance from the sun's path — users see
+  //       "99 everywhere, makes no sense."
+  //
+  //   (b) The relative colour banding in ZonnieMap spreads 5 pin colours
+  //       across the visible score range. When that range is (0.80–1.0),
+  //       a terrace at 0.84 ("Full Sun" by label) gets t = 0.18 → painted
+  //       BLACK — deeply misleading.
+  //
+  // Fix: divide the raw score by MAX_RAW (the theoretical product of the two
+  // bonus factors) before clamping. This preserves all relative orderings and
+  // label semantics while ensuring the ceiling is only reached by a genuinely
+  // extreme combination (perfect midsummer noon + 0% cloud + perfectly-aligned
+  // terrace + 30°C heat):
+  //
+  //   Typical hot sunny afternoon, SW-facing, 22°C  → ~0.74  ("Full Sun")
+  //   N-facing on same day                           → ~0.50  ("Mostly Sunny")
+  //   In deep building shadow                        → ~0.15  ("Mostly Shade")
+  //
+  // This is the only change needed — the score label thresholds (0.7/0.5/0.3/
+  // 0.1) remain correct, and relative comparisons across terraces are unaffected
+  // because every terrace's score is divided by the same constant.
+  const MAX_RAW = 1.25 * 1.15; // facingBonus_max × tempFactor_max = 1.4375
   return {
-    score: Math.min(1, Math.max(0, score)),
+    score: Math.min(1, Math.max(0, score / MAX_RAW)),
     sun,
     shadow: coverage,
     weather,

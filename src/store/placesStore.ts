@@ -77,7 +77,6 @@ export const usePlacesStore = create<PlacesState>()(
         // entry has aged past TTL.
         if (
           existing?.status === 'ready' &&
-          existing.data?.photoNames?.length &&
           isFresh(existing, Date.now())
         ) {
           return;

@@ -107,9 +107,9 @@ function pickTopByRegion(
   const entry = weatherByDate[dateStr];
   const hourly = entry?.status === 'ready' ? entry.data : undefined;
 
-  // Use a 2-hour window centred on now — identical to the main app's
-  // default "Now" preset. This ensures landing page scores match what
-  // the user sees when they tap "See all terraces".
+  // Use a 2-hour window centred on now — the landing page always shows
+  // "sunny right now". The list view has separate Morning/Afternoon/Evening
+  // chips for browsing fixed windows.
   const fromHour = hour;
   const toHour = Math.min(hour + 2, 23);
 

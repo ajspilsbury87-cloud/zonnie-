@@ -94,6 +94,11 @@ export async function fetchPlaceDetails(placeId: string): Promise<PlaceDetails |
   if (!key) return null;
 
   const url = `${PLACES_DETAIL_URL}/${encodeURIComponent(placeId)}`;
+  // AbortSignal.timeout() is not reliably available in Hermes (React Native's
+  // JS engine). Use AbortController + setTimeout instead — supported since RN 0.60.
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
   let res: Response;
   try {
     res = await fetch(url, {
@@ -103,10 +108,12 @@ export async function fetchPlaceDetails(placeId: string): Promise<PlaceDetails |
         'X-Goog-FieldMask': FIELD_MASK,
         Accept: 'application/json',
       },
-      signal: AbortSignal.timeout(8000),
+      signal: controller.signal,
     });
   } catch {
     return null;
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   if (!res.ok) return null;
