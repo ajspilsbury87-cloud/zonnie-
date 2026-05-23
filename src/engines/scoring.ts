@@ -415,11 +415,11 @@ export function findBestWindow(
 }
 
 export function scoreLabel(score: number): string {
-  if (score > 0.7) return 'Full Sun';
-  if (score > 0.5) return 'Mostly Sunny';
-  if (score > 0.3) return 'Partial Sun';
-  if (score > 0.1) return 'Mostly Shade';
-  return 'In Shadow';
+  if (score > 0.7) return 'Volle zon';
+  if (score > 0.5) return 'Grotendeels zonnig';
+  if (score > 0.3) return 'Deels zonnig';
+  if (score > 0.1) return 'Grotendeels schaduw';
+  return 'In de schaduw';
 }
 
 // scoreColor() was removed — it used hardcoded hex values that duplicated

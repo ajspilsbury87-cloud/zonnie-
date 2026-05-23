@@ -449,7 +449,7 @@ export function TerraceDetailSheet() {
               onProLockPress={() => showPaywall('photos')}
             />
 
-            <Text style={styles.sectionLabel}>Sun today</Text>
+            <Text style={styles.sectionLabel}>Zon vandaag</Text>
             <SunTimeline terrace={terrace} />
             <Text style={styles.scoreLabelText}>
               {rangeLabel}: <Text style={styles.scoreLabelStrong}>{scoreLabel(score)}</Text>
@@ -466,10 +466,10 @@ export function TerraceDetailSheet() {
                   styles.bestWindowCard,
                   pressed && styles.bestWindowCardPressed,
                 ]}
-                accessibilityLabel={`Best time to visit: ${bestWindow.fromHour.toString().padStart(2, '0')}:00 to ${bestWindow.toHour.toString().padStart(2, '0')}:00`}
+                accessibilityLabel={`Beste bezoektijd: ${bestWindow.fromHour.toString().padStart(2, '0')}:00 tot ${bestWindow.toHour.toString().padStart(2, '0')}:00`}
               >
                 <View style={styles.bestWindowLeft}>
-                  <Text style={styles.bestWindowLabel}>Best time to visit</Text>
+                  <Text style={styles.bestWindowLabel}>Beste bezoektijd</Text>
                   <Text style={styles.bestWindowTime}>
                     {bestWindow.fromHour.toString().padStart(2, '0')}:00
                     {' – '}
@@ -499,10 +499,10 @@ export function TerraceDetailSheet() {
                 >
                   <Text style={styles.infoChipText}>
                     {sunTrend === 'rising'
-                      ? '↑ Sun building'
+                      ? '↑ Zon in opkomst'
                       : sunTrend === 'falling'
-                        ? '↓ Sun fading'
-                        : '→ Sun holding'}
+                        ? '↓ Zon neemt af'
+                        : '→ Zon stabiel'}
                   </Text>
                 </View>
               ) : null}
@@ -529,8 +529,8 @@ export function TerraceDetailSheet() {
                 <View style={[styles.infoChip, styles.infoChipMatch]}>
                   <Text style={[styles.infoChipText, styles.infoChipTextMatch]}>
                     📺 {terrace.outdoorScreens === 1
-                      ? '1 outdoor screen'
-                      : `${terrace.outdoorScreens} outdoor screens`}
+                      ? '1 buitenscherm'
+                      : `${terrace.outdoorScreens} buitenschermen`}
                   </Text>
                 </View>
               ) : null}
@@ -538,14 +538,14 @@ export function TerraceDetailSheet() {
 
             {terrace.vibe ? (
               <>
-                <Text style={styles.sectionLabel}>Vibe</Text>
+                <Text style={styles.sectionLabel}>Sfeer</Text>
                 <Text style={styles.body}>{terrace.vibe}</Text>
               </>
             ) : null}
 
             {placeDetails?.address || terrace.address ? (
               <>
-                <Text style={styles.sectionLabel}>Address</Text>
+                <Text style={styles.sectionLabel}>Adres</Text>
                 <Text style={styles.body}>
                   {placeDetails?.address ?? terrace.address}
                 </Text>
@@ -562,7 +562,7 @@ export function TerraceDetailSheet() {
                 ]}
               >
                 <Text style={[styles.actionText, styles.actionTextSecondary]}>
-                  Show on Map
+                  Op kaart
                 </Text>
               </Pressable>
               <Pressable
@@ -574,7 +574,7 @@ export function TerraceDetailSheet() {
                 ]}
               >
                 <Text style={[styles.actionText, styles.actionTextSecondary]}>
-                  View in Maps
+                  Open in Maps
                 </Text>
               </Pressable>
             </View>
@@ -585,9 +585,9 @@ export function TerraceDetailSheet() {
                 styles.actionShare,
                 pressed && styles.actionPressed,
               ]}
-              accessibilityLabel="Share this terrace"
+              accessibilityLabel="Deel dit terras"
             >
-              <Text style={styles.actionShareText}>Share ☀️</Text>
+              <Text style={styles.actionShareText}>Delen ☀️</Text>
             </Pressable>
 
             <Pressable
@@ -597,7 +597,7 @@ export function TerraceDetailSheet() {
                 pressed && styles.actionPressed,
               ]}
             >
-              <Text style={styles.actionText}>Get Directions</Text>
+              <Text style={styles.actionText}>Routebeschrijving</Text>
             </Pressable>
           </>
         ) : null}
@@ -670,7 +670,7 @@ function PhotoStrip({
         accessibilityLabel="See photos — unlock with Pro"
       >
         <Text style={styles.photoStripLockGlyph}>📷</Text>
-        <Text style={styles.photoStripLockText}>Photos · Pro</Text>
+        <Text style={styles.photoStripLockText}>Foto's · Pro</Text>
         <Text style={styles.photoStripLockHint}>🔒</Text>
       </Pressable>
     );
@@ -747,7 +747,7 @@ function PlacesCard({
     const price = priceLevelToDollars(details.priceLevel);
     if (price) proSegments.push(price);
     if (details.openNow != null) {
-      proSegments.push(details.openNow ? 'Open now' : 'Closed now');
+      proSegments.push(details.openNow ? 'Nu open' : 'Nu gesloten');
     }
   }
 
@@ -776,11 +776,11 @@ function PlacesCard({
       {/* Hours: Pro shows live, free shows locked teaser */}
       {isPro ? (
         loading ? (
-          <Text style={styles.placesPlaceholder}>Loading hours…</Text>
+          <Text style={styles.placesPlaceholder}>Openingstijden laden…</Text>
         ) : details?.todayHours ? (
           <Text style={styles.placesHours}>🕐  {details.todayHours}</Text>
         ) : (
-          <Text style={styles.placesPlaceholder}>Hours unavailable</Text>
+          <Text style={styles.placesPlaceholder}>Openingstijden onbekend</Text>
         )
       ) : (
         <Pressable
@@ -812,7 +812,7 @@ function PlacesCard({
           accessibilityLabel="See phone and website — unlock with Pro"
         >
           <Text style={styles.proLockGlyph}>📞</Text>
-          <Text style={styles.proLockText}>Phone · Website</Text>
+          <Text style={styles.proLockText}>Telefoon · Website</Text>
           <Text style={styles.proLockTag}>Pro 🔒</Text>
         </Pressable>
       )}

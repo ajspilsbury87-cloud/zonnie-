@@ -107,7 +107,7 @@ function pad(n: number): string {
 }
 
 function notifBody(block: SunnyBlock): string {
-  return `Sunny ${pad(block.fromHour)}:00–${pad(block.toHour)}:00 tomorrow ☀️`;
+  return `Morgen zonnig van ${pad(block.fromHour)}:00 tot ${pad(block.toHour)}:00 ☀️`;
 }
 
 function tomorrowAt9amAmsterdam(tomorrowDateStr: string): Date {

@@ -65,9 +65,9 @@ interface Preset {
 // making it obvious) and prevented users from easily comparing morning
 // vs afternoon conditions. Fixed windows are easier to reason about.
 const PRESETS: Preset[] = [
-  { key: 'morning',   label: 'Morning',   fixed: { from: 9,  to: 12 } },
-  { key: 'afternoon', label: 'Afternoon', fixed: { from: 13, to: 17 } },
-  { key: 'evening',   label: 'Evening',   fixed: { from: 18, to: 22 } },
+  { key: 'morning',   label: 'Ochtend',  fixed: { from: 9,  to: 12 } },
+  { key: 'afternoon', label: 'Middag',   fixed: { from: 13, to: 17 } },
+  { key: 'evening',   label: 'Avond',    fixed: { from: 18, to: 22 } },
 ];
 
 function presetRange(p: Preset, sunset: number): { from: number; to: number } {
@@ -114,7 +114,7 @@ export function TimeRangeQuickPicker() {
       <View style={styles.card}>
         {/* Card header row: label left, live time right */}
         <View style={styles.cardHeader}>
-          <Text style={styles.cardLabel}>WHEN</Text>
+          <Text style={styles.cardLabel}>WANNEER</Text>
           <Text style={styles.timeDisplay}>
             <Text style={styles.timeBold}>{formatHour(fromHour)}</Text>
             <Text style={styles.timeSep}> – </Text>
@@ -245,7 +245,7 @@ export function TimeRangeFineTune() {
             accessibilityLabel="Unlock custom time scrubber with Pro"
           >
             <View style={styles.lockBadge}>
-              <Text style={styles.lockBadgeText}>🔒 Set exact hours — Pro</Text>
+              <Text style={styles.lockBadgeText}>🔒 Exacte tijden instellen — Pro</Text>
             </View>
           </Pressable>
         ) : null}
@@ -261,7 +261,7 @@ export function TimeRangeFineTune() {
           onPress={() => { haptics.selection(); toggleShadow(); }}
           style={[styles.shadowToggle, shadowEnabled && styles.shadowToggleActive]}
           accessibilityLabel={
-            shadowEnabled ? 'Hide building shadows on map' : 'Show building shadows on map'
+            shadowEnabled ? 'Verberg gebouwschaduwen op kaart' : 'Toon gebouwschaduwen op kaart'
           }
           hitSlop={8}
         >
@@ -269,7 +269,7 @@ export function TimeRangeFineTune() {
             style={[styles.shadowToggleText, shadowEnabled && styles.shadowToggleTextActive]}
             allowFontScaling={false}
           >
-            {shadowEnabled ? '🌑 Shadows on' : '🔆 Show shadows'}
+            {shadowEnabled ? '🌑 Schaduwen aan' : '🔆 Schaduwen tonen'}
           </Text>
         </Pressable>
       ) : null}

@@ -110,7 +110,7 @@ describe('formatNotificationBody', () => {
         avgTemp: 21,
       }),
     ).toBe(
-      'Looks like good terrace weather from 09:00 to 17:00 — find a sunny spot →',
+      'Lekker terrasweer van 09:00 tot 17:00 — vind een zonnig terras →',
     );
   });
 });

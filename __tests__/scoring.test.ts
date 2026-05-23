@@ -161,12 +161,12 @@ describe('windShelterFactor', () => {
 });
 
 describe('label/color thresholds', () => {
-  test('scoreLabel buckets', () => {
-    expect(scoreLabel(0.9)).toBe('Full Sun');
-    expect(scoreLabel(0.6)).toBe('Mostly Sunny');
-    expect(scoreLabel(0.4)).toBe('Partial Sun');
-    expect(scoreLabel(0.2)).toBe('Mostly Shade');
-    expect(scoreLabel(0.05)).toBe('In Shadow');
+  test('scoreLabel buckets (Dutch)', () => {
+    expect(scoreLabel(0.9)).toBe('Volle zon');
+    expect(scoreLabel(0.6)).toBe('Grotendeels zonnig');
+    expect(scoreLabel(0.4)).toBe('Deels zonnig');
+    expect(scoreLabel(0.2)).toBe('Grotendeels schaduw');
+    expect(scoreLabel(0.05)).toBe('In de schaduw');
   });
 
   test('scoreToColor returns a hex string for any score', () => {

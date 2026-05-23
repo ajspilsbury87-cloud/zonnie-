@@ -112,7 +112,7 @@ export function WeatherStrip() {
     return (
       <View style={styles.placeholderRow}>
         <Text style={styles.placeholderText}>
-          {status === 'loading' ? 'Loading weather…' : 'Weather unavailable'}
+          {status === 'loading' ? 'Weer laden…' : 'Geen weerdata'}
         </Text>
       </View>
     );

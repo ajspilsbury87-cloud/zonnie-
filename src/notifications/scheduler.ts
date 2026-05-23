@@ -97,7 +97,7 @@ export async function syncTomorrowForecastNotification(
     await Notifications.scheduleNotificationAsync({
       identifier: NOTIFICATION_ID,
       content: {
-        title: 'Sunny weather tomorrow ☀️',
+        title: 'Morgen zonnig ☀️',
         body: formatNotificationBody(block),
         badge: 1,
         sound: 'default',

@@ -60,7 +60,7 @@ export function VenueTypeFilter() {
     <View style={styles.outerPad}>
       <View style={styles.card}>
         {/* Card label */}
-        <Text style={styles.cardLabel}>WHAT</Text>
+        <Text style={styles.cardLabel}>WAT</Text>
 
         {/* Row 1: Bar / Restaurant / Coffee — same fixed width as WHEN chips */}
         <View style={styles.chipRow}>
@@ -95,26 +95,26 @@ export function VenueTypeFilter() {
             onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
             activeOpacity={0.7}
             style={[styles.modeChip, { width: chipWidth }, matchModeOnly && styles.modeChipMatch]}
-            accessibilityLabel="Show only terraces with outdoor screens"
+            accessibilityLabel="Toon alleen terrassen met buitenschermen"
           >
             <Text
               style={[styles.chipText, matchModeOnly && styles.chipTextActive]}
               numberOfLines={1}
             >
-              ⚽ Outdoor
+              ⚽ Buiten
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleSortByDistance(); }}
             activeOpacity={0.7}
             style={[styles.modeChip, { width: chipWidth }, sortByDistance && styles.modeChipNearMe]}
-            accessibilityLabel="Sort by nearest sunny terrace"
+            accessibilityLabel="Sorteer op dichtstbijzijnde zonnige plek"
           >
             <Text
               style={[styles.chipText, sortByDistance && styles.chipTextActive]}
               numberOfLines={1}
             >
-              📍 Near me
+              📍 Dichtbij
             </Text>
           </TouchableOpacity>
         </View>

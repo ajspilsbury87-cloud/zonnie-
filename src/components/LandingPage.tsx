@@ -296,14 +296,14 @@ export function LandingPage({ onContinue }: LandingPageProps) {
         </View>
         <Animated.Text style={[styles.title, titleStyle]}>Zonnie</Animated.Text>
         <Animated.Text style={[styles.tagline, taglineStyle]}>
-          Sunniest terraces in Amsterdam
+          De zonnigste terrassen van Amsterdam
         </Animated.Text>
       </View>
 
       {/* Top 3 per region. ScrollView in case the 6 regions × 3 cards
           overflow on smaller screens. */}
       <Animated.View style={[styles.cardStack, cardsStyle]}>
-        <Text style={styles.sectionLabel}>SUNNIEST RIGHT NOW</Text>
+        <Text style={styles.sectionLabel}>NU ZONNIGST</Text>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -331,9 +331,9 @@ export function LandingPage({ onContinue }: LandingPageProps) {
             styles.button,
             pressed && styles.buttonPressed,
           ]}
-          accessibilityLabel="Continue to the map"
+          accessibilityLabel="Ga naar de kaart"
         >
-          <Text style={styles.buttonText}>See all terraces</Text>
+          <Text style={styles.buttonText}>Alle terrassen bekijken</Text>
         </Pressable>
       </Animated.View>
     </Animated.View>
@@ -389,7 +389,7 @@ function VenueCard({ venue, onPress }: VenueCardProps) {
           </Text>
           {featured ? (
             <View style={styles.featuredBadge}>
-              <Text style={styles.featuredBadgeText}>Featured</Text>
+              <Text style={styles.featuredBadgeText}>Uitgelicht</Text>
             </View>
           ) : null}
         </View>

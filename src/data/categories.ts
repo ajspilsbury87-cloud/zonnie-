@@ -38,7 +38,7 @@ export const CATEGORIES_ORDERED: readonly VenueCategory[] = [
 export const CATEGORY_LABELS: Record<VenueCategory, string> = {
   bar: 'Bar',
   restaurant: 'Restaurant',
-  coffee: 'Coffee',
+  coffee: 'Koffie',
 };
 
 export const CATEGORY_GLYPHS: Record<VenueCategory, string> = {

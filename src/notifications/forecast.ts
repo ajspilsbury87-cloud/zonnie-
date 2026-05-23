@@ -98,5 +98,5 @@ export function findGoodWeatherBlock(
 export function formatNotificationBody(block: GoodWeatherBlock): string {
   const f = block.fromHour.toString().padStart(2, '0');
   const t = block.toHour.toString().padStart(2, '0');
-  return `Looks like good terrace weather from ${f}:00 to ${t}:00 — find a sunny spot →`;
+  return `Lekker terrasweer van ${f}:00 tot ${t}:00 — vind een zonnig terras →`;
 }
