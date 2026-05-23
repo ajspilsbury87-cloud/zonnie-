@@ -33,21 +33,37 @@ function windGlyph(windKmh: number | undefined): string {
   return ' 🌬️';
 }
 
+/**
+ * Convert a meteorological wind direction in degrees (0 = wind FROM north)
+ * to an 8-point compass label. Shown only when wind speed is meaningful
+ * (≥ 8 km/h) so the direction is relevant to terrace comfort.
+ *
+ * Meteorological convention: direction = where wind is blowing FROM.
+ * So 270° = wind coming from the west (blowing eastward).
+ */
+function windDirLabel(degrees: number | undefined, windKmh: number | undefined): string {
+  if (degrees == null || windKmh == null || windKmh < 8) return '';
+  const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  const idx = Math.round(degrees / 45) % 8;
+  return ` ${dirs[idx]}`;
+}
+
 interface CellProps {
   hour: number;
   temp: number;
   cloudCover: number;
   windSpeed: number | undefined;
+  windDirection: number | undefined;
 }
 
-function Cell({ hour, temp, cloudCover, windSpeed }: CellProps) {
+function Cell({ hour, temp, cloudCover, windSpeed, windDirection }: CellProps) {
   return (
     <View style={styles.cell}>
       <Text style={styles.hour}>{hour.toString().padStart(2, '0')}</Text>
       <Text style={styles.glyph}>{cloudGlyph(cloudCover)}</Text>
       <Text style={styles.temp}>{temp}°</Text>
       <Text style={styles.detail}>
-        {cloudCover}%{windGlyph(windSpeed)}
+        {cloudCover}%{windDirLabel(windDirection, windSpeed)}{windGlyph(windSpeed)}
       </Text>
     </View>
   );
@@ -81,6 +97,7 @@ export function WeatherStrip() {
         temp: w.temp,
         cloudCover: w.cloudCover,
         windSpeed: w.windSpeed,
+        windDirection: w.windDirection,
       });
     }
     return { cells: out, status: 'ready' as const };

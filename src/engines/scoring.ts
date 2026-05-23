@@ -422,10 +422,7 @@ export function scoreLabel(score: number): string {
   return 'In Shadow';
 }
 
-export function scoreColor(score: number): string {
-  if (score > 0.7) return '#F59E0B';
-  if (score > 0.5) return '#FBBF24';
-  if (score > 0.3) return '#D97706';
-  if (score > 0.1) return '#6B7280';
-  return '#374151';
-}
+// scoreColor() was removed — it used hardcoded hex values that duplicated
+// scoreToColor() in src/theme/tokens.ts (which stays in sync with the brand
+// palette). Nothing imported scoreColor from this module; use scoreToColor
+// from tokens.ts for all score → colour mappings.

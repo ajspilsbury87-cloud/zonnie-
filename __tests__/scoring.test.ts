@@ -3,10 +3,10 @@ import {
   amsterdamLocalToUtc,
   computeSunScore,
   getWeather,
-  scoreColor,
   scoreLabel,
   windShelterFactor,
 } from '@/src/engines/scoring';
+import { scoreToColor } from '@/src/theme/tokens';
 import { solarPosition } from '@/src/engines/solar';
 import type { Facing, Terrace } from '@/src/engines/types';
 
@@ -169,9 +169,12 @@ describe('label/color thresholds', () => {
     expect(scoreLabel(0.05)).toBe('In Shadow');
   });
 
-  test('scoreColor returns a hex string for any score', () => {
+  test('scoreToColor returns a hex string for any score', () => {
+    // scoreToColor lives in src/theme/tokens — canonical mapping that
+    // stays in sync with the brand palette. scoreColor from scoring.ts
+    // was a duplicate with hardcoded hex values and has been removed.
     for (const s of [0, 0.15, 0.4, 0.6, 0.8]) {
-      expect(scoreColor(s)).toMatch(/^#[0-9A-F]{6}$/i);
+      expect(scoreToColor(s)).toMatch(/^#[0-9A-F]{6}$/i);
     }
   });
 });
