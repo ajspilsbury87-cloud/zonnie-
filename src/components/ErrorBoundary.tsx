@@ -11,7 +11,38 @@
 import { Component, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useStrings } from '@/src/i18n/useStrings';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
+
+/** Function component for the error fallback so we can use hooks. */
+function ErrorFallback({
+  surface,
+  message,
+  onReset,
+}: {
+  surface?: string;
+  message: string;
+  onReset: () => void;
+}) {
+  const t = useStrings();
+  return (
+    <View style={styles.root}>
+      <Text style={styles.title}>{t.somethingWentWrong}</Text>
+      {surface ? (
+        <Text style={styles.surface}>in {surface}</Text>
+      ) : null}
+      <Text style={styles.message} numberOfLines={6}>
+        {message}
+      </Text>
+      <Pressable
+        onPress={onReset}
+        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+      >
+        <Text style={styles.buttonText}>{t.tryAgain}</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 interface Props {
   children: ReactNode;
@@ -43,21 +74,11 @@ export class ErrorBoundary extends Component<Props, State> {
   override render() {
     if (this.state.error) {
       return (
-        <View style={styles.root}>
-          <Text style={styles.title}>Something went wrong</Text>
-          {this.props.surface ? (
-            <Text style={styles.surface}>in {this.props.surface}</Text>
-          ) : null}
-          <Text style={styles.message} numberOfLines={6}>
-            {this.state.error.message}
-          </Text>
-          <Pressable
-            onPress={this.reset}
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-          >
-            <Text style={styles.buttonText}>Try again</Text>
-          </Pressable>
-        </View>
+        <ErrorFallback
+          surface={this.props.surface}
+          message={this.state.error.message}
+          onReset={this.reset}
+        />
       );
     }
     return this.props.children;

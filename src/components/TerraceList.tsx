@@ -19,6 +19,7 @@ import { scoreLabel } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
+import { useStrings } from '@/src/i18n/useStrings';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
@@ -82,6 +83,8 @@ interface TerraceListProps {
 }
 
 export function TerraceList({ onSelect }: TerraceListProps) {
+  const t = useStrings();
+
   // Get user location — used for "Near me" sort mode. The hook asks for
   // foreground permission once, resolves a single low-accuracy fix, and
   // never subscribes. Returns null if denied or unavailable; the sort
@@ -125,25 +128,25 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   const emptyState = (() => {
     if (matchModeOnly) {
       return {
-        title: 'No outdoor-TV terraces match',
-        body: 'Tap 📺 Match again to clear, or widen your other filters.',
+        title: t.noMatchModeTerraces,
+        body: t.noMatchModeHint,
       };
     }
     if (favoritesOnly) {
       return {
-        title: 'No favourites yet',
-        body: 'Tap the ♡ on a terrace detail to save it for later.',
+        title: t.noFavourites,
+        body: t.noFavouritesHint,
       };
     }
     if (query.trim().length > 0) {
       return {
-        title: 'No matches',
-        body: `Nothing in the dataset matches "${query.trim()}".`,
+        title: t.noResults,
+        body: t.noResultsQuery(query.trim()),
       };
     }
     return {
-      title: 'No terraces match',
-      body: 'Try a different search, fewer neighbourhoods, or a wider time range.',
+      title: t.noTerraces,
+      body: t.noTerracesHint,
     };
   })();
 
@@ -252,7 +255,7 @@ export function TerraceList({ onSelect }: TerraceListProps) {
           />
           {showFilterHint && !filtersExpanded ? (
             <HintBubble onDismiss={dismissFilterHint} style={styles.inlineHint}>
-              ⛛ Tap to refine by area or name
+              {t.filterHint}
             </HintBubble>
           ) : null}
           {filtersExpanded ? (

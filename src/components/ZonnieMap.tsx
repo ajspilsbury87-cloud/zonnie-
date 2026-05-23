@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, type Region as MapRegion } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -12,6 +12,7 @@ import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { haptics } from '@/src/lib/haptics';
 import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
+import { useStrings } from '@/src/i18n/useStrings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { fonts, palette, spacing } from '@/src/theme/tokens';
 
@@ -279,6 +280,7 @@ function isInAmsterdam(c: { lat: number; lng: number }): boolean {
 }
 
 export function ZonnieMap({ onSelect }: ZonnieMapProps) {
+  const t = useStrings();
   const mapRef = useRef<MapView>(null);
   const scored = useScoredTerraces();
   const selectedId = useSelectionStore((s) => s.selectedId);
@@ -370,11 +372,11 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert(
-          'Location off',
-          'Zonnie needs location to centre the map on you. Enable it in iOS Settings → Privacy → Location → Zonnie.',
+          t.locationOff,
+          t.locationOffBody,
           [
-            { text: 'Not now', style: 'cancel' },
-            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+            { text: t.notNow, style: 'cancel' },
+            { text: t.openSettings, onPress: () => Linking.openSettings() },
           ],
         );
         return;
@@ -392,7 +394,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         500,
       );
     } catch {
-      Alert.alert('Couldn’t get location', 'Try again in a moment.');
+      Alert.alert(t.locationError, t.locationErrorBody);
     }
   }, []);
 
@@ -539,7 +541,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       */}
       {showPinHint ? (
         <HintBubble onDismiss={dismissPinHint} style={styles.pinHint}>
-          📍 Tap a pin to see hourly sun
+          {t.mapHint}
         </HintBubble>
       ) : null}
       {/*
@@ -556,7 +558,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       <Pressable
         onPress={handleLocateMe}
         style={({ pressed }) => [styles.locateButton, pressed && styles.locateButtonPressed]}
-        accessibilityLabel="Centre map on my location"
+        accessibilityLabel={t.centreMap}
         hitSlop={8}
       >
         <Text style={styles.locateGlyph}>⌖</Text>

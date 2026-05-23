@@ -45,6 +45,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { formatInTimeZone } from 'date-fns-tz';
 
+import { useStrings } from '@/src/i18n/useStrings';
 import { TERRACES } from '@/src/data/terraces';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
@@ -152,6 +153,7 @@ function pickTopByRegion(
 }
 
 export function LandingPage({ onContinue }: LandingPageProps) {
+  const t = useStrings();
   const weatherByDate = useWeatherStore((s) => s.byDate);
   const select = useSelectionStore((s) => s.select);
   // Recomputes whenever weather data loads — keeps the landing fresh
@@ -296,14 +298,14 @@ export function LandingPage({ onContinue }: LandingPageProps) {
         </View>
         <Animated.Text style={[styles.title, titleStyle]}>Zonnie</Animated.Text>
         <Animated.Text style={[styles.tagline, taglineStyle]}>
-          De zonnigste terrassen van Amsterdam
+          {t.tagline}
         </Animated.Text>
       </View>
 
       {/* Top 3 per region. ScrollView in case the 6 regions × 3 cards
           overflow on smaller screens. */}
       <Animated.View style={[styles.cardStack, cardsStyle]}>
-        <Text style={styles.sectionLabel}>NU ZONNIGST</Text>
+        <Text style={styles.sectionLabel}>{t.sunniestNow}</Text>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -331,9 +333,9 @@ export function LandingPage({ onContinue }: LandingPageProps) {
             styles.button,
             pressed && styles.buttonPressed,
           ]}
-          accessibilityLabel="Ga naar de kaart"
+          accessibilityLabel={t.seeAllTerraces}
         >
-          <Text style={styles.buttonText}>Alle terrassen bekijken</Text>
+          <Text style={styles.buttonText}>{t.seeAllTerraces}</Text>
         </Pressable>
       </Animated.View>
     </Animated.View>
@@ -372,6 +374,7 @@ interface VenueCardProps {
  * sheet is already animating up.
  */
 function VenueCard({ venue, onPress }: VenueCardProps) {
+  const t = useStrings();
   const { terrace, score, featured } = venue;
   const pct = Math.round(score * 100);
   const color = scoreToColor(score);
@@ -389,7 +392,7 @@ function VenueCard({ venue, onPress }: VenueCardProps) {
           </Text>
           {featured ? (
             <View style={styles.featuredBadge}>
-              <Text style={styles.featuredBadgeText}>Uitgelicht</Text>
+              <Text style={styles.featuredBadgeText}>{t.featured}</Text>
             </View>
           ) : null}
         </View>

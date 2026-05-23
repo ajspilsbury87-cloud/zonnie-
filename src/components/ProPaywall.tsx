@@ -78,6 +78,8 @@ import type { PurchasesPackage } from 'react-native-purchases';
 import { create } from 'zustand';
 
 import { haptics } from '@/src/lib/haptics';
+import { useStrings } from '@/src/i18n/useStrings';
+import type { Strings } from '@/src/i18n/strings';
 import { usePurchaseStore } from '@/src/store/purchaseStore';
 import {
   fonts,
@@ -123,83 +125,45 @@ interface TriggerCopy {
   sub: string;
 }
 
-function triggerCopy(trigger: FeatureTrigger | undefined): TriggerCopy {
+function triggerCopy(trigger: FeatureTrigger | undefined, t: Strings): TriggerCopy {
   switch (trigger) {
     case 'time_scrubber':
-      return {
-        emoji: '🕐',
-        headline: 'Versleep naar elk uur',
-        sub: 'Scrol door de dag en zie de zonscores live bijwerken voor elk terras.',
-      };
+      return { emoji: '🕐', headline: t.paywallTimeScrubberHeadline, sub: t.paywallTimeScrubberSub };
     case 'ratings':
       // v1.2 model: ratings are FREE (pre-imported into the static
       // dataset). This trigger now anchors the PlacesCard's
       // hours + phone + website lock. Renaming the union member
       // would break OTA-shipped builds that hardcode 'ratings'
       // as the string trigger, so keep the key, refresh the copy.
-      return {
-        emoji: '🕐',
-        headline: 'Openingstijden & contact van vandaag',
-        sub: 'Live openingstijden, telefoon en website direct van Google, voor elk terras.',
-      };
+      return { emoji: '🕐', headline: t.paywallRatingsHeadline, sub: t.paywallRatingsSub };
     case 'busyness':
-      return {
-        emoji: '👥',
-        headline: 'Bekijk drukte in realtime',
-        sub: 'Weet welke terrassen rustig zijn voordat je vertrekt. Zonnig én leeg is het doel.',
-      };
+      return { emoji: '👥', headline: t.paywallBusynessHeadline, sub: t.paywallBusynessSub };
     case 'photos':
-      return {
-        emoji: '📸',
-        headline: "Bekijk terrasfoto's",
-        sub: 'Swipe door foto\'s voordat je de tocht onderneemt.',
-      };
+      return { emoji: '📸', headline: t.paywallPhotosHeadline, sub: t.paywallPhotosSub };
     case 'favourites':
-      return {
-        emoji: '🤍',
-        headline: 'Onbeperkte favorieten opslaan',
-        sub: 'Bewaar al je vaste plekken en ontvang een melding als ze op het punt staan zonnig te worden.',
-      };
+      return { emoji: '🤍', headline: t.paywallFavouritesHeadline, sub: t.paywallFavouritesSub };
     case 'widget':
-      return {
-        emoji: '📱',
-        headline: 'Widget op je beginscherm',
-        sub: 'Top 3 zonnigste terrassen dichtbij, altijd in één oogopslag.',
-      };
+      return { emoji: '📱', headline: t.paywallWidgetHeadline, sub: t.paywallWidgetSub };
     case 'notifications':
-      return {
-        emoji: '🔔',
-        headline: 'Ontvang zonmeldingen',
-        sub: 'Een melding \'s ochtends als morgen een goede terrasdag wordt.',
-      };
+      return { emoji: '🔔', headline: t.paywallNotificationsHeadline, sub: t.paywallNotificationsSub };
     case 'best_window':
-      return {
-        emoji: '✨',
-        headline: 'Beste bezoekmoment',
-        sub: 'We berekenen het perfecte 2–3 uurs-venster per terras, zodat jij dat niet hoeft.',
-      };
+      return { emoji: '✨', headline: t.paywallBestWindowHeadline, sub: t.paywallBestWindowSub };
     case 'share':
-      return {
-        emoji: '↗️',
-        headline: 'Deel een terraskaartje',
-        sub: 'Een mooi kaartje met zonscore, beste bezoekmoment en Zonnie-branding. Gemaakt voor Stories.',
-      };
+      return { emoji: '↗️', headline: t.paywallShareHeadline, sub: t.paywallShareSub };
     default:
-      return {
-        emoji: '☀️',
-        headline: 'Zonnie Pro vrijschakelen',
-        sub: 'De volledige Amsterdam-zonervaring — tijdschuifregelaar, openingstijden, foto\'s, widget en meer.',
-      };
+      return { emoji: '☀️', headline: t.paywallDefaultHeadline, sub: t.paywallDefaultSub };
   }
 }
 
 // ─── Pro feature list (shown in all paywall states) ───────────────────────────
 
-const PRO_FEATURES = [
-  { emoji: '🕐', label: 'Tijdschuifregelaar — versleep naar elk uur' },
-  { emoji: '⭐', label: 'Google-beoordelingen direct in beeld' },
-  { emoji: '🤍', label: 'Onbeperkte favorieten + pushmeldingen' },
-] as const;
+function proFeatures(t: Strings) {
+  return [
+    { emoji: '🕐', label: t.proFeature1 },
+    { emoji: '⭐', label: t.proFeature2 },
+    { emoji: '🤍', label: t.proFeature3 },
+  ];
+}
 
 // ─── Pricing fallbacks (shown while offerings load) ───────────────────────────
 
@@ -212,6 +176,7 @@ const FALLBACK_PRICES = {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ProPaywall() {
+  const t = useStrings();
   const ref = useRef<BottomSheet>(null);
   const isOpen = useProPaywallStore((s) => s.isOpen);
   const trigger = useProPaywallStore((s) => s.trigger);
@@ -268,7 +233,7 @@ export function ProPaywall() {
     if (!pkg) {
       // Offerings not loaded yet — shouldn't happen since button is
       // only enabled once offerings are available, but guard anyway.
-      Alert.alert('Niet beschikbaar', 'Winkel is nu niet beschikbaar. Probeer het zo opnieuw.');
+      Alert.alert(t.alertNotAvailableTitle, t.alertNotAvailableBody);
       return;
     }
     const err = await purchasePackage(pkg);
@@ -278,9 +243,9 @@ export function ProPaywall() {
       return;
     }
     Alert.alert(
-      'Aankoop mislukt',
-      err.message ?? 'Er is iets misgegaan. Probeer het opnieuw.',
-      [{ text: 'OK' }],
+      t.alertPurchaseFailedTitle,
+      err.message ?? t.alertPurchaseFailedDefault,
+      [{ text: t.alertOk }],
     );
   }, [selectedType, purchasePackage, offerings]);
 
@@ -289,9 +254,9 @@ export function ProPaywall() {
     const err = await restorePurchases();
     if (err) {
       Alert.alert(
-        'Herstel mislukt',
-        err.message ?? 'Aankopen konden niet worden hersteld. Probeer het opnieuw.',
-        [{ text: 'OK' }],
+        t.alertRestoreFailedTitle,
+        err.message ?? t.alertRestoreFailedDefault,
+        [{ text: t.alertOk }],
       );
       return;
     }
@@ -299,9 +264,9 @@ export function ProPaywall() {
     // will close the sheet. If false, nothing was found — tell the user.
     if (!usePurchaseStore.getState().isPro) {
       Alert.alert(
-        'Geen aankopen gevonden',
-        'Er is geen eerdere Zonnie Pro-aankoop gevonden voor dit Apple ID.',
-        [{ text: 'OK' }],
+        t.alertNoPurchasesTitle,
+        t.alertNoPurchasesBody,
+        [{ text: t.alertOk }],
       );
     }
   }, [restorePurchases]);
@@ -325,7 +290,7 @@ export function ProPaywall() {
     [handleClose],
   );
 
-  const copy = triggerCopy(trigger);
+  const copy = triggerCopy(trigger, t);
   // Allow purchase attempt even if offerings haven't loaded yet —
   // the handleBuy function guards against null packages and shows
   // an alert. This prevents the button being permanently disabled
@@ -351,7 +316,7 @@ export function ProPaywall() {
         <Pressable
           onPress={handleClose}
           style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}
-          accessibilityLabel="Sluiten"
+          accessibilityLabel={t.closePaywallA11y}
           hitSlop={12}
         >
           <Text style={styles.closeButtonText}>✕</Text>
@@ -364,7 +329,7 @@ export function ProPaywall() {
 
         {/* ── Feature list ── */}
         <View style={styles.featureList}>
-          {PRO_FEATURES.map((f) => (
+          {proFeatures(t).map((f) => (
             <View key={f.label} style={styles.featureRow}>
               <Text style={styles.featureEmoji}>{f.emoji}</Text>
               <Text style={styles.featureLabel}>{f.label}</Text>
@@ -383,13 +348,13 @@ export function ProPaywall() {
               selectedType === 'monthly' && styles.tierCardSelected,
               pressed && styles.pressed,
             ]}
-            accessibilityLabel={`Maandelijks abonnement, ${priceStringForType('monthly')} per maand`}
+            accessibilityLabel={t.tierMonthlyA11y(priceStringForType('monthly'))}
           >
-            <Text style={styles.tierName}>Maandelijks</Text>
+            <Text style={styles.tierName}>{t.tierMonthly}</Text>
             <Text style={[styles.tierPrice, selectedType === 'monthly' && styles.tierPriceSelected]}>
               {priceStringForType('monthly')}
             </Text>
-            <Text style={styles.tierPeriod}>per maand</Text>
+            <Text style={styles.tierPeriod}>{t.tierMonthlyPeriod}</Text>
           </Pressable>
 
           {/* Yearly — highlighted */}
@@ -401,16 +366,16 @@ export function ProPaywall() {
               selectedType === 'yearly' && styles.tierCardSelected,
               pressed && styles.pressed,
             ]}
-            accessibilityLabel={`Jaarlijks abonnement, ${priceStringForType('yearly')} per jaar, beste deal`}
+            accessibilityLabel={t.tierYearlyA11y(priceStringForType('yearly'))}
           >
             <View style={styles.bestValueBadge}>
-              <Text style={styles.bestValueText}>Beste deal</Text>
+              <Text style={styles.bestValueText}>{t.bestDeal}</Text>
             </View>
-            <Text style={styles.tierName}>Jaarlijks</Text>
+            <Text style={styles.tierName}>{t.tierYearly}</Text>
             <Text style={[styles.tierPrice, selectedType === 'yearly' && styles.tierPriceSelected]}>
               {priceStringForType('yearly')}
             </Text>
-            <Text style={styles.tierPeriod}>per jaar</Text>
+            <Text style={styles.tierPeriod}>{t.tierYearlyPeriod}</Text>
           </Pressable>
 
           {/* Lifetime */}
@@ -421,13 +386,13 @@ export function ProPaywall() {
               selectedType === 'lifetime' && styles.tierCardSelected,
               pressed && styles.pressed,
             ]}
-            accessibilityLabel={`Eenmalig, ${priceStringForType('lifetime')}`}
+            accessibilityLabel={t.tierLifetimeA11y(priceStringForType('lifetime'))}
           >
-            <Text style={styles.tierName}>Eenmalig</Text>
+            <Text style={styles.tierName}>{t.tierLifetime}</Text>
             <Text style={[styles.tierPrice, selectedType === 'lifetime' && styles.tierPriceSelected]}>
               {priceStringForType('lifetime')}
             </Text>
-            <Text style={styles.tierPeriod}>eenmalig</Text>
+            <Text style={styles.tierPeriod}>{t.tierLifetimePeriod}</Text>
           </Pressable>
 
         </View>
@@ -442,35 +407,32 @@ export function ProPaywall() {
             pressed && styles.pressed,
           ]}
           accessibilityLabel={
-            selectedType === 'yearly'  ? 'Doorgaan met jaarlijks abonnement' :
-            selectedType === 'monthly' ? 'Doorgaan met maandelijks abonnement' :
-                                         'Eenmalig kopen'
+            selectedType === 'yearly'  ? t.buyYearlyA11y  :
+            selectedType === 'monthly' ? t.buyMonthlyA11y :
+                                         t.buyLifetimeA11y
           }
         >
           {isLoading ? (
             <ActivityIndicator color={palette.cream} />
           ) : (
             <Text style={styles.buyButtonText}>
-              {selectedType === 'yearly'   ? `Begin voor ${priceStringForType('yearly')}/jr` :
-               selectedType === 'monthly'  ? `Begin voor ${priceStringForType('monthly')}/mnd` :
-                                             `Eenmalig kopen — ${priceStringForType('lifetime')}`}
+              {selectedType === 'yearly'  ? t.buyYearly(priceStringForType('yearly'))    :
+               selectedType === 'monthly' ? t.buyMonthly(priceStringForType('monthly'))  :
+                                            t.buyLifetime(priceStringForType('lifetime'))}
             </Text>
           )}
         </Pressable>
 
         {/* ── Legal / restore ── */}
-        <Text style={styles.legal}>
-          Abonnementen worden automatisch verlengd. Annuleer altijd via Instellingen.
-          Betaling wordt in rekening gebracht via je Apple ID bij bevestiging.
-        </Text>
+        <Text style={styles.legal}>{t.legalText}</Text>
 
         <Pressable
           onPress={handleRestore}
           disabled={isLoading}
           style={({ pressed }) => [styles.restoreButton, pressed && styles.pressed]}
-          accessibilityLabel="Eerdere aankopen herstellen"
+          accessibilityLabel={t.restoreA11y}
         >
-          <Text style={styles.restoreText}>Aankopen herstellen</Text>
+          <Text style={styles.restoreText}>{t.restorePurchases}</Text>
         </Pressable>
 
         {/* Bottom padding for home indicator */}

@@ -16,6 +16,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
+import { useStrings } from '@/src/i18n/useStrings';
 import { useTimeStore, MAX_DATE_OFFSET, selectedDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -27,7 +28,7 @@ interface ChipDate {
   bottomLine: string; // "6" (day of month) for distant chips
 }
 
-function buildDates(): ChipDate[] {
+function buildDates(today: string, tomorrow: string): ChipDate[] {
   const dates: ChipDate[] = [];
   for (let offset = 0; offset <= MAX_DATE_OFFSET; offset++) {
     const dateStr = selectedDateStr(offset);
@@ -35,10 +36,10 @@ function buildDates(): ChipDate[] {
     let topLine: string;
     let bottomLine: string;
     if (offset === 0) {
-      topLine = 'Today';
+      topLine = today;
       bottomLine = formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'd MMM');
     } else if (offset === 1) {
-      topLine = 'Tomorrow';
+      topLine = tomorrow;
       bottomLine = formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'd MMM');
     } else {
       topLine = formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'EEE');
@@ -70,12 +71,13 @@ function dayCloudAvg(hourly: { cloudCover: number }[] | undefined): number | nul
 }
 
 export function DatePicker() {
+  const t = useStrings();
   const dateOffset = useTimeStore((s) => s.dateOffset);
   const setDateOffset = useTimeStore((s) => s.setDateOffset);
   const byDate = useWeatherStore((s) => s.byDate);
   const ensure = useWeatherStore((s) => s.ensure);
 
-  const dates = useMemo(() => buildDates(), []);
+  const dates = useMemo(() => buildDates(t.today, t.tomorrow), [t.today, t.tomorrow]);
 
   // Prefetch every visible date's forecast on mount, in parallel. Cheap
   // because Open-Meteo deduplicates at the network layer and the cache

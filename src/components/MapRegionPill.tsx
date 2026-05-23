@@ -23,6 +23,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text } from 'react-native';
 
 import { haptics } from '@/src/lib/haptics';
+import { useStrings } from '@/src/i18n/useStrings';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 import type { Region } from '@/src/data/regions';
 
@@ -34,6 +35,7 @@ interface MapRegionPillProps {
 }
 
 export function MapRegionPill({ region, onPress }: MapRegionPillProps) {
+  const t = useStrings();
   // Cross-fade the label when it changes. We don't slide because the
   // pill sits in a fixed position; the label is just the contents.
   const opacity = useRef(new Animated.Value(1)).current;
@@ -58,7 +60,7 @@ export function MapRegionPill({ region, onPress }: MapRegionPillProps) {
         onPress(region);
       }}
       style={({ pressed }) => [styles.pill, pressed && styles.pillPressed]}
-      accessibilityLabel={`Currently viewing ${label}. Tap to recenter.`}
+      accessibilityLabel={t.currentlyViewing(label)}
       hitSlop={8}
     >
       <Animated.View style={{ opacity, flexDirection: 'row', alignItems: 'center' }}>

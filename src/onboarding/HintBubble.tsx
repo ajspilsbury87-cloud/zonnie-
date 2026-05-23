@@ -28,6 +28,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { useStrings } from '@/src/i18n/useStrings';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 interface HintBubbleProps {
@@ -40,9 +41,8 @@ interface HintBubbleProps {
 }
 
 export function HintBubble({ children, onDismiss, style }: HintBubbleProps) {
-  // Fade in on mount so the bubble doesn't pop on screen. Pairs
-  // visually with the slide-in animations of the sheets it usually
-  // overlays.
+  const t = useStrings();
+  // Fade in on mount so the bubble doesn't pop on screen.
   const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(opacity, {
@@ -55,7 +55,7 @@ export function HintBubble({ children, onDismiss, style }: HintBubbleProps) {
 
   return (
     <Animated.View style={[styles.bubble, style, { opacity }]} pointerEvents="box-none">
-      <Pressable onPress={onDismiss} style={styles.inner} accessibilityHint="Tap to dismiss this hint">
+      <Pressable onPress={onDismiss} style={styles.inner} accessibilityHint={t.dismissHint}>
         <Text style={styles.text}>{children}</Text>
       </Pressable>
     </Animated.View>

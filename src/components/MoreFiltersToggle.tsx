@@ -1,31 +1,23 @@
 /**
- * Collapsible-filters toggle row. Sits inside the TerraceList header
- * between the always-visible decision tools (date / time preset /
- * weather / venue type chips) and the hidden-by-default refine tools
- * (time sliders / search / neighborhood chips).
+ * Collapsible-filters toggle row. Sits inside the TerraceList header.
  *
  * Two responsibilities:
+ *   1. Toggle the expanded state — tap the "More filters / Meer filters"
+ *      button to show or hide the refine controls.
+ *   2. Surface a compact summary of which refine filters are active,
+ *      so the user can see what's applied without expanding. Each chip
+ *      is independently tappable to clear that filter.
  *
- *   1. Toggle the expanded state — tap anywhere on the row to show or
- *      hide the refine controls.
- *   2. Surface a compact summary of which refine filters are
- *      currently active, so the user can see what's applied without
- *      expanding. Each summary chip is independently tappable: tap a
- *      chip to clear that one filter without affecting the others.
- *
- * Active filters surfaced here:
- *   - Search query (non-empty)
- *   - Selected regions (each as its own chip)
- *
- * Time fine-tune is NOT shown — the time-window is also visible in
- * the always-on TimeRangeQuickPicker / WeatherStrip above, so adding
- * it here would duplicate the signal.
+ * Also hosts the 🌐 language toggle (left side of the row) so users
+ * can switch between EN and NL at any time after the initial onboarding.
  */
 
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { haptics } from '@/src/lib/haptics';
+import { useStrings } from '@/src/i18n/useStrings';
+import { useLanguageStore } from '@/src/store/languageStore';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import {
@@ -42,6 +34,10 @@ interface MoreFiltersToggleProps {
 }
 
 export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps) {
+  const t = useStrings();
+  const lang = useLanguageStore((s) => s.lang);
+  const setLang = useLanguageStore((s) => s.setLang);
+
   const query = useSearchStore((s) => s.query);
   const clearQuery = useSearchStore((s) => s.clear);
   const selectedRegions = useAreaStore((s) => s.selectedRegions);
@@ -57,8 +53,25 @@ export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps
     <View style={styles.root}>
       <View style={styles.divider} />
       <View style={styles.row}>
-        {/* Active-filter summary — scrolls horizontally if many regions
-            are selected. Tapping a chip clears just that filter. */}
+        {/* 🌐 Language toggle — left side, always visible */}
+        <TouchableOpacity
+          onPress={() => {
+            haptics.selection();
+            setLang(lang === 'nl' ? 'en' : 'nl');
+          }}
+          activeOpacity={0.6}
+          style={styles.langToggle}
+          accessibilityLabel={
+            lang === 'nl' ? t.switchToEnglish : t.switchToDutch
+          }
+          hitSlop={8}
+        >
+          <Text style={styles.langToggleText}>
+            {lang === 'nl' ? '🇳🇱' : '🇬🇧'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Active-filter summary chips */}
         {anyActive ? (
           <ScrollView
             horizontal
@@ -73,10 +86,10 @@ export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps
                 }}
                 activeOpacity={0.6}
                 style={styles.summaryChip}
-                accessibilityLabel={`Clear search "${trimmedQuery}"`}
+                accessibilityLabel={t.clearSearchA11y(trimmedQuery)}
               >
                 <Text style={styles.summaryChipText}>
-                  🔍 “{trimmedQuery}” ✕
+                  {t.clearSearch(trimmedQuery)}
                 </Text>
               </TouchableOpacity>
             ) : null}
@@ -89,9 +102,11 @@ export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps
                 }}
                 activeOpacity={0.6}
                 style={styles.summaryChip}
-                accessibilityLabel={`Remove ${region} filter`}
+                accessibilityLabel={t.removeRegionA11y(region)}
               >
-                <Text style={styles.summaryChipText}>📍 {region} ✕</Text>
+                <Text style={styles.summaryChipText}>
+                  {t.removeRegion(region)}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -99,7 +114,7 @@ export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps
           <View style={styles.summaryPlaceholder} />
         )}
 
-        {/* The toggle itself — always at the right. */}
+        {/* Meer filters / More filters toggle — right side */}
         <TouchableOpacity
           onPress={() => {
             haptics.light();
@@ -107,14 +122,12 @@ export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps
           }}
           activeOpacity={0.6}
           style={styles.toggleButton}
-          accessibilityLabel={
-            expanded ? 'Verberg meer filters' : 'Toon meer filters'
-          }
+          accessibilityLabel={expanded ? t.hideFilters : t.showFilters}
           accessibilityState={{ expanded }}
           hitSlop={8}
         >
           <Text style={styles.toggleLabel}>
-            Meer filters {expanded ? '▴' : '▾'}
+            {t.moreFilters} {expanded ? '▴' : '▾'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -138,14 +151,19 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     gap: spacing.sm,
   },
+  langToggle: {
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.xs,
+  },
+  langToggleText: {
+    fontSize: 18,
+  },
   summaryRow: {
     flexDirection: 'row',
     gap: spacing.xs,
     paddingRight: spacing.sm,
   },
   summaryPlaceholder: {
-    // Spacer so the toggle stays right-aligned when there are no
-    // active filters to show. flex:1 pushes the toggle to the edge.
     flex: 1,
   },
   summaryChip: {

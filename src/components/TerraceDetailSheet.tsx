@@ -36,7 +36,7 @@ import {
   type PlaceDetails,
 } from '@/src/data/places';
 import { SunTimeline } from '@/src/components/SunTimeline';
-import { computeRangeScore, computeSunScore, findBestWindow, scoreLabel } from '@/src/engines/scoring';
+import { computeRangeScore, computeSunScore, findBestWindow } from '@/src/engines/scoring';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
@@ -55,6 +55,7 @@ import {
   scoreToColor,
   spacing,
 } from '@/src/theme/tokens';
+import { useStrings } from '@/src/i18n/useStrings';
 
 const FACING_LABELS: Record<string, string> = {
   N: 'North',
@@ -75,6 +76,14 @@ const CAPACITY_LABELS: Record<string, string> = {
 };
 
 export function TerraceDetailSheet() {
+  const t = useStrings();
+  const getScoreLabel = (s: number): string => {
+    if (s > 0.7) return t.scoreFull;
+    if (s > 0.5) return t.scoreMostly;
+    if (s > 0.3) return t.scorePartly;
+    if (s > 0.1) return t.scoreMostlyShade;
+    return t.scoreShade;
+  };
   const ref = useRef<BottomSheet>(null);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const clear = useSelectionStore((s) => s.clear);
@@ -224,13 +233,13 @@ export function TerraceDetailSheet() {
    */
   const curationLabel = useMemo(() => {
     if (!terrace || !terrace.verified) return null;
-    return 'Curated by Zonnie';
-  }, [terrace]);
+    return t.curatedByZonnie;
+  }, [terrace, t]);
 
   const rangeLabel = useMemo(() => {
     const f = fromHour.toString().padStart(2, '0');
-    const t = toHour.toString().padStart(2, '0');
-    return fromHour === toHour ? `at ${f}:00` : `${f}:00 – ${t}:00`;
+    const toStr = toHour.toString().padStart(2, '0');
+    return fromHour === toHour ? `${f}:00` : `${f}:00 – ${toStr}:00`;
   }, [fromHour, toHour]);
 
   /**
@@ -449,10 +458,10 @@ export function TerraceDetailSheet() {
               onProLockPress={() => showPaywall('photos')}
             />
 
-            <Text style={styles.sectionLabel}>Zon vandaag</Text>
+            <Text style={styles.sectionLabel}>{t.sunToday}</Text>
             <SunTimeline terrace={terrace} />
             <Text style={styles.scoreLabelText}>
-              {rangeLabel}: <Text style={styles.scoreLabelStrong}>{scoreLabel(score)}</Text>
+              {rangeLabel}: <Text style={styles.scoreLabelStrong}>{getScoreLabel(score)}</Text>
             </Text>
 
             {/* Best-window banner — the single most actionable insight
@@ -466,10 +475,10 @@ export function TerraceDetailSheet() {
                   styles.bestWindowCard,
                   pressed && styles.bestWindowCardPressed,
                 ]}
-                accessibilityLabel={`Beste bezoektijd: ${bestWindow.fromHour.toString().padStart(2, '0')}:00 tot ${bestWindow.toHour.toString().padStart(2, '0')}:00`}
+                accessibilityLabel={`${t.bestVisitTime}: ${bestWindow.fromHour.toString().padStart(2, '0')}:00 – ${bestWindow.toHour.toString().padStart(2, '0')}:00`}
               >
                 <View style={styles.bestWindowLeft}>
-                  <Text style={styles.bestWindowLabel}>Beste bezoektijd</Text>
+                  <Text style={styles.bestWindowLabel}>{t.bestVisitTime}</Text>
                   <Text style={styles.bestWindowTime}>
                     {bestWindow.fromHour.toString().padStart(2, '0')}:00
                     {' – '}
@@ -499,10 +508,10 @@ export function TerraceDetailSheet() {
                 >
                   <Text style={styles.infoChipText}>
                     {sunTrend === 'rising'
-                      ? '↑ Zon in opkomst'
+                      ? t.sunBuilding
                       : sunTrend === 'falling'
-                        ? '↓ Zon neemt af'
-                        : '→ Zon stabiel'}
+                        ? t.sunFading
+                        : t.sunHolding}
                   </Text>
                 </View>
               ) : null}
@@ -529,8 +538,8 @@ export function TerraceDetailSheet() {
                 <View style={[styles.infoChip, styles.infoChipMatch]}>
                   <Text style={[styles.infoChipText, styles.infoChipTextMatch]}>
                     📺 {terrace.outdoorScreens === 1
-                      ? '1 buitenscherm'
-                      : `${terrace.outdoorScreens} buitenschermen`}
+                      ? t.outdoorScreen
+                      : t.outdoorScreens(terrace.outdoorScreens)}
                   </Text>
                 </View>
               ) : null}
@@ -538,14 +547,14 @@ export function TerraceDetailSheet() {
 
             {terrace.vibe ? (
               <>
-                <Text style={styles.sectionLabel}>Sfeer</Text>
+                <Text style={styles.sectionLabel}>{t.vibe}</Text>
                 <Text style={styles.body}>{terrace.vibe}</Text>
               </>
             ) : null}
 
             {placeDetails?.address || terrace.address ? (
               <>
-                <Text style={styles.sectionLabel}>Adres</Text>
+                <Text style={styles.sectionLabel}>{t.address}</Text>
                 <Text style={styles.body}>
                   {placeDetails?.address ?? terrace.address}
                 </Text>
@@ -562,7 +571,7 @@ export function TerraceDetailSheet() {
                 ]}
               >
                 <Text style={[styles.actionText, styles.actionTextSecondary]}>
-                  Op kaart
+                  {t.showOnMap}
                 </Text>
               </Pressable>
               <Pressable
@@ -574,7 +583,7 @@ export function TerraceDetailSheet() {
                 ]}
               >
                 <Text style={[styles.actionText, styles.actionTextSecondary]}>
-                  Open in Maps
+                  {t.viewInMaps}
                 </Text>
               </Pressable>
             </View>
@@ -585,9 +594,9 @@ export function TerraceDetailSheet() {
                 styles.actionShare,
                 pressed && styles.actionPressed,
               ]}
-              accessibilityLabel="Deel dit terras"
+              accessibilityLabel={t.share}
             >
-              <Text style={styles.actionShareText}>Delen ☀️</Text>
+              <Text style={styles.actionShareText}>{t.share}</Text>
             </Pressable>
 
             <Pressable
@@ -597,7 +606,7 @@ export function TerraceDetailSheet() {
                 pressed && styles.actionPressed,
               ]}
             >
-              <Text style={styles.actionText}>Routebeschrijving</Text>
+              <Text style={styles.actionText}>{t.getDirections}</Text>
             </Pressable>
           </>
         ) : null}
@@ -654,6 +663,8 @@ function PhotoStrip({
   hasPlaceId,
   onProLockPress,
 }: PhotoStripProps) {
+  // Hook must come before any early returns — React rules of hooks.
+  const t = useStrings();
   if (!hasPlaceId) return null;
   if (loading) return null;
 
@@ -667,10 +678,10 @@ function PhotoStrip({
           styles.photoStripLock,
           pressed && styles.photoStripLockPressed,
         ]}
-        accessibilityLabel="See photos — unlock with Pro"
+        accessibilityLabel={t.photosLocked}
       >
         <Text style={styles.photoStripLockGlyph}>📷</Text>
-        <Text style={styles.photoStripLockText}>Foto's · Pro</Text>
+        <Text style={styles.photoStripLockText}>{t.photosLocked}</Text>
         <Text style={styles.photoStripLockHint}>🔒</Text>
       </Pressable>
     );
@@ -732,6 +743,8 @@ function PlacesCard({
   staticReviewCount,
   onProLockPress,
 }: PlacesCardProps) {
+  // Hook must come before any early returns — React rules of hooks.
+  const t = useStrings();
   if (!hasPlaceId) return null;
 
   // Rating: prefer live (Pro fetched it) over static, but always show
@@ -747,7 +760,7 @@ function PlacesCard({
     const price = priceLevelToDollars(details.priceLevel);
     if (price) proSegments.push(price);
     if (details.openNow != null) {
-      proSegments.push(details.openNow ? 'Nu open' : 'Nu gesloten');
+      proSegments.push(details.openNow ? t.openNow : t.closedNow);
     }
   }
 
@@ -776,11 +789,11 @@ function PlacesCard({
       {/* Hours: Pro shows live, free shows locked teaser */}
       {isPro ? (
         loading ? (
-          <Text style={styles.placesPlaceholder}>Openingstijden laden…</Text>
+          <Text style={styles.placesPlaceholder}>{t.loadingHours}</Text>
         ) : details?.todayHours ? (
           <Text style={styles.placesHours}>🕐  {details.todayHours}</Text>
         ) : (
-          <Text style={styles.placesPlaceholder}>Openingstijden onbekend</Text>
+          <Text style={styles.placesPlaceholder}>{t.hoursUnavailable}</Text>
         )
       ) : (
         <Pressable
@@ -789,10 +802,10 @@ function PlacesCard({
             styles.proLockRow,
             pressed && styles.proLockRowPressed,
           ]}
-          accessibilityLabel="See today's opening hours — unlock with Pro"
+          accessibilityLabel={t.todayHours}
         >
           <Text style={styles.proLockGlyph}>🕐</Text>
-          <Text style={styles.proLockText}>Today's hours</Text>
+          <Text style={styles.proLockText}>{t.todayHours}</Text>
           <Text style={styles.proLockTag}>Pro 🔒</Text>
         </Pressable>
       )}
@@ -809,10 +822,10 @@ function PlacesCard({
             styles.proLockRow,
             pressed && styles.proLockRowPressed,
           ]}
-          accessibilityLabel="See phone and website — unlock with Pro"
+          accessibilityLabel={`${t.phone} · ${t.website}`}
         >
           <Text style={styles.proLockGlyph}>📞</Text>
-          <Text style={styles.proLockText}>Telefoon · Website</Text>
+          <Text style={styles.proLockText}>{t.phone} · {t.website}</Text>
           <Text style={styles.proLockTag}>Pro 🔒</Text>
         </Pressable>
       )}

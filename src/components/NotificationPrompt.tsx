@@ -18,6 +18,7 @@ import { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { haptics } from '@/src/lib/haptics';
+import { useStrings } from '@/src/i18n/useStrings';
 import {
   markPrompted,
   requestPermission,
@@ -36,6 +37,8 @@ interface NotificationPromptProps {
 }
 
 export function NotificationPrompt({ onDismiss }: NotificationPromptProps) {
+  const t = useStrings();
+
   const handleEnable = useCallback(async () => {
     haptics.medium();
     await markPrompted();
@@ -56,21 +59,17 @@ export function NotificationPrompt({ onDismiss }: NotificationPromptProps) {
     <View style={styles.scrim}>
       <View style={styles.card}>
         <Text style={styles.glyph}>☀️</Text>
-        <Text style={styles.title}>Never miss a sunny terrace</Text>
-        <Text style={styles.body}>
-          Get a morning heads-up when your favourite terraces are forecast
-          to be sunny — plus a daily alert on any day with a great stretch
-          of terrace weather across Amsterdam.
-        </Text>
+        <Text style={styles.title}>{t.notifHeadline}</Text>
+        <Text style={styles.body}>{t.notifBody}</Text>
         <Pressable
           onPress={handleEnable}
           style={({ pressed }) => [
             styles.primaryButton,
             pressed && styles.buttonPressed,
           ]}
-          accessibilityLabel="Enable notifications"
+          accessibilityLabel={t.notifAllow}
         >
-          <Text style={styles.primaryButtonText}>Notify me</Text>
+          <Text style={styles.primaryButtonText}>{t.notifAllow}</Text>
         </Pressable>
         <Pressable
           onPress={handleDismiss}
@@ -78,9 +77,9 @@ export function NotificationPrompt({ onDismiss }: NotificationPromptProps) {
             styles.secondaryButton,
             pressed && styles.buttonPressed,
           ]}
-          accessibilityLabel="Skip for now"
+          accessibilityLabel={t.notifLater}
         >
-          <Text style={styles.secondaryButtonText}>Not now</Text>
+          <Text style={styles.secondaryButtonText}>{t.notifLater}</Text>
         </Pressable>
       </View>
     </View>

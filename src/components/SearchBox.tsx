@@ -16,10 +16,12 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
+import { useStrings } from '@/src/i18n/useStrings';
 import { useSearchStore } from '@/src/store/searchStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 export function SearchBox() {
+  const t = useStrings();
   const storedQuery = useSearchStore((s) => s.query);
   const setQuery = useSearchStore((s) => s.setQuery);
   const clear = useSearchStore((s) => s.clear);
@@ -48,7 +50,7 @@ export function SearchBox() {
       <BottomSheetTextInput
         value={local}
         onChangeText={handleChange}
-        placeholder="Search terraces, vibes, addresses…"
+        placeholder={t.searchPlaceholder}
         placeholderTextColor={palette.mistDeep}
         style={styles.input}
         autoCorrect={false}

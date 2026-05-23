@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
+import { useStrings } from '@/src/i18n/useStrings';
 import { StyleSheet, Text, View, Pressable, useWindowDimensions } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -57,17 +58,18 @@ export function useChipWidth(): number {
 type PresetKey = 'morning' | 'afternoon' | 'evening';
 interface Preset {
   key: PresetKey;
-  label: string;
   fixed: { from: number; to: number };
 }
 // Three fixed-window presets — Morning replaces the old dynamic "Now"
 // chip. "Now" was confusing at 19:00 (showed evening scores without
 // making it obvious) and prevented users from easily comparing morning
 // vs afternoon conditions. Fixed windows are easier to reason about.
+// Labels are derived inside the component via useStrings() so they
+// update when the user switches language.
 const PRESETS: Preset[] = [
-  { key: 'morning',   label: 'Ochtend',  fixed: { from: 9,  to: 12 } },
-  { key: 'afternoon', label: 'Middag',   fixed: { from: 13, to: 17 } },
-  { key: 'evening',   label: 'Avond',    fixed: { from: 18, to: 22 } },
+  { key: 'morning',   fixed: { from: 9,  to: 12 } },
+  { key: 'afternoon', fixed: { from: 13, to: 17 } },
+  { key: 'evening',   fixed: { from: 18, to: 22 } },
 ];
 
 function presetRange(p: Preset, sunset: number): { from: number; to: number } {
@@ -84,11 +86,19 @@ function formatHour(h: number): string {
 // ─── Quick picker ─────────────────────────────────────────────────────
 
 export function TimeRangeQuickPicker() {
+  const t = useStrings();
   const fromHour  = useTimeStore((s) => s.fromHour);
   const toHour    = useTimeStore((s) => s.toHour);
   const setRange  = useTimeStore((s) => s.setRange);
   const dateOffset = useTimeStore((s) => s.dateOffset);
   const chipWidth = useChipWidth();
+
+  // Labels live inside the component so they recompute when language changes.
+  const presetLabel: Record<PresetKey, string> = {
+    morning:   t.morning,
+    afternoon: t.afternoon,
+    evening:   t.evening,
+  };
 
   const sunset = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
@@ -114,7 +124,7 @@ export function TimeRangeQuickPicker() {
       <View style={styles.card}>
         {/* Card header row: label left, live time right */}
         <View style={styles.cardHeader}>
-          <Text style={styles.cardLabel}>WANNEER</Text>
+          <Text style={styles.cardLabel}>{t.when}</Text>
           <Text style={styles.timeDisplay}>
             <Text style={styles.timeBold}>{formatHour(fromHour)}</Text>
             <Text style={styles.timeSep}> – </Text>
@@ -137,7 +147,7 @@ export function TimeRangeQuickPicker() {
                   style={[styles.chipText, active && styles.chipTextActive]}
                   numberOfLines={1}
                 >
-                  {p.label}
+                  {presetLabel[p.key]}
                 </Text>
               </TouchableOpacity>
             );
@@ -200,6 +210,7 @@ function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
 }
 
 export function TimeRangeFineTune() {
+  const t = useStrings();
   const fromHour     = useTimeStore((s) => s.fromHour);
   const toHour       = useTimeStore((s) => s.toHour);
   const setFromHour  = useTimeStore((s) => s.setFromHour);
@@ -224,14 +235,14 @@ export function TimeRangeFineTune() {
         <DayNightTrack />
         <View style={[styles.slidersOverlay, !isPro && styles.slidersLocked]}>
           <RangeSlider
-            label="From"
+            label={t.from}
             value={Math.max(sunrise, fromHour)}
             min={sunrise}
             max={Math.min(sunset, Math.max(sunrise, toHour))}
             onCommit={setFromHour}
           />
           <RangeSlider
-            label="To"
+            label={t.to}
             value={toHour}
             min={Math.min(sunset, Math.max(sunrise, fromHour))}
             max={sunset}
@@ -242,10 +253,10 @@ export function TimeRangeFineTune() {
           <Pressable
             onPress={() => { haptics.light(); showPaywall('time_scrubber'); }}
             style={styles.lockOverlay}
-            accessibilityLabel="Unlock custom time scrubber with Pro"
+            accessibilityLabel={t.exactTimesA11y}
           >
             <View style={styles.lockBadge}>
-              <Text style={styles.lockBadgeText}>🔒 Exacte tijden instellen — Pro</Text>
+              <Text style={styles.lockBadgeText}>{t.exactTimesProLock}</Text>
             </View>
           </Pressable>
         ) : null}
@@ -260,16 +271,14 @@ export function TimeRangeFineTune() {
         <Pressable
           onPress={() => { haptics.selection(); toggleShadow(); }}
           style={[styles.shadowToggle, shadowEnabled && styles.shadowToggleActive]}
-          accessibilityLabel={
-            shadowEnabled ? 'Verberg gebouwschaduwen op kaart' : 'Toon gebouwschaduwen op kaart'
-          }
+          accessibilityLabel={shadowEnabled ? t.shadowsHideA11y : t.showShadowsA11y}
           hitSlop={8}
         >
           <Text
             style={[styles.shadowToggleText, shadowEnabled && styles.shadowToggleTextActive]}
             allowFontScaling={false}
           >
-            {shadowEnabled ? '🌑 Schaduwen aan' : '🔆 Schaduwen tonen'}
+            {shadowEnabled ? t.shadowsOn : t.showShadows}
           </Text>
         </Pressable>
       ) : null}

@@ -15,6 +15,7 @@
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useStrings } from '@/src/i18n/useStrings';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -70,6 +71,7 @@ function Cell({ hour, temp, cloudCover, windSpeed, windDirection }: CellProps) {
 }
 
 export function WeatherStrip() {
+  const t = useStrings();
   const dateOffset = useTimeStore((s) => s.dateOffset);
   const fromHour = useTimeStore((s) => s.fromHour);
   const toHour = useTimeStore((s) => s.toHour);
@@ -112,7 +114,7 @@ export function WeatherStrip() {
     return (
       <View style={styles.placeholderRow}>
         <Text style={styles.placeholderText}>
-          {status === 'loading' ? 'Weer laden…' : 'Geen weerdata'}
+          {status === 'loading' ? t.weatherLoading : t.weatherNoData}
         </Text>
       </View>
     );

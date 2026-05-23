@@ -13,10 +13,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
 
+import { useStrings } from '@/src/i18n/useStrings';
+
 import {
   CATEGORIES_ORDERED,
-  CATEGORY_GLYPHS,
-  CATEGORY_LABELS,
   type VenueCategory,
 } from '@/src/data/categories';
 import { useChipWidth } from '@/src/components/TimeRangeScrubber';
@@ -33,6 +33,7 @@ const COFFEE_AUTO_SHIFT_THRESHOLD = 12;
 const CHIP_H = 36;
 
 export function VenueTypeFilter() {
+  const t = useStrings();
   const selectedCategories   = useAreaStore((s) => s.selectedCategories);
   const toggleCategory       = useAreaStore((s) => s.toggleCategory);
   const matchModeOnly        = useAreaStore((s) => s.matchModeOnly);
@@ -40,6 +41,14 @@ export function VenueTypeFilter() {
   const sortByDistance       = useAreaStore((s) => s.sortByDistance);
   const toggleSortByDistance = useAreaStore((s) => s.toggleSortByDistance);
   const chipWidth            = useChipWidth();
+
+  // Category chip labels — derived from t.* so they update on language change.
+  // The strings include the emoji (e.g. "☕ Koffie" / "☕ Coffee").
+  const categoryText: Record<VenueCategory, string> = {
+    bar: t.filterBar,
+    restaurant: t.filterRestaurant,
+    coffee: t.filterCoffee,
+  };
 
   const handleToggleCategory = (cat: VenueCategory) => {
     haptics.selection();
@@ -60,7 +69,7 @@ export function VenueTypeFilter() {
     <View style={styles.outerPad}>
       <View style={styles.card}>
         {/* Card label */}
-        <Text style={styles.cardLabel}>WAT</Text>
+        <Text style={styles.cardLabel}>{t.filterWhat}</Text>
 
         {/* Row 1: Bar / Restaurant / Coffee — same fixed width as WHEN chips */}
         <View style={styles.chipRow}>
@@ -77,7 +86,7 @@ export function VenueTypeFilter() {
                   style={[styles.chipText, active && styles.chipTextActive]}
                   numberOfLines={1}
                 >
-                  {CATEGORY_GLYPHS[cat]} {CATEGORY_LABELS[cat]}
+                  {categoryText[cat]}
                 </Text>
               </TouchableOpacity>
             );
@@ -95,26 +104,26 @@ export function VenueTypeFilter() {
             onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
             activeOpacity={0.7}
             style={[styles.modeChip, { width: chipWidth }, matchModeOnly && styles.modeChipMatch]}
-            accessibilityLabel="Toon alleen terrassen met buitenschermen"
+            accessibilityLabel={t.filterOutdoorA11y}
           >
             <Text
               style={[styles.chipText, matchModeOnly && styles.chipTextActive]}
               numberOfLines={1}
             >
-              ⚽ Buiten
+              {t.filterOutdoor}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleSortByDistance(); }}
             activeOpacity={0.7}
             style={[styles.modeChip, { width: chipWidth }, sortByDistance && styles.modeChipNearMe]}
-            accessibilityLabel="Sorteer op dichtstbijzijnde zonnige plek"
+            accessibilityLabel={t.filterNearMeA11y}
           >
             <Text
               style={[styles.chipText, sortByDistance && styles.chipTextActive]}
               numberOfLines={1}
             >
-              📍 Dichtbij
+              {t.filterNearMe}
             </Text>
           </TouchableOpacity>
         </View>

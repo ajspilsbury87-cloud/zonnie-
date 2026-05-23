@@ -13,6 +13,7 @@ import { memo, useEffect, useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { useStrings } from '@/src/i18n/useStrings';
 import { useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
@@ -77,6 +78,7 @@ const HourRow = memo(function HourRow({ selectedHour, inRange, onSelect }: HourR
 });
 
 export function TimeRangePicker() {
+  const t = useStrings();
   const fromHour = useTimeStore((s) => s.fromHour);
   const toHour = useTimeStore((s) => s.toHour);
   const setFromHour = useTimeStore((s) => s.setFromHour);
@@ -89,18 +91,18 @@ export function TimeRangePicker() {
     <View style={styles.root}>
       <View style={styles.header}>
         <Text style={styles.title}>
-          Visiting <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text> to{' '}
+          {t.visitingFrom} <Text style={styles.titleStrong}>{formatHour(fromHour)}</Text> {t.to}{' '}
           <Text style={styles.titleStrong}>{formatHour(toHour)}</Text>
         </Text>
         <TouchableOpacity onPress={resetToNow} style={styles.nowButton}>
-          <Text style={styles.nowButtonText}>Now</Text>
+          <Text style={styles.nowButtonText}>{t.now}</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.rowLabel}>From</Text>
+      <Text style={styles.rowLabel}>{t.from}</Text>
       <HourRow selectedHour={fromHour} inRange={inRange} onSelect={setFromHour} />
 
-      <Text style={styles.rowLabel}>To</Text>
+      <Text style={styles.rowLabel}>{t.to}</Text>
       <HourRow selectedHour={toHour} inRange={inRange} onSelect={setToHour} />
     </View>
   );

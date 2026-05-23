@@ -1,24 +1,16 @@
 /**
- * First-run onboarding overlay — 2 swipeable slides that establish
- * what Zonnie is and how to use it, before the user sees the live app.
+ * First-run onboarding overlay — language picker + 2 swipeable slides.
  *
- * Why: user-test feedback was that the app's purpose and primary
- * gesture aren't obvious on first open. A skippable 2-slide intro
- * front-loads that context without cluttering the regular UI.
+ * Flow:
+ *   1. Language picker (always shown on first open) — two flag cards let
+ *      the user choose EN or NL before they see any copy. Choice persists
+ *      via languageStore.
+ *   2. Slide 1 — what Zonnie is (☀️ headline)
+ *   3. Slide 2 — how to use it (📍 headline)
  *
- * Mechanics:
- *   - Fullscreen overlay (above the regular Stack + LandingPage)
- *   - Sand-cream gradient background matching the brand palette
- *   - Horizontal swipe via FlatList's pagingEnabled, plus an explicit
- *     Continue/Let's-go button on each slide
- *   - Skip link in the top-right corner
- *   - On dismiss → `markIntroSeen()` persists the flag and the parent
- *     unmounts this overlay
- *
- * Slide content is locked at 2 slides; we deliberately don't go to 3+
- * because carousel intros lose users with each tap. Two slides is the
- * shortest that still establishes (a) what the app does and (b) how
- * to use it.
+ * On dismiss → `markIntroSeen()` persists the flag and the parent
+ * unmounts this overlay. Language preference is already stored separately
+ * and survives app restarts independently of intro state.
  */
 
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -36,36 +28,19 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { haptics } from '@/src/lib/haptics';
+import { useStrings } from '@/src/i18n/useStrings';
+import { useLanguageStore } from '@/src/store/languageStore';
 import { markIntroSeen } from '@/src/onboarding/state';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
 interface Slide {
-  /** Emoji shown large above the headline as the visual hook. */
   glyph: string;
-  /** Bold serif headline — the *what* of the slide. */
   headline: string;
-  /** Sans subhead — the *how* / supporting detail. */
   subhead: string;
-  /** CTA button copy. The last slide's CTA dismisses the intro. */
   cta: string;
 }
-
-const SLIDES: ReadonlyArray<Slide> = [
-  {
-    glyph: '☀️',
-    headline: 'Vind het zonnigste terras van Amsterdam.',
-    subhead: 'Uur voor uur. Per buurt.',
-    cta: 'Verder →',
-  },
-  {
-    glyph: '📍',
-    headline: 'Tik op een pin om te zien wanneer de zon schijnt.',
-    subhead: 'Plan vooruit. Filter op buurt. Zoek zon.',
-    cta: 'Ga aan de slag ☀',
-  },
-];
 
 interface OnboardingIntroProps {
   /** Called once the user finishes or skips — parent should unmount. */
@@ -75,6 +50,31 @@ interface OnboardingIntroProps {
 export function OnboardingIntro({ onDismiss }: OnboardingIntroProps) {
   const listRef = useRef<FlatList<Slide>>(null);
   const [index, setIndex] = useState(0);
+  /** Whether the user has picked a language and is now in the slides. */
+  const [langChosen, setLangChosen] = useState(false);
+
+  const t = useStrings();
+  const lang = useLanguageStore((s) => s.lang);
+  const setLang = useLanguageStore((s) => s.setLang);
+
+  // Slides are derived from strings so they update when language changes.
+  const SLIDES: ReadonlyArray<Slide> = useMemo(
+    () => [
+      {
+        glyph: '☀️',
+        headline: t.slide1Headline,
+        subhead: t.slide1Sub,
+        cta: t.slide1Cta,
+      },
+      {
+        glyph: '📍',
+        headline: t.slide2Headline,
+        subhead: t.slide2Sub,
+        cta: t.slide2Cta,
+      },
+    ],
+    [t],
+  );
 
   const dismiss = useCallback(() => {
     haptics.light();
@@ -90,9 +90,8 @@ export function OnboardingIntro({ onDismiss }: OnboardingIntroProps) {
     }
     listRef.current?.scrollToIndex({ index: index + 1, animated: true });
     setIndex(index + 1);
-  }, [index, dismiss]);
+  }, [index, dismiss, SLIDES.length]);
 
-  /** Sync the dots with the user's swipe gesture. */
   const handleScrollEnd = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       const newIndex = Math.round(e.nativeEvent.contentOffset.x / SCREEN_W);
@@ -114,7 +113,6 @@ export function OnboardingIntro({ onDismiss }: OnboardingIntroProps) {
 
   const keyExtractor = useCallback((_: Slide, i: number) => String(i), []);
 
-  // Memoized dot indicators
   const dots = useMemo(
     () =>
       SLIDES.map((_, i) => (
@@ -123,7 +121,7 @@ export function OnboardingIntro({ onDismiss }: OnboardingIntroProps) {
           style={[styles.dot, i === index ? styles.dotActive : null]}
         />
       )),
-    [index],
+    [index, SLIDES],
   );
 
   const currentCta = SLIDES[index]?.cta ?? SLIDES[SLIDES.length - 1]!.cta;
@@ -131,48 +129,92 @@ export function OnboardingIntro({ onDismiss }: OnboardingIntroProps) {
   return (
     <View style={styles.root}>
       <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-        <View style={styles.skipRow}>
-          <Pressable
-            onPress={dismiss}
-            hitSlop={12}
-            accessibilityLabel="Sla de intro over"
-          >
-            <Text style={styles.skip}>Overslaan</Text>
-          </Pressable>
-        </View>
+        {!langChosen ? (
+          /* ── Language picker ──────────────────────────────────────────── */
+          <View style={styles.langPickerContainer}>
+            <Text style={styles.langPickerHeadline}>
+              {'Choose language\nKies je taal'}
+            </Text>
+            <View style={styles.langPickerRow}>
+              <Pressable
+                onPress={() => {
+                  haptics.light();
+                  setLang('en');
+                  setLangChosen(true);
+                }}
+                style={({ pressed }) => [
+                  styles.langCard,
+                  lang === 'en' && styles.langCardSelected,
+                  pressed && styles.langCardPressed,
+                ]}
+                accessibilityLabel="English"
+              >
+                <Text style={styles.langFlag}>🇬🇧</Text>
+                <Text style={styles.langLabel}>English</Text>
+              </Pressable>
 
-        <FlatList
-          ref={listRef}
-          data={SLIDES as Slide[]}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleScrollEnd}
-          style={styles.list}
-          // FlatList types want a slide-width-aware getItemLayout for
-          // smooth scrollToIndex; without it `scrollToIndex` can refuse
-          // to scroll if layout hasn't measured yet.
-          getItemLayout={(_, i) => ({
-            length: SCREEN_W,
-            offset: SCREEN_W * i,
-            index: i,
-          })}
-        />
+              <Pressable
+                onPress={() => {
+                  haptics.light();
+                  setLang('nl');
+                  setLangChosen(true);
+                }}
+                style={({ pressed }) => [
+                  styles.langCard,
+                  lang === 'nl' && styles.langCardSelected,
+                  pressed && styles.langCardPressed,
+                ]}
+                accessibilityLabel="Nederlands"
+              >
+                <Text style={styles.langFlag}>🇳🇱</Text>
+                <Text style={styles.langLabel}>Nederlands</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : (
+          /* ── Onboarding slides ────────────────────────────────────────── */
+          <>
+            <View style={styles.skipRow}>
+              <Pressable
+                onPress={dismiss}
+                hitSlop={12}
+                accessibilityLabel={t.skipIntroLabel}
+              >
+                <Text style={styles.skip}>{t.skipIntro}</Text>
+              </Pressable>
+            </View>
 
-        <View style={styles.dotsRow}>{dots}</View>
+            <FlatList
+              ref={listRef}
+              data={SLIDES as Slide[]}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handleScrollEnd}
+              style={styles.list}
+              getItemLayout={(_, i) => ({
+                length: SCREEN_W,
+                offset: SCREEN_W * i,
+                index: i,
+              })}
+            />
 
-        <Pressable
-          onPress={handleCtaPress}
-          style={({ pressed }) => [
-            styles.cta,
-            pressed && styles.ctaPressed,
-          ]}
-          accessibilityLabel={currentCta}
-        >
-          <Text style={styles.ctaLabel}>{currentCta}</Text>
-        </Pressable>
+            <View style={styles.dotsRow}>{dots}</View>
+
+            <Pressable
+              onPress={handleCtaPress}
+              style={({ pressed }) => [
+                styles.cta,
+                pressed && styles.ctaPressed,
+              ]}
+              accessibilityLabel={currentCta}
+            >
+              <Text style={styles.ctaLabel}>{currentCta}</Text>
+            </Pressable>
+          </>
+        )}
       </SafeAreaView>
     </View>
   );
@@ -191,6 +233,54 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
   },
+
+  // ── Language picker ──────────────────────────────────────────────────
+  langPickerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xxl,
+  },
+  langPickerHeadline: {
+    fontFamily: fonts.displayBold,
+    fontSize: fontSizes.xxl,
+    color: palette.ink,
+    textAlign: 'center',
+    marginBottom: spacing.xxl,
+    lineHeight: fontSizes.xxl * 1.3,
+  },
+  langPickerRow: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+    alignSelf: 'stretch',
+  },
+  langCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+    borderRadius: radii.lg,
+    backgroundColor: palette.sandDeep,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  langCardSelected: {
+    borderColor: palette.burnt,
+    backgroundColor: palette.cream,
+  },
+  langCardPressed: {
+    opacity: 0.8,
+  },
+  langFlag: {
+    fontSize: 48,
+    marginBottom: spacing.sm,
+  },
+  langLabel: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.md,
+    color: palette.ink,
+  },
+
+  // ── Slides ───────────────────────────────────────────────────────────
   skipRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -266,4 +356,3 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
 });
-
