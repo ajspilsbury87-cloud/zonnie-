@@ -4,6 +4,7 @@ import MapView, { Marker, PROVIDER_DEFAULT, type Region as MapRegion } from 'rea
 import * as Location from 'expo-location';
 
 import { MapRegionPill } from '@/src/components/MapRegionPill';
+import { ShadowOverlay } from '@/src/components/ShadowOverlay';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
 import type { Region } from '@/src/data/regions';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -12,7 +13,7 @@ import { haptics } from '@/src/lib/haptics';
 import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
 import { useSelectionStore } from '@/src/store/selectionStore';
-import { palette, radii, spacing } from '@/src/theme/tokens';
+import { fonts, palette, spacing } from '@/src/theme/tokens';
 
 // Above this latitude delta (~5km vertical span), the map view spans
 // more than one region so showing a specific region label would lie.
@@ -27,32 +28,39 @@ const AMSTERDAM_REGION: MapRegion = {
 };
 
 /**
- * Pre-rendered pin PNGs per state (`scripts/rasterize-assets.ts`).
- * `require()` is the React Native asset bundler convention — strings won't
- * work, the bundler needs to see the literal at build time.
+ * Score → pin colour band. Mirrors the band thresholds in
+ * `engines/scoring.ts#scoreLabel`. Five bands so the visual reads
+ * the score class even at extreme map zoom-outs where the number
+ * inside the pin becomes too small to read.
  */
-const PIN_IMAGES = {
-  full: require('@/assets/images/pins/full.png'),
-  mostly: require('@/assets/images/pins/mostly.png'),
-  partial: require('@/assets/images/pins/partial.png'),
-  // mshade ("mostly shade") added with the v3 Aperol-spritz pin design —
-  // splits the previous single shade band into two so the foam/ice
-  // fade-out gradient has somewhere to land.
-  mshade: require('@/assets/images/pins/mshade.png'),
-  shade: require('@/assets/images/pins/shade.png'),
-  selected: require('@/assets/images/pins/selected.png'),
-} as const;
+type ScoreBand = 'full' | 'mostly' | 'partial' | 'mshade' | 'shade';
 
-type PinAsset = typeof PIN_IMAGES[keyof typeof PIN_IMAGES];
-
-/** Score → pin asset key. Mirrors the band thresholds in `engines/scoring.ts#scoreLabel`. */
-function pinAssetForScore(score: number): PinAsset {
-  if (score > 0.7) return PIN_IMAGES.full;
-  if (score > 0.5) return PIN_IMAGES.mostly;
-  if (score > 0.3) return PIN_IMAGES.partial;
-  if (score > 0.1) return PIN_IMAGES.mshade;
-  return PIN_IMAGES.shade;
+/**
+ * Assign a colour band from a normalised position within the visible
+ * score range (0 = worst visible, 1 = best visible).
+ *
+ * Used inside the markers useMemo so pin colours always show the full
+ * spectrum regardless of how tightly bunched the raw scores are.
+ */
+function bandForRelative(t: number): ScoreBand {
+  if (t > 0.82) return 'full';
+  if (t > 0.62) return 'mostly';
+  if (t > 0.38) return 'partial';
+  if (t > 0.18) return 'mshade';
+  return 'shade';
 }
+
+/**
+ * Band → palette colours. The fill is the dominant pin colour;
+ * `text` is the score-number colour layered on top.
+ */
+const BAND_COLORS: Record<ScoreBand, { fill: string; text: string }> = {
+  full:    { fill: palette.terracotta, text: palette.cream },   // top — sunniest
+  mostly:  { fill: palette.burnt,      text: palette.cream },
+  partial: { fill: palette.peach,      text: palette.cocoa },
+  mshade:  { fill: palette.mist,       text: palette.inkSoft }, // mostly shade
+  shade:   { fill: palette.ink,        text: palette.cream },   // bottom — fully shaded
+};
 
 interface ZonnieMapProps {
   onSelect?: (item: ScoredTerrace) => void;
@@ -62,62 +70,182 @@ interface TerracePinProps {
   id: number;
   latitude: number;
   longitude: number;
-  asset: PinAsset;
+  band: ScoreBand;
+  score: number;
+  selected: boolean;
+  featured: boolean;
   title: string;
   description: string;
   onPress: () => void;
 }
 
 /**
- * Memoized marker. Re-renders only when its asset (score band) or coordinates
- * change. With 378 markers on screen and a time-change rebanding maybe 10–30
- * of them, this skips ~90% of native bridge traffic on time changes.
+ * Custom score-teardrop pin (concept B).
  *
- * Custom comparator ignores `onPress` because it's a fresh closure per render
- * — comparing function identity would force a re-render every parent render.
+ * Pure RN views — no SVG, no PNG. The pin shape is a circle "head"
+ * with a rotated square "tail" peeking below; absolute positioning
+ * stitches them into a teardrop silhouette. Score number is centred
+ * in the head.
+ *
+ * Why pure RN: the previous PNG-asset path meant any change to the
+ * pin design needed a new asset pipeline + a new binary. This is
+ * OTA-shippable and the score (which changes with the time slider)
+ * can be drawn dynamically rather than being baked into the asset.
+ *
+ * `featured` (paid-placement) plumbing is wired up but only adds a
+ * subtle gold border when true. No terraces have it set today —
+ * exists so the B1 "Featured partner" sponsored-pin variant can be
+ * activated by toggling the data flag, not by shipping new code.
+ *
+ * Memoized — re-renders only when its band/score/selected state
+ * changes. Coord changes basically never happen post-mount.
  */
 const TerracePin = memo(
-  function TerracePin({ latitude, longitude, asset, title, description, onPress }: TerracePinProps) {
+  function TerracePin({
+    latitude,
+    longitude,
+    band,
+    score,
+    selected,
+    featured,
+    title,
+    description,
+    onPress,
+  }: TerracePinProps) {
+    // Selected pins get a slight size bump + amber halo so the user
+    // can re-locate them on the map after opening the detail sheet.
+    const size = selected ? 38 : 32;
+    const tail = selected ? 13 : 11;
+    const colors = BAND_COLORS[band];
+    // Score on the pin is shown as 0–100 (cleaner read than a 0–1
+    // decimal). Always clamp + floor so we never show 100 unless
+    // it really is a perfect score.
+    const display = Math.min(99, Math.max(0, Math.floor(score * 100)));
+
     return (
       <Marker
         coordinate={{ latitude, longitude }}
-        // Anchor: base of the spritz glass sits on the lat/lng.
-        //   - unselected: viewBox y=-38..18 (56 tall), glass base at y=9
-        //                 → anchor.y = 47 / 56 ≈ 0.84
-        //   - selected:   viewBox y=-42..34 (76 tall, expanded for halo),
-        //                 glass base at y=9 → anchor.y = 51 / 76 ≈ 0.67
-        // Pick the right anchor based on whether this is the selected
-        // pin (asset comparison is fine here — TerracePin gets the same
-        // PIN_IMAGES.selected reference for selected and any score
-        // band's PIN_IMAGES[…] otherwise).
-        anchor={{ x: 0.5, y: asset === PIN_IMAGES.selected ? 0.67 : 0.84 }}
-        image={asset}
-        // Single-tap → detail sheet. Two earlier attempts to make this
-        // work + suppress Apple Maps' default callout failed:
-        //   (a) `onCalloutPress={onPress}` required two taps.
-        //   (b) `onPress={onPress}` + an empty `<Callout>` child still
-        //       didn't fire on iOS — react-native-maps treats any
-        //       Callout child as a tap target competing with the
-        //       Marker's onPress, and the Callout always wins.
-        // No Callout AND no title/description on the Marker means
-        // Apple Maps has nothing to show in its default popup, so the
-        // popup is suppressed — and onPress fires cleanly on first tap.
-        // Accessibility goes through accessibilityLabel which doesn't
-        // trigger the popup the way `title` does.
+        // Anchor at the very bottom of the layout box so the tail tip
+        // sits on the lat/lng coordinate. With the flow layout the wrap
+        // height = size + tail/2 (negative margin pulls tail halfway
+        // into the head); the rotated tail's visible point extends a
+        // couple of pixels beyond layout bounds, which is fine — the
+        // visual reads correctly and map markers aren't hard-clipped.
+        anchor={{ x: 0.5, y: 1.0 }}
+        // Crucial for child-component markers on Android: must be true
+        // until the first paint so the bitmap snapshot is correct,
+        // then we flip it off for perf. iOS ignores this prop for
+        // child-component markers.
+        tracksViewChanges={false}
         accessibilityLabel={title}
         accessibilityHint={description ?? undefined}
         onPress={onPress}
-      />
+      >
+        <View style={pinStyles.wrap}>
+          {/* Head — drawn first so its z-order covers the tail's top half */}
+          <View
+            style={[
+              pinStyles.head,
+              {
+                width: size,
+                height: size,
+                borderRadius: size / 2,
+                backgroundColor: colors.fill,
+              },
+              selected && pinStyles.headSelected,
+              // Featured (paid placement) adds a thin gold ring.
+              // Today no terraces have `featured: true` so this is
+              // never visible — plumbing only.
+              featured && pinStyles.headFeatured,
+            ]}
+          >
+            <Text
+              allowFontScaling={false}
+              style={[
+                pinStyles.scoreText,
+                {
+                  color: colors.text,
+                  fontSize: selected ? 16 : 14,
+                  lineHeight: selected ? 18 : 16,
+                },
+              ]}
+            >
+              {display}
+            </Text>
+          </View>
+          {/* Tail — rotated square pulled up by half its height so its
+              top half merges with the head, forming the teardrop seam */}
+          <View
+            style={[
+              pinStyles.tail,
+              {
+                width: tail,
+                height: tail,
+                backgroundColor: featured ? palette.mustard : colors.fill,
+                marginTop: -(tail / 2),
+              },
+            ]}
+          />
+        </View>
+      </Marker>
     );
   },
   (prev, next) =>
     prev.id === next.id &&
-    prev.asset === next.asset &&
+    prev.band === next.band &&
+    prev.score === next.score &&
+    prev.selected === next.selected &&
+    prev.featured === next.featured &&
     prev.latitude === next.latitude &&
     prev.longitude === next.longitude &&
     prev.title === next.title &&
     prev.description === next.description,
 );
+
+const pinStyles = StyleSheet.create({
+  // Flow column: head on top, tail below with negative marginTop to form
+  // the teardrop seam. alignItems: 'center' keeps the narrower tail
+  // horizontally centred under the head.
+  //
+  // WHY no absolute positioning: the old approach used `position:'absolute'`
+  // + `left:0, right:0, marginHorizontal:'auto'` on the head, which is not
+  // supported in Hermes (React Native's JS engine). It stretched the head to
+  // the full wrap width (always 38px) regardless of the intended `size`
+  // prop — making 32px pins oval instead of circular.
+  wrap: {
+    alignItems: 'center',
+  },
+  head: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    // White outline lifts the pin off dark map tiles.
+    borderWidth: 2,
+    borderColor: palette.white,
+    // Soft drop-shadow so the pin floats above the map.
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  headSelected: {
+    borderColor: palette.cream,
+    borderWidth: 2.5,
+  },
+  headFeatured: {
+    borderColor: palette.mustard,
+    borderWidth: 2.5,
+  },
+  tail: {
+    // marginTop is set inline (-(tail/2)) so the tail overlaps the head.
+    transform: [{ rotate: '45deg' }],
+  },
+  scoreText: {
+    fontFamily: fonts.displayBold,
+    textAlign: 'center',
+    // lineHeight set inline — differs between normal (16) and selected (18).
+  },
+});
 
 /**
  * Score-themed terrace markers (Zonnie brand pins) without app-side
@@ -165,12 +293,19 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   // — the pill falls back to "Amsterdam" in that case.
   const [visibleRegion, setVisibleRegion] = useState<Region | null>(null);
 
-  const handleRegionChangeComplete = useCallback((mapRegion: MapRegion) => {
-    if (mapRegion.latitudeDelta > REGION_PILL_ZOOM_THRESHOLD) {
+  // Current map viewport — passed to ShadowOverlay for viewport culling.
+  // Initialised to the whole-city view; updated after every pan/zoom settle.
+  // Stored separately from `visibleRegion` so shadow culling still works
+  // at city-zoom even when the region pill is suppressed.
+  const [mapRegion, setMapRegion] = useState<MapRegion>(AMSTERDAM_REGION);
+
+  const handleRegionChangeComplete = useCallback((region: MapRegion) => {
+    setMapRegion(region);
+    if (region.latitudeDelta > REGION_PILL_ZOOM_THRESHOLD) {
       setVisibleRegion(null);
       return;
     }
-    const r = regionForCoordinate(mapRegion.latitude, mapRegion.longitude);
+    const r = regionForCoordinate(region.latitude, region.longitude);
     setVisibleRegion((prev) => (prev === r ? prev : r));
   }, []);
 
@@ -296,11 +431,46 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
           (x): x is ScoredTerrace => !!x,
         )
       : top;
-    return list.map(({ terrace, score }) => ({
-      item: { terrace, score },
-      asset:
-        terrace.id === selectedId ? PIN_IMAGES.selected : pinAssetForScore(score),
-    }));
+
+    // Relative colour bands — normalise within the top-N score range so
+    // the map always shows the full five-colour spectrum.
+    //
+    // Why: at Amsterdam latitude (52°N) the top-200 terraces on a sunny
+    // afternoon differ by only ~0.06 in raw score (e.g. 0.736–0.799).
+    // Fixed absolute thresholds collapse them all into one band (terracotta).
+    // Relative bands make the MAP read as a comparison tool:
+    //   "which of the visible terraces is sunniest right now?"
+    // The number inside each pin (0–99) still reflects the absolute score
+    // so users can compare across different times / days.
+    //
+    // Thresholds use `top` (not `list`) as the reference so a low-scoring
+    // selected-terrace outlier doesn't compress all other bands.
+    //
+    // topMin floor at 0.30: when all top-200 terraces score above ~0.80
+    // (e.g. a hot sunny afternoon after score normalisation), the raw spread
+    // is only ~0.20. Without a floor, t = 0.18 maps a score of 0.84 —
+    // labelled "Full Sun" — to the 'shade' band (black pin). Flooring topMin
+    // at 0.30 ensures the spread spans at least (topMax − 0.30), so every
+    // terrace with a genuinely good absolute score gets a warm-coloured pin.
+    const rawMin  = top[top.length - 1]?.score ?? 0;
+    const topMin  = Math.min(rawMin, 0.30); // never let the floor sit above the "partial sun" line
+    const topMax  = top[0]?.score ?? 1;
+    const topSpread = Math.max(topMax - topMin, 0.01);
+
+    return list.map(({ terrace, score }) => {
+      // t ∈ [0, 1]: 0 = worst of top-N visible, 1 = best
+      const t = (score - topMin) / topSpread;
+      return {
+        item: { terrace, score },
+        band: bandForRelative(t),
+        selected: terrace.id === selectedId,
+        // `featured` is the data flag for paid placement (B1 sponsored
+        // pin). Default false today; plumbed through so flipping the
+        // flag on a terrace lights up the gold border immediately, no
+        // code change required.
+        featured: terrace.featured === true,
+      };
+    });
   }, [scored, selectedId]);
 
   return (
@@ -325,13 +495,24 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         showsCompass
         showsScale
       >
-        {markers.map(({ item, asset }) => (
+        {/*
+          Shadow overlay — Pro only, toggled from the TimeRangeFineTune
+          section in the bottom sheet. Renders semi-transparent shadow
+          polygons for buildings visible in the current viewport, at the
+          midpoint of the selected visit window. Sits below the markers
+          so pins always read over the shadows.
+        */}
+        <ShadowOverlay mapRegion={mapRegion} />
+        {markers.map(({ item, band, selected, featured }) => (
           <TerracePin
             key={item.terrace.id}
             id={item.terrace.id}
             latitude={item.terrace.lat}
             longitude={item.terrace.lng}
-            asset={asset}
+            band={band}
+            score={item.score}
+            selected={selected}
+            featured={featured}
             title={item.terrace.name}
             description={item.terrace.vibe}
             onPress={() => {

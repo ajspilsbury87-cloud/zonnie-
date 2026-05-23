@@ -11,7 +11,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View, Pressable, useWindowDimensions } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { formatInTimeZone } from 'date-fns-tz';
 
 import {
   AMSTERDAM_LAT,
@@ -23,6 +22,7 @@ import { haptics } from '@/src/lib/haptics';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { usePurchaseStore } from '@/src/store/purchaseStore';
 import { useProPaywallStore } from '@/src/components/ProPaywall';
+import { useShadowStore } from '@/src/store/shadowStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
@@ -54,38 +54,26 @@ export function useChipWidth(): number {
   return Math.floor((rowInner - 2 * spacing.xs) / 3);
 }
 
-type PresetKey = 'now' | 'afternoon' | 'evening';
+type PresetKey = 'morning' | 'afternoon' | 'evening';
 interface Preset {
   key: PresetKey;
   label: string;
-  fixed: { from: number; to: number } | null;
+  fixed: { from: number; to: number };
 }
-// Dropped 'morning' (9–12) — it overlapped with 'now' for most of
-// the day and the 4-chip row prevented chip-width parity with the
-// 3-chip WHAT card. Now all chip rows have 3 slots and chips render
-// at the same pixel width across both cards.
+// Three fixed-window presets — Morning replaces the old dynamic "Now"
+// chip. "Now" was confusing at 19:00 (showed evening scores without
+// making it obvious) and prevented users from easily comparing morning
+// vs afternoon conditions. Fixed windows are easier to reason about.
 const PRESETS: Preset[] = [
-  { key: 'now',       label: 'Now',       fixed: null },
+  { key: 'morning',   label: 'Morning',   fixed: { from: 9,  to: 12 } },
   { key: 'afternoon', label: 'Afternoon', fixed: { from: 13, to: 17 } },
   { key: 'evening',   label: 'Evening',   fixed: { from: 18, to: 22 } },
 ];
 
-function nowHourLocal(): number {
-  const h = Number(formatInTimeZone(new Date(), AMSTERDAM_TZ, 'H'));
-  return Number.isFinite(h) ? h : 12;
-}
-
 function presetRange(p: Preset, sunset: number): { from: number; to: number } {
-  if (p.fixed) {
-    return {
-      from: Math.min(p.fixed.from, sunset),
-      to:   Math.min(p.fixed.to,   sunset),
-    };
-  }
-  const h = nowHourLocal();
   return {
-    from: Math.min(h,     sunset),
-    to:   Math.min(h + 2, 23),
+    from: Math.min(p.fixed.from, sunset),
+    to:   Math.min(p.fixed.to,   sunset),
   };
 }
 
@@ -96,12 +84,11 @@ function formatHour(h: number): string {
 // ─── Quick picker ─────────────────────────────────────────────────────
 
 export function TimeRangeQuickPicker() {
-  const fromHour      = useTimeStore((s) => s.fromHour);
-  const toHour        = useTimeStore((s) => s.toHour);
-  const setRange      = useTimeStore((s) => s.setRange);
-  const setDateOffset = useTimeStore((s) => s.setDateOffset);
-  const dateOffset    = useTimeStore((s) => s.dateOffset);
-  const chipWidth     = useChipWidth();
+  const fromHour  = useTimeStore((s) => s.fromHour);
+  const toHour    = useTimeStore((s) => s.toHour);
+  const setRange  = useTimeStore((s) => s.setRange);
+  const dateOffset = useTimeStore((s) => s.dateOffset);
+  const chipWidth = useChipWidth();
 
   const sunset = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
@@ -111,15 +98,13 @@ export function TimeRangeQuickPicker() {
   const activePresetKey = useMemo<PresetKey | null>(() => {
     for (const p of PRESETS) {
       const { from, to } = presetRange(p, sunset);
-      if (p.key === 'now' && dateOffset !== 0) continue;
       if (fromHour === from && toHour === to) return p.key;
     }
     return null;
-  }, [fromHour, toHour, dateOffset, sunset]);
+  }, [fromHour, toHour, sunset]);
 
   const applyPreset = (p: Preset) => {
     haptics.selection();
-    if (p.key === 'now' && dateOffset !== 0) setDateOffset(0);
     const { from, to } = presetRange(p, sunset);
     setRange(from, to);
   };
@@ -215,13 +200,15 @@ function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
 }
 
 export function TimeRangeFineTune() {
-  const fromHour    = useTimeStore((s) => s.fromHour);
-  const toHour      = useTimeStore((s) => s.toHour);
-  const setFromHour = useTimeStore((s) => s.setFromHour);
-  const setToHour   = useTimeStore((s) => s.setToHour);
-  const dateOffset  = useTimeStore((s) => s.dateOffset);
-  const isPro       = usePurchaseStore((s) => s.isPro);
-  const showPaywall = useProPaywallStore((s) => s.show);
+  const fromHour     = useTimeStore((s) => s.fromHour);
+  const toHour       = useTimeStore((s) => s.toHour);
+  const setFromHour  = useTimeStore((s) => s.setFromHour);
+  const setToHour    = useTimeStore((s) => s.setToHour);
+  const dateOffset   = useTimeStore((s) => s.dateOffset);
+  const isPro        = usePurchaseStore((s) => s.isPro);
+  const showPaywall  = useProPaywallStore((s) => s.show);
+  const shadowEnabled = useShadowStore((s) => s.shadowEnabled);
+  const toggleShadow  = useShadowStore((s) => s.toggleShadow);
 
   const { sunrise, sunset } = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
@@ -263,6 +250,29 @@ export function TimeRangeFineTune() {
           </Pressable>
         ) : null}
       </View>
+      {/*
+        Shadow-overlay toggle — only shown to Pro users. Tapping it
+        shows/hides the semi-transparent shadow polygons on the map.
+        The overlay itself only renders when zoomed in enough (< 0.025°
+        lat delta) so the toggle text reminds the user to zoom in.
+      */}
+      {isPro ? (
+        <Pressable
+          onPress={() => { haptics.selection(); toggleShadow(); }}
+          style={[styles.shadowToggle, shadowEnabled && styles.shadowToggleActive]}
+          accessibilityLabel={
+            shadowEnabled ? 'Hide building shadows on map' : 'Show building shadows on map'
+          }
+          hitSlop={8}
+        >
+          <Text
+            style={[styles.shadowToggleText, shadowEnabled && styles.shadowToggleTextActive]}
+            allowFontScaling={false}
+          >
+            {shadowEnabled ? '🌑 Shadows on' : '🔆 Show shadows'}
+          </Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -407,6 +417,30 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: palette.inkSoft,
   },
+  // ── Shadow overlay toggle ──────────────────────────────────────────
+  shadowToggle: {
+    marginTop: spacing.sm,
+    alignSelf: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: palette.mistDeep,
+    backgroundColor: palette.white,
+  },
+  shadowToggleActive: {
+    backgroundColor: palette.ink,
+    borderColor: palette.ink,
+  },
+  shadowToggleText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+  },
+  shadowToggleTextActive: {
+    color: palette.cream,
+  },
+
   sliderRow: {
     flexDirection: 'row',
     alignItems: 'center',
