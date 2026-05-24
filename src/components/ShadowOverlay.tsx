@@ -137,6 +137,19 @@ export const ShadowOverlay = memo(function ShadowOverlay({ mapRegion }: ShadowOv
 
   return (
     <>
+      {/* DEBUG: fixed red square over Dam Square — remove after confirming render works */}
+      <Polygon
+        key="debug-test"
+        coordinates={[
+          { latitude: 52.374, longitude: 4.893 },
+          { latitude: 52.372, longitude: 4.893 },
+          { latitude: 52.372, longitude: 4.897 },
+          { latitude: 52.374, longitude: 4.897 },
+        ]}
+        fillColor="rgba(255, 0, 0, 0.6)"
+        strokeColor="rgba(200, 0, 0, 0.9)"
+        strokeWidth={2}
+      />
       {polygons.map((coordinates, i) => (
         <Polygon
           // Index key is stable for a given polygons array — the array is
