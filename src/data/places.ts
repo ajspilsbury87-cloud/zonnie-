@@ -81,7 +81,7 @@ interface PlacesResponse {
 }
 
 const apiKey = (): string | null => {
-  const key = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? 'REDACTED_GOOGLE_MAPS_KEY';
+  const key = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
   return key && key.length > 0 ? key : null;
 };
 
