@@ -63,13 +63,16 @@ const VIEWPORT_BUFFER_DEG = 0.012;
  * 0.45 opacity sits clearly over light map tiles while keeping street
  * names legible beneath. Higher than the initial 0.20/0.30 values which
  * were calibrated for dark tiles and vanish on a bright light map.
+ *
+ * DEBUG: temporarily bright red to confirm polygons are rendering.
+ * Change back to 'rgba(10, 10, 40, 0.45)' once confirmed.
  */
-const SHADOW_FILL = 'rgba(10, 10, 40, 0.45)';
+const SHADOW_FILL = 'rgba(220, 0, 0, 0.65)';
 /**
  * Thin stroke traces the polygon boundary — gives crisp edges on the
  * light map background even where the fill blends into pale tile colours.
  */
-const SHADOW_STROKE = 'rgba(10, 10, 40, 0.25)';
+const SHADOW_STROKE = 'rgba(180, 0, 0, 0.9)';
 
 interface ShadowOverlayProps {
   /** Current map viewport, updated after each pan/zoom settle. */
@@ -137,19 +140,6 @@ export const ShadowOverlay = memo(function ShadowOverlay({ mapRegion }: ShadowOv
 
   return (
     <>
-      {/* DEBUG: fixed red square over Dam Square — remove after confirming render works */}
-      <Polygon
-        key="debug-test"
-        coordinates={[
-          { latitude: 52.374, longitude: 4.893 },
-          { latitude: 52.372, longitude: 4.893 },
-          { latitude: 52.372, longitude: 4.897 },
-          { latitude: 52.374, longitude: 4.897 },
-        ]}
-        fillColor="rgba(255, 0, 0, 0.6)"
-        strokeColor="rgba(200, 0, 0, 0.9)"
-        strokeWidth={2}
-      />
       {polygons.map((coordinates, i) => (
         <Polygon
           // Index key is stable for a given polygons array — the array is

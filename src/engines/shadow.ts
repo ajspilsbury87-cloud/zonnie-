@@ -354,6 +354,39 @@ const MAX_SHADOW_OVERLAY_M = 150;
  * The caller is responsible for deduplication and viewport culling —
  * this function is pure and stateless.
  */
+/**
+ * Remove consecutive duplicate (or near-duplicate) vertices from a polygon.
+ * The 3D BAG source data regularly has multiple identical vertices in a row
+ * (e.g. 4 copies of the same corner point). Zero-length degenerate edges
+ * can confuse the native fill engine on iOS, causing polygons to not render.
+ *
+ * Threshold: 1e-5 degrees ≈ 1 m — anything closer is treated as the same
+ * point for map-overlay purposes.
+ */
+function dedupPoly(
+  poly: [number, number][],
+): [number, number][] {
+  const THRESH = 1e-5;
+  if (poly.length === 0) return poly;
+  const out: [number, number][] = [poly[0]!];
+  for (let i = 1; i < poly.length; i++) {
+    const [plat, plng] = poly[i]!;
+    const [llat, llng] = out[out.length - 1]!;
+    if (Math.abs(plat - llat) > THRESH || Math.abs(plng - llng) > THRESH) {
+      out.push(poly[i]!);
+    }
+  }
+  // Also remove last vertex if it duplicates the first (closed-ring redundancy).
+  if (out.length > 1) {
+    const [flat, flng] = out[0]!;
+    const [llat, llng] = out[out.length - 1]!;
+    if (Math.abs(flat - llat) <= THRESH && Math.abs(flng - llng) <= THRESH) {
+      out.pop();
+    }
+  }
+  return out;
+}
+
 export function computeShadowPolygon(
   building: Building,
   sunAltitude: number,
@@ -370,7 +403,12 @@ export function computeShadowPolygon(
   const dLng = (shadowLen * Math.sin(shadowDirRad)) / METRES_PER_DEG_LNG;
   const dLat = (shadowLen * Math.cos(shadowDirRad)) / METRES_PER_DEG_LAT;
 
-  const poly = building.poly; // [[lat, lng], …]
+  // Strip consecutive duplicates — 3D BAG data frequently contains runs of
+  // identical vertices that create degenerate zero-length edges, which can
+  // prevent the native polygon layer from rendering the fill on iOS.
+  const poly = dedupPoly(building.poly);
+  if (poly.length < 3) return null;
+
   const original = poly.map(([lat, lng]) => ({ latitude: lat, longitude: lng }));
   // Shadow-tip vertices = original footprint shifted in shadow direction.
   const shadow = poly.map(([lat, lng]) => ({
