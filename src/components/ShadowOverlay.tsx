@@ -42,12 +42,13 @@ import { usePurchaseStore } from '@/src/store/purchaseStore';
 const MAX_POLYGONS = 150;
 
 /**
- * Latitude-delta threshold below which the overlay is shown. 0.025 ≈
- * ~2.8 km vertical span — neighbourhood zoom or closer. Above this the
- * polygons are too small to be meaningful and the overlay would look
- * like mud.
+ * Latitude-delta threshold below which the overlay is shown. 0.035 ≈
+ * ~3.9 km vertical span — a natural Amsterdam neighbourhood view.
+ * Raised from 0.025 so the user doesn't need to zoom in as far before
+ * shadows appear; at this zoom individual building shadows are still
+ * 15–50+ pixels tall and clearly legible.
  */
-const ZOOM_THRESHOLD = 0.025;
+const ZOOM_THRESHOLD = 0.035;
 
 /**
  * Extra degrees added to each viewport edge when filtering buildings.
@@ -58,13 +59,17 @@ const ZOOM_THRESHOLD = 0.025;
 const VIEWPORT_BUFFER_DEG = 0.012;
 
 /**
- * Shadow polygon fill: semi-transparent ink-blue. 0.20 opacity is dark
- * enough to read clearly over map tiles but light enough that street
- * names and POI icons remain visible underneath.
+ * Shadow polygon fill: semi-transparent blue-black.
+ * 0.45 opacity sits clearly over light map tiles while keeping street
+ * names legible beneath. Higher than the initial 0.20/0.30 values which
+ * were calibrated for dark tiles and vanish on a bright light map.
  */
-const SHADOW_FILL = 'rgba(10, 10, 40, 0.30)';
-/** No stroke — the polygon edges on a real shadow are penumbra, not sharp lines. */
-const SHADOW_STROKE = 'rgba(10, 10, 40, 0.00)';
+const SHADOW_FILL = 'rgba(10, 10, 40, 0.45)';
+/**
+ * Thin stroke traces the polygon boundary — gives crisp edges on the
+ * light map background even where the fill blends into pale tile colours.
+ */
+const SHADOW_STROKE = 'rgba(10, 10, 40, 0.25)';
 
 interface ShadowOverlayProps {
   /** Current map viewport, updated after each pan/zoom settle. */
@@ -141,7 +146,7 @@ export const ShadowOverlay = memo(function ShadowOverlay({ mapRegion }: ShadowOv
           coordinates={coordinates}
           fillColor={SHADOW_FILL}
           strokeColor={SHADOW_STROKE}
-          strokeWidth={0}
+          strokeWidth={1}
         />
       ))}
     </>

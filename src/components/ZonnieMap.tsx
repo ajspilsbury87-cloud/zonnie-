@@ -580,11 +580,11 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       {/*
         Shadow zoom hint — shown when the user has enabled the shadow
         overlay but hasn't zoomed in far enough to trigger it (the
-        overlay kicks in below latitudeDelta 0.025, roughly a 2.5km
+        overlay kicks in below latitudeDelta 0.035, roughly a 3.9km
         vertical span). Without this, the toggle feels broken because
         nothing appears. The pill fades away once the user zooms in.
       */}
-      {shadowEnabled && mapRegion.latitudeDelta > 0.025 ? (
+      {shadowEnabled && mapRegion.latitudeDelta > 0.035 ? (
         <View style={styles.shadowHint} pointerEvents="none">
           <Text style={styles.shadowHintText}>{t.shadowZoomHint}</Text>
         </View>
