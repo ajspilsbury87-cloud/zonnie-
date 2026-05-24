@@ -23,7 +23,6 @@ import { haptics } from '@/src/lib/haptics';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { usePurchaseStore } from '@/src/store/purchaseStore';
 import { useProPaywallStore } from '@/src/components/ProPaywall';
-import { useShadowStore } from '@/src/store/shadowStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 const HOURS = 24;
@@ -218,9 +217,6 @@ export function TimeRangeFineTune() {
   const dateOffset   = useTimeStore((s) => s.dateOffset);
   const isPro        = usePurchaseStore((s) => s.isPro);
   const showPaywall  = useProPaywallStore((s) => s.show);
-  const shadowEnabled = useShadowStore((s) => s.shadowEnabled);
-  const toggleShadow  = useShadowStore((s) => s.toggleShadow);
-
   const { sunrise, sunset } = useMemo(() => {
     const dateStr = selectedDateStr(dateOffset);
     return {
@@ -261,27 +257,6 @@ export function TimeRangeFineTune() {
           </Pressable>
         ) : null}
       </View>
-      {/*
-        Shadow-overlay toggle — only shown to Pro users. Tapping it
-        shows/hides the semi-transparent shadow polygons on the map.
-        The overlay itself only renders when zoomed in enough (< 0.025°
-        lat delta) so the toggle text reminds the user to zoom in.
-      */}
-      {isPro ? (
-        <Pressable
-          onPress={() => { haptics.selection(); toggleShadow(); }}
-          style={[styles.shadowToggle, shadowEnabled && styles.shadowToggleActive]}
-          accessibilityLabel={shadowEnabled ? t.shadowsHideA11y : t.showShadowsA11y}
-          hitSlop={8}
-        >
-          <Text
-            style={[styles.shadowToggleText, shadowEnabled && styles.shadowToggleTextActive]}
-            allowFontScaling={false}
-          >
-            {shadowEnabled ? t.shadowsOn : t.showShadows}
-          </Text>
-        </Pressable>
-      ) : null}
     </View>
   );
 }
@@ -426,30 +401,6 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: palette.inkSoft,
   },
-  // ── Shadow overlay toggle ──────────────────────────────────────────
-  shadowToggle: {
-    marginTop: spacing.sm,
-    alignSelf: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: palette.mistDeep,
-    backgroundColor: palette.white,
-  },
-  shadowToggleActive: {
-    backgroundColor: palette.ink,
-    borderColor: palette.ink,
-  },
-  shadowToggleText: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: fontSizes.sm,
-    color: palette.inkSoft,
-  },
-  shadowToggleTextActive: {
-    color: palette.cream,
-  },
-
   sliderRow: {
     flexDirection: 'row',
     alignItems: 'center',

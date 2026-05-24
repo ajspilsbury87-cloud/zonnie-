@@ -61,18 +61,14 @@ const VIEWPORT_BUFFER_DEG = 0.012;
 /**
  * Shadow polygon fill: semi-transparent blue-black.
  * 0.45 opacity sits clearly over light map tiles while keeping street
- * names legible beneath. Higher than the initial 0.20/0.30 values which
- * were calibrated for dark tiles and vanish on a bright light map.
- *
- * DEBUG: temporarily bright red to confirm polygons are rendering.
- * Change back to 'rgba(10, 10, 40, 0.45)' once confirmed.
+ * names legible beneath.
  */
-const SHADOW_FILL = 'rgba(220, 0, 0, 0.65)';
+const SHADOW_FILL = 'rgba(10, 10, 40, 0.45)';
 /**
  * Thin stroke traces the polygon boundary — gives crisp edges on the
  * light map background even where the fill blends into pale tile colours.
  */
-const SHADOW_STROKE = 'rgba(180, 0, 0, 0.9)';
+const SHADOW_STROKE = 'rgba(10, 10, 40, 0.25)';
 
 interface ShadowOverlayProps {
   /** Current map viewport, updated after each pan/zoom settle. */

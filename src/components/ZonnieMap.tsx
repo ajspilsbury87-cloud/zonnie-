@@ -4,7 +4,6 @@ import MapView, { Marker, PROVIDER_DEFAULT, type Region as MapRegion } from 'rea
 import * as Location from 'expo-location';
 
 import { MapRegionPill } from '@/src/components/MapRegionPill';
-import { ShadowOverlay } from '@/src/components/ShadowOverlay';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
 import type { Region } from '@/src/data/regions';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -14,7 +13,6 @@ import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useSelectionStore } from '@/src/store/selectionStore';
-import { useShadowStore } from '@/src/store/shadowStore';
 import { fonts, fontSizes, palette, spacing } from '@/src/theme/tokens';
 
 // Above this latitude delta (~5km vertical span), the map view spans
@@ -302,7 +300,6 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   const mapRef = useRef<MapView>(null);
   const scored = useScoredTerraces();
   const selectedId = useSelectionStore((s) => s.selectedId);
-  const shadowEnabled = useShadowStore((s) => s.shadowEnabled);
   const panTo = useSelectionStore((s) => s.panTo);
   const clearPanTo = useSelectionStore((s) => s.clearPanTo);
   const userLoc = useUserLocation();
@@ -511,14 +508,6 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         showsScale
         userInterfaceStyle="light"
       >
-        {/*
-          Shadow overlay — Pro only, toggled from the TimeRangeFineTune
-          section in the bottom sheet. Renders semi-transparent shadow
-          polygons for buildings visible in the current viewport, at the
-          midpoint of the selected visit window. Sits below the markers
-          so pins always read over the shadows.
-        */}
-        <ShadowOverlay mapRegion={mapRegion} />
         {markers.map(({ item, band, selected, featured }) => (
           <TerracePin
             key={item.terrace.id}
@@ -577,18 +566,6 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       >
         <Text style={styles.locateGlyph}>⌖</Text>
       </Pressable>
-      {/*
-        Shadow zoom hint — shown when the user has enabled the shadow
-        overlay but hasn't zoomed in far enough to trigger it (the
-        overlay kicks in below latitudeDelta 0.035, roughly a 3.9km
-        vertical span). Without this, the toggle feels broken because
-        nothing appears. The pill fades away once the user zooms in.
-      */}
-      {shadowEnabled && mapRegion.latitudeDelta > 0.035 ? (
-        <View style={styles.shadowHint} pointerEvents="none">
-          <Text style={styles.shadowHintText}>{t.shadowZoomHint}</Text>
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -628,23 +605,5 @@ const styles = StyleSheet.create({
   pinHint: {
     bottom: 300,
     alignSelf: 'center',
-  },
-  // Shadow-zoom hint pill — floats at the top of the visible map area
-  // when shadows are enabled but the viewport is too wide to show them.
-  // `pointerEvents="none"` so it doesn't intercept taps on pins below.
-  shadowHint: {
-    position: 'absolute',
-    top: spacing.xxl + spacing.lg + 52, // below the locate button
-    alignSelf: 'center',
-    backgroundColor: palette.ink,
-    borderRadius: 20,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 6,
-    opacity: 0.85,
-  },
-  shadowHintText: {
-    fontFamily: fonts.bodySemibold,
-    fontSize: fontSizes.sm,
-    color: palette.cream,
   },
 });
