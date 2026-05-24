@@ -62,7 +62,7 @@ const VIEWPORT_BUFFER_DEG = 0.012;
  * enough to read clearly over map tiles but light enough that street
  * names and POI icons remain visible underneath.
  */
-const SHADOW_FILL = 'rgba(10, 10, 40, 0.20)';
+const SHADOW_FILL = 'rgba(10, 10, 40, 0.30)';
 /** No stroke — the polygon edges on a real shadow are penumbra, not sharp lines. */
 const SHADOW_STROKE = 'rgba(10, 10, 40, 0.00)';
 

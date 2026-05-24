@@ -197,62 +197,103 @@ export function computeSunScore(
 
   let score = 0;
   if (sun.altitude > 0) {
-    // Altitude factor: sqrt(altitude / 61).
+    // Altitude factor — flat 1.0 above 25°, smooth sqrt ramp below.
     //
-    // Earlier versions used `min(1, altitude / 60)` — physically right for
-    // solar irradiance (W/m²), but it under-rated the perceived "sunniness"
-    // of golden-hour and evening sun. At alt 19° (a sunny May 19:00) the
-    // linear curve gives 0.32 — labelled "Partial Sun" — but the actual
-    // experience on a W-facing terrace is bright and warm. Andy flagged
-    // the top evening scores reading 28% as "Mostly Shade" which is wrong.
+    // WHY FLAT ABOVE 25°:
+    //   The app's purpose is "which terrace should I go to RIGHT NOW?"
+    //   That question is answered by shadow obstruction + facing alignment
+    //   + temperature — not by whether the sun is at 35° vs 55°. Both feel
+    //   like full sun on a terrace; only low angles (golden hour / early
+    //   morning) meaningfully reduce the terrace experience.
     //
-    // sqrt(alt / 61) calibrates the scale to Amsterdam's actual sky:
-    //   61° = 90° - 52.37° (latitude) + 23.45° (max solar declination)
-    //       = the highest the sun ever gets in Amsterdam (midsummer noon).
-    // Using 61 as the denominator means a perfect midsummer noon → score
-    // of 1.0 (100). Using the old denominator of 90 (theoretical zenith,
-    // unreachable here) permanently capped real-world scores at ~0.82
-    // (√(61/90) ≈ 0.82), which made perfect sunny afternoons read as ~76
-    // instead of the ~95+ locals expect.
+    //   With the old sqrt(alt/61) curve:
+    //     - Morning (9am, alt ≈ 34°): altFactor = 0.75 — all S/SW-facing
+    //       terraces compressed into the same 0.60–0.75 band, no contrast.
+    //     - Evening (7pm, alt ≈ 19°): altFactor = 0.56 — a W-facing terrace
+    //       in full evening sun scored only 46%, labelled "Partly Sunny".
+    //       Users see 30s scores when they're sitting in bright warm light.
     //
-    // The sqrt curve still:
-    //   - lifts evening scores into the Partial → Mostly-Sunny range
-    //   - mirrors human perception: sun feels "sunny" across a wide
-    //     altitude range, not just at noon
-    // Math.min(1, ...) caps the result so scores never exceed 1.0 on
-    // the rare day an altitude measurement rounds above 61°.
-    score = Math.min(1, Math.sqrt(sun.altitude / 61));
+    //   Flattening to 1.0 above 25° transfers the differentiation entirely
+    //   to facing and shadow, which is what the user actually cares about:
+    //     - Morning 9am: E-facing in sun → 84%, W-facing (sun behind) → 35%.
+    //       The contrast is visible and meaningful; shaded terraces show dark.
+    //     - Evening 7pm: W-facing in golden sun → 71%, S-facing → ~50%.
+    //       Scores feel right for what users are experiencing.
+    //
+    // WHY SQRT BELOW 25°:
+    //   A smooth sqrt ramp from 0 at the horizon to 1.0 at 25° handles
+    //   dawn/dusk gracefully — scores aren't abruptly high at sunrise.
+    //   sqrt(alt/25) at alt=5° gives 0.45, at 10° gives 0.63, at 20° gives
+    //   0.89 — a natural taper that matches the feeling of early/late light.
+    //
+    // Continuity check: sqrt(25/25) = 1.0, so the curve joins the flat
+    // section seamlessly at exactly 25°.
+    const ALT_FULL_DEG = 25; // above this, sun is "full" for terrace comfort
+    const altFactor = sun.altitude >= ALT_FULL_DEG
+      ? 1.0
+      : Math.sqrt(sun.altitude / ALT_FULL_DEG);
+    score = altFactor;
     // Continuous shadow attenuation — the multiplier ramps smoothly from 1.0
     // (no obstruction) down to 0.15 (fully blocked). Replaces the old binary
     // "in shadow → ×0.15, else ×1.0" cliff that produced bimodal score
     // distributions.
     score *= 1 - 0.85 * coverage;
-    // Cloud penalty: 100% cloud cover reduces score to ~45% of clear-sky.
-    // 0.55 keeps the cloud signal meaningful while preserving enough
-    // dynamic range that shadow + facing differentiation still lands in
-    // different score bands.
-    score *= 1 - (weather.cloudCover / 100) * 0.55;
+    // Sky transparency — two paths depending on what weather data is available:
+    //
+    // PATH A — direct_radiation (real forecast from Open-Meteo):
+    //   Use the ratio of actual direct irradiance to the theoretical clear-sky
+    //   value. This is a much more honest "is the sun actually shining?" signal
+    //   than cloud fraction, for two reasons:
+    //
+    //   1. Cloud fraction includes high thin cirrus that inflates the percentage
+    //      while barely blocking direct sunlight. Open-Meteo regularly reports
+    //      "85–90% cloud cover" on days where direct radiation is still 600+ W/m²
+    //      (≈ 90% of clear sky). Using cloud fraction would wrongly penalise
+    //      those hours by 25–27%, dragging a sunny afternoon to 60–65%.
+    //
+    //   2. Direct radiation responds to actual sun-breaks (sun peeks through = high
+    //      value) in a way that a total-cloud-fraction average misses entirely.
+    //
+    //   Clear-sky horizontal direct irradiance ≈ 950 × sin(altitude) W/m².
+    //   Multiplier range: transparency 0 → ×0.70 (pure diffuse sky);
+    //                     transparency 1 → ×1.00 (full direct sun).
+    //
+    // PATH B — cloudCover fraction (synthetic profiles / offline fallback):
+    //   0.30 coefficient: 100% cloud → ×0.70; 10% cloud (typical "sunny") → ×0.97.
+    //   All scoring tests use this path (no directRadiation in test fixtures).
+    if (weather.directRadiation != null && sun.altitude > 1) {
+      const clearSkyDirect = 950 * Math.sin(sun.altitude * (Math.PI / 180));
+      const transparency = clearSkyDirect > 0
+        ? Math.min(1, weather.directRadiation / clearSkyDirect)
+        : 1;
+      score *= 0.70 + transparency * 0.30;
+    } else {
+      score *= 1 - (weather.cloudCover / 100) * 0.30;
+    }
 
     const facingAzimuth = FACING_AZIMUTHS[terrace.facing];
     if (facingAzimuth >= 0) {
       const diff = Math.abs(sun.azimuth - facingAzimuth);
       const facingDiff = Math.min(diff, 360 - diff);
       if (facingDiff < 90) {
-        // Sun is in front of the terrace: linear bonus from +25% (aligned)
-        // down to ×1.0 (perpendicular). Unchanged from before.
-        score *= 1 + (1 - facingDiff / 90) * 0.25;
+        // Sun is in front of the terrace: linear bonus from +40% (aligned)
+        // down to ×1.0 (perpendicular).
+        //
+        // Raised from the old +25%: with most Amsterdam terraces facing
+        // S/SW/W, a smaller bonus compressed the top-200 into a narrow band.
+        // +40% gives enough spread that a SW-facing terrace (diff ~10–20°) reads
+        // clearly brighter than a W-facing one (diff ~50–60°) on a sunny afternoon.
+        score *= 1 + (1 - facingDiff / 90) * 0.40;
       } else {
         // Sun is behind the terrace: the host building's own shadow falls
         // over the seating area, reducing score. Smooth linear ramp from
-        // ×1.0 at 90° down to ×0.6 at 180°.
+        // ×1.0 at 90° down to ×0.5 at 180°.
         //
-        // Previously this was a flat ×0.6 for ALL diffs ≥ 90°, which
-        // created a harsh cliff: at sun-az 269° (diff=89°) a S-facing
-        // terrace scored ×1.003, but at 270° (diff=90°) it dropped to
-        // ×0.600 — a 40% jump for a 1° sun movement. The smooth ramp
-        // removes that discontinuity while preserving the ×0.6 maximum
-        // penalty at 180° (sun exactly behind the terrace).
-        score *= 1 - ((facingDiff - 90) / 90) * 0.4;
+        // Increased from the old ×0.6 to ×0.5 at 180° (penalty −40% → −50%).
+        // Together with the wider front-facing bonus, this creates a ~3× score
+        // spread between a perfectly aligned and a perfectly opposed terrace,
+        // making orientation clearly readable on the map.
+        score *= 1 - ((facingDiff - 90) / 90) * 0.50;
       }
     } else {
       // 'All' facing (rooftop / 360°) gets flat +15% (down from +20%).
@@ -298,14 +339,19 @@ export function computeSunScore(
   // extreme combination (perfect midsummer noon + 0% cloud + perfectly-aligned
   // terrace + 30°C heat):
   //
-  //   Typical hot sunny afternoon, SW-facing, 22°C  → ~0.74  ("Full Sun")
-  //   N-facing on same day                           → ~0.50  ("Mostly Sunny")
-  //   In deep building shadow                        → ~0.15  ("Mostly Shade")
+  //   SW-facing, afternoon (alt>25°), 22°C, no shadow → ~0.82  ("Full Sun")
+  //   E-facing at 9 am (alt≈34°, sun aligned)         → ~0.84  ("Full Sun")
+  //   W-facing at 9 am (sun directly behind)           → ~0.35  ("Partly Sunny")
+  //   W-facing at 7 pm (alt≈19°, golden hour)         → ~0.71  ("Full Sun")
+  //   In deep building shadow (any facing / time)      → ~0.12  ("In Shadow")
   //
   // This is the only change needed — the score label thresholds (0.7/0.5/0.3/
   // 0.1) remain correct, and relative comparisons across terraces are unaffected
   // because every terrace's score is divided by the same constant.
-  const MAX_RAW = 1.25 * 1.15; // facingBonus_max × tempFactor_max = 1.4375
+  //
+  // MAX_RAW = facingBonus_max × tempFactor_max.
+  // Facing bonus raised to 1.40 (from 1.25) to match the new +40% cap above.
+  const MAX_RAW = 1.40 * 1.15; // = 1.61
   return {
     score: Math.min(1, Math.max(0, score / MAX_RAW)),
     sun,

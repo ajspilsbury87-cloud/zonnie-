@@ -54,10 +54,13 @@ describe('computeSunScore', () => {
   test('overcast weather drops score noticeably vs sunny', () => {
     const sunny = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'sunny');
     const overcast = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'overcast');
-    // Overcast should be clearly lower (50% headroom is enough), but NOT
-    // crushed to ~15% — that was the old 0.85 cloud factor and it caused
-    // every terrace on a cloudy day to fall in the same low score band.
-    expect(overcast.score).toBeLessThan(sunny.score * 0.7);
+    // Overcast should be clearly lower, but not crushed.
+    //
+    // With cloud coefficient 0.30 (vs old 0.55), 100% overcast → ×0.70 and
+    // a typical sunny day (~10% cloud) → ×0.97. The realistic ratio is
+    // overcast ≈ 72–76% of sunny, so we test < 80% (meaningfully different)
+    // and > 30% (not completely floored — diffuse light still counts).
+    expect(overcast.score).toBeLessThan(sunny.score * 0.80);
     expect(overcast.score).toBeGreaterThan(sunny.score * 0.3);
   });
 

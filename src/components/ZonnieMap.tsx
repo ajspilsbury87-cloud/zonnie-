@@ -14,7 +14,8 @@ import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useSelectionStore } from '@/src/store/selectionStore';
-import { fonts, palette, spacing } from '@/src/theme/tokens';
+import { useShadowStore } from '@/src/store/shadowStore';
+import { fonts, fontSizes, palette, spacing } from '@/src/theme/tokens';
 
 // Above this latitude delta (~5km vertical span), the map view spans
 // more than one region so showing a specific region label would lie.
@@ -37,19 +38,36 @@ const AMSTERDAM_REGION: MapRegion = {
 type ScoreBand = 'full' | 'mostly' | 'partial' | 'mshade' | 'shade';
 
 /**
- * Assign a colour band from a normalised position within the visible
- * score range (0 = worst visible, 1 = best visible).
+ * Absolute score → colour band. Thresholds mirror scoreLabel() in
+ * scoring.ts so pin colour and detail-sheet label always agree.
  *
- * Used inside the markers useMemo so pin colours always show the full
- * spectrum regardless of how tightly bunched the raw scores are.
+ * Using absolute (not relative-within-range) thresholds means that a
+ * terrace in genuine shadow is always dark regardless of how its
+ * neighbours are scoring — which is exactly the signal the user needs
+ * ("where to avoid") without any colour mapping trickery.
+ *
+ * With the altFactor now flat above 25° and a 40% facing spread,
+ * the real-world score range (≈ 10%–90%) is wide enough that all five
+ * colour bands appear naturally without needing relative normalisation.
  */
-function bandForRelative(t: number): ScoreBand {
-  if (t > 0.82) return 'full';
-  if (t > 0.62) return 'mostly';
-  if (t > 0.38) return 'partial';
-  if (t > 0.18) return 'mshade';
+function bandForScore(score: number): ScoreBand {
+  if (score > 0.7) return 'full';
+  if (score > 0.5) return 'mostly';
+  if (score > 0.3) return 'partial';
+  if (score > 0.1) return 'mshade';
   return 'shade';
 }
+
+/** Half-width margin added to the viewport box when culling markers.
+ *  Small fraction of a lat/lng degree — keeps pins at the visible edge
+ *  from popping in/out as the user pans by a few pixels. */
+const VIEWPORT_MARGIN = 0.003;
+
+/** Hard cap on rendered markers per frame. react-native-maps 1.27.2
+ *  handles 300 child-component markers comfortably on modern iOS/Android;
+ *  city-zoom Amsterdam fits ≈ 280 terraces in the viewport already, so
+ *  this cap only fires when zoomed further out than city level. */
+const MAX_VIEWPORT_PINS = 300;
 
 /**
  * Band → palette colours. The fill is the dominant pin colour;
@@ -284,6 +302,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   const mapRef = useRef<MapView>(null);
   const scored = useScoredTerraces();
   const selectedId = useSelectionStore((s) => s.selectedId);
+  const shadowEnabled = useShadowStore((s) => s.shadowEnabled);
   const panTo = useSelectionStore((s) => s.panTo);
   const clearPanTo = useSelectionStore((s) => s.clearPanTo);
   const userLoc = useUserLocation();
@@ -412,68 +431,62 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     clearPanTo();
   }, [panTo, clearPanTo]);
 
-  // Cap visible markers at top-N by score. After importing ~750 venues
-  // from the competitor list, the dataset jumped to 1100+ terraces and
-  // rendering them all at city zoom is unusable. Top 200 covers nearly
-  // every actually-good sun spot at any given hour and is scannable on
-  // the full-Amsterdam view; user can filter (region/category/search/
-  // favorites) to narrow further. The selected terrace is always
-  // included even if it falls below the top-N.
+  // ── Viewport-culled markers ────────────────────────────────────────────────
   //
-  // 200 is also well below the threshold (~30+ simultaneous mount
-  // transactions) where the old `react-native-maps` 1.20.1 Fabric bug
-  // tripped. Now on 1.27.2 we don't need that as much, but keeping
-  // markers bounded is still good for native annotation perf.
-  const MAX_MARKERS = 200;
+  // Instead of a global top-N cap, we show EVERY scored terrace that lies
+  // inside the current map region (post-filter). This means:
+  //
+  //   No filters:     city zoom → ~280 pins from the full dataset.
+  //                   neighbourhood zoom → all 25–50 venues in the area.
+  //   Category filter (e.g. "Bar"): only bars visible on screen appear.
+  //                   Makes niche venues (Kiebert, Marathonweg) always show
+  //                   in their neighbourhoods regardless of global rank.
+  //
+  // Colour uses ABSOLUTE score bands (same thresholds as scoreLabel) so a
+  // dark pin genuinely means "in shadow right now" — users can see WHERE
+  // to avoid, not just WHERE the top-scorers are.
+  //
+  // mapRegion is only updated on pan/zoom settle (onRegionChangeComplete),
+  // not during the gesture — so this useMemo doesn't fire while dragging.
   const markers = useMemo(() => {
-    const top = scored.slice(0, MAX_MARKERS);
-    const need = selectedId != null && !top.some((s) => s.terrace.id === selectedId);
+    const minLat = mapRegion.latitude - mapRegion.latitudeDelta / 2 - VIEWPORT_MARGIN;
+    const maxLat = mapRegion.latitude + mapRegion.latitudeDelta / 2 + VIEWPORT_MARGIN;
+    const minLng = mapRegion.longitude - mapRegion.longitudeDelta / 2 - VIEWPORT_MARGIN;
+    const maxLng = mapRegion.longitude + mapRegion.longitudeDelta / 2 + VIEWPORT_MARGIN;
+
+    // Filter to viewport, then slice to the performance cap.
+    // `scored` is already sorted best-first, so slicing keeps the highest
+    // scorers when the viewport contains more than MAX_VIEWPORT_PINS.
+    const visible = scored.filter(
+      (s) =>
+        s.terrace.lat >= minLat &&
+        s.terrace.lat <= maxLat &&
+        s.terrace.lng >= minLng &&
+        s.terrace.lng <= maxLng,
+    );
+    const capped = visible.slice(0, MAX_VIEWPORT_PINS);
+
+    // Always include the selected terrace even if it's been panned off-screen
+    // (user tapped "Show on map" → pan animates but re-render fires before
+    // settle, so the terrace briefly falls outside the viewport bounds).
+    const need =
+      selectedId != null && !capped.some((s) => s.terrace.id === selectedId);
     const list = need
-      ? [...top, scored.find((s) => s.terrace.id === selectedId)].filter(
-          (x): x is ScoredTerrace => !!x,
-        )
-      : top;
+      ? [
+          ...capped,
+          scored.find((s) => s.terrace.id === selectedId),
+        ].filter((x): x is ScoredTerrace => !!x)
+      : capped;
 
-    // Relative colour bands — normalise within the top-N score range so
-    // the map always shows the full five-colour spectrum.
-    //
-    // Why: at Amsterdam latitude (52°N) the top-200 terraces on a sunny
-    // afternoon differ by only ~0.06 in raw score (e.g. 0.736–0.799).
-    // Fixed absolute thresholds collapse them all into one band (terracotta).
-    // Relative bands make the MAP read as a comparison tool:
-    //   "which of the visible terraces is sunniest right now?"
-    // The number inside each pin (0–99) still reflects the absolute score
-    // so users can compare across different times / days.
-    //
-    // Thresholds use `top` (not `list`) as the reference so a low-scoring
-    // selected-terrace outlier doesn't compress all other bands.
-    //
-    // topMin floor at 0.30: when all top-200 terraces score above ~0.80
-    // (e.g. a hot sunny afternoon after score normalisation), the raw spread
-    // is only ~0.20. Without a floor, t = 0.18 maps a score of 0.84 —
-    // labelled "Full Sun" — to the 'shade' band (black pin). Flooring topMin
-    // at 0.30 ensures the spread spans at least (topMax − 0.30), so every
-    // terrace with a genuinely good absolute score gets a warm-coloured pin.
-    const rawMin  = top[top.length - 1]?.score ?? 0;
-    const topMin  = Math.min(rawMin, 0.30); // never let the floor sit above the "partial sun" line
-    const topMax  = top[0]?.score ?? 1;
-    const topSpread = Math.max(topMax - topMin, 0.01);
-
-    return list.map(({ terrace, score }) => {
-      // t ∈ [0, 1]: 0 = worst of top-N visible, 1 = best
-      const t = (score - topMin) / topSpread;
-      return {
-        item: { terrace, score },
-        band: bandForRelative(t),
-        selected: terrace.id === selectedId,
-        // `featured` is the data flag for paid placement (B1 sponsored
-        // pin). Default false today; plumbed through so flipping the
-        // flag on a terrace lights up the gold border immediately, no
-        // code change required.
-        featured: terrace.featured === true,
-      };
-    });
-  }, [scored, selectedId]);
+    return list.map(({ terrace, score }) => ({
+      item: { terrace, score },
+      band: bandForScore(score),
+      selected: terrace.id === selectedId,
+      // `featured` flag for paid placement — gold border, no terraces
+      // have it today; wired up for the B1 sponsored-pin variant.
+      featured: terrace.featured === true,
+    }));
+  }, [scored, selectedId, mapRegion]);
 
   return (
     <View style={styles.container}>
@@ -496,6 +509,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         showsMyLocationButton={false}
         showsCompass
         showsScale
+        userInterfaceStyle="light"
       >
         {/*
           Shadow overlay — Pro only, toggled from the TimeRangeFineTune
@@ -563,6 +577,18 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       >
         <Text style={styles.locateGlyph}>⌖</Text>
       </Pressable>
+      {/*
+        Shadow zoom hint — shown when the user has enabled the shadow
+        overlay but hasn't zoomed in far enough to trigger it (the
+        overlay kicks in below latitudeDelta 0.025, roughly a 2.5km
+        vertical span). Without this, the toggle feels broken because
+        nothing appears. The pill fades away once the user zooms in.
+      */}
+      {shadowEnabled && mapRegion.latitudeDelta > 0.025 ? (
+        <View style={styles.shadowHint} pointerEvents="none">
+          <Text style={styles.shadowHintText}>{t.shadowZoomHint}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -602,5 +628,23 @@ const styles = StyleSheet.create({
   pinHint: {
     bottom: 300,
     alignSelf: 'center',
+  },
+  // Shadow-zoom hint pill — floats at the top of the visible map area
+  // when shadows are enabled but the viewport is too wide to show them.
+  // `pointerEvents="none"` so it doesn't intercept taps on pins below.
+  shadowHint: {
+    position: 'absolute',
+    top: spacing.xxl + spacing.lg + 52, // below the locate button
+    alignSelf: 'center',
+    backgroundColor: palette.ink,
+    borderRadius: 20,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    opacity: 0.85,
+  },
+  shadowHintText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.cream,
   },
 });

@@ -221,16 +221,20 @@ export const usePurchaseStore = create<PurchaseState>((set, get) => ({
     const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY;
 
     if (!apiKey) {
-      // Development fallback — no key means we're running without IAP.
-      // isPro stays false, hydrated flips true so gated components render
-      // (locked) rather than spinning forever.
       if (__DEV__) {
+        // No RevenueCat key in dev — grant Pro automatically so all Pro
+        // features (shadow overlay, time scrubber) can be tested without
+        // going through the App Store. Never runs in production builds
+        // (where EXPO_PUBLIC_REVENUECAT_IOS_KEY is always set via EAS Secrets).
         console.warn(
           '[PurchaseStore] EXPO_PUBLIC_REVENUECAT_IOS_KEY is not set. ' +
-          'IAP disabled. Add it to your .env file to test purchases.',
+          'Granting Pro automatically for dev testing.',
         );
+        set({ isPro: true, hydrated: true });
+      } else {
+        // Production without a key — shouldn't happen, but fail gracefully.
+        set({ hydrated: true });
       }
-      set({ hydrated: true });
       return;
     }
 

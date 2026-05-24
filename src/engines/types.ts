@@ -151,6 +151,22 @@ export interface Weather {
   /** Degrees from north, clockwise (0 = N, 90 = E, 180 = S, 270 = W). The
    * direction the wind is coming FROM (meteorological convention). */
   windDirection?: number;
+  /**
+   * Actual direct solar irradiance on a horizontal surface (W/m²),
+   * averaged over the preceding hour. Sourced from Open-Meteo's
+   * `direct_radiation` field.
+   *
+   * When present, the scoring engine uses this instead of `cloudCover`
+   * to compute the sky-transparency penalty — it's a much more honest
+   * signal for "is the sun actually shining?" than cloud fraction.
+   * Cloud fraction includes high thin cirrus that inflates the percentage
+   * while barely blocking direct sunlight; direct radiation measures what
+   * actually hits the surface.
+   *
+   * Absent for synthetic weather profiles (all tests, offline fallback).
+   * The engine falls back to the cloudCover formula in that case.
+   */
+  directRadiation?: number;
 }
 
 export interface ScoreResult {

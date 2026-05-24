@@ -62,6 +62,7 @@ export const strings = {
     showShadowsA11y: 'Toon gebouwschaduwen op kaart',
     shadowsHideA11y: 'Verberg gebouwschaduwen op kaart',
     exactTimesA11y: 'Schakel exacte tijden in met Pro',
+    shadowZoomHint: 'Zoom in om schaduwen te zien',
 
     // Terrace detail sheet
     sunToday: 'Zon vandaag',
@@ -275,6 +276,7 @@ export const strings = {
     showShadowsA11y: 'Show building shadows on map',
     shadowsHideA11y: 'Hide building shadows on map',
     exactTimesA11y: 'Unlock exact times with Pro',
+    shadowZoomHint: 'Zoom in to see shadows',
 
     // Terrace detail sheet
     sunToday: 'Sun today',
@@ -441,4 +443,15 @@ export const strings = {
   },
 } as const;
 
-export type Strings = typeof strings.nl;
+/**
+ * The type of any fully-translated strings dictionary.
+ * Using the union of both language objects means:
+ *   1. TypeScript accepts `useStrings()` return value (which can be nl OR en)
+ *      wherever `Strings` is expected.
+ *   2. Accessing `t.someKey` still gives a string (union of two string literals),
+ *      safe to render in JSX.
+ *   3. Adding a key to nl but forgetting en still causes a compile error because
+ *      the `en` object is checked against the shape of `nl` in the `strings`
+ *      object literal.
+ */
+export type Strings = typeof strings.nl | typeof strings.en;

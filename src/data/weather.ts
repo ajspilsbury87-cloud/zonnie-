@@ -32,10 +32,12 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
     new URLSearchParams({
       latitude: AMSTERDAM_LAT.toString(),
       longitude: AMSTERDAM_LNG.toString(),
-      // wind_speed_10m + wind_direction_10m feed the wind-shelter score
-      // (engines/scoring → terrace facing × wind direction). Adds ~3KB
-      // per response, no extra request — same endpoint, just more fields.
-      hourly: 'cloud_cover,temperature_2m,wind_speed_10m,wind_direction_10m',
+      // wind_speed_10m + wind_direction_10m feed the wind-shelter score.
+      // direct_radiation is the actual horizontal direct irradiance (W/m²)
+      // — the scoring engine uses it as a better "is the sun shining?" signal
+      // than cloud_cover fraction (which inflates when thin cirrus is present).
+      // Adds ~2KB per response, same request, no extra API cost.
+      hourly: 'cloud_cover,temperature_2m,wind_speed_10m,wind_direction_10m,direct_radiation',
       start_date: dateStr,
       end_date: dateStr,
       timezone: 'Europe/Amsterdam',
@@ -76,6 +78,7 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
       temperature_2m?: number[];
       wind_speed_10m?: number[];
       wind_direction_10m?: number[];
+      direct_radiation?: number[];
     };
   };
 
@@ -83,6 +86,7 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
   const temp = data.hourly?.temperature_2m;
   const wind = data.hourly?.wind_speed_10m;
   const windDir = data.hourly?.wind_direction_10m;
+  const directRad = data.hourly?.direct_radiation;
   const time = data.hourly?.time;
   if (!cloud || !temp || !time || cloud.length !== 24) {
     throw new Error(`Unexpected Open-Meteo payload (got ${cloud?.length ?? 0} hours)`);
@@ -93,5 +97,6 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
     temp: Math.round(temp[h] ?? 0),
     windSpeed: wind?.[h] != null ? Math.round(wind[h]!) : undefined,
     windDirection: windDir?.[h] != null ? Math.round(windDir[h]!) : undefined,
+    directRadiation: directRad?.[h] != null ? Math.round(directRad[h]!) : undefined,
   }));
 }
