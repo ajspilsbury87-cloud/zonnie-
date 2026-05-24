@@ -333,60 +333,109 @@ export function treeShadowCoverage(
  * activates (e.g. at 10°, a 10 m building casts a 57 m shadow). */
 const MAX_SHADOW_OVERLAY_M = 150;
 
+// ── Shadow polygon helpers ────────────────────────────────────────────────────
+
+type Pt = { lat: number; lng: number };
+
 /**
- * Compute the ground-projected shadow polygon for a building with polygon
- * footprint data. Returns an array of `{latitude, longitude}` coordinate
- * objects suitable for react-native-maps `<Polygon coordinates={…} />`.
- *
- * Algorithm:
- *   1. Shadow direction  = (sunAzimuth + 180) % 360  [opposite of sun]
- *   2. Shadow length     = min(height / tan(altitude), MAX_SHADOW_OVERLAY_M)
- *   3. Offset in WGS84  = (dLng, dLat) computed from the shadow vector
- *   4. Shadow polygon   = original footprint vertices (forward) +
- *                          shadow-offset vertices (reversed)
- *      → traces the outer boundary of the shadow volume in a single
- *        closed path; react-native-maps fills the enclosed area.
- *
- * Returns `null` when the sun is below the horizon, when the building
- * has no polygon data (centroid-only fallback buildings), or when the
- * building is fewer than 3 vertices (degenerate).
- *
- * The caller is responsible for deduplication and viewport culling —
- * this function is pure and stateless.
+ * Z-component of the cross product (O→A) × (O→B).
+ * Negative  → B is clockwise of A relative to O (right turn).
+ * Positive  → B is counter-clockwise of A relative to O (left turn).
+ * Zero      → collinear.
  */
+function crossZ(O: Pt, A: Pt, B: Pt): number {
+  return (A.lng - O.lng) * (B.lat - O.lat) - (A.lat - O.lat) * (B.lng - O.lng);
+}
+
 /**
- * Remove consecutive duplicate (or near-duplicate) vertices from a polygon.
- * The 3D BAG source data regularly has multiple identical vertices in a row
- * (e.g. 4 copies of the same corner point). Zero-length degenerate edges
- * can confuse the native fill engine on iOS, causing polygons to not render.
+ * Convex hull of a point set — Jarvis march (gift wrapping).
  *
- * Threshold: 1e-5 degrees ≈ 1 m — anything closer is treated as the same
- * point for map-overlay purposes.
+ * Why convex hull for shadow polygons:
+ *   The ground shadow of a building is the Minkowski sum of the building's
+ *   footprint and the shadow-direction line segment. For a convex footprint
+ *   that sum is also convex, so the convex hull of
+ *   {original_vertices ∪ shadow_offset_vertices} is the exact shadow boundary.
+ *
+ *   The previous [original…, shadow.reverse()] approach relied on the input
+ *   winding order being consistent and the footprint being strictly convex.
+ *   3D BAG data has near-duplicate vertices (float rounding) and occasional
+ *   micro-concavities, which caused self-intersecting polygons. iOS renders
+ *   those with the even-odd fill rule, producing "holes" in the fill area.
+ *
+ * O(n²) — negligible for n ≤ 30 (deduped hull vertices × 2).
  */
-function dedupPoly(
-  poly: [number, number][],
-): [number, number][] {
-  const THRESH = 1e-5;
+function convexHull(pts: Pt[]): Pt[] {
+  const n = pts.length;
+  if (n < 3) return pts;
+
+  // Start with the leftmost point (min-lng), break ties by min-lat.
+  let start = 0;
+  for (let i = 1; i < n; i++) {
+    if (
+      pts[i]!.lng < pts[start]!.lng ||
+      (pts[i]!.lng === pts[start]!.lng && pts[i]!.lat < pts[start]!.lat)
+    ) {
+      start = i;
+    }
+  }
+
+  const hull: Pt[] = [];
+  let cur = start;
+
+  for (let step = 0; step <= n; step++) {
+    hull.push(pts[cur]!);
+    let next = (cur + 1) % n;
+    for (let i = 0; i < n; i++) {
+      if (crossZ(pts[cur]!, pts[next]!, pts[i]!) < 0) {
+        next = i;
+      }
+    }
+    cur = next;
+    if (cur === start) break;
+  }
+
+  return hull;
+}
+
+/**
+ * Strip consecutive duplicate (or near-duplicate) vertices.
+ * 3D BAG data has runs of identical coordinates (float rounding artefacts)
+ * that create zero-length edges. iOS (MKPolygon) can silently drop the fill
+ * for polygons with degenerate edges.
+ *
+ * Threshold: 1e-5° ≈ 1 m.
+ */
+function dedupPoly(poly: [number, number][]): [number, number][] {
+  const T = 1e-5;
   if (poly.length === 0) return poly;
   const out: [number, number][] = [poly[0]!];
   for (let i = 1; i < poly.length; i++) {
     const [plat, plng] = poly[i]!;
     const [llat, llng] = out[out.length - 1]!;
-    if (Math.abs(plat - llat) > THRESH || Math.abs(plng - llng) > THRESH) {
+    if (Math.abs(plat - llat) > T || Math.abs(plng - llng) > T) {
       out.push(poly[i]!);
     }
   }
-  // Also remove last vertex if it duplicates the first (closed-ring redundancy).
+  // Remove last vertex if it duplicates first (closed-ring redundancy).
   if (out.length > 1) {
     const [flat, flng] = out[0]!;
     const [llat, llng] = out[out.length - 1]!;
-    if (Math.abs(flat - llat) <= THRESH && Math.abs(flng - llng) <= THRESH) {
-      out.pop();
-    }
+    if (Math.abs(flat - llat) <= T && Math.abs(flng - llng) <= T) out.pop();
   }
   return out;
 }
 
+/**
+ * Compute the ground-projected shadow polygon for a building.
+ *
+ * Returns the convex hull of {footprint vertices ∪ shadow-offset vertices}.
+ * This is the correct outer boundary of the shadow volume for a convex
+ * building footprint, and degrades gracefully (slightly over-fills) for
+ * non-convex input. Always produces a simple, non-self-intersecting polygon.
+ *
+ * Returns `null` when the sun is below the horizon, the building has no
+ * polygon data, or fewer than 3 unique vertices remain after deduplication.
+ */
 export function computeShadowPolygon(
   building: Building,
   sunAltitude: number,
@@ -399,27 +448,22 @@ export function computeShadowPolygon(
   const rawLen = building.height / Math.tan(sunAltitude * DEG);
   const shadowLen = Math.min(rawLen, MAX_SHADOW_OVERLAY_M);
 
-  // Convert shadow vector from metres to WGS84 degree offsets.
   const dLng = (shadowLen * Math.sin(shadowDirRad)) / METRES_PER_DEG_LNG;
   const dLat = (shadowLen * Math.cos(shadowDirRad)) / METRES_PER_DEG_LAT;
 
-  // Strip consecutive duplicates — 3D BAG data frequently contains runs of
-  // identical vertices that create degenerate zero-length edges, which can
-  // prevent the native polygon layer from rendering the fill on iOS.
   const poly = dedupPoly(building.poly);
   if (poly.length < 3) return null;
 
-  const original = poly.map(([lat, lng]) => ({ latitude: lat, longitude: lng }));
-  // Shadow-tip vertices = original footprint shifted in shadow direction.
-  const shadow = poly.map(([lat, lng]) => ({
-    latitude: lat + dLat,
-    longitude: lng + dLng,
-  }));
+  // Combine original + shadow-offset vertices, then take convex hull.
+  const combined: Pt[] = [
+    ...poly.map(([lat, lng]) => ({ lat, lng })),
+    ...poly.map(([lat, lng]) => ({ lat: lat + dLat, lng: lng + dLng })),
+  ];
 
-  // Union polygon: forward through original footprint + backward through the
-  // shadow footprint. For a convex hull (which `poly` already is, per the 3D
-  // BAG fetcher), this traces the exact outer boundary of the shadow volume.
-  return [...original, ...shadow.reverse()];
+  const hull = convexHull(combined);
+  if (hull.length < 3) return null;
+
+  return hull.map(({ lat, lng }) => ({ latitude: lat, longitude: lng }));
 }
 
 /**
