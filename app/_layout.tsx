@@ -22,6 +22,8 @@ import { NotificationPrompt } from '@/src/components/NotificationPrompt';
 import { shouldShowPrompt } from '@/src/notifications/permission';
 import { useDailyForecastNotification } from '@/src/notifications/useDailyForecastNotification';
 import { useFavouritesSunnyNotifications } from '@/src/notifications/useFavouritesSunnyNotifications';
+import { useFeaturedTerraceNotification } from '@/src/notifications/useFeaturedTerraceNotification';
+import { useContextualNotifications } from '@/src/notifications/useContextualNotifications';
 import { OnboardingIntro } from '@/src/onboarding/OnboardingIntro';
 import { shouldShowIntro } from '@/src/onboarding/state';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
@@ -88,6 +90,15 @@ export default function RootLayout() {
   // per favourited terrace that has a 2+ hour sunny block tomorrow.
   // Re-syncs whenever favourites or tomorrow's weather changes.
   useFavouritesSunnyNotifications();
+
+  // Monthly "featured terrace of the month" notification — fires on the
+  // 1st of next month at 10:00. Synced once per app open.
+  useFeaturedTerraceNotification();
+
+  // Contextual notifications: week-ahead (Mon 08:00), weekday evening
+  // alert (Mon–Fri 16:00), and weekend day-of alert (Sat–Sun 09:00).
+  // Re-syncs whenever any of the next 7 days of weather data changes.
+  useContextualNotifications();
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
