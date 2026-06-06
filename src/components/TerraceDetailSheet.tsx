@@ -379,7 +379,7 @@ export function TerraceDetailSheet() {
           <>
             <View style={styles.header}>
               <View style={styles.headerText}>
-                <Text style={styles.name} numberOfLines={2}>
+                <Text style={styles.name} numberOfLines={3}>
                   {terrace.name}
                 </Text>
                 <Text style={styles.subtitle}>
