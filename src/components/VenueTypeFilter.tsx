@@ -38,9 +38,11 @@ export function VenueTypeFilter() {
   const toggleCategory       = useAreaStore((s) => s.toggleCategory);
   const matchModeOnly        = useAreaStore((s) => s.matchModeOnly);
   const toggleMatchModeOnly  = useAreaStore((s) => s.toggleMatchModeOnly);
-  const sortByDistance       = useAreaStore((s) => s.sortByDistance);
-  const toggleSortByDistance = useAreaStore((s) => s.toggleSortByDistance);
-  const chipWidth            = useChipWidth();
+  const sortByDistance        = useAreaStore((s) => s.sortByDistance);
+  const toggleSortByDistance  = useAreaStore((s) => s.toggleSortByDistance);
+  const hiddenGemOnly         = useAreaStore((s) => s.hiddenGemOnly);
+  const toggleHiddenGemOnly   = useAreaStore((s) => s.toggleHiddenGemOnly);
+  const chipWidth             = useChipWidth();
 
   // Category chip labels — derived from t.* so they update on language change.
   // The strings include the emoji (e.g. "☕ Koffie" / "☕ Coffee").
@@ -124,6 +126,19 @@ export function VenueTypeFilter() {
               numberOfLines={1}
             >
               {t.filterNearMe}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => { haptics.selection(); toggleHiddenGemOnly(); }}
+            activeOpacity={0.7}
+            style={[styles.modeChip, { width: chipWidth }, hiddenGemOnly && styles.modeChipHiddenGem]}
+            accessibilityLabel={t.filterHiddenGemA11y}
+          >
+            <Text
+              style={[styles.chipText, hiddenGemOnly && styles.chipTextActive]}
+              numberOfLines={1}
+            >
+              {t.filterHiddenGem}
             </Text>
           </TouchableOpacity>
         </View>
@@ -230,6 +245,15 @@ const styles = StyleSheet.create({
   },
   modeChipNearMe: {
     backgroundColor: palette.leaf,
+    shadowOpacity: 0.16,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  modeChipHiddenGem: {
+    // Amethyst purple — distinct from burnt (orange) and leaf (green),
+    // carries the "rare / special" connotation of a gem.
+    backgroundColor: '#7B5EA7',
     shadowOpacity: 0.16,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },

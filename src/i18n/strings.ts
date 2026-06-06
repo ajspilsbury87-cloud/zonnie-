@@ -37,8 +37,10 @@ export const strings = {
     filterNearMe: '📍 Dichtbij',
     filterMatch: '📺 Match',
     filterFavourites: '🤍 Favorieten',
+    filterHiddenGem: '💎 Hidden gem',
     filterOutdoorA11y: 'Toon alleen terrassen met buitenschermen',
     filterNearMeA11y: 'Sorteer op dichtstbijzijnde zonnige plek',
+    filterHiddenGemA11y: 'Toon alleen minder bekende terrassen (beste zon, minder mensen)',
 
     // More filters toggle
     moreFilters: 'Meer filters',
@@ -93,6 +95,7 @@ export const strings = {
     sunniestNow: 'NU ZONNIGST',
     seeAllTerraces: 'Alle terrassen bekijken',
     featured: 'Uitgelicht',
+    featuredSection: 'UITGELICHT',
 
     // Search box
     searchPlaceholder: 'Zoek terrassen, vibes, adressen…',
@@ -251,8 +254,10 @@ export const strings = {
     filterNearMe: '📍 Near me',
     filterMatch: '📺 Match',
     filterFavourites: '🤍 Favourites',
+    filterHiddenGem: '💎 Hidden gem',
     filterOutdoorA11y: 'Show only terraces with outdoor screens',
     filterNearMeA11y: 'Sort by nearest sunny spot',
+    filterHiddenGemA11y: 'Show only lesser-known terraces (best sun, fewer people)',
 
     // More filters toggle
     moreFilters: 'More filters',
@@ -307,6 +312,7 @@ export const strings = {
     sunniestNow: 'SUNNIEST RIGHT NOW',
     seeAllTerraces: 'See all terraces',
     featured: 'Featured',
+    featuredSection: 'FEATURED',
 
     // Search box
     searchPlaceholder: 'Search terraces, vibes, addresses…',

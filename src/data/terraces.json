@@ -5019,7 +5019,9 @@
     "verifiedAt": "2026-05-03T13:34:58.507Z",
     "placeId": "ChIJPbrjuQHixUcRUwDluuuXuEY",
     "googleRating": 4.1,
-    "googleReviewCount": 746
+    "googleReviewCount": 746,
+    "featured": true,
+    "photoUrl": "https://app.thefeedfactory.nl/api/assets/5ff8a8ccde7e8633a4ab8d03/ad35c805-472d-4c0b-b306-7631beb6fd05.jpg"
   },
   {
     "id": 502,
@@ -17044,5 +17046,21 @@
     ],
     "googleRating": 4.2,
     "googleReviewCount": 1708
+  },
+  {
+    "id": 1382,
+    "name": "Piattini",
+    "lat": 52.34835,
+    "lng": 4.86145,
+    "area": "Stadionbuurt",
+    "facing": "SW",
+    "capacity": "S",
+    "vibe": "Intimate Venetian restaurant, natural wines and homemade pasta",
+    "address": "Marathonweg 8HS",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "featured": true,
+    "photoUrl": "https://menupiattini.nl/wp-content/uploads/2025/08/250717_PIATTINI_BS_12.jpg"
   }
 ]

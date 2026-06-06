@@ -31,7 +31,6 @@ import { Platform } from 'react-native';
 import { fromZonedTime } from 'date-fns-tz';
 
 import { TERRACES } from '@/src/data/terraces';
-import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { AMSTERDAM_TZ, computeSunScore } from '@/src/engines/scoring';
 import type { Weather } from '@/src/engines/types';
 
@@ -65,7 +64,6 @@ function findSunnyBlock(
 ): SunnyBlock | null {
   const terrace = TERRACES.find((t) => t.id === terraceId);
   if (!terrace) return null;
-  const buildings = getBuildingsForTerrace(terraceId);
 
   let bestStart = -1;
   let bestEnd = -1;
@@ -77,7 +75,7 @@ function findSunnyBlock(
 
   for (let h = MIN_HOUR; h <= MAX_HOUR; h++) {
     const w = hourly[h];
-    const { score } = computeSunScore(terrace, buildings, h, dateStr, 'sunny', w);
+    const { score } = computeSunScore(terrace, h, dateStr, 'sunny', w);
     if (score >= SUNNY_THRESHOLD) {
       if (curStart < 0) {
         curStart = h;

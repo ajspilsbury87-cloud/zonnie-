@@ -40,20 +40,20 @@ describe('amsterdamLocalToUtc — DST handling', () => {
 
 describe('computeSunScore', () => {
   test('south-facing terrace at noon scores higher than north-facing', () => {
-    const south = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'sunny');
-    const north = computeSunScore(terrace('N'), [], 13, '2025-06-21', 'sunny');
+    const south = computeSunScore(terrace('S'), 13, '2025-06-21', 'sunny');
+    const north = computeSunScore(terrace('N'), 13, '2025-06-21', 'sunny');
     expect(south.score).toBeGreaterThan(north.score);
   });
 
   test('midnight → score 0 (sun below horizon)', () => {
-    const result = computeSunScore(terrace('S'), [], 0, '2025-06-21', 'sunny');
+    const result = computeSunScore(terrace('S'), 0, '2025-06-21', 'sunny');
     expect(result.score).toBe(0);
     expect(result.sun.altitude).toBeLessThan(0);
   });
 
   test('overcast weather drops score noticeably vs sunny', () => {
-    const sunny = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'sunny');
-    const overcast = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'overcast');
+    const sunny = computeSunScore(terrace('S'), 13, '2025-06-21', 'sunny');
+    const overcast = computeSunScore(terrace('S'), 13, '2025-06-21', 'overcast');
     // Overcast should be clearly lower, but not crushed.
     //
     // With cloud coefficient 0.30 (vs old 0.55), 100% overcast → ×0.70 and
@@ -68,8 +68,8 @@ describe('computeSunScore', () => {
     // 95% cloud cover (overcast profile). Even with most direct sun blocked,
     // a south-facing terrace at noon must still score meaningfully higher
     // than a north-facing one — otherwise pin colors collapse to one band.
-    const south = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'overcast');
-    const north = computeSunScore(terrace('N'), [], 13, '2025-06-21', 'overcast');
+    const south = computeSunScore(terrace('S'), 13, '2025-06-21', 'overcast');
+    const north = computeSunScore(terrace('N'), 13, '2025-06-21', 'overcast');
     // Either S/N gap ≥ 10 percentage points, OR S exceeds N by ≥ 30% (relative).
     // Both express "the cloud factor didn't crush all variation".
     const gap = south.score - north.score;
@@ -79,14 +79,14 @@ describe('computeSunScore', () => {
   test('"All" facing terrace gets a flat bonus over a fixed-facing one', () => {
     // Use a direction where a fixed facing gets ZERO bonus (>=90° from sun).
     // At summer noon (sun ~south), an N-facing terrace has facingDiff = 180 → no bonus.
-    const all = computeSunScore(terrace('All'), [], 13, '2025-06-21', 'sunny');
-    const facingNorth = computeSunScore(terrace('N'), [], 13, '2025-06-21', 'sunny');
+    const all = computeSunScore(terrace('All'), 13, '2025-06-21', 'sunny');
+    const facingNorth = computeSunScore(terrace('N'), 13, '2025-06-21', 'sunny');
     expect(all.score).toBeGreaterThan(facingNorth.score);
   });
 
   test('DST: same wall-clock time in summer vs winter resolves to different sun positions', () => {
-    const summer = computeSunScore(terrace('S'), [], 13, '2025-06-21', 'sunny');
-    const winter = computeSunScore(terrace('S'), [], 13, '2025-12-21', 'sunny');
+    const summer = computeSunScore(terrace('S'), 13, '2025-06-21', 'sunny');
+    const winter = computeSunScore(terrace('S'), 13, '2025-12-21', 'sunny');
     // Summer noon is much higher than winter noon — score should reflect that.
     expect(summer.sun.altitude).toBeGreaterThan(50);
     expect(winter.sun.altitude).toBeGreaterThan(0);
@@ -94,7 +94,7 @@ describe('computeSunScore', () => {
   });
 
   test('returned sun position matches solarPosition for the resolved UTC instant', () => {
-    const result = computeSunScore(terrace('S'), [], 14, '2025-06-21', 'sunny');
+    const result = computeSunScore(terrace('S'), 14, '2025-06-21', 'sunny');
     const expected = solarPosition(amsterdamLocalToUtc('2025-06-21', 14), AMS_LAT, AMS_LNG);
     expect(result.sun.altitude).toBeCloseTo(expected.altitude, 5);
     expect(result.sun.azimuth).toBeCloseTo(expected.azimuth, 5);

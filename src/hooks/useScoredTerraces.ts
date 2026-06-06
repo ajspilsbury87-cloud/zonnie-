@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 
 import { TERRACES } from '@/src/data/terraces';
-import { getBuildingsForTerrace } from '@/src/data/buildings';
-import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea } from '@/src/data/regions';
 import { categoriesForTerrace } from '@/src/data/categories';
 import { computeSunScore } from '@/src/engines/scoring';
@@ -66,16 +64,12 @@ function cachedHourScore(
   const key = `${terrace.id}|${hour}|${dateStr}|${weatherBucket(weather)}`;
   const hit = HOUR_SCORE_CACHE.get(key);
   if (hit != null) return hit;
-  const buildings = getBuildingsForTerrace(terrace.id);
-  const trees = getTreesForTerrace(terrace.id);
   const score = computeSunScore(
     terrace,
-    buildings,
     hour,
     dateStr,
     'sunny',
     weather,
-    trees,
   ).score;
   if (HOUR_SCORE_CACHE.size >= MAX_CACHE_SIZE) {
     const dropCount = Math.floor(MAX_CACHE_SIZE * 0.2);
@@ -135,6 +129,7 @@ export function useScoredTerraces(
   const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
   const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
   const sortByDistance = useAreaStore((s) => s.sortByDistance);
+  const hiddenGemOnly = useAreaStore((s) => s.hiddenGemOnly);
   const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
   const query = useSearchStore((s) => s.query);
   const weatherByDate = useWeatherStore((s) => s.byDate);
@@ -157,6 +152,15 @@ export function useScoredTerraces(
     }
     if (matchModeOnly) {
       filtered = filtered.filter((t) => (t.outdoorScreens ?? 0) > 0);
+    }
+    // Hidden gem: bottom quartile of review count (< 200) plus terraces with
+    // no review data at all. ~364 of 484 terraces pass this threshold — a
+    // meaningful "off the beaten track" subset.
+    const HIDDEN_GEM_MAX_REVIEWS = 200;
+    if (hiddenGemOnly) {
+      filtered = filtered.filter(
+        (t) => !t.googleReviewCount || t.googleReviewCount < HIDDEN_GEM_MAX_REVIEWS,
+      );
     }
     if (selectedRegions.size > 0) {
       filtered = filtered.filter((t) => {
@@ -215,6 +219,7 @@ export function useScoredTerraces(
     favoriteIds,
     matchModeOnly,
     sortByDistance,
+    hiddenGemOnly,
     query,
     weatherByDate,
     coordKey, // eslint-disable-line react-hooks/exhaustive-deps

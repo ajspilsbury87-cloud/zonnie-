@@ -99,6 +99,13 @@ export interface Terrace {
    * data quietly in a "verified by Zonnie 3 days ago" badge.
    */
   outdoorScreensVerifiedAt?: string;
+  /**
+   * Direct URL to a representative photo for this terrace. Used on the
+   * featured carousel on the landing page. Curated manually — only set
+   * for featured venues. Falls back to a warm gradient placeholder when
+   * absent.
+   */
+  photoUrl?: string;
 }
 
 export interface Building {
@@ -173,11 +180,5 @@ export interface ScoreResult {
   /** 0–1 normalized sun score. */
   score: number;
   sun: SunPosition;
-  /**
-   * Fraction of the sun's silhouette blocked by surrounding buildings,
-   * 0 = unobstructed, 1 = fully blocked. Replaces the earlier `shadow:
-   * boolean`. Used by debug/validation tooling and the detail sheet.
-   */
-  shadow: number;
   weather: Weather;
 }

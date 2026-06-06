@@ -45,6 +45,13 @@ interface AreaState {
    * Falls back to pure sun-score sort if location is unavailable.
    */
   sortByDistance: boolean;
+  /**
+   * When true, restrict to terraces with fewer than 200 Google reviews
+   * (or no review data at all). Bottom quartile of the dataset — surfaces
+   * lesser-known spots for users who want "best sun, fewest people".
+   * ANDs with all other active filters.
+   */
+  hiddenGemOnly: boolean;
   toggle: (region: Region) => void;
   toggleCategory: (cat: VenueCategory) => void;
   setAll: (regions: Region[]) => void;
@@ -55,6 +62,7 @@ interface AreaState {
   toggleMatchModeOnly: () => void;
   setSortByDistance: (on: boolean) => void;
   toggleSortByDistance: () => void;
+  toggleHiddenGemOnly: () => void;
 }
 
 export const useAreaStore = create<AreaState>((set, get) => ({
@@ -63,6 +71,7 @@ export const useAreaStore = create<AreaState>((set, get) => ({
   favoritesOnly: false,
   matchModeOnly: false,
   sortByDistance: false,
+  hiddenGemOnly: false,
   toggle: (region) =>
     set((s) => {
       const next = new Set(s.selectedRegions);
@@ -85,6 +94,7 @@ export const useAreaStore = create<AreaState>((set, get) => ({
       favoritesOnly: false,
       matchModeOnly: false,
       sortByDistance: false,
+      hiddenGemOnly: false,
     }),
   setFavoritesOnly: (on) => set({ favoritesOnly: on }),
   toggleFavoritesOnly: () => set({ favoritesOnly: !get().favoritesOnly }),
@@ -92,4 +102,5 @@ export const useAreaStore = create<AreaState>((set, get) => ({
   toggleMatchModeOnly: () => set({ matchModeOnly: !get().matchModeOnly }),
   setSortByDistance: (on) => set({ sortByDistance: on }),
   toggleSortByDistance: () => set({ sortByDistance: !get().sortByDistance }),
+  toggleHiddenGemOnly: () => set({ hiddenGemOnly: !get().hiddenGemOnly }),
 }));

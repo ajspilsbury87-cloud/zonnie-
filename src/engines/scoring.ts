@@ -3,9 +3,9 @@
  *
  * Combines:
  *   1. Solar altitude (higher sun → higher base score)
- *   2. Shadow obstruction (in-shadow → 15% of full sun)
- *   3. Cloud cover attenuation (100% cloud → 85% reduction)
- *   4. Terrace orientation bonus (facing the sun → up to +30%)
+ *   2. Cloud cover attenuation (100% cloud → 85% reduction)
+ *   3. Terrace orientation bonus (facing the sun → up to +30%)
+ *   4. Temperature comfort multiplier (±15% around 20°C baseline)
  *
  * Change from the prototype: the hardcoded `utcOffset = 2` parameter is gone.
  * Instead we resolve dates against `Europe/Amsterdam` so the engine is correct
@@ -14,13 +14,10 @@
 
 import { fromZonedTime } from 'date-fns-tz';
 import { solarPosition } from './solar';
-import { shadowCoverage, treeShadowCoverage } from './shadow';
 import type {
-  Building,
   Facing,
   ScoreResult,
   Terrace,
-  Tree,
   Weather,
   WeatherProfile,
 } from './types';
@@ -160,14 +157,12 @@ export function amsterdamLocalToUtc(dateStr: string, hour: number): Date {
  * Compute the sun score for a single terrace at a given local Amsterdam date/hour.
  *
  * @param terrace          Terrace (only lat/lng/facing are read)
- * @param buildings        Nearby buildings for shadow ray-casting
  * @param hour             Hour of day in Amsterdam local time (fractional, e.g. 14.5)
  * @param dateStr          Date in 'YYYY-MM-DD' (interpreted as Amsterdam local)
  * @param weatherProfile   sunny | partlyCloudy | cloudy | overcast
  */
 export function computeSunScore(
   terrace: Pick<Terrace, 'lat' | 'lng' | 'facing'>,
-  buildings: Building[],
   hour: number,
   dateStr: string,
   weatherProfile: WeatherProfile,
@@ -178,22 +173,10 @@ export function computeSunScore(
    * engine stays runnable offline / before the fetch lands.
    */
   weatherOverride?: Weather,
-  /**
-   * Optional nearby trees from the Bomenkaart dataset. When provided,
-   * tree canopy shadow is combined with building shadow (Math.max).
-   * Pass an empty array or omit to skip tree shadow (e.g. during
-   * testing or when Bomenkaart data hasn't been fetched yet).
-   */
-  trees?: Tree[],
 ): ScoreResult {
   const utcDate = amsterdamLocalToUtc(dateStr, hour);
   const sun = solarPosition(utcDate, terrace.lat, terrace.lng);
   const weather = weatherOverride ?? getWeather(hour, weatherProfile);
-  const buildingCoverage = shadowCoverage(terrace, buildings, sun.altitude, sun.azimuth);
-  const treeCoverage = trees && trees.length > 0
-    ? treeShadowCoverage(terrace, trees, sun.altitude, sun.azimuth)
-    : 0;
-  const coverage = Math.max(buildingCoverage, treeCoverage);
 
   let score = 0;
   if (sun.altitude > 0) {
@@ -201,10 +184,10 @@ export function computeSunScore(
     //
     // WHY FLAT ABOVE 25°:
     //   The app's purpose is "which terrace should I go to RIGHT NOW?"
-    //   That question is answered by shadow obstruction + facing alignment
-    //   + temperature — not by whether the sun is at 35° vs 55°. Both feel
-    //   like full sun on a terrace; only low angles (golden hour / early
-    //   morning) meaningfully reduce the terrace experience.
+    //   That question is answered by facing alignment + temperature — not
+    //   by whether the sun is at 35° vs 55°. Both feel like full sun on a
+    //   terrace; only low angles (golden hour / early morning) meaningfully
+    //   reduce the terrace experience.
     //
     //   With the old sqrt(alt/61) curve:
     //     - Morning (9am, alt ≈ 34°): altFactor = 0.75 — all S/SW-facing
@@ -214,9 +197,9 @@ export function computeSunScore(
     //       Users see 30s scores when they're sitting in bright warm light.
     //
     //   Flattening to 1.0 above 25° transfers the differentiation entirely
-    //   to facing and shadow, which is what the user actually cares about:
+    //   to facing and temperature, which is what the user actually cares about:
     //     - Morning 9am: E-facing in sun → 84%, W-facing (sun behind) → 35%.
-    //       The contrast is visible and meaningful; shaded terraces show dark.
+    //       The contrast is visible and meaningful.
     //     - Evening 7pm: W-facing in golden sun → 71%, S-facing → ~50%.
     //       Scores feel right for what users are experiencing.
     //
@@ -233,11 +216,6 @@ export function computeSunScore(
       ? 1.0
       : Math.sqrt(sun.altitude / ALT_FULL_DEG);
     score = altFactor;
-    // Continuous shadow attenuation — the multiplier ramps smoothly from 1.0
-    // (no obstruction) down to 0.15 (fully blocked). Replaces the old binary
-    // "in shadow → ×0.15, else ×1.0" cliff that produced bimodal score
-    // distributions.
-    score *= 1 - 0.85 * coverage;
     // Sky transparency — two paths depending on what weather data is available:
     //
     // PATH A — direct_radiation (real forecast from Open-Meteo):
@@ -355,7 +333,6 @@ export function computeSunScore(
   return {
     score: Math.min(1, Math.max(0, score / MAX_RAW)),
     sun,
-    shadow: coverage,
     weather,
   };
 }
@@ -369,7 +346,6 @@ export function computeSunScore(
  */
 export function computeRangeScore(
   terrace: Pick<Terrace, 'lat' | 'lng' | 'facing'>,
-  buildings: Building[],
   fromHour: number,
   toHour: number,
   dateStr: string,
@@ -386,7 +362,7 @@ export function computeRangeScore(
   let count = 0;
   for (let h = fromHour; h <= toHour; h++) {
     const override = hourlyWeather?.[h];
-    sum += computeSunScore(terrace, buildings, h, dateStr, weatherProfile, override).score;
+    sum += computeSunScore(terrace, h, dateStr, weatherProfile, override).score;
     count++;
   }
   return count > 0 ? sum / count : 0;

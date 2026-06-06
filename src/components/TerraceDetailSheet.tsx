@@ -37,7 +37,6 @@ import {
 } from '@/src/data/places';
 import { SunTimeline } from '@/src/components/SunTimeline';
 import { computeRangeScore, computeSunScore, findBestWindow } from '@/src/engines/scoring';
-import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -139,13 +138,11 @@ export function TerraceDetailSheet() {
 
   const score = useMemo(() => {
     if (!terrace) return 0;
-    const buildings = getBuildingsForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
     return computeRangeScore(
       terrace,
-      buildings,
       fromHour,
       toHour,
       dateStr,
@@ -161,13 +158,11 @@ export function TerraceDetailSheet() {
    */
   const sunTrend = useMemo(() => {
     if (!terrace) return null as 'rising' | 'holding' | 'falling' | null;
-    const buildings = getBuildingsForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
     const here = computeSunScore(
       terrace,
-      buildings,
       fromHour,
       dateStr,
       weatherProfile,
@@ -176,7 +171,6 @@ export function TerraceDetailSheet() {
     const prevHour = Math.max(0, fromHour - 1);
     const before = computeSunScore(
       terrace,
-      buildings,
       prevHour,
       dateStr,
       weatherProfile,
@@ -257,7 +251,6 @@ export function TerraceDetailSheet() {
    */
   const bestWindow = useMemo(() => {
     if (!terrace) return null;
-    const buildings = getBuildingsForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -265,7 +258,6 @@ export function TerraceDetailSheet() {
     const hourlyScores = Array.from({ length: 24 }, (_, h) =>
       computeSunScore(
         terrace,
-        buildings,
         h,
         dateStr,
         weatherProfile,
