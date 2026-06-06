@@ -1097,7 +1097,9 @@
     "capacity": "M",
     "vibe": "Greenhouse café",
     "address": "Eerste van der Helststraat 43",
-    "verified": true
+    "verified": true,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 71,
@@ -1421,7 +1423,9 @@
       "coffee"
     ],
     "googleRating": 4.4,
-    "googleReviewCount": 2417
+    "googleReviewCount": 2417,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 93,
@@ -1672,7 +1676,9 @@
     "verifiedAt": "2026-05-02T11:37:01.057Z",
     "placeId": "ChIJ856viTkIxkcRXFJrwFltL_4",
     "googleRating": 4.4,
-    "googleReviewCount": 9439
+    "googleReviewCount": 9439,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 110,
@@ -2167,7 +2173,9 @@
     "verifiedAt": "2026-05-02T11:37:12.291Z",
     "placeId": "ChIJ82Ku_mYJxkcRZWFK2mf5IyQ",
     "googleRating": 4.1,
-    "googleReviewCount": 1775
+    "googleReviewCount": 1775,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 142,
@@ -2334,7 +2342,9 @@
     "verifiedAt": "2026-05-02T11:37:16.008Z",
     "placeId": "ChIJK5ErwF8JxkcRqjp0mnDFR5E",
     "googleRating": 4.4,
-    "googleReviewCount": 3354
+    "googleReviewCount": 3354,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 152,
@@ -5038,7 +5048,9 @@
     "verifiedAt": "2026-05-03T13:34:58.507Z",
     "placeId": "ChIJfRmy6PDjxUcRfS7em1ADVvk",
     "googleRating": 4.3,
-    "googleReviewCount": 1029
+    "googleReviewCount": 1029,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 503,
@@ -5140,7 +5152,9 @@
     "verifiedAt": "2026-05-05T06:08:10.713Z",
     "placeId": "ChIJqy6Z7j4JxkcRQQAScR-Sj1M",
     "googleRating": 4.8,
-    "googleReviewCount": 78
+    "googleReviewCount": 78,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 509,
@@ -8546,7 +8560,9 @@
     "verifiedAt": "2026-05-05T06:10:40.162Z",
     "placeId": "ChIJoe7ppb8JxkcR4PA5ZooY0T4",
     "googleRating": 4.3,
-    "googleReviewCount": 440
+    "googleReviewCount": 440,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 798,
@@ -13032,7 +13048,9 @@
     "verifiedAt": "2026-05-05T06:39:05.334Z",
     "placeId": "ChIJXVNep7cJxkcRd7PwZSlGA3w",
     "googleRating": 4.3,
-    "googleReviewCount": 3726
+    "googleReviewCount": 3726,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 1163,
@@ -17062,5 +17080,117 @@
     "verifiedAt": "2026-06-06T00:00:00.000Z",
     "featured": true,
     "photoUrl": "https://menupiattini.nl/wp-content/uploads/2025/08/250717_PIATTINI_BS_12.jpg"
+  },
+  {
+    "id": 1383,
+    "name": "Alba",
+    "lat": 52.35325,
+    "lng": 4.90794,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "L",
+    "vibe": "Natural wine bar with 130m² sun terrace open morning to evening",
+    "address": "Wibautstraat 105",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+  },
+  {
+    "id": 1384,
+    "name": "Karavaan",
+    "lat": 52.36618,
+    "lng": 4.8728,
+    "area": "Oud West",
+    "facing": "SW",
+    "capacity": "L",
+    "vibe": "All-day Mediterranean café with large sunny terrace on Kwakersplein",
+    "address": "Kwakersplein 2",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+  },
+  {
+    "id": 1385,
+    "name": "Mossel & Gin",
+    "lat": 52.3826,
+    "lng": 4.87012,
+    "area": "Westerpark",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Iconic seafood bar at Westergasfabriek with outdoor terrace and gin tonics",
+    "address": "Gosschalklaan 12",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+  },
+  {
+    "id": 1386,
+    "name": "Café Struis",
+    "lat": 52.36208,
+    "lng": 4.93031,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Brouwerij 't IJ brewery bar — terrace next to the iconic windmill",
+    "address": "Zeeburgerstraat 1",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+  },
+  {
+    "id": 1387,
+    "name": "Café Restaurant Meyer",
+    "lat": 52.36093,
+    "lng": 4.89785,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "L",
+    "vibe": "Classic Amsterdam brasserie on the sunny Amstelveld square",
+    "address": "Amstelveld 12",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+  },
+  {
+    "id": 1388,
+    "name": "Café Marcella",
+    "lat": 52.3608,
+    "lng": 4.8981,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "S",
+    "vibe": "Canal-front neighbourhood café on Amstelveld",
+    "address": "Amstelveld 21",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+  },
+  {
+    "id": 1389,
+    "name": "Café Nieuw Amsterdam",
+    "lat": 52.38191,
+    "lng": 4.88838,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "French café with courtyard terrace on Haarlemmerstraat",
+    "address": "Haarlemmerstraat 75",
+    "verified": true,
+    "coordSource": "manual",
+    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   }
 ]
