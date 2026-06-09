@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <title>Zonnie — Privacy Policy</title>
+  <style>
+    :root {
+      --cream: #FFE5C2; --sand: #FFF8F0; --ink: #2A1F15; --inkSoft: #5A4A38;
+      --burnt: #D9633E; --terracotta: #B14222; --mist: #E8DCC8;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--sand);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      font-size: 17px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 40px 22px 80px; }
+    header { border-bottom: 2px solid var(--mist); padding-bottom: 20px; margin-bottom: 28px; }
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.1rem; line-height: 1.15; margin: 0 0 10px; color: var(--ink);
+    }
+    .dates { color: var(--inkSoft); font-size: 0.95rem; margin: 0; }
+    .dates strong { color: var(--ink); }
+    h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.4rem; margin: 38px 0 10px; color: var(--terracotta);
+    }
+    p { margin: 0 0 14px; }
+    ul { margin: 0 0 16px; padding-left: 22px; }
+    li { margin: 0 0 10px; }
+    a { color: var(--burnt); text-decoration: underline; word-break: break-word; }
+    a:hover { color: var(--terracotta); }
+    hr { border: none; border-top: 2px solid var(--mist); margin: 34px 0; }
+    .lead { font-size: 1.05rem; }
+    .note { color: var(--inkSoft); font-style: italic; font-size: 0.95rem; }
+    .intro strong, .lead strong { color: var(--terracotta); }
+    code { background: var(--mist); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>Zonnie — Privacy Policy</h1>
+      <p class="dates"><strong>Effective date:</strong> 2026-05-08 &nbsp;·&nbsp; <strong>Last updated:</strong> 2026-05-08</p>
+    </header>
+
+    <p class="intro lead">Zonnie (“the app”, “we”) is built and operated by Andy Spilsbury, an independent developer based in Amsterdam. This policy explains what data the app touches and what we do with it. The short version: <strong>we don’t collect any of your data</strong>, and the app works without an account.</p>
+
+    <hr>
+
+    <h2>What we collect</h2>
+    <p><strong>Nothing personal. Nothing leaves your device that identifies you.</strong></p>
+    <p>Specifically:</p>
+    <ul>
+      <li><strong>No account.</strong> The app does not ask you to sign up, sign in, or provide an email address.</li>
+      <li><strong>No analytics.</strong> The app does not include Google Analytics, Firebase, Mixpanel, Sentry, or any third-party analytics SDK.</li>
+      <li><strong>No advertising IDs.</strong> The app does not request or use IDFA, App Tracking Transparency permissions, or any advertising identifier.</li>
+      <li><strong>No cookies.</strong> Native apps don’t have cookies in the web sense; we also store no equivalent persistent identifier.</li>
+    </ul>
+
+    <h2>Data the app uses on-device only</h2>
+    <ul>
+      <li><strong>Your location</strong> (foreground only, while the app is open). Used exclusively to centre the map on you and rank nearby terraces by distance. Your coordinates <strong>never leave your device.</strong> Apple Maps’ <code>react-native-maps</code> displays them as a blue dot; that’s the only place they go.</li>
+      <li><strong>Your favourites.</strong> When you tap the heart on a terrace, the terrace’s ID is stored on-device using <code>AsyncStorage</code> (Apple’s encrypted-at-rest local storage). Your favourites never sync to any server.</li>
+    </ul>
+
+    <h2>Data we send to third parties</h2>
+    <p>To make the app useful we query a few public APIs. Each receives only what’s necessary, and <strong>never anything that identifies you</strong>:</p>
+    <ul>
+      <li><strong>Open-Meteo</strong> (open-meteo.com) — receives the date and Amsterdam’s city-centre coordinates (52.3676, 4.9041). It returns the weather forecast. Open-Meteo’s privacy policy: <a href="https://open-meteo.com/en/terms">https://open-meteo.com/en/terms</a></li>
+      <li><strong>Google Places API</strong> (Google, googleapis.com) — receives place IDs (each terrace has a public Google Place ID). Returns each venue’s rating, opening hours, and phone number for display. Google receives the place ID and your IP address (the latter unavoidable in any HTTP request); Google’s privacy policy: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
+      <li><strong>Map tile servers</strong> — your map view sends standard map-tile requests to either Apple Maps (on iOS, via MapKit) or Google Maps (on Android, via the Maps SDK). Each platform’s own privacy policy governs that traffic, which Zonnie does not see or process.
+        <ul>
+          <li>Apple’s policy: <a href="https://www.apple.com/legal/privacy/">https://www.apple.com/legal/privacy/</a></li>
+          <li>Google’s policy: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
+        </ul>
+      </li>
+    </ul>
+    <p>We do <strong>not</strong> send your location, favourites, in-app activity, device ID, or any user-identifying data to any of these services.</p>
+
+    <h2>What we don’t do</h2>
+    <ul>
+      <li>We do not sell, rent, or share data — because we don’t have any to sell.</li>
+      <li>We do not use your data for advertising — there are no ads in the app.</li>
+      <li>We do not track you across other apps or websites.</li>
+      <li>We do not store your data on our servers — we don’t have user-data servers.</li>
+    </ul>
+
+    <h2>Crash reports and diagnostic data</h2>
+    <p>The only diagnostic channel is your platform’s standard crash-reporting system — Apple’s on iOS (which only reports back to Apple, with your permission via Settings → Privacy → Analytics) or Google Play’s on Android (likewise, with your permission via Settings → Google → Usage &amp; diagnostics). Zonnie itself does not receive or read these reports. We may add an in-app crash-reporting tool like Sentry in the future; if we do, we’ll update this policy and disclose it in the app before any reports are sent.</p>
+
+    <h2>Children</h2>
+    <p>The app is not directed at children under 13. The App Store and Google Play age ratings are both 4+ / Everyone — the content is suitable for any age — but we do not knowingly collect data from anyone in any age group (per the sections above).</p>
+
+    <h2>Your rights</h2>
+    <p>Because we don’t collect personal data, there’s nothing for you to request, export, or delete from us. To clear local data on your device:</p>
+    <ul>
+      <li><strong>Favourites &amp; app preferences:</strong> delete and reinstall the app.</li>
+      <li><strong>Location permission:</strong> Settings → Zonnie → Location.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>Questions or concerns:</p>
+    <ul>
+      <li>Email: <a href="mailto:a.j.spilsbury87@gmail.com">a.j.spilsbury87@gmail.com</a></li>
+    </ul>
+
+    <h2>Changes to this policy</h2>
+    <p>If we make material changes — for example, adding a third-party SDK or a new permission — we’ll bump the “Last updated” date above and disclose the change in the app’s release notes. We won’t change “we don’t collect your data” without obvious in-app prompts.</p>
+
+    <hr>
+
+    <p class="note">This policy is plain-language by design. If anything is unclear, that’s a bug; please email and we’ll fix the wording.</p>
+  </main>
+</body>
+</html>
