@@ -10,6 +10,8 @@
  * (`peach`, `terracotta`, etc.).
  */
 
+import { bandForScore } from '@/src/engines/bands';
+
 export const palette = {
   // 70s sunset — primary brand
   cream: '#FFE5C2',
@@ -102,12 +104,14 @@ export const radii = {
  *
  * These are the same colors used as pin T-fills in the brand-asset SVGs —
  * keeping in-app score chips/bars visually consistent with map markers.
- * Score band thresholds match `engines/scoring.ts#scoreLabel`.
+ * Thresholds come from bandForScore (bands.ts) — single source of truth.
  */
 export function scoreToColor(score: number): string {
-  if (score > 0.7) return palette.burnt; // Full sun — terracotta
-  if (score > 0.5) return palette.orange; // Mostly sunny — peach
-  if (score > 0.3) return palette.mustard; // Partial sun
-  if (score > 0.1) return palette.cocoa; // Mostly shade
-  return palette.ink; // In shadow
+  switch (bandForScore(score)) {
+    case 'full':    return palette.burnt;   // Full sun — terracotta
+    case 'mostly':  return palette.orange;  // Mostly sunny — peach
+    case 'partial': return palette.mustard; // Partial sun
+    case 'mshade':  return palette.cocoa;   // Mostly shade
+    default:        return palette.ink;     // In shadow
+  }
 }

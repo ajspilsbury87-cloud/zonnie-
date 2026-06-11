@@ -63,6 +63,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -172,6 +173,13 @@ const FALLBACK_PRICES = {
   yearly: '€5.99',
   lifetime: '€17.99',
 } as const;
+
+// Required legal links shown inside the subscription purchase flow
+// (App Store Review Guideline 3.1.2): a functional Terms of Use (EULA)
+// and Privacy Policy. EULA uses Apple's standard licence; the privacy
+// policy is the Zonnie GitHub Pages page (served as text/html).
+const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+const PRIVACY_URL = 'https://ajspilsbury87-cloud.github.io/zonnie-/PRIVACY-POLICY.html';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -426,6 +434,28 @@ export function ProPaywall() {
         {/* ── Legal / restore ── */}
         <Text style={styles.legal}>{t.legalText}</Text>
 
+        {/* Required subscription links (App Store Guideline 3.1.2):
+            functional Terms of Use (EULA) + Privacy Policy. */}
+        <View style={styles.legalLinks}>
+          <Pressable
+            onPress={() => { Linking.openURL(TERMS_URL).catch(() => {}); }}
+            hitSlop={8}
+            accessibilityRole="link"
+            accessibilityLabel={t.termsOfUse}
+          >
+            <Text style={styles.legalLink}>{t.termsOfUse}</Text>
+          </Pressable>
+          <Text style={styles.legalLinkSep}>·</Text>
+          <Pressable
+            onPress={() => { Linking.openURL(PRIVACY_URL).catch(() => {}); }}
+            hitSlop={8}
+            accessibilityRole="link"
+            accessibilityLabel={t.privacyPolicy}
+          >
+            <Text style={styles.legalLink}>{t.privacyPolicy}</Text>
+          </Pressable>
+        </View>
+
         <Pressable
           onPress={handleRestore}
           disabled={isLoading}
@@ -610,6 +640,24 @@ const styles = StyleSheet.create({
     lineHeight: fontSizes.xs * 1.5,
     marginBottom: spacing.sm,
     maxWidth: 300,
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  legalLink: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.xs,
+    color: palette.inkSoft,
+    textDecorationLine: 'underline',
+  },
+  legalLinkSep: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.xs,
+    color: palette.mistDeep,
   },
   restoreButton: {
     paddingVertical: spacing.sm,

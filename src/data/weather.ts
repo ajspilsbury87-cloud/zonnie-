@@ -5,9 +5,13 @@
  * and not consumable directly from a phone. Open-Meteo wraps multiple models
  * including KNMI HARMONIE-Arome (the gold-standard NL micro-forecast) in a
  * phone-friendly JSON API with no key, no rate limits, and 7-day forecast
- * horizon that matches our date picker. We pin to HARMONIE explicitly via the
- * `models` parameter — without it, Open-Meteo defaults to an ECMWF blend that
- * is less accurate for Amsterdam-scale urban forecasting.
+ * horizon that matches our date picker.
+ *
+ * Model strategy: we use `models: 'best_match'` rather than pinning to
+ * HARMONIE exclusively. For days 0–2, Open-Meteo resolves this to HARMONIE
+ * automatically (same accuracy). For days 3–7 it uses ECMWF, which is
+ * necessary because HARMONIE only forecasts ~48-72 hours out — pinning to it
+ * caused all hours on days 4+ to return null from the API.
  *
  * Swap path to a different provider (KNMI proxy, OpenWeather, etc.): replace
  * `fetchHourlyForecast` here. The shape of `Weather[]` is provider-neutral.
@@ -41,10 +45,14 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
       start_date: dateStr,
       end_date: dateStr,
       timezone: 'Europe/Amsterdam',
-      // Pin to KNMI HARMONIE-Arome: higher-resolution NL model vs the
-      // default ECMWF blend. Meaningful difference for Amsterdam-scale
-      // micro-forecasting (cloud cover timing, coastal wind, sea-breeze).
-      models: 'knmi_harmonie_arome_europe',
+      // Use Open-Meteo's automatic best-model selection. For days 0–2 this
+      // resolves to KNMI HARMONIE-Arome (higher-res NL model, same accuracy
+      // as pinning explicitly). For days 3–7 it falls back to ECMWF, which
+      // has full 7-day coverage — HARMONIE's horizon is only ~48-72 h, so
+      // pinning to it caused all afternoon hours on days 4+ to return null,
+      // which the ?-fallback silently converted to 0 °C / 0 % cloud (frozen
+      // but sunny), making those day-strips appear blank in the UI.
+      models: 'best_match',
     }).toString();
 
   // 10-second timeout via AbortController. We previously used the static

@@ -79,6 +79,7 @@ export const strings = {
     outdoorScreen: '1 buitenscherm',
     outdoorScreens: (n: number) => `${n} buitenschermen`,
     photosLocked: "Foto's · Pro",
+    loadingPhotos: "Foto's laden…",
     todayHours: 'Openingstijden vandaag',
     curatedByZonnie: 'Gecureerd door Zonnie',
     loadingHours: 'Openingstijden laden…',
@@ -192,8 +193,8 @@ export const strings = {
 
     // Paywall feature bullets
     proFeature1: 'Tijdschuifregelaar — versleep naar elk uur',
-    proFeature2: 'Google-beoordelingen direct in beeld',
-    proFeature3: 'Onbeperkte favorieten + pushmeldingen',
+    proFeature2: "Terrasfoto's",
+    proFeature3: 'Onbeperkte favorieten',
 
     // Paywall tier labels
     tierMonthly: 'Maandelijks',
@@ -215,6 +216,8 @@ export const strings = {
     buyLifetimeA11y: 'Eenmalig kopen',
     legalText:
       'Abonnementen worden automatisch verlengd. Annuleer altijd via Instellingen. Betaling wordt in rekening gebracht via je Apple ID bij bevestiging.',
+    termsOfUse: 'Gebruiksvoorwaarden',
+    privacyPolicy: 'Privacybeleid',
     restorePurchases: 'Aankopen herstellen',
     restoreA11y: 'Eerdere aankopen herstellen',
     alertNotAvailableTitle: 'Niet beschikbaar',
@@ -296,6 +299,7 @@ export const strings = {
     outdoorScreen: '1 outdoor screen',
     outdoorScreens: (n: number) => `${n} outdoor screens`,
     photosLocked: 'Photos · Pro',
+    loadingPhotos: 'Loading photos…',
     todayHours: "Today's hours",
     curatedByZonnie: 'Curated by Zonnie',
     loadingHours: 'Loading hours…',
@@ -410,8 +414,8 @@ export const strings = {
 
     // Paywall feature bullets
     proFeature1: 'Time scrubber — drag to any hour',
-    proFeature2: 'Google ratings inline',
-    proFeature3: 'Unlimited favourites + push alerts',
+    proFeature2: 'Terrace photos',
+    proFeature3: 'Unlimited favourites',
 
     // Paywall tier labels
     tierMonthly: 'Monthly',
@@ -432,6 +436,8 @@ export const strings = {
     buyLifetimeA11y: 'Buy lifetime',
     legalText:
       'Subscriptions renew automatically. Cancel anytime in Settings. Payment charged to your Apple ID at confirmation.',
+    termsOfUse: 'Terms of Use',
+    privacyPolicy: 'Privacy Policy',
     restorePurchases: 'Restore purchases',
     restoreA11y: 'Restore previous purchases',
     alertNotAvailableTitle: 'Not available',

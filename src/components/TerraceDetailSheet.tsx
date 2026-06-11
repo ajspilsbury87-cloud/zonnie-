@@ -36,7 +36,10 @@ import {
   type PlaceDetails,
 } from '@/src/data/places';
 import { SunTimeline } from '@/src/components/SunTimeline';
+import { getBuildingsForTerrace } from '@/src/data/buildings';
+import { getTreesForTerrace } from '@/src/data/trees';
 import { computeRangeScore, computeSunScore, findBestWindow } from '@/src/engines/scoring';
+import { bandForScore } from '@/src/engines/bands';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -76,12 +79,15 @@ const CAPACITY_LABELS: Record<string, string> = {
 
 export function TerraceDetailSheet() {
   const t = useStrings();
+  // Uses bandForScore (bands.ts) so thresholds are never duplicated here.
   const getScoreLabel = (s: number): string => {
-    if (s > 0.7) return t.scoreFull;
-    if (s > 0.5) return t.scoreMostly;
-    if (s > 0.3) return t.scorePartly;
-    if (s > 0.1) return t.scoreMostlyShade;
-    return t.scoreShade;
+    switch (bandForScore(s)) {
+      case 'full':    return t.scoreFull;
+      case 'mostly':  return t.scoreMostly;
+      case 'partial': return t.scorePartly;
+      case 'mshade':  return t.scoreMostlyShade;
+      default:        return t.scoreShade;
+    }
   };
   const ref = useRef<BottomSheet>(null);
   const selectedId = useSelectionStore((s) => s.selectedId);
@@ -104,21 +110,14 @@ export function TerraceDetailSheet() {
     return TERRACES.find((t) => t.id === selectedId) ?? null;
   }, [selectedId]);
 
-  // Trigger Places fetch when a Pro user opens a terrace with a
-  // placeId. Free users see the STATIC terrace fields (including
-  // googleRating + googleReviewCount, which we pre-import via
-  // `scripts/import-google-ratings.ts` and bake into terraces.json
-  // — no runtime API call needed). Pro users additionally get the
-  // LIVE extras via Places API: photos, today's opening hours,
-  // phone, website. This combination keeps the variable API cost
-  // bounded to active Pro users + their cache TTL, while still
-  // showing rating universally as a decision-useful signal.
-  //
-  // If a free user upgrades mid-session, the dep array re-runs and
-  // the fetch fires automatically — no need to re-open the sheet.
+  // Trigger Places fetch whenever a terrace with a placeId is opened.
+  // Previously gated on isPro, but opening hours are now free for all
+  // users — so we always fetch. Photos and contact details are still
+  // Pro-only at the display level; the fetch cost is bounded by the
+  // 7-day per-device cache in placesStore regardless of Pro status.
   useEffect(() => {
-    if (terrace?.placeId && isPro) ensurePlace(terrace.placeId);
-  }, [terrace, ensurePlace, isPro]);
+    if (terrace?.placeId) ensurePlace(terrace.placeId);
+  }, [terrace, ensurePlace]);
 
   // Imperative open/close. The `index` prop in Gorhom v5 only drives
   // INITIAL mount; later prop changes don't reliably animate the sheet
@@ -138,6 +137,8 @@ export function TerraceDetailSheet() {
 
   const score = useMemo(() => {
     if (!terrace) return 0;
+    const buildings = getBuildingsForTerrace(terrace.id);
+    const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -148,6 +149,8 @@ export function TerraceDetailSheet() {
       dateStr,
       weatherProfile,
       hourlyWeather,
+      buildings,
+      trees,
     );
   }, [terrace, dateOffset, fromHour, toHour, weatherProfile, weatherByDate]);
 
@@ -158,6 +161,8 @@ export function TerraceDetailSheet() {
    */
   const sunTrend = useMemo(() => {
     if (!terrace) return null as 'rising' | 'holding' | 'falling' | null;
+    const buildings = getBuildingsForTerrace(terrace.id);
+    const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -167,6 +172,8 @@ export function TerraceDetailSheet() {
       dateStr,
       weatherProfile,
       hourlyWeather?.[fromHour],
+      buildings,
+      trees,
     ).score;
     const prevHour = Math.max(0, fromHour - 1);
     const before = computeSunScore(
@@ -175,6 +182,8 @@ export function TerraceDetailSheet() {
       dateStr,
       weatherProfile,
       hourlyWeather?.[prevHour],
+      buildings,
+      trees,
     ).score;
     const delta = here - before;
     if (delta > 0.05) return 'rising';
@@ -251,6 +260,8 @@ export function TerraceDetailSheet() {
    */
   const bestWindow = useMemo(() => {
     if (!terrace) return null;
+    const buildings = getBuildingsForTerrace(terrace.id);
+    const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -262,6 +273,8 @@ export function TerraceDetailSheet() {
         dateStr,
         weatherProfile,
         hourlyWeather?.[h],
+        buildings,
+        trees,
       ).score,
     );
     return findBestWindow(hourlyScores);
@@ -658,10 +671,10 @@ function PhotoStrip({
   // Hook must come before any early returns — React rules of hooks.
   const t = useStrings();
   if (!hasPlaceId) return null;
-  if (loading) return null;
 
-  // Free user: show a locked teaser so the feature is discoverable.
-  // Tapping opens the paywall.
+  // Free user: always show the locked teaser regardless of loading state.
+  // (We now fetch Places data for all users for hours, but photos stay
+  // Pro-only. Show the teaser immediately — don't wait for the fetch.)
   if (!isPro) {
     return (
       <Pressable
@@ -676,6 +689,16 @@ function PhotoStrip({
         <Text style={styles.photoStripLockText}>{t.photosLocked}</Text>
         <Text style={styles.photoStripLockHint}>🔒</Text>
       </Pressable>
+    );
+  }
+
+  // Pro user — show loading placeholder while the Places fetch is in flight.
+  // Previously returned null here, leaving a blank gap after subscribing.
+  if (loading) {
+    return (
+      <View style={styles.photoStripLoadingRow}>
+        <Text style={styles.photoStripLoadingText}>📷  {t.loadingPhotos}</Text>
+      </View>
     );
   }
 
@@ -745,10 +768,11 @@ function PlacesCard({
   const rating = details?.rating ?? staticRating;
   const reviewCount = details?.ratingCount ?? staticReviewCount;
 
-  // Pro-only segments: price + open/now status. Hidden for free users
-  // (live data they don't get).
+  // Pro-only segments: price + open/now status. We now fetch for all
+  // users (hours are free), but keep price/openNow behind Pro so the
+  // paywall still has visible value beyond photos.
   const proSegments: string[] = [];
-  if (details) {
+  if (details && isPro) {
     const price = priceLevelToDollars(details.priceLevel);
     if (price) proSegments.push(price);
     if (details.openNow != null) {
@@ -778,28 +802,13 @@ function PlacesCard({
         ) : null}
       </View>
 
-      {/* Hours: Pro shows live, free shows locked teaser */}
-      {isPro ? (
-        loading ? (
-          <Text style={styles.placesPlaceholder}>{t.loadingHours}</Text>
-        ) : details?.todayHours ? (
-          <Text style={styles.placesHours}>🕐  {details.todayHours}</Text>
-        ) : (
-          <Text style={styles.placesPlaceholder}>{t.hoursUnavailable}</Text>
-        )
+      {/* Hours: free for everyone — fetched for all users now. */}
+      {loading ? (
+        <Text style={styles.placesPlaceholder}>{t.loadingHours}</Text>
+      ) : details?.todayHours ? (
+        <Text style={styles.placesHours}>🕐  {details.todayHours}</Text>
       ) : (
-        <Pressable
-          onPress={onProLockPress}
-          style={({ pressed }) => [
-            styles.proLockRow,
-            pressed && styles.proLockRowPressed,
-          ]}
-          accessibilityLabel={t.todayHours}
-        >
-          <Text style={styles.proLockGlyph}>🕐</Text>
-          <Text style={styles.proLockText}>{t.todayHours}</Text>
-          <Text style={styles.proLockTag}>Pro 🔒</Text>
-        </Pressable>
+        <Text style={styles.placesPlaceholder}>{t.hoursUnavailable}</Text>
       )}
 
       {/* Contact row: Pro shows phone (if present), free shows locked teaser */}
@@ -1160,6 +1169,22 @@ const styles = StyleSheet.create({
   // Free users see these in place of the photo strip + the
   // hours/contact rows. Each row clearly shows what Pro unlocks
   // without pretending the user has the data, and tap-to-paywall.
+  photoStripLoadingRow: {
+    marginHorizontal: -spacing.lg,
+    marginTop: spacing.md,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: palette.sandDeep,
+    borderRadius: 0,
+  },
+  photoStripLoadingText: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.md,
+    color: palette.inkSoft,
+  },
   photoStripLock: {
     marginHorizontal: -spacing.lg,
     marginTop: spacing.md,
