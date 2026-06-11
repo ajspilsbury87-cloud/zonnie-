@@ -3661,7 +3661,9 @@
     "googleRating": 4.1,
     "googleReviewCount": 746,
     "featured": true,
-    "photoUrl": "https://app.thefeedfactory.nl/api/assets/5ff8a8ccde7e8633a4ab8d03/ad35c805-472d-4c0b-b306-7631beb6fd05.jpg"
+    "photoUrl": "https://app.thefeedfactory.nl/api/assets/5ff8a8ccde7e8633a4ab8d03/ad35c805-472d-4c0b-b306-7631beb6fd05.jpg",
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-11T17:56:18.103Z"
   },
   {
     "id": 502,
@@ -16116,5 +16118,24 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T10:57:07.451Z",
     "placeId": "ChIJvzNiq6sJxkcRWmGwIBgw9cg"
+  },
+  {
+    "id": 1415,
+    "name": "Market 33",
+    "lat": 52.3373734,
+    "lng": 4.8714165,
+    "area": "Zuidas",
+    "facing": "All",
+    "capacity": "L",
+    "vibe": "World Cup 2026 outdoor stadium setup - big screen, food stands and bar (Jun 11-Jul 19)",
+    "address": "Claude Debussylaan 33",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-11T17:56:18.103Z",
+    "placeId": "ChIJeaCiqiwLxkcRqkcNJw6rRns",
+    "googleRating": 4.4,
+    "googleReviewCount": 1704,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-11T17:56:18.103Z"
   }
 ]
