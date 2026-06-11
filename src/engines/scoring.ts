@@ -14,10 +14,14 @@
 
 import { fromZonedTime } from 'date-fns-tz';
 import { solarPosition } from './solar';
+import { shadowCoverage, treeShadowCoverage } from './shadow';
+import { bandForScore } from './bands';
 import type {
+  Building,
   Facing,
   ScoreResult,
   Terrace,
+  Tree,
   Weather,
   WeatherProfile,
 } from './types';
@@ -160,6 +164,9 @@ export function amsterdamLocalToUtc(dateStr: string, hour: number): Date {
  * @param hour             Hour of day in Amsterdam local time (fractional, e.g. 14.5)
  * @param dateStr          Date in 'YYYY-MM-DD' (interpreted as Amsterdam local)
  * @param weatherProfile   sunny | partlyCloudy | cloudy | overcast
+ * @param weatherOverride  Optional real-forecast weather; overrides the synthetic profile.
+ * @param buildings        Nearby buildings for shadow ray-casting (default: []).
+ * @param trees            Nearby trees from the Bomenkaart dataset (default: []).
  */
 export function computeSunScore(
   terrace: Pick<Terrace, 'lat' | 'lng' | 'facing'>,
@@ -173,12 +180,66 @@ export function computeSunScore(
    * engine stays runnable offline / before the fetch lands.
    */
   weatherOverride?: Weather,
+  /**
+   * Nearby buildings for shadow ray-casting. Defaults to empty so
+   * existing callers that don't pass buildings still typecheck and
+   * produce orientation-only scores (same as before this param was
+   * added). Production callers should pass `getBuildingsForTerrace(id)`.
+   */
+  buildings: Building[] = [],
+  /**
+   * Optional nearby trees from the Bomenkaart dataset. When provided,
+   * tree canopy shadow is combined with building shadow (Math.max).
+   * Pass an empty array or omit to skip tree shadow (e.g. during
+   * testing or when Bomenkaart data hasn't been fetched yet).
+   */
+  trees: Tree[] = [],
 ): ScoreResult {
   const utcDate = amsterdamLocalToUtc(dateStr, hour);
   const sun = solarPosition(utcDate, terrace.lat, terrace.lng);
-  const weather = weatherOverride ?? getWeather(hour, weatherProfile);
+  const rawWeather = weatherOverride ?? getWeather(hour, weatherProfile);
+
+  // ── NaN guard ─────────────────────────────────────────────────────────────
+  //
+  // Open-Meteo occasionally returns null for individual hourly values.
+  // `src/data/weather.ts` maps nulls with `?? 0`, BUT the nullish-coalescing
+  // operator (`??`) only catches null/undefined — it passes NaN straight
+  // through. A single NaN value then poisons the entire multiplicative chain,
+  // producing a NaN score that crashes UI rendering.
+  //
+  // Strategy: sanitize at this single choke-point rather than at every call
+  // site. Each field falls back to the synthetic profile value so the engine
+  // stays runnable even when real-forecast data is partially corrupt.
+  const synth = getWeather(hour, weatherProfile);
+  const weather: Weather = {
+    // cloudCover drives the primary cloud-penalty path; a NaN here makes
+    // `score *= 1 - NaN * 0.30` → NaN score immediately.
+    cloudCover: Number.isFinite(rawWeather.cloudCover)
+      ? rawWeather.cloudCover
+      : synth.cloudCover,
+    // temp drives temperatureFactor; NaN propagates through the clamp → NaN.
+    temp: Number.isFinite(rawWeather.temp) ? rawWeather.temp : synth.temp,
+    // directRadiation — undefined is handled (PATH A skips), but NaN would
+    // reach `Math.min(1, NaN / clearSkyDirect)` → NaN.
+    directRadiation:
+      rawWeather.directRadiation != null && Number.isFinite(rawWeather.directRadiation)
+        ? rawWeather.directRadiation
+        : undefined,
+    // windSpeed — windShelterFactor checks `== null`, so undefined is safe.
+    // NaN would slip past the null check and reach `penaltyMagnitude` math.
+    windSpeed:
+      rawWeather.windSpeed != null && Number.isFinite(rawWeather.windSpeed)
+        ? rawWeather.windSpeed
+        : undefined,
+    // windDirection — same null-check pattern as windSpeed in windShelterFactor.
+    windDirection:
+      rawWeather.windDirection != null && Number.isFinite(rawWeather.windDirection)
+        ? rawWeather.windDirection
+        : undefined,
+  };
 
   let score = 0;
+  let coverage = 0; // shadow coverage for this hour, [0, 1]
   if (sun.altitude > 0) {
     // Altitude factor — flat 1.0 above 25°, smooth sqrt ramp below.
     //
@@ -216,6 +277,17 @@ export function computeSunScore(
       ? 1.0
       : Math.sqrt(sun.altitude / ALT_FULL_DEG);
     score = altFactor;
+    // Continuous shadow attenuation — the multiplier ramps smoothly from 1.0
+    // (no obstruction) down to 0.15 (fully blocked). Replaces the old binary
+    // "in shadow → ×0.15, else ×1.0" cliff that produced bimodal score
+    // distributions. Building and tree coverage are combined with Math.max
+    // (the sun is either visible or it isn't — shadows don't stack).
+    const buildingCoverage = shadowCoverage(terrace, buildings, sun.altitude, sun.azimuth);
+    const treeCoverage = trees.length > 0
+      ? treeShadowCoverage(terrace, trees, sun.altitude, sun.azimuth)
+      : 0;
+    coverage = Math.max(buildingCoverage, treeCoverage);
+    score *= 1 - 0.85 * coverage;
     // Sky transparency — two paths depending on what weather data is available:
     //
     // PATH A — direct_radiation (real forecast from Open-Meteo):
@@ -334,6 +406,7 @@ export function computeSunScore(
     score: Math.min(1, Math.max(0, score / MAX_RAW)),
     sun,
     weather,
+    shadow: coverage,
   };
 }
 
@@ -356,13 +429,17 @@ export function computeRangeScore(
    * are ignored.
    */
   hourlyWeather?: readonly Weather[],
+  /** Nearby buildings for shadow ray-casting (default: []). */
+  buildings: Building[] = [],
+  /** Nearby trees from the Bomenkaart dataset (default: []). */
+  trees: Tree[] = [],
 ): number {
   if (toHour < fromHour) return 0;
   let sum = 0;
   let count = 0;
   for (let h = fromHour; h <= toHour; h++) {
     const override = hourlyWeather?.[h];
-    sum += computeSunScore(terrace, h, dateStr, weatherProfile, override).score;
+    sum += computeSunScore(terrace, h, dateStr, weatherProfile, override, buildings, trees).score;
     count++;
   }
   return count > 0 ? sum / count : 0;
@@ -437,11 +514,15 @@ export function findBestWindow(
 }
 
 export function scoreLabel(score: number): string {
-  if (score > 0.7) return 'Volle zon';
-  if (score > 0.5) return 'Grotendeels zonnig';
-  if (score > 0.3) return 'Deels zonnig';
-  if (score > 0.1) return 'Grotendeels schaduw';
-  return 'In de schaduw';
+  // Uses bandForScore (bands.ts) so the threshold values are never
+  // duplicated here — changing one number in bands.ts updates all consumers.
+  switch (bandForScore(score)) {
+    case 'full':    return 'Volle zon';
+    case 'mostly':  return 'Grotendeels zonnig';
+    case 'partial': return 'Deels zonnig';
+    case 'mshade':  return 'Grotendeels schaduw';
+    default:        return 'In de schaduw';
+  }
 }
 
 // scoreColor() was removed — it used hardcoded hex values that duplicated

@@ -188,7 +188,6 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:36:28.54Z",
-    "placeId": "ChIJ3X7KShgJxkcRNJ6P783NB88",
     "googleRating": 4.4,
     "googleReviewCount": 2860
   },
@@ -893,21 +892,6 @@
     "googleReviewCount": 552
   },
   {
-    "id": 58,
-    "name": "P96",
-    "lat": 52.37708,
-    "lng": 4.88484,
-    "area": "Jordaan",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Boat terrace",
-    "address": "Prinsengracht 96",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:44.407Z",
-    "placeId": "EjVQcmluc2VuZ3JhY2h0IDk2LCBwOTYsIDEwMTUgRFogQW1zdGVyZGFtLCBOZXRoZXJsYW5kcyIfGh0KFgoUChIJF44LaMUJxkcRR4RlIYzOPzoSA3A5Ng"
-  },
-  {
     "id": 59,
     "name": "Café Tabac",
     "lat": 52.38018,
@@ -1029,26 +1013,32 @@
   {
     "id": 66,
     "name": "Dulcie",
-    "lat": 52.37824,
-    "lng": 4.88163,
+    "lat": 52.3537843,
+    "lng": 4.8560156,
     "area": "Jordaan",
     "facing": "S",
     "capacity": "S",
     "vibe": "Coffee & cake",
     "address": "Tichelstraat 41",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:03.465Z",
+    "placeId": "ChIJ6bKnXwTixUcRJIL9CHtWbmo"
   },
   {
     "id": 67,
     "name": "Louie Louie",
-    "lat": 52.35485,
-    "lng": 4.89179,
+    "lat": 52.3630521,
+    "lng": 4.9238802999999995,
     "area": "De Pijp",
     "facing": "W",
     "capacity": "M",
     "vibe": "Lively terrace",
     "address": "Linnaeusstraat 11",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:03.947Z",
+    "placeId": "ChIJ6zYl_nQJxkcRfmceVrMKTVU"
   },
   {
     "id": 68,
@@ -1090,8 +1080,8 @@
   {
     "id": 70,
     "name": "Bar Botanique",
-    "lat": 52.3544,
-    "lng": 4.8937,
+    "lat": 52.363422,
+    "lng": 4.930292199999999,
     "area": "De Pijp",
     "facing": "SW",
     "capacity": "M",
@@ -1099,7 +1089,10 @@
     "address": "Eerste van der Helststraat 43",
     "verified": true,
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:04.288Z",
+    "placeId": "ChIJx8jIHXMJxkcRbXr3CkT35hM"
   },
   {
     "id": 71,
@@ -1618,8 +1611,8 @@
   {
     "id": 106,
     "name": "Café Langendijk",
-    "lat": 52.36612900000001,
-    "lng": 4.9001399,
+    "lat": 52.3668402,
+    "lng": 4.9258644,
     "area": "Oost",
     "facing": "E",
     "capacity": "S",
@@ -1627,7 +1620,7 @@
     "address": "Zeeburgerstraat 1",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-03T13:34:58.507Z",
+    "verifiedAt": "2026-06-11T04:17:57.417Z",
     "placeId": "ChIJ3QWjFQsJxkcRByiZTvixDZE",
     "googleRating": 4.3,
     "googleReviewCount": 678
@@ -1652,14 +1645,17 @@
   {
     "id": 108,
     "name": "Waterkant",
-    "lat": 52.38618,
-    "lng": 4.90131,
+    "lat": 52.3699808,
+    "lng": 4.8760914,
     "area": "Noord",
     "facing": "S",
     "capacity": "L",
     "vibe": "Beach club IJ",
     "address": "Marnixkade 613",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:05.330Z",
+    "placeId": "ChIJO5oH0t0JxkcRKkXlC7IYHMA"
   },
   {
     "id": 109,
@@ -1768,14 +1764,17 @@
   {
     "id": 115,
     "name": "Oedipus Brewing",
-    "lat": 52.39248,
-    "lng": 4.89048,
+    "lat": 52.385357,
+    "lng": 4.9241202,
     "area": "Noord",
     "facing": "All",
     "capacity": "M",
     "vibe": "Craft brewery",
     "address": "Gedempt Hamerkanaal 85",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:05.689Z",
+    "placeId": "ChIJdVWLs6sJxkcRwIZFYv2wOmk"
   },
   {
     "id": 116,
@@ -1797,14 +1796,17 @@
   {
     "id": 117,
     "name": "FC Hyena",
-    "lat": 52.39299,
-    "lng": 4.89202,
+    "lat": 52.383386099999996,
+    "lng": 4.9290579999999995,
     "area": "Noord",
     "facing": "S",
     "capacity": "M",
     "vibe": "Cinema terrace",
     "address": "Aambeeldstraat 24",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:06.046Z",
+    "placeId": "ChIJV6JTUwAJxkcRzYRCsfJRgoE"
   },
   {
     "id": 119,
@@ -1845,8 +1847,8 @@
   {
     "id": 121,
     "name": "Lagerwal",
-    "lat": 52.38905,
-    "lng": 4.9025,
+    "lat": 52.4058302,
+    "lng": 4.8848012,
     "area": "Noord",
     "facing": "S",
     "capacity": "M",
@@ -1854,7 +1856,10 @@
     "address": "Neveritaweg 41",
     "verified": true,
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:06.368Z",
+    "placeId": "ChIJJSK-AZUJxkcRWWd_pdHjYVE"
   },
   {
     "id": 122,
@@ -1872,26 +1877,6 @@
     "placeId": "ChIJtWMWEeAJxkcR7PV7zX9aRh0",
     "googleRating": 4.5,
     "googleReviewCount": 22597
-  },
-  {
-    "id": 123,
-    "name": "Lot Sixty One",
-    "lat": 52.36683,
-    "lng": 4.87031,
-    "area": "Oud-West",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Specialty coffee",
-    "address": "Kinkerstraat 112",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:05.874Z",
-    "placeId": "ChIJEfmjb-AJxkcRqdnhOTbEetc",
-    "category": [
-      "coffee"
-    ],
-    "googleRating": 4.6,
-    "googleReviewCount": 2024
   },
   {
     "id": 124,
@@ -1950,14 +1935,17 @@
   {
     "id": 127,
     "name": "Café Kobalt",
-    "lat": 52.36553,
-    "lng": 4.87199,
+    "lat": 52.3795194,
+    "lng": 4.8942993,
     "area": "Oud-West",
     "facing": "S",
     "capacity": "M",
     "vibe": "Leidseplein area",
     "address": "Singel 2a",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:06.695Z",
+    "placeId": "ChIJMxnKT8gJxkcRzU8RA4ssfdw"
   },
   {
     "id": 128,
@@ -2083,19 +2071,24 @@
     "capacity": "S",
     "vibe": "Third wave",
     "address": "Witte de Withstraat 87",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:07.381Z"
   },
   {
     "id": 136,
     "name": "Pendergast",
-    "lat": 52.36505,
-    "lng": 4.85447,
+    "lat": 52.384736399999994,
+    "lng": 4.8713559,
     "area": "De Baarsjes",
     "facing": "W",
     "capacity": "S",
     "vibe": "Coffee expert",
     "address": "Overtoom 344",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:07.693Z",
+    "placeId": "ChIJIRuK9NUJxkcRSJz2EFvNEi4"
   },
   {
     "id": 137,
@@ -2156,7 +2149,9 @@
     "capacity": "L",
     "vibe": "Cultural garden",
     "address": "Rijnvis Feithstraat 2",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:08.064Z"
   },
   {
     "id": 141,
@@ -2209,7 +2204,9 @@
     "verifiedAt": "2026-05-02T11:37:13.008Z",
     "placeId": "ChIJfaL0_37ixUcR0k7Qq5PrwIc",
     "googleRating": 4.5,
-    "googleReviewCount": 1980
+    "googleReviewCount": 1980,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 144,
@@ -2241,7 +2238,6 @@
     "verified": true,
     "coordSource": "places_api",
     "verifiedAt": "2026-05-02T11:37:13.742Z",
-    "placeId": "ChIJe3hOLH_ixUcRRLECWCyvFZE",
     "googleRating": 4.2,
     "googleReviewCount": 2721
   },
@@ -2267,14 +2263,17 @@
   {
     "id": 147,
     "name": "Café Edel",
-    "lat": 52.39001,
-    "lng": 4.86398,
+    "lat": 52.364059,
+    "lng": 4.8590879,
     "area": "Spaarndammer",
     "facing": "S",
     "capacity": "S",
     "vibe": "Neighbourhood",
     "address": "Spaarndammerdijk 575",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:08.393Z",
+    "placeId": "ChIJK69AQQzixUcRHdpcqTytp7Q"
   },
   {
     "id": 148,
@@ -2568,14 +2567,17 @@
   {
     "id": 166,
     "name": "George Marina",
-    "lat": 52.33948,
-    "lng": 4.87198,
+    "lat": 52.341979599999995,
+    "lng": 4.9187423,
     "area": "Zuidas",
     "facing": "S",
     "capacity": "M",
     "vibe": "Waterside",
     "address": "De Boelelaan 2",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:08.765Z",
+    "placeId": "ChIJvZRYx9QLxkcRTUYpW3Say80"
   },
   {
     "id": 167,
@@ -2699,26 +2701,32 @@
   {
     "id": 175,
     "name": "Halvemaan",
-    "lat": 52.35798,
-    "lng": 4.90548,
+    "lat": 52.37802010000001,
+    "lng": 4.8956263,
     "area": "Amstel",
     "facing": "W",
     "capacity": "M",
     "vibe": "Riverside café",
     "address": "Amsteldijk 42",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:09.108Z",
+    "placeId": "ChIJoxunGsgJxkcRKhsZdn55IOM"
   },
   {
     "id": 177,
     "name": "Meneer Nieges",
-    "lat": 52.3655,
-    "lng": 4.88348,
+    "lat": 52.3876615,
+    "lng": 4.8927255,
     "area": "9 Straatjes",
     "facing": "S",
     "capacity": "S",
     "vibe": "Cocktails",
     "address": "Keizersgracht 302",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:09.436Z",
+    "placeId": "ChIJjVnvTssJxkcR0SpAFNV358w"
   },
   {
     "id": 178,
@@ -2777,14 +2785,17 @@
   {
     "id": 181,
     "name": "Café Soleil",
-    "lat": 52.366,
-    "lng": 4.884,
+    "lat": 52.3934867,
+    "lng": 4.9118251,
     "area": "9 Straatjes",
     "facing": "S",
     "capacity": "S",
     "vibe": "Sun chasing",
     "address": "Wolvenstraat 14",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:09.748Z",
+    "placeId": "ChIJNz_LWgAJxkcRanlLvP4BHc0"
   },
   {
     "id": 182,
@@ -2806,14 +2817,17 @@
   {
     "id": 183,
     "name": "Café Staal",
-    "lat": 52.38048,
-    "lng": 4.89198,
+    "lat": 52.3476146,
+    "lng": 4.850613,
     "area": "Haarlemmerbrt",
     "facing": "E",
     "capacity": "S",
     "vibe": "Corner classic",
     "address": "Haarlemmerstraat 40",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:10.090Z",
+    "placeId": "ChIJpcCAxbLjxUcRo5hrlR8hpv8"
   },
   {
     "id": 184,
@@ -2835,26 +2849,32 @@
   {
     "id": 185,
     "name": "IJscuypje",
-    "lat": 52.35583,
-    "lng": 4.89314,
+    "lat": 52.401448599999995,
+    "lng": 4.891981299999999,
     "area": "Rivierenbuurt",
     "facing": "S",
     "capacity": "S",
     "vibe": "Ice cream sun",
     "address": "Lutmastraat 175",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:10.450Z",
+    "placeId": "ChIJ1-pa5OAJxkcRlkHQJqNuvuY"
   },
   {
     "id": 186,
     "name": "Vessel",
-    "lat": 52.37648,
-    "lng": 4.91398,
+    "lat": 52.394417399999995,
+    "lng": 4.881958399999999,
     "area": "Centrum",
     "facing": "S",
     "capacity": "M",
     "vibe": "IJ morning sun",
     "address": "Oosterdoksstraat 14",
-    "verified": true
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:43:10.792Z",
+    "placeId": "ChIJqeH2OMsJxkcRM_rrrKbl2gY"
   },
   {
     "id": 187,
@@ -3228,7 +3248,9 @@
     "verifiedAt": "2026-05-02T11:37:37.64Z",
     "placeId": "ChIJxfmdNGYJxkcRZFuQNMsdX4I",
     "googleRating": 4.2,
-    "googleReviewCount": 1183
+    "googleReviewCount": 1183,
+    "outdoorScreens": 1,
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 212,
@@ -3316,23 +3338,6 @@
     "googleReviewCount": 108
   },
   {
-    "id": 217,
-    "name": "De Kleine Bes",
-    "lat": 52.36479,
-    "lng": 4.92504,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Neighbourhood new",
-    "address": "Mauritskade 100A",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:39.721Z",
-    "placeId": "ChIJVxnkp7IJxkcRLM73VioNYew",
-    "googleRating": 4.8,
-    "googleReviewCount": 35
-  },
-  {
     "id": 218,
     "name": "Sol",
     "lat": 52.3601393,
@@ -3384,76 +3389,6 @@
     "googleReviewCount": 944
   },
   {
-    "id": 222,
-    "name": "Bar Gouden Hoek II",
-    "lat": 52.363931199999996,
-    "lng": 4.8832225,
-    "area": "Rembrandtplein",
-    "facing": "All",
-    "capacity": "S",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:41.555Z",
-    "placeId": "ChIJp9M2GIUJxkcR2b0p5VX_Sg0",
-    "googleRating": 4.2,
-    "googleReviewCount": 413
-  },
-  {
-    "id": 223,
-    "name": "Café Dijk",
-    "lat": 52.37721,
-    "lng": 4.88193,
-    "area": "Jordaan",
-    "facing": "SE",
-    "capacity": "L",
-    "vibe": "Student hangout",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 225,
-    "name": "Brasserie Molen",
-    "lat": 52.37613,
-    "lng": 4.87148,
-    "area": "Westerpark",
-    "facing": "W",
-    "capacity": "S",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 227,
-    "name": "Koffiehuis Bergeend a/h Plein",
-    "lat": 52.3619047,
-    "lng": 4.9284129,
-    "area": "Plantage",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Waterfront spot",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:43.472Z",
-    "placeId": "ChIJFbzpl3MJxkcR7wNnMSOhLZg",
-    "googleRating": 4.5,
-    "googleReviewCount": 61
-  },
-  {
-    "id": 230,
-    "name": "Lounge Kraai",
-    "lat": 52.38567,
-    "lng": 4.9143,
-    "area": "Noord",
-    "facing": "SE",
-    "capacity": "L",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true
-  },
-  {
     "id": 233,
     "name": "Brasserie Nonnetje",
     "lat": 52.37047,
@@ -3466,35 +3401,6 @@
     "verified": true
   },
   {
-    "id": 234,
-    "name": "Bar Zaagbek",
-    "lat": 52.3482,
-    "lng": 4.91299,
-    "area": "Amstel",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Waterfront spot",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 236,
-    "name": "Proeflokaal Zaagbek",
-    "lat": 52.36997,
-    "lng": 4.88723,
-    "area": "Leidseplein",
-    "facing": "W",
-    "capacity": "S",
-    "vibe": "Coffee spot",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:46.288Z",
-    "placeId": "ChIJDyPty8MJxkcRjpDqIW6HUFo",
-    "googleRating": 4.6,
-    "googleReviewCount": 2839
-  },
-  {
     "id": 237,
     "name": "Brasserie Dolfijn a/h Plein",
     "lat": 52.36564,
@@ -3504,36 +3410,10 @@
     "capacity": "L",
     "vibe": "Local favourite",
     "address": "",
-    "verified": true
-  },
-  {
-    "id": 238,
-    "name": "Bistro Molen",
-    "lat": 52.38226,
-    "lng": 4.85596,
-    "area": "Bos en Lommer",
-    "facing": "All",
-    "capacity": "S",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 240,
-    "name": "Lounge Topper",
-    "lat": 52.3574784,
-    "lng": 4.8981252,
-    "area": "De Pijp",
-    "facing": "E",
-    "capacity": "L",
-    "vibe": "Neighbourhood gem",
-    "address": "",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:47.455Z",
-    "placeId": "ChIJe6b0UgjixUcRXyiZfFsdJZ8",
-    "googleRating": 3.9,
-    "googleReviewCount": 115
+    "verifiedAt": "2026-06-06T11:35:57.797Z",
+    "placeId": "ChIJaS6at-kJxkcRvmOwBD_gymk"
   },
   {
     "id": 241,
@@ -3553,76 +3433,6 @@
     "googleReviewCount": 40
   },
   {
-    "id": 246,
-    "name": "Bar Korhoen",
-    "lat": 52.3742029,
-    "lng": 4.9047841,
-    "area": "Oost",
-    "facing": "N",
-    "capacity": "L",
-    "vibe": "Park-side terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:49.689Z",
-    "placeId": "ChIJUWPEsrsJxkcRGitNQKv3hOM",
-    "googleRating": 4.7,
-    "googleReviewCount": 1088
-  },
-  {
-    "id": 247,
-    "name": "Bruin Café Fuut",
-    "lat": 52.37721,
-    "lng": 4.88193,
-    "area": "Jordaan",
-    "facing": "SE",
-    "capacity": "L",
-    "vibe": "Coffee spot",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 252,
-    "name": "Café Kievit & Zn",
-    "lat": 52.37153,
-    "lng": 4.8704,
-    "area": "Oud-West",
-    "facing": "NW",
-    "capacity": "L",
-    "vibe": "Local favourite",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 254,
-    "name": "Bistro Kievit",
-    "lat": 52.38901,
-    "lng": 4.88007,
-    "area": "Spaarndammer",
-    "facing": "All",
-    "capacity": "M",
-    "vibe": "Modern design",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 256,
-    "name": "Lounge Leeuwerik & Zn",
-    "lat": 52.363947499999995,
-    "lng": 4.9066543000000005,
-    "area": "Centrum",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:52.938Z",
-    "placeId": "ChIJ4zFcpt0JxkcRb27k6rUfA0w",
-    "googleRating": 4.7,
-    "googleReviewCount": 394
-  },
-  {
     "id": 257,
     "name": "Bistro Vlinder",
     "lat": 52.35537,
@@ -3638,173 +3448,6 @@
     "placeId": "ChIJYUv3UY0JxkcR1ZUeaJNZb9Y",
     "googleRating": 4.1,
     "googleReviewCount": 588
-  },
-  {
-    "id": 261,
-    "name": "Bruin Café Patrijs",
-    "lat": 52.378235399999994,
-    "lng": 4.8859305,
-    "area": "9 Straatjes",
-    "facing": "E",
-    "capacity": "L",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:54.838Z",
-    "placeId": "ChIJ-35RhM8JxkcRNK056NuK8Vo",
-    "googleRating": 4.1,
-    "googleReviewCount": 320
-  },
-  {
-    "id": 262,
-    "name": "Koffiehuis Patrijs",
-    "lat": 52.34524,
-    "lng": 4.89484,
-    "area": "Rivierenbuurt",
-    "facing": "N",
-    "capacity": "M",
-    "vibe": "Sunny square",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 263,
-    "name": "Bistro Korhoen",
-    "lat": 52.3805567,
-    "lng": 4.8856506,
-    "area": "Leidseplein",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Urban garden",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:55.572Z",
-    "placeId": "ChIJkaGKIGIJxkcRLDqeO4wDXa4",
-    "googleRating": 4.5,
-    "googleReviewCount": 191
-  },
-  {
-    "id": 266,
-    "name": "Brasserie Topper II",
-    "lat": 52.34258,
-    "lng": 4.89262,
-    "area": "Rivierenbuurt",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Modern design",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 267,
-    "name": "Brasserie Kreeft",
-    "lat": 52.339876999999994,
-    "lng": 4.892914900000001,
-    "area": "De Pijp",
-    "facing": "All",
-    "capacity": "M",
-    "vibe": "Canal terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:56.388Z",
-    "placeId": "ChIJdcB-KyIKxkcRONSXHEVrYJk",
-    "googleRating": 4.2,
-    "googleReviewCount": 488
-  },
-  {
-    "id": 268,
-    "name": "Brasserie Roos",
-    "lat": 52.36046,
-    "lng": 4.92542,
-    "area": "Oost",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 269,
-    "name": "Koffiehuis Dolfijn",
-    "lat": 52.365638,
-    "lng": 4.8852817,
-    "area": "Haarlemmerbrt",
-    "facing": "N",
-    "capacity": "L",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:57.121Z",
-    "placeId": "ChIJaS6at-kJxkcRvmOwBD_gymk",
-    "googleRating": 4.8,
-    "googleReviewCount": 8710
-  },
-  {
-    "id": 270,
-    "name": "Proeflokaal Kolibri & Co",
-    "lat": 52.380947400000004,
-    "lng": 4.884013899999999,
-    "area": "Centrum",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:57.488Z",
-    "placeId": "ChIJc3GqKc4JxkcRx05b2w9-M50",
-    "googleRating": 4.2,
-    "googleReviewCount": 10
-  },
-  {
-    "id": 271,
-    "name": "Grand Café Leeuwerik",
-    "lat": 52.3417969,
-    "lng": 4.8900422,
-    "area": "De Pijp",
-    "facing": "S",
-    "capacity": "L",
-    "vibe": "Industrial chic",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:57.856Z",
-    "placeId": "ChIJPwbsYR8KxkcRvSZKO8mREco",
-    "googleRating": 2.9,
-    "googleReviewCount": 134
-  },
-  {
-    "id": 272,
-    "name": "Bruin Café Zwaan",
-    "lat": 52.37636,
-    "lng": 4.88422,
-    "area": "Leidseplein",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Beer garden",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:37:58.255Z",
-    "placeId": "ChIJ3d9HP8UJxkcRjTZAEeg6yNE",
-    "googleRating": 4.4,
-    "googleReviewCount": 422
-  },
-  {
-    "id": 273,
-    "name": "Eetcafé Leeuwerik",
-    "lat": 52.36355,
-    "lng": 4.88486,
-    "area": "Leidseplein",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Sunny square",
-    "address": "",
-    "verified": true
   },
   {
     "id": 275,
@@ -3824,144 +3467,19 @@
     "googleReviewCount": 799
   },
   {
-    "id": 281,
-    "name": "Bistro Merel",
-    "lat": 52.36413,
-    "lng": 4.8983,
-    "area": "Rembrandtplein",
-    "facing": "SW",
-    "capacity": "M",
-    "vibe": "Student hangout",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:00.088Z",
-    "placeId": "ChIJFX-OmpQJxkcRcF18TZlXxsw",
-    "googleRating": 4.4,
-    "googleReviewCount": 353
-  },
-  {
-    "id": 282,
-    "name": "Eetcafé Molen",
-    "lat": 52.36721,
-    "lng": 4.88287,
-    "area": "De Pijp",
-    "facing": "NE",
-    "capacity": "M",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:00.474Z",
-    "placeId": "ChIJ39AuHugJxkcRXpYMcnD00eI",
-    "googleRating": 4.3,
-    "googleReviewCount": 814
-  },
-  {
-    "id": 283,
-    "name": "Proeflokaal Haas",
-    "lat": 52.38608,
-    "lng": 4.87282,
-    "area": "Westerpark",
-    "facing": "N",
-    "capacity": "L",
-    "vibe": "Beer garden",
-    "address": "",
-    "verified": true
-  },
-  {
     "id": 285,
     "name": "Koffiehuis Spreeuw",
-    "lat": 52.35709,
-    "lng": 4.9177,
+    "lat": 52.384177799999996,
+    "lng": 4.9132356999999995,
     "area": "Amstelkwartier",
     "facing": "N",
     "capacity": "M",
     "vibe": "Cozy corner",
     "address": "",
-    "verified": true
-  },
-  {
-    "id": 286,
-    "name": "Koffiehuis Ekster & Zn",
-    "lat": 52.3637788,
-    "lng": 4.886993599999999,
-    "area": "De Baarsjes",
-    "facing": "NW",
-    "capacity": "S",
-    "vibe": "Hidden courtyard",
-    "address": "",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:01.906Z",
-    "placeId": "ChIJ1cJdWOE0xEcRKegOmnH2_Bc",
-    "googleRating": 4.6,
-    "googleReviewCount": 401
-  },
-  {
-    "id": 287,
-    "name": "Grand Café Zaagbek a/d Gracht",
-    "lat": 52.3812,
-    "lng": 4.87011,
-    "area": "Westerpark",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Neighbourhood gem",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 289,
-    "name": "Café Leeuwerik",
-    "lat": 52.37153,
-    "lng": 4.8704,
-    "area": "Oud-West",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Modern design",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 291,
-    "name": "Café Kolibri",
-    "lat": 52.39148,
-    "lng": 4.87843,
-    "area": "Spaarndammer",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Sunny square",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 292,
-    "name": "Koffiehuis Wulp II",
-    "lat": 52.3669715,
-    "lng": 4.894145099999999,
-    "area": "De Pijp",
-    "facing": "NE",
-    "capacity": "L",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:04.122Z",
-    "placeId": "ChIJxU3mA8AJxkcRZBaxdFH9zqw",
-    "googleRating": 4.5,
-    "googleReviewCount": 892
-  },
-  {
-    "id": 296,
-    "name": "Brasserie Bergeend",
-    "lat": 52.35613,
-    "lng": 4.89269,
-    "area": "De Pijp",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Canal terrace",
-    "address": "",
-    "verified": true
+    "verifiedAt": "2026-06-06T11:43:16.995Z",
+    "placeId": "ChIJoevUp60JxkcRUFOZb94aqL4"
   },
   {
     "id": 297,
@@ -3981,30 +3499,6 @@
     "googleReviewCount": 51
   },
   {
-    "id": 299,
-    "name": "Lounge Vos & Zn",
-    "lat": 52.37302,
-    "lng": 4.88984,
-    "area": "Rembrandtplein",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 301,
-    "name": "Brasserie Zwaluw",
-    "lat": 52.35869,
-    "lng": 4.88613,
-    "area": "Zuid",
-    "facing": "All",
-    "capacity": "L",
-    "vibe": "Rooftop bar",
-    "address": "",
-    "verified": true
-  },
-  {
     "id": 302,
     "name": "Bistro Nonnetje",
     "lat": 52.36274,
@@ -4015,156 +3509,6 @@
     "vibe": "Industrial chic",
     "address": "",
     "verified": true
-  },
-  {
-    "id": 308,
-    "name": "Brasserie Korhoen",
-    "lat": 52.36679,
-    "lng": 4.86791,
-    "area": "Oud-West",
-    "facing": "E",
-    "capacity": "S",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 310,
-    "name": "Koffiehuis Korhoen II",
-    "lat": 52.35213,
-    "lng": 4.88529,
-    "area": "Zuid",
-    "facing": "E",
-    "capacity": "M",
-    "vibe": "Urban garden",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 315,
-    "name": "Lounge Dijk",
-    "lat": 52.367605600000005,
-    "lng": 4.8940722,
-    "area": "Rembrandtplein",
-    "facing": "NE",
-    "capacity": "S",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:11.605Z",
-    "placeId": "ChIJw0-tDsAJxkcR7duHFlAm7K8",
-    "googleRating": 4.6,
-    "googleReviewCount": 615
-  },
-  {
-    "id": 321,
-    "name": "Eetcafé Walvis a/d Gracht",
-    "lat": 52.37249,
-    "lng": 4.89705,
-    "area": "Rembrandtplein",
-    "facing": "NW",
-    "capacity": "M",
-    "vibe": "Historic setting",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:12.773Z",
-    "placeId": "ChIJhyGpBQAJxkcRdPY4Bp03ehk",
-    "googleRating": 4.8,
-    "googleReviewCount": 17
-  },
-  {
-    "id": 324,
-    "name": "Lounge Fazant",
-    "lat": 52.36813,
-    "lng": 4.84407,
-    "area": "West",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 328,
-    "name": "Eetcafé Gracht",
-    "lat": 52.368914999999994,
-    "lng": 4.8874492,
-    "area": "Haarlemmerbrt",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Waterfront spot",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:14.773Z",
-    "placeId": "ChIJXz1PJcIJxkcRwNRJoAj7-Kc",
-    "googleRating": 4.4,
-    "googleReviewCount": 966
-  },
-  {
-    "id": 339,
-    "name": "Café Hert & Zn",
-    "lat": 52.365264499999995,
-    "lng": 4.902307599999999,
-    "area": "Rembrandtplein",
-    "facing": "NE",
-    "capacity": "M",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:18.006Z",
-    "placeId": "ChIJtYjZgp4JxkcR8gTDhBBxkKw",
-    "googleRating": 3.6,
-    "googleReviewCount": 66
-  },
-  {
-    "id": 343,
-    "name": "Brasserie Kievit",
-    "lat": 52.36397,
-    "lng": 4.8823,
-    "area": "Leidseplein",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Canal terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 344,
-    "name": "Proeflokaal Zwaan II",
-    "lat": 52.359834899999996,
-    "lng": 4.8602099999999995,
-    "area": "Bos en Lommer",
-    "facing": "NW",
-    "capacity": "L",
-    "vibe": "Industrial chic",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:19.566Z",
-    "placeId": "ChIJCYGeh1bjxUcR5Q9Q1eIdZlA",
-    "googleRating": 4.4,
-    "googleReviewCount": 160
-  },
-  {
-    "id": 347,
-    "name": "Bar IJseend",
-    "lat": 52.376731199999995,
-    "lng": 4.8892983,
-    "area": "Haarlemmerbrt",
-    "facing": "N",
-    "capacity": "L",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:20.673Z",
-    "placeId": "ChIJx_aU48UJxkcRxOEtx6d5Lng",
-    "googleRating": 4.7,
-    "googleReviewCount": 4617
   },
   {
     "id": 350,
@@ -4184,190 +3528,6 @@
     "googleReviewCount": 985
   },
   {
-    "id": 354,
-    "name": "Lounge Slobeend",
-    "lat": 52.36,
-    "lng": 4.90517,
-    "area": "Amstel",
-    "facing": "SE",
-    "capacity": "L",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 355,
-    "name": "Proeflokaal Hert",
-    "lat": 52.36669,
-    "lng": 4.92643,
-    "area": "Indische Buurt",
-    "facing": "NW",
-    "capacity": "M",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 358,
-    "name": "Koffiehuis Uil",
-    "lat": 52.34059,
-    "lng": 4.8735,
-    "area": "Zuidas",
-    "facing": "All",
-    "capacity": "L",
-    "vibe": "Sunny square",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 359,
-    "name": "Lounge Bergeend",
-    "lat": 52.3785058,
-    "lng": 4.8952427,
-    "area": "Haarlemmerbrt",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Park-side terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:24.601Z",
-    "placeId": "ChIJE7kBFcgJxkcRt93dXpydHnE",
-    "googleRating": 4.2,
-    "googleReviewCount": 4281
-  },
-  {
-    "id": 361,
-    "name": "Bar Uil",
-    "lat": 52.3656295,
-    "lng": 4.8966598,
-    "area": "De Pijp",
-    "facing": "All",
-    "capacity": "S",
-    "vibe": "Student hangout",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:25.406Z",
-    "placeId": "ChIJj_0__IgJxkcRy_PlHlnl93I",
-    "googleRating": 4.2,
-    "googleReviewCount": 160
-  },
-  {
-    "id": 362,
-    "name": "Grand Café Korhoen",
-    "lat": 52.37273,
-    "lng": 4.89445,
-    "area": "9 Straatjes",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:25.757Z",
-    "placeId": "ChIJsfwjUMcJxkcRajOm1t-X8iU",
-    "category": [
-      "coffee"
-    ],
-    "googleRating": 4.5,
-    "googleReviewCount": 617
-  },
-  {
-    "id": 367,
-    "name": "Grand Café Slobeend a/h Plein",
-    "lat": 52.34909,
-    "lng": 4.93759,
-    "area": "Indische Buurt",
-    "facing": "E",
-    "capacity": "L",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 368,
-    "name": "Bar Merel",
-    "lat": 52.355167400000006,
-    "lng": 4.8804178,
-    "area": "Leidseplein",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Sunny square",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:28.274Z",
-    "placeId": "ChIJ0fOrC2IJxkcRGPmi4T3ZfSs",
-    "googleRating": 4.7,
-    "googleReviewCount": 211
-  },
-  {
-    "id": 369,
-    "name": "Proeflokaal Toren",
-    "lat": 52.39362,
-    "lng": 4.86731,
-    "area": "Houthavens",
-    "facing": "NW",
-    "capacity": "L",
-    "vibe": "Industrial chic",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 370,
-    "name": "Bistro Meeuw & Zn",
-    "lat": 52.36937700000001,
-    "lng": 4.892668,
-    "area": "Jordaan",
-    "facing": "SE",
-    "capacity": "S",
-    "vibe": "Modern design",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:28.99Z",
-    "placeId": "ChIJq6hhWMAJxkcR0dLgPLP0f0o",
-    "googleRating": 4.4,
-    "googleReviewCount": 1588
-  },
-  {
-    "id": 371,
-    "name": "Grand Café Toren",
-    "lat": 52.36675,
-    "lng": 4.91248,
-    "area": "Plantage",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Historic setting",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 374,
-    "name": "Café Zwaan",
-    "lat": 52.35983,
-    "lng": 4.86021,
-    "area": "De Baarsjes",
-    "facing": "SW",
-    "capacity": "S",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 375,
-    "name": "Bistro Uil",
-    "lat": 52.35612,
-    "lng": 4.92729,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "L",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true
-  },
-  {
     "id": 377,
     "name": "Eetcafé Anker",
     "lat": 52.35079,
@@ -4376,18 +3536,6 @@
     "facing": "E",
     "capacity": "L",
     "vibe": "Waterfront spot",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 379,
-    "name": "Lounge Gracht",
-    "lat": 52.36984,
-    "lng": 4.86601,
-    "area": "West",
-    "facing": "N",
-    "capacity": "M",
-    "vibe": "Local favourite",
     "address": "",
     "verified": true
   },
@@ -4409,100 +3557,6 @@
     "googleReviewCount": 14
   },
   {
-    "id": 381,
-    "name": "Proeflokaal Pijlstaart & Zn",
-    "lat": 52.3762917,
-    "lng": 4.899905599999999,
-    "area": "Spaarndammer",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Neighbourhood gem",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:32.757Z",
-    "placeId": "ChIJPfgtzLkJxkcRKOnHxY2ZCuU",
-    "googleRating": 4.6,
-    "googleReviewCount": 704
-  },
-  {
-    "id": 382,
-    "name": "Eetcafé Kade",
-    "lat": 52.353049899999995,
-    "lng": 4.8872272,
-    "area": "Zuidas",
-    "facing": "NE",
-    "capacity": "L",
-    "vibe": "Rooftop bar",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:33.157Z",
-    "placeId": "ChIJ5WuOrEcJxkcRIH6hFsW_klw",
-    "googleRating": 4.9,
-    "googleReviewCount": 138
-  },
-  {
-    "id": 383,
-    "name": "Bistro Kemphaan",
-    "lat": 52.38009,
-    "lng": 4.88269,
-    "area": "Jordaan",
-    "facing": "E",
-    "capacity": "M",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 386,
-    "name": "Eetcafé Wielewaal",
-    "lat": 52.38901,
-    "lng": 4.88007,
-    "area": "Spaarndammer",
-    "facing": "W",
-    "capacity": "S",
-    "vibe": "Waterfront spot",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 387,
-    "name": "Eetcafé Korhoen & Co",
-    "lat": 52.38414,
-    "lng": 4.86833,
-    "area": "Westerpark",
-    "facing": "NE",
-    "capacity": "L",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 390,
-    "name": "Bruin Café Molen",
-    "lat": 52.37863,
-    "lng": 4.8505,
-    "area": "Bos en Lommer",
-    "facing": "E",
-    "capacity": "L",
-    "vibe": "Coffee spot",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 391,
-    "name": "Bruin Café Vlinder II",
-    "lat": 52.37721,
-    "lng": 4.88193,
-    "area": "Jordaan",
-    "facing": "NW",
-    "capacity": "S",
-    "vibe": "Student hangout",
-    "address": "",
-    "verified": true
-  },
-  {
     "id": 394,
     "name": "Lounge Scholekster",
     "lat": 52.3512744,
@@ -4518,201 +3572,6 @@
     "placeId": "ChIJuVNcE4wJxkcRLi9aYkHTxxg"
   },
   {
-    "id": 395,
-    "name": "Eetcafé Merel",
-    "lat": 52.3551,
-    "lng": 4.89314,
-    "area": "De Pijp",
-    "facing": "NE",
-    "capacity": "S",
-    "vibe": "Coffee spot",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 396,
-    "name": "Café Adelaar",
-    "lat": 52.34609,
-    "lng": 4.89965,
-    "area": "Rivierenbuurt",
-    "facing": "NE",
-    "capacity": "M",
-    "vibe": "Historic setting",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 397,
-    "name": "Grand Café Kolibri",
-    "lat": 52.37273,
-    "lng": 4.89445,
-    "area": "Centrum",
-    "facing": "E",
-    "capacity": "S",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 399,
-    "name": "Bistro IJseend",
-    "lat": 52.35741,
-    "lng": 4.89127,
-    "area": "Zuid",
-    "facing": "W",
-    "capacity": "S",
-    "vibe": "Industrial chic",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 401,
-    "name": "Koffiehuis Fazant",
-    "lat": 52.34861,
-    "lng": 4.90306,
-    "area": "Amstel",
-    "facing": "E",
-    "capacity": "M",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 402,
-    "name": "Koffiehuis Kreeft",
-    "lat": 52.3640546,
-    "lng": 4.889094399999999,
-    "area": "Centrum",
-    "facing": "NE",
-    "capacity": "L",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:38:38.991Z",
-    "placeId": "ChIJkXa6y-sJxkcRTvMnFEv41ik",
-    "googleRating": 4.1,
-    "googleReviewCount": 2070
-  },
-  {
-    "id": 403,
-    "name": "Proeflokaal Fazant",
-    "lat": 52.35437,
-    "lng": 4.89927,
-    "area": "De Pijp",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 407,
-    "name": "Café Pijlstaart",
-    "lat": 52.371723599999996,
-    "lng": 4.8792786999999995,
-    "area": "Oud-West",
-    "facing": "All",
-    "capacity": "M",
-    "vibe": "Student hangout",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:44:51.257Z",
-    "placeId": "ChIJTQLS5_YJxkcRXsEWE7CCKJo",
-    "googleRating": 4.8,
-    "googleReviewCount": 176
-  },
-  {
-    "id": 411,
-    "name": "Eetcafé Fazant",
-    "lat": 52.38226,
-    "lng": 4.85596,
-    "area": "Bos en Lommer",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Coffee spot",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 416,
-    "name": "Grand Café Meeuw",
-    "lat": 52.33416,
-    "lng": 4.86388,
-    "area": "Zuidas",
-    "facing": "N",
-    "capacity": "L",
-    "vibe": "Rooftop bar",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 418,
-    "name": "Lounge Leeuw",
-    "lat": 52.36305,
-    "lng": 4.92388,
-    "area": "Watergraafsmeer",
-    "facing": "NW",
-    "capacity": "S",
-    "vibe": "Cozy corner",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 419,
-    "name": "Grand Café Kemphaan",
-    "lat": 52.36393,
-    "lng": 4.88322,
-    "area": "Leidseplein",
-    "facing": "E",
-    "capacity": "L",
-    "vibe": "Rooftop bar",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 420,
-    "name": "Grand Café Dolfijn",
-    "lat": 52.34838,
-    "lng": 4.91733,
-    "area": "Amstelkwartier",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Canal terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 424,
-    "name": "Eetcafé Uil",
-    "lat": 52.3837666,
-    "lng": 4.8888972,
-    "area": "Houthavens",
-    "facing": "All",
-    "capacity": "S",
-    "vibe": "Industrial chic",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-03T13:34:58.507Z",
-    "placeId": "ChIJ-fR8PMwJxkcRAEsOP0f0pXw",
-    "googleRating": 4.5,
-    "googleReviewCount": 819
-  },
-  {
-    "id": 427,
-    "name": "Koffiehuis Molen",
-    "lat": 52.39148,
-    "lng": 4.87843,
-    "area": "Spaarndammer",
-    "facing": "SW",
-    "capacity": "L",
-    "vibe": "Hidden courtyard",
-    "address": "",
-    "verified": true
-  },
-  {
     "id": 434,
     "name": "Lounge Anker",
     "lat": 52.33589,
@@ -4721,71 +3580,6 @@
     "facing": "NW",
     "capacity": "L",
     "vibe": "Neighbourhood gem",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 440,
-    "name": "Grand Café Dolfijn a/h Plein",
-    "lat": 52.38901,
-    "lng": 4.88007,
-    "area": "Spaarndammer",
-    "facing": "NW",
-    "capacity": "S",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 444,
-    "name": "Koffiehuis Wielewaal",
-    "lat": 52.33742,
-    "lng": 4.87018,
-    "area": "Zuidas",
-    "facing": "E",
-    "capacity": "L",
-    "vibe": "Sunny square",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 445,
-    "name": "Grand Café Fazant",
-    "lat": 52.36899,
-    "lng": 4.88363,
-    "area": "9 Straatjes",
-    "facing": "S",
-    "capacity": "L",
-    "vibe": "Neighbourhood gem",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 446,
-    "name": "Brasserie Slobeend",
-    "lat": 52.355827399999995,
-    "lng": 4.888988299999999,
-    "area": "Oud-Zuid",
-    "facing": "SW",
-    "capacity": "M",
-    "vibe": "Streetside classic",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:45:03.69Z",
-    "placeId": "ChIJH6FjfPIJxkcREkFPHLJiRFM",
-    "googleRating": 4.6,
-    "googleReviewCount": 879
-  },
-  {
-    "id": 448,
-    "name": "Bar Kreeft & Co",
-    "lat": 52.36675,
-    "lng": 4.91248,
-    "area": "Plantage",
-    "facing": "SE",
-    "capacity": "L",
-    "vibe": "Modern design",
     "address": "",
     "verified": true
   },
@@ -4800,38 +3594,6 @@
     "vibe": "Local favourite",
     "address": "",
     "verified": true
-  },
-  {
-    "id": 452,
-    "name": "Café Wielewaal & Co",
-    "lat": 52.36563,
-    "lng": 4.89666,
-    "area": "Rembrandtplein",
-    "facing": "N",
-    "capacity": "S",
-    "vibe": "Wine terrace",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 453,
-    "name": "Café IJseend",
-    "lat": 52.3741148,
-    "lng": 4.898346699999999,
-    "area": "Noord",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Canal terrace",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:45:05.508Z",
-    "placeId": "ChIJW11C8LgJxkcR-X_xv39yjU0",
-    "category": [
-      "coffee"
-    ],
-    "googleRating": 4.7,
-    "googleReviewCount": 3535
   },
   {
     "id": 454,
@@ -4851,139 +3613,19 @@
     "googleReviewCount": 117
   },
   {
-    "id": 461,
-    "name": "Grand Café Gracht & Zn",
-    "lat": 52.33759,
-    "lng": 4.87304,
-    "area": "Zuidas",
-    "facing": "All",
-    "capacity": "S",
-    "vibe": "Student hangout",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 465,
-    "name": "Bar Fazant & Zn",
-    "lat": 52.34478,
-    "lng": 4.89113,
-    "area": "Rivierenbuurt",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Rooftop bar",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 466,
-    "name": "Eetcafé Slobeend",
-    "lat": 52.3763328,
-    "lng": 4.882285899999999,
-    "area": "Houthavens",
-    "facing": "SW",
-    "capacity": "M",
-    "vibe": "Coffee spot",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:45:09.842Z",
-    "placeId": "ChIJ69iOyNoJxkcRzXH14nv_h0c",
-    "googleRating": 4.5,
-    "googleReviewCount": 4436
-  },
-  {
-    "id": 467,
-    "name": "Bruin Café Dijk & Co",
-    "lat": 52.36991,
-    "lng": 4.86538,
-    "area": "De Baarsjes",
-    "facing": "SW",
-    "capacity": "S",
-    "vibe": "Rooftop bar",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 472,
-    "name": "Lounge Ster",
-    "lat": 52.36406,
-    "lng": 4.86332,
-    "area": "De Baarsjes",
-    "facing": "E",
-    "capacity": "L",
-    "vibe": "Industrial chic",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 473,
-    "name": "Koffiehuis Zwaan",
-    "lat": 52.35983,
-    "lng": 4.86021,
-    "area": "Oud-Zuid",
-    "facing": "SE",
-    "capacity": "M",
-    "vibe": "Urban garden",
-    "address": "",
-    "verified": true
-  },
-  {
     "id": 475,
     "name": "Lounge Kade & Co",
-    "lat": 52.37022,
-    "lng": 4.88601,
+    "lat": 52.343483,
+    "lng": 4.8642756,
     "area": "9 Straatjes",
     "facing": "SW",
     "capacity": "L",
     "vibe": "Wine terrace",
     "address": "",
-    "verified": true
-  },
-  {
-    "id": 484,
-    "name": "Koffiehuis Fuut",
-    "lat": 52.38127,
-    "lng": 4.85516,
-    "area": "Spaarndammer",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Historic setting",
-    "address": "",
-    "verified": true
-  },
-  {
-    "id": 486,
-    "name": "Lounge Roos a/h Plein",
-    "lat": 52.373959,
-    "lng": 4.89691,
-    "area": "9 Straatjes",
-    "facing": "All",
-    "capacity": "S",
-    "vibe": "Waterfront spot",
-    "address": "",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:45:16.991Z",
-    "placeId": "ChIJYz0NpWQJxkcRR8p8-BKsAdM",
-    "googleRating": 5,
-    "googleReviewCount": 5
-  },
-  {
-    "id": 487,
-    "name": "Café Zaagbek",
-    "lat": 52.3705716,
-    "lng": 4.900796,
-    "area": "Leidseplein",
-    "facing": "NE",
-    "capacity": "L",
-    "vibe": "Urban garden",
-    "address": "",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:45:17.342Z",
-    "placeId": "ChIJdVLICfEJxkcRQxGmA3GbJnI",
-    "googleRating": 4.5,
-    "googleReviewCount": 2094
+    "verifiedAt": "2026-06-06T11:43:33.874Z",
+    "placeId": "ChIJFdxxhAAKxkcRCQB4teu2dYQ"
   },
   {
     "id": 488,
@@ -5001,18 +3643,6 @@
     "placeId": "ChIJZ_vneM4JxkcRWSjmayD2Nyk",
     "googleRating": 4.7,
     "googleReviewCount": 110
-  },
-  {
-    "id": 500,
-    "name": "Koffiehuis Duif & Co",
-    "lat": 52.3564,
-    "lng": 4.89736,
-    "area": "De Pijp",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Urban garden",
-    "address": "",
-    "verified": true
   },
   {
     "id": 501,
@@ -14714,26 +13344,28 @@
     "vibe": "Cozy restaurant on the historic Westergasfabriek grounds, large terrace, big screen for matches",
     "address": "Klönneplein 4-6",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-07T21:38:49.656Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:22.582Z",
     "outdoorScreens": 2,
-    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z",
+    "placeId": "ChIJMVYWmX_ixUcRWE9x4VJrmro"
   },
   {
     "id": 1260,
     "name": "Westerunie",
-    "lat": 52.3868,
-    "lng": 4.8695,
+    "lat": 52.3871283,
+    "lng": 4.8700218,
     "area": "Westerpark",
     "facing": "All",
     "capacity": "L",
     "vibe": "Events venue with large outdoor terrace, big screen for international matches",
     "address": "Klönneplein 1",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-07T21:38:49.658Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:22.956Z",
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z",
+    "placeId": "ChIJNaN4rU_jxUcRsdxOrmAiFww"
   },
   {
     "id": 1261,
@@ -14746,10 +13378,11 @@
     "vibe": "Café in southern Vondelpark, picnic tables, outdoor screen for big matches",
     "address": "Vondelpark 7",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-07T21:38:49.66Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:23.328Z",
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z",
+    "placeId": "ChIJAXfOrAXixUcR1byBrlBHZ8E"
   },
   {
     "id": 1262,
@@ -14762,24 +13395,26 @@
     "vibe": "Bar with outdoor terrace at Westergasfabriek, pizza and football on the screen",
     "address": "Pazzanistraat 3",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-07T21:38:49.66Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:23.712Z",
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z"
+    "outdoorScreensVerifiedAt": "2026-05-07T21:38:49.672Z",
+    "placeId": "ChIJMy5xe1gJxkcRuz7-jXV-bvg"
   },
   {
     "id": 1263,
     "name": "Hangar Oost",
-    "lat": 52.3690104,
-    "lng": 4.9647143,
+    "lat": 52.3686274,
+    "lng": 4.9681847999999995,
     "area": "Zeeburgereiland",
     "facing": "SW",
     "capacity": "L",
     "vibe": "Big waterfront terrace on Zeeburgereiland with views over the IJ. Topped zonopjebakkes.nl's 2026 sunny-terraces list at #1.",
     "address": "Zuiderzeeweg 6H",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-09T06:25:39.224Z"
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:24.097Z",
+    "placeId": "ChIJ8f6sNeQJxkcRcR9CnNqMt_k"
   },
   {
     "id": 1264,
@@ -14792,8 +13427,9 @@
     "vibe": "Industrial-area café/restaurant near Sloterdijk. Listed at #4 on zonopjebakkes.nl 2026 sunny-terraces.",
     "address": "Radarweg 480",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-09T06:25:39.224Z"
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:24.451Z",
+    "placeId": "ChIJRW7mBVnixUcRK_OhCOJjjB0"
   },
   {
     "id": 1265,
@@ -15666,11 +14302,12 @@
     "vibe": "Specialty coffee",
     "address": "Amstelveenseweg 133, 1075 VX Amsterdam",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-14T15:55:39.234Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:24.841Z",
     "category": [
       "coffee"
-    ]
+    ],
+    "placeId": "ChIJB-LiKgDjxUcRxKs0uhWQR50"
   },
   {
     "id": 1309,
@@ -15843,11 +14480,12 @@
     "vibe": "Specialty coffee",
     "address": "Hendrik Jacobszstraat 18, 1075 PD Amsterdam",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-05-14T14:28:53.456Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:25.264Z",
     "category": [
       "coffee"
-    ]
+    ],
+    "placeId": "ChIJ_3D0x-njxUcRrOfrv8DJtTY"
   },
   {
     "id": 1318,
@@ -15861,12 +14499,13 @@
     "address": "Kon. Wilhelminaplein 13, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.255Z",
+    "verifiedAt": "2026-06-06T11:36:25.649Z",
     "category": [
       "coffee"
     ],
     "googleRating": 5,
-    "googleReviewCount": 128
+    "googleReviewCount": 128,
+    "placeId": "ChIJ9SF9LKHjxUcRBDB4ZEDTrwQ"
   },
   {
     "id": 1319,
@@ -15880,12 +14519,13 @@
     "address": "Potgieterstraat 47 HS, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.26Z",
+    "verifiedAt": "2026-06-06T11:36:26.020Z",
     "category": [
       "coffee"
     ],
     "googleRating": 5,
-    "googleReviewCount": 74
+    "googleReviewCount": 74,
+    "placeId": "ChIJ5ZURWgAJxkcR978GW1Eb1Sk"
   },
   {
     "id": 1320,
@@ -15899,12 +14539,13 @@
     "address": "Postjesweg 55, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.261Z",
+    "verifiedAt": "2026-06-06T11:36:26.373Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 585
+    "googleReviewCount": 585,
+    "placeId": "ChIJHxOh6w3ixUcRv5RXcqmRNqw"
   },
   {
     "id": 1321,
@@ -15918,12 +14559,13 @@
     "address": "Zeedijk 71, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.262Z",
+    "verifiedAt": "2026-06-06T11:36:26.774Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 283
+    "googleReviewCount": 283,
+    "placeId": "ChIJH6PcQccJxkcRPToQybgjebw"
   },
   {
     "id": 1322,
@@ -15937,12 +14579,13 @@
     "address": "Kostverlorenstraat 11H, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.265Z",
+    "verifiedAt": "2026-06-06T11:36:27.162Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 230
+    "googleReviewCount": 230,
+    "placeId": "ChIJq4yeA60JxkcRnb-jCwqxRHA"
   },
   {
     "id": 1323,
@@ -15956,12 +14599,13 @@
     "address": "Saenredamstraat 26h, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.266Z",
+    "verifiedAt": "2026-06-06T11:36:27.534Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 166
+    "googleReviewCount": 166,
+    "placeId": "ChIJUww00NMJxkcRLR39KynB6ro"
   },
   {
     "id": 1324,
@@ -15975,12 +14619,13 @@
     "address": "Kinkerstraat 58, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.266Z",
+    "verifiedAt": "2026-06-06T11:36:27.906Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 114
+    "googleReviewCount": 114,
+    "placeId": "ChIJva_0IN4JxkcRwkoDTiIGklw"
   },
   {
     "id": 1325,
@@ -15994,12 +14639,13 @@
     "address": "Marius Bauerstraat 28, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.268Z",
+    "verifiedAt": "2026-06-06T11:36:28.276Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 74
+    "googleReviewCount": 74,
+    "placeId": "ChIJCz4D8BnjxUcR6Oz34q0Iw0Y"
   },
   {
     "id": 1326,
@@ -16013,12 +14659,13 @@
     "address": "Oosterpark (kiosk), Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.269Z",
+    "verifiedAt": "2026-06-06T11:36:28.663Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 63
+    "googleReviewCount": 63,
+    "placeId": "ChIJr8umejcJxkcRQUhUWcM5JpE"
   },
   {
     "id": 1327,
@@ -16032,12 +14679,13 @@
     "address": "Bos en Lommerweg 432, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.269Z",
+    "verifiedAt": "2026-06-06T11:36:29.065Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.9,
-    "googleReviewCount": 53
+    "googleReviewCount": 53,
+    "placeId": "ChIJEb_tg7vjxUcR-gBDonUGC5I"
   },
   {
     "id": 1328,
@@ -16051,12 +14699,13 @@
     "address": "Amstel 102, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.27Z",
+    "verifiedAt": "2026-06-06T11:36:29.436Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 2269
+    "googleReviewCount": 2269,
+    "placeId": "ChIJ_SFeOswJxkcRh_MMFXBsA6w"
   },
   {
     "id": 1329,
@@ -16070,12 +14719,13 @@
     "address": "Linnaeusstraat 88, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.272Z",
+    "verifiedAt": "2026-06-06T11:36:29.811Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 1893
+    "googleReviewCount": 1893,
+    "placeId": "ChIJKQEowXAJxkcR1uPTdMCJs60"
   },
   {
     "id": 1330,
@@ -16089,12 +14739,13 @@
     "address": "Van Woustraat 113, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.273Z",
+    "verifiedAt": "2026-06-06T11:36:30.186Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 276
+    "googleReviewCount": 276,
+    "placeId": "ChIJg04uXk0JxkcRRV3dm8AJehI"
   },
   {
     "id": 1331,
@@ -16108,12 +14759,13 @@
     "address": "Van Woustraat 9HS, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.273Z",
+    "verifiedAt": "2026-06-06T11:36:30.584Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 248
+    "googleReviewCount": 248,
+    "placeId": "ChIJU7WxJgAJxkcRJkSx5cYly2c"
   },
   {
     "id": 1332,
@@ -16127,12 +14779,13 @@
     "address": "Abraham Staalmanplein 12, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.273Z",
+    "verifiedAt": "2026-06-06T11:36:30.972Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 244
+    "googleReviewCount": 244,
+    "placeId": "ChIJqfE2qobjxUcRguI45iuzYOk"
   },
   {
     "id": 1333,
@@ -16146,12 +14799,13 @@
     "address": "Meeuwenlaan 126B, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.274Z",
+    "verifiedAt": "2026-06-06T11:36:31.371Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 160
+    "googleReviewCount": 160,
+    "placeId": "ChIJI4NOGwAJxkcRMKOJBSYzbCM"
   },
   {
     "id": 1334,
@@ -16165,12 +14819,13 @@
     "address": "Dapperplein 45, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.274Z",
+    "verifiedAt": "2026-06-06T11:36:31.740Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 132
+    "googleReviewCount": 132,
+    "placeId": "ChIJ9YtCjwEJxkcR02w4BwuY3XQ"
   },
   {
     "id": 1335,
@@ -16184,12 +14839,13 @@
     "address": "Docklandsweg 29, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.274Z",
+    "verifiedAt": "2026-06-06T11:36:32.143Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 130
+    "googleReviewCount": 130,
+    "placeId": "ChIJq4gGdvUJxkcROERJS-GJuL0"
   },
   {
     "id": 1336,
@@ -16203,12 +14859,13 @@
     "address": "Wagenaarstraat 70H, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.274Z",
+    "verifiedAt": "2026-06-06T11:36:32.573Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 102
+    "googleReviewCount": 102,
+    "placeId": "ChIJfWrrN4cJxkcRtOgzbihdbFI"
   },
   {
     "id": 1337,
@@ -16222,12 +14879,13 @@
     "address": "Overtoom 556-A, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.274Z",
+    "verifiedAt": "2026-06-06T11:36:32.946Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 99
+    "googleReviewCount": 99,
+    "placeId": "ChIJoRWFCNXjxUcRp2O31U5SUsE"
   },
   {
     "id": 1338,
@@ -16241,12 +14899,13 @@
     "address": "Osdorpplein 735, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.274Z",
+    "verifiedAt": "2026-06-06T11:36:33.318Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 60
+    "googleReviewCount": 60,
+    "placeId": "ChIJe3wQ1rXjxUcRS65kiglJ96I"
   },
   {
     "id": 1339,
@@ -16260,12 +14919,13 @@
     "address": "Strawinskylaan 67, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.274Z",
+    "verifiedAt": "2026-06-06T11:36:33.723Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.8,
-    "googleReviewCount": 57
+    "googleReviewCount": 57,
+    "placeId": "ChIJe5sCp3cLxkcRLYc2ZxBQ1qM"
   },
   {
     "id": 1340,
@@ -16279,12 +14939,13 @@
     "address": "Oudekerksplein 27, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.275Z",
+    "verifiedAt": "2026-06-06T11:36:34.063Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 3534
+    "googleReviewCount": 3534,
+    "placeId": "ChIJW11C8LgJxkcR-X_xv39yjU0"
   },
   {
     "id": 1341,
@@ -16298,12 +14959,13 @@
     "address": "Plantage Middenlaan 30A, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.275Z",
+    "verifiedAt": "2026-06-06T11:36:34.461Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 2922
+    "googleReviewCount": 2922,
+    "placeId": "ChIJZ5TbeaIJxkcRPKzZphIwYrs"
   },
   {
     "id": 1342,
@@ -16317,12 +14979,13 @@
     "address": "Cornelis Schuytstraat 57, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.275Z",
+    "verifiedAt": "2026-06-06T11:36:34.848Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 1219
+    "googleReviewCount": 1219,
+    "placeId": "ChIJq8kKglkJxkcRV2MMVmzSd1o"
   },
   {
     "id": 1343,
@@ -16336,12 +14999,13 @@
     "address": "Stromarkt 15, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.276Z",
+    "verifiedAt": "2026-06-06T11:36:35.236Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 1185
+    "googleReviewCount": 1185,
+    "placeId": "ChIJXXoMacgJxkcRB7roIOz_63Q"
   },
   {
     "id": 1344,
@@ -16355,12 +15019,13 @@
     "address": "Rozengracht 92H, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.276Z",
+    "verifiedAt": "2026-06-06T11:36:35.624Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 1146
+    "googleReviewCount": 1146,
+    "placeId": "ChIJL9r0CgMJxkcRYcip3em1zC8"
   },
   {
     "id": 1345,
@@ -16374,12 +15039,13 @@
     "address": "Spuistraat 217, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.277Z",
+    "verifiedAt": "2026-06-06T11:36:35.982Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 1059
+    "googleReviewCount": 1059,
+    "placeId": "ChIJ-ZHrz_QJxkcRKC2ovKvwteo"
   },
   {
     "id": 1346,
@@ -16393,12 +15059,13 @@
     "address": "Stadhouderskade 82A, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.277Z",
+    "verifiedAt": "2026-06-06T11:36:36.370Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 925
+    "googleReviewCount": 925,
+    "placeId": "ChIJd0K8r1IJxkcRTFIu2xJsOao"
   },
   {
     "id": 1347,
@@ -16412,12 +15079,13 @@
     "address": "Eerste Jacob van Campenstraat 47H, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.28Z",
+    "verifiedAt": "2026-06-06T11:36:36.774Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 430
+    "googleReviewCount": 430,
+    "placeId": "ChIJue2vTb4JxkcRJo5KbLYoFd4"
   },
   {
     "id": 1348,
@@ -16431,12 +15099,13 @@
     "address": "Galileiplantsoen 94, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.28Z",
+    "verifiedAt": "2026-06-06T11:36:37.145Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 385
+    "googleReviewCount": 385,
+    "placeId": "ChIJ5Y0FJ3QJxkcRODApLj1HmjU"
   },
   {
     "id": 1349,
@@ -16450,12 +15119,13 @@
     "address": "Korte Leidsedwarsstraat 203, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.281Z",
+    "verifiedAt": "2026-06-06T11:36:37.532Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 225
+    "googleReviewCount": 225,
+    "placeId": "ChIJRQlpb18JxkcRTd4De5yaaHg"
   },
   {
     "id": 1350,
@@ -16469,12 +15139,13 @@
     "address": "Ruyschstraat 34, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.281Z",
+    "verifiedAt": "2026-06-06T11:36:37.904Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 124
+    "googleReviewCount": 124,
+    "placeId": "ChIJ9RrWo-0JxkcRdCf1pWzDwFU"
   },
   {
     "id": 1351,
@@ -16488,12 +15159,13 @@
     "address": "Ceintuurbaan 276-h, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.282Z",
+    "verifiedAt": "2026-06-06T11:36:38.292Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 81
+    "googleReviewCount": 81,
+    "placeId": "ChIJN32pSRMJxkcRDAiWA0NdnS0"
   },
   {
     "id": 1352,
@@ -16507,12 +15179,13 @@
     "address": "Kastanjeplein 2, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.282Z",
+    "verifiedAt": "2026-06-06T11:36:38.696Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.7,
-    "googleReviewCount": 38
+    "googleReviewCount": 38,
+    "placeId": "ChIJn_kmi3YJxkcR4yw-YCJN9Vk"
   },
   {
     "id": 1353,
@@ -16526,12 +15199,13 @@
     "address": "Nieuwebrugsteeg 24, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.283Z",
+    "verifiedAt": "2026-06-06T11:36:39.082Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 6238
+    "googleReviewCount": 6238,
+    "placeId": "ChIJNVW2y7kJxkcR9aOE9tnlp08"
   },
   {
     "id": 1354,
@@ -16545,12 +15219,13 @@
     "address": "Warmoesstraat 52A, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.284Z",
+    "verifiedAt": "2026-06-06T11:36:39.469Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 3985
+    "googleReviewCount": 3985,
+    "placeId": "ChIJC3g7RLgJxkcR7MWadvd1_u0"
   },
   {
     "id": 1355,
@@ -16564,12 +15239,13 @@
     "address": "Kinkerstraat 112, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.285Z",
+    "verifiedAt": "2026-06-06T11:36:39.890Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 2022
+    "googleReviewCount": 2022,
+    "placeId": "ChIJEfmjb-AJxkcRqdnhOTbEetc"
   },
   {
     "id": 1356,
@@ -16583,12 +15259,13 @@
     "address": "Warmoesstraat 133, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.286Z",
+    "verifiedAt": "2026-06-06T11:36:40.277Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 1244
+    "googleReviewCount": 1244,
+    "placeId": "ChIJi5zSag8JxkcRLeUu3j1pH4g"
   },
   {
     "id": 1357,
@@ -16602,31 +15279,13 @@
     "address": "Singel 180, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.286Z",
+    "verifiedAt": "2026-06-06T11:36:40.661Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 1004
-  },
-  {
-    "id": 1358,
-    "name": "Cafenation Amsterdam",
-    "lat": 52.354718,
-    "lng": 4.8493189,
-    "area": "Oud-West",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Coffee",
-    "address": "Warmondstraat 120, Amsterdam",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.287Z",
-    "category": [
-      "coffee"
-    ],
-    "googleRating": 4.6,
-    "googleReviewCount": 905
+    "googleReviewCount": 1004,
+    "placeId": "ChIJ7Ri6K8QJxkcRW0_hwFeU8N8"
   },
   {
     "id": 1359,
@@ -16640,12 +15299,13 @@
     "address": "Daniel Stalpertstraat 61H, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.287Z",
+    "verifiedAt": "2026-06-06T11:36:41.453Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 881
+    "googleReviewCount": 881,
+    "placeId": "ChIJ_XEIxB8JxkcR7KBAPjUoqbY"
   },
   {
     "id": 1360,
@@ -16659,12 +15319,13 @@
     "address": "Rokin 118A, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.287Z",
+    "verifiedAt": "2026-06-06T11:36:41.840Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 433
+    "googleReviewCount": 433,
+    "placeId": "ChIJ99GOub8JxkcRtVdBpLLnr-o"
   },
   {
     "id": 1361,
@@ -16678,12 +15339,13 @@
     "address": "Claude Debussylaan 269, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.287Z",
+    "verifiedAt": "2026-06-06T11:36:42.256Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 382
+    "googleReviewCount": 382,
+    "placeId": "ChIJNb1kys0LxkcRz8FyOhJdsqo"
   },
   {
     "id": 1362,
@@ -16697,12 +15359,13 @@
     "address": "Kinkerstraat 186, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.288Z",
+    "verifiedAt": "2026-06-06T11:36:42.658Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 353
+    "googleReviewCount": 353,
+    "placeId": "ChIJTdfEnVXjxUcRRgl9ADDca1o"
   },
   {
     "id": 1363,
@@ -16716,12 +15379,13 @@
     "address": "Buitenveldertselaan 98, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.288Z",
+    "verifiedAt": "2026-06-06T11:36:43.028Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.6,
-    "googleReviewCount": 250
+    "googleReviewCount": 250,
+    "placeId": "ChIJnYGRF7cLxkcR4w3uY5jOZ4M"
   },
   {
     "id": 1364,
@@ -16735,12 +15399,13 @@
     "address": "Snoekjessteeg 1-3, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.289Z",
+    "verifiedAt": "2026-06-06T11:36:43.401Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 2071
+    "googleReviewCount": 2071,
+    "placeId": "ChIJdVLICfEJxkcRQxGmA3GbJnI"
   },
   {
     "id": 1365,
@@ -16754,12 +15419,13 @@
     "address": "Oosterdoksstraat 4, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.29Z",
+    "verifiedAt": "2026-06-06T11:36:43.787Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 1376
+    "googleReviewCount": 1376,
+    "placeId": "ChIJW49D6XQJxkcRQb0_7xnUwUI"
   },
   {
     "id": 1366,
@@ -16773,12 +15439,13 @@
     "address": "Oudekerksplein 4, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.29Z",
+    "verifiedAt": "2026-06-06T11:36:44.169Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 1301
+    "googleReviewCount": 1301,
+    "placeId": "ChIJQ0IGVrgJxkcRXhQvrLGI4h8"
   },
   {
     "id": 1367,
@@ -16792,12 +15459,13 @@
     "address": "Oude Hoogstraat 22, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.29Z",
+    "verifiedAt": "2026-06-06T11:36:44.632Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 726
+    "googleReviewCount": 726,
+    "placeId": "ChIJ_T-BOr8JxkcRdra2-zQ3x1M"
   },
   {
     "id": 1368,
@@ -16811,12 +15479,13 @@
     "address": "Elandsgracht 53, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.291Z",
+    "verifiedAt": "2026-06-06T11:36:45.004Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 648
+    "googleReviewCount": 648,
+    "placeId": "ChIJa6eSJN0JxkcRws9Dab6UdB0"
   },
   {
     "id": 1369,
@@ -16830,12 +15499,13 @@
     "address": "Prinsengracht 296, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.292Z",
+    "verifiedAt": "2026-06-06T11:36:45.404Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 606
+    "googleReviewCount": 606,
+    "placeId": "ChIJL96lKcMJxkcRpj2a2a-qdJ4"
   },
   {
     "id": 1370,
@@ -16849,12 +15519,13 @@
     "address": "Warmoesstraat 143, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.292Z",
+    "verifiedAt": "2026-06-06T11:36:45.790Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 576
+    "googleReviewCount": 576,
+    "placeId": "ChIJbZpgUrEJxkcRZkJEpSnZNhA"
   },
   {
     "id": 1371,
@@ -16868,12 +15539,13 @@
     "address": "Gaasterlandstraat 401, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.294Z",
+    "verifiedAt": "2026-06-06T11:36:46.145Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 347
+    "googleReviewCount": 347,
+    "placeId": "ChIJV_2MU20LxkcR0I_7YDoBZX8"
   },
   {
     "id": 1372,
@@ -16887,12 +15559,13 @@
     "address": "Herengracht 542-556, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.298Z",
+    "verifiedAt": "2026-06-06T11:36:46.526Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 83
+    "googleReviewCount": 83,
+    "placeId": "ChIJq6puD5UJxkcRGJ1216aaMe8"
   },
   {
     "id": 1373,
@@ -16906,12 +15579,13 @@
     "address": "Beukenplein 22, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.3Z",
+    "verifiedAt": "2026-06-06T11:36:46.927Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 72
+    "googleReviewCount": 72,
+    "placeId": "ChIJnS5dXgQJxkcRy9QollQkoCM"
   },
   {
     "id": 1374,
@@ -16925,12 +15599,13 @@
     "address": "Barbara Strozzilaan 336, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.3Z",
+    "verifiedAt": "2026-06-06T11:36:47.359Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.5,
-    "googleReviewCount": 61
+    "googleReviewCount": 61,
+    "placeId": "ChIJC4En2FQLxkcRZcVLjr_Stsk"
   },
   {
     "id": 1375,
@@ -16944,12 +15619,13 @@
     "address": "Nieuwe Herengracht 18a, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.3Z",
+    "verifiedAt": "2026-06-06T11:36:47.762Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.4,
-    "googleReviewCount": 3237
+    "googleReviewCount": 3237,
+    "placeId": "ChIJ0W1l0pcJxkcRQO5KDCFd6mg"
   },
   {
     "id": 1376,
@@ -16963,12 +15639,13 @@
     "address": "Ferdinand Bolstraat 21-B, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.301Z",
+    "verifiedAt": "2026-06-06T11:36:48.165Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.4,
-    "googleReviewCount": 287
+    "googleReviewCount": 287,
+    "placeId": "ChIJPXt-3QcJxkcRKIdMkEXjfAc"
   },
   {
     "id": 1377,
@@ -16982,12 +15659,13 @@
     "address": "Bellamystraat 11, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.301Z",
+    "verifiedAt": "2026-06-06T11:36:48.567Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.4,
-    "googleReviewCount": 156
+    "googleReviewCount": 156,
+    "placeId": "ChIJ4RLl8E3jxUcRbK0RVtdhXIQ"
   },
   {
     "id": 1378,
@@ -17001,12 +15679,13 @@
     "address": "Van Woustraat 54, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.302Z",
+    "verifiedAt": "2026-06-06T11:36:48.970Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.3,
-    "googleReviewCount": 68
+    "googleReviewCount": 68,
+    "placeId": "ChIJt_YLHQAJxkcRHHZ1d0uOuX8"
   },
   {
     "id": 1379,
@@ -17020,12 +15699,13 @@
     "address": "Prins Hendrikkade 48, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.304Z",
+    "verifiedAt": "2026-06-06T11:36:49.329Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.2,
-    "googleReviewCount": 8820
+    "googleReviewCount": 8820,
+    "placeId": "ChIJc1GMMbgJxkcRXOaOht2cF6k"
   },
   {
     "id": 1380,
@@ -17039,12 +15719,13 @@
     "address": "Bosboom Toussaintstraat 60, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.304Z",
+    "verifiedAt": "2026-06-06T11:36:49.733Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.2,
-    "googleReviewCount": 2811
+    "googleReviewCount": 2811,
+    "placeId": "ChIJ68jGLucJxkcRJh4HCmlEnDU"
   },
   {
     "id": 1381,
@@ -17058,12 +15739,13 @@
     "address": "Bellamystraat 2-h, Amsterdam",
     "verified": true,
     "coordSource": "places_api",
-    "verifiedAt": "2026-05-14T16:08:47.304Z",
+    "verifiedAt": "2026-06-06T11:36:50.138Z",
     "category": [
       "coffee"
     ],
     "googleRating": 4.2,
-    "googleReviewCount": 1708
+    "googleReviewCount": 1708,
+    "placeId": "ChIJc9UkrArixUcRgRrWHKmGTvg"
   },
   {
     "id": 1382,
@@ -17076,10 +15758,11 @@
     "vibe": "Intimate Venetian restaurant, natural wines and homemade pasta",
     "address": "Marathonweg 8HS",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:50.556Z",
     "featured": true,
-    "photoUrl": "https://menupiattini.nl/wp-content/uploads/2025/08/250717_PIATTINI_BS_12.jpg"
+    "photoUrl": "https://menupiattini.nl/wp-content/uploads/2025/08/250717_PIATTINI_BS_12.jpg",
+    "placeId": "ChIJGyPaOEjjxUcRPrlJ6eythHA"
   },
   {
     "id": 1383,
@@ -17092,158 +15775,93 @@
     "vibe": "Natural wine bar with 130m² sun terrace open morning to evening",
     "address": "Wibautstraat 105",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
-    "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
-  },
-  {
-    "id": 1384,
-    "name": "Karavaan",
-    "lat": 52.36618,
-    "lng": 4.8728,
-    "area": "Oud West",
-    "facing": "SW",
-    "capacity": "L",
-    "vibe": "All-day Mediterranean café with large sunny terrace on Kwakersplein",
-    "address": "Kwakersplein 2",
-    "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
-    "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
-  },
-  {
-    "id": 1385,
-    "name": "Mossel & Gin",
-    "lat": 52.3826,
-    "lng": 4.87012,
-    "area": "Westerpark",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Iconic seafood bar at Westergasfabriek with outdoor terrace and gin tonics",
-    "address": "Gosschalklaan 12",
-    "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:50.912Z",
     "outdoorScreens": 1,
     "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
   },
   {
     "id": 1386,
     "name": "Café Struis",
-    "lat": 52.36208,
-    "lng": 4.93031,
+    "lat": 52.3668572,
+    "lng": 4.9258622999999995,
     "area": "Oost",
     "facing": "S",
     "capacity": "M",
     "vibe": "Brouwerij 't IJ brewery bar — terrace next to the iconic windmill",
     "address": "Zeeburgerstraat 1",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:52.156Z",
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z",
+    "placeId": "ChIJH94eWjMJxkcRpVicolPYbBw"
   },
   {
     "id": 1387,
     "name": "Café Restaurant Meyer",
-    "lat": 52.36093,
-    "lng": 4.89785,
+    "lat": 52.36226,
+    "lng": 4.8966867999999995,
     "area": "Centrum",
     "facing": "S",
     "capacity": "L",
     "vibe": "Classic Amsterdam brasserie on the sunny Amstelveld square",
     "address": "Amstelveld 12",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:52.557Z",
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z",
+    "placeId": "ChIJWRkzojUJxkcRN5QbiOuLcdY"
   },
   {
     "id": 1388,
     "name": "Café Marcella",
-    "lat": 52.3608,
-    "lng": 4.8981,
+    "lat": 52.362249,
+    "lng": 4.8982857,
     "area": "Centrum",
     "facing": "S",
     "capacity": "S",
     "vibe": "Canal-front neighbourhood café on Amstelveld",
     "address": "Amstelveld 21",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:52.912Z",
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z",
+    "placeId": "ChIJBypQaZQJxkcRsMmyW6YMrkk"
   },
   {
     "id": 1389,
     "name": "Café Nieuw Amsterdam",
-    "lat": 52.38191,
-    "lng": 4.88838,
+    "lat": 52.3801803,
+    "lng": 4.8919698,
     "area": "Centrum",
     "facing": "S",
     "capacity": "M",
     "vibe": "French café with courtyard terrace on Haarlemmerstraat",
     "address": "Haarlemmerstraat 75",
     "verified": true,
-    "coordSource": "manual",
-    "verifiedAt": "2026-06-06T00:00:00.000Z",
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T11:36:53.298Z",
     "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z"
+    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z",
+    "placeId": "ChIJnQzziD4JxkcR7zEIhe1IfZw"
   },
   {
     "id": 1390,
     "name": "Helling 7",
     "lat": 52.40591,
-    "lng": 4.88500,
+    "lng": 4.885,
     "area": "Noord",
     "facing": "S",
     "capacity": "L",
     "vibe": "Panoramic IJ waterfront restaurant on the historic NDSM shipyard slipway",
     "address": "Melissaweg 57, 1033 SP Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
-  },
-  {
-    "id": 1391,
-    "name": "De Ysbreeker",
-    "lat": 52.35749,
-    "lng": 4.90689,
-    "area": "Oost",
-    "facing": "W",
-    "capacity": "L",
-    "vibe": "Classic grand café on the Amstel with a large waterside terrace and river views",
-    "address": "Weesperzijde 23, 1091 EC Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
-  },
-  {
-    "id": 1392,
-    "name": "Waterkant",
-    "lat": 52.36972,
-    "lng": 4.87619,
-    "area": "West",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Buzzy canalside café-bar with a floating waterside deck on the Singelgracht",
-    "address": "Marnixstraat 246, 1016 TL Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
-  },
-  {
-    "id": 1393,
-    "name": "Bar Botanique",
-    "lat": 52.36345,
-    "lng": 4.93033,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Urban jungle café with tropical plants and a sunny streetside terrace",
-    "address": "Eerste van Swindenstraat 581, 1093 LC Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:24:50.348Z",
+    "placeId": "ChIJNf2OejoJxkcR4KNrp5RaDAk"
   },
   {
     "id": 1394,
@@ -17255,34 +15873,9 @@
     "capacity": "L",
     "vibe": "Rooftop bar on the 7th floor of Volkshotel with panoramic 360° city views",
     "address": "Wibautstraat 150, 1091 GR Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
-  },
-  {
-    "id": 1395,
-    "name": "Dignita Hoftuin",
-    "lat": 52.36563,
-    "lng": 4.90451,
-    "area": "Centrum",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Organic brunch café in a glasshouse with a sunny walled garden terrace near the Plantage",
-    "address": "Nieuwe Herengracht 18a, 1018 DP Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
-  },
-  {
-    "id": 1396,
-    "name": "Polly Goudvisch",
-    "lat": 52.38253,
-    "lng": 4.90341,
-    "area": "Noord",
-    "facing": "S",
-    "capacity": "L",
-    "vibe": "Brasserie on the IJ ferry stop with spacious south-facing waterfront terraces",
-    "address": "Buiksloterweg 3, 1031 CC Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:24:51.793Z"
   },
   {
     "id": 1397,
@@ -17294,8 +15887,9 @@
     "capacity": "M",
     "vibe": "Historic public bathhouse converted into a lively restaurant with a sun terrace",
     "address": "Javaplein 21, 1095 CJ Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:24:52.876Z"
   },
   {
     "id": 1398,
@@ -17307,46 +15901,220 @@
     "capacity": "L",
     "vibe": "French-Greek restobar on Beukenplein with a 120-seat terrace and natural wines",
     "address": "Beukenplein, 1092 Amsterdam Oost",
-    "verified": false,
-    "coordSource": "manual"
-  },
-  {
-    "id": 1399,
-    "name": "Turbo",
-    "lat": 52.36063,
-    "lng": 4.92527,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "S",
-    "vibe": "Hip snack bar next to Oosterpark serving brunch, specialty coffee and natural wine",
-    "address": "Reinwardtstraat 1, Amsterdam Oost",
-    "verified": false,
-    "coordSource": "manual"
-  },
-  {
-    "id": 1400,
-    "name": "Le French Café (Javastraat)",
-    "lat": 52.36347,
-    "lng": 4.93344,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "French brasserie with a sprawling streetside terrace on the Javastraat",
-    "address": "Javastraat 42, Amsterdam Oost",
-    "verified": false,
-    "coordSource": "manual"
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:24:53.206Z"
   },
   {
     "id": 1401,
     "name": "Café de Kleine Bes",
-    "lat": 52.36435,
-    "lng": 4.92430,
+    "lat": 52.364793999999996,
+    "lng": 4.925039700000001,
     "area": "Oost",
     "facing": "SW",
     "capacity": "S",
     "vibe": "Cosy corner café in the Dapperbuurt with a sunny, plant-framed terrace",
     "address": "Mauritskade 100, 1093 RR Amsterdam",
-    "verified": false,
-    "coordSource": "manual"
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:24:54.329Z",
+    "placeId": "ChIJVxnkp7IJxkcRLM73VioNYew",
+    "googleRating": 4.8,
+    "googleReviewCount": 35
+  },
+  {
+    "id": 1402,
+    "name": "Brouwerij 't IJ",
+    "lat": 52.3666977,
+    "lng": 4.9263471,
+    "area": "Oost",
+    "facing": "S",
+    "capacity": "L",
+    "vibe": "Iconic craft brewery in a 1725 windmill with a legendary large sunny terrace — one of Amsterdam's most photographed spots",
+    "address": "Funenkade 7, 1018 BN Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:03.041Z",
+    "placeId": "ChIJk_jIQQsJxkcRxEsf3kkT_nc"
+  },
+  {
+    "id": 1403,
+    "name": "Café Helmers",
+    "lat": 52.3634175,
+    "lng": 4.8752407,
+    "area": "Oud-West",
+    "facing": "SW",
+    "capacity": "M",
+    "vibe": "Classic Oud-West bruinkroeg with a sunny street-facing terrace in the heart of the Helmersbuurt",
+    "address": "Eerste Helmersstraat 59, 1054 BT Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:03.430Z",
+    "placeId": "ChIJQY8fueYJxkcRFSPuiwcrUq8"
+  },
+  {
+    "id": 1404,
+    "name": "Café Kompleet",
+    "lat": 52.3638495,
+    "lng": 4.874814,
+    "area": "Oud-West",
+    "facing": "SW",
+    "capacity": "M",
+    "vibe": "The quintessential Helmersbuurt living room café — traditional Dutch food, beers under €3, and a front terrace almost always in the sun",
+    "address": "Eerste Constantijn Huygensstraat 45H, 1054 BS Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:03.788Z",
+    "placeId": "ChIJR1n8HFgJxkcR7wxn6W_i9jQ"
+  },
+  {
+    "id": 1405,
+    "name": "De Zingende Zwaan",
+    "lat": 52.359834899999996,
+    "lng": 4.8602099999999995,
+    "area": "Oud-West",
+    "facing": "S",
+    "capacity": "L",
+    "vibe": "Up to 80 terrace chairs in an open sun-drenched garden — the biggest and sunniest terrace on Eerste Helmersstraat",
+    "address": "Eerste Helmersstraat 250, 1054 ER Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:04.160Z",
+    "placeId": "ChIJCYGeh1bjxUcR5Q9Q1eIdZlA"
+  },
+  {
+    "id": 1406,
+    "name": "Star Ferry",
+    "lat": 52.3782711,
+    "lng": 4.9131079,
+    "area": "Oost",
+    "facing": "NW",
+    "capacity": "L",
+    "vibe": "Waterfront café-restaurant on the Piet Heinkade with panoramic IJ harbour views and a large sun-exposed terrace",
+    "address": "Piet Heinkade 1, 1019 BR Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:04.550Z",
+    "placeId": "ChIJbz9kpK8JxkcRWeRCo0EvsIQ"
+  },
+  {
+    "id": 1407,
+    "name": "Café Caron",
+    "lat": 52.35733,
+    "lng": 4.8887719,
+    "area": "De Pijp",
+    "facing": "SW",
+    "capacity": "S",
+    "vibe": "Intimate French bistro by TV chef Alain Caron with a sunny streetside terrace on the Frans Halsstraat",
+    "address": "Frans Halsstraat 28H, 1072 BS Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:04.941Z",
+    "placeId": "ChIJycmSme0JxkcReMbks4jH_ZU"
+  },
+  {
+    "id": 1408,
+    "name": "Café-Restaurant Amsterdam",
+    "lat": 52.3842205,
+    "lng": 4.8682145,
+    "area": "West",
+    "facing": "S",
+    "capacity": "L",
+    "vibe": "Grand café in a converted 19th-century water tower with a large calm rear terrace away from the street",
+    "address": "Watertorenplein 6, 1051 PA Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:05.329Z",
+    "placeId": "ChIJe3hOLH_ixUcRRLECWCyvFZE"
+  },
+  {
+    "id": 1409,
+    "name": "LuminAir",
+    "lat": 52.3765715,
+    "lng": 4.905451600000001,
+    "area": "Centrum",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Voted best hotel bar in the Netherlands 2025 — 11th-floor rooftop terrace above Amsterdam Centraal with panoramic city views",
+    "address": "Oosterdoksstraat 4, 1011 DK Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:05.699Z",
+    "placeId": "ChIJ3X7KShgJxkcRNJ6P783NB88"
+  },
+  {
+    "id": 1410,
+    "name": "WET Deck",
+    "lat": 52.3727997,
+    "lng": 4.8897582,
+    "area": "Centrum",
+    "facing": "SW",
+    "capacity": "M",
+    "vibe": "Design-forward rooftop pool bar on top of the W Amsterdam hotel in the heart of the city",
+    "address": "Spuistraat 175, 1012 VN Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:06.033Z",
+    "placeId": "ChIJQQnar8YJxkcRvUSlBsi-QTk"
+  },
+  {
+    "id": 1411,
+    "name": "Madam",
+    "lat": 52.383927799999995,
+    "lng": 4.902386400000001,
+    "area": "Noord",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Sky bar and restaurant on top of the A'DAM Tower with 360° panoramic views over Amsterdam and the IJ",
+    "address": "Overhoeksplein 1, 1031 KS Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:06.395Z",
+    "placeId": "ChIJ2zKv9ucJxkcRG-pmd0ND6MY"
+  },
+  {
+    "id": 1412,
+    "name": "Fitz's on the Roof",
+    "lat": 52.3621937,
+    "lng": 4.9196841000000004,
+    "area": "Oost",
+    "facing": "SW",
+    "capacity": "S",
+    "vibe": "Undiscovered boutique hotel rooftop bar among the treetops above the Oosterpark — cocktails with city views",
+    "address": "Mauritskade 61, 1092 AD Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:06.755Z",
+    "placeId": "ChIJsfEI1OAJxkcR8Fhq62_t6Cc"
+  },
+  {
+    "id": 1413,
+    "name": "Bolenius",
+    "lat": 52.3593751,
+    "lng": 4.844816499999999,
+    "area": "West",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Michelin-starred restaurant in Rembrandtpark with a kitchen garden and a peaceful park-side sun terrace",
+    "address": "Nachtwachtlaan 20B, 1058 EA Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:07.096Z",
+    "placeId": "ChIJK-siJMzjxUcRiU3bQ-0LbCU"
+  },
+  {
+    "id": 1414,
+    "name": "Chateau Amsterdam",
+    "lat": 52.386100299999995,
+    "lng": 4.9264071,
+    "area": "Noord",
+    "facing": "SW",
+    "capacity": "M",
+    "vibe": "Urban winery and restaurant in a Noord warehouse with a large canal-facing terrace in the creative Hamerkanaal district",
+    "address": "Gedempt Hamerkanaal 4, 1021 KP Amsterdam",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-06-06T10:57:07.451Z",
+    "placeId": "ChIJvzNiq6sJxkcRWmGwIBgw9cg"
   }
 ]

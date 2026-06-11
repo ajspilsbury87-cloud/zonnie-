@@ -24,6 +24,8 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { getBuildingsForTerrace } from '@/src/data/buildings';
+import { getTreesForTerrace } from '@/src/data/trees';
 import { computeSunScore } from '@/src/engines/scoring';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -104,6 +106,8 @@ export function SunTimeline({ terrace }: SunTimelineProps) {
 
   /** Hourly scores (24 samples), feeds the interpolated sub-bar fill. */
   const hourly = useMemo(() => {
+    const buildings = getBuildingsForTerrace(terrace.id);
+    const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -114,6 +118,8 @@ export function SunTimeline({ terrace }: SunTimelineProps) {
         dateStr,
         weatherProfile,
         hourlyWeather?.[h],
+        buildings,
+        trees,
       ).score,
     );
   }, [terrace, dateOffset, weatherProfile, weatherByDate]);

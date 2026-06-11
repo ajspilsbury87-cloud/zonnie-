@@ -44,11 +44,15 @@ const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText';
 // id + displayName + location + formattedAddress = Basic SKU (cheapest).
 const FIELD_MASK = 'places.id,places.displayName,places.location,places.formattedAddress';
 
+// Widened per audit finding A2-1 (2026-06): the previous tight box
+// (52.32-52.42 N, 4.75-5.0 E) excluded ~17 legitimate terraces on the
+// Zuidoost / IJburg / Noord edges. The audit-spec box below covers the
+// whole municipality while still rejecting far-away geocoder mistakes.
 const AMSTERDAM_BOUNDS = {
-  minLat: 52.32,
-  maxLat: 52.42,
-  minLng: 4.75,
-  maxLng: 5.0,
+  minLat: 52.27,
+  maxLat: 52.45,
+  minLng: 4.72,
+  maxLng: 5.07,
 };
 
 const REQUEST_DELAY_MS = 150;
@@ -60,16 +64,27 @@ interface Args {
   max: number;
   onlyUnverified: boolean;
   onlyUnsourced: boolean;
+  onlyWithoutPlaceId: boolean;
+  /** Override the default 2km suspicious-distance threshold. Useful for
+   *  a targeted re-run on terraces whose stored coords are known to be
+   *  badly off (e.g. --max-correction-distance 5000). */
+  maxCorrectionDistance: number;
 }
 
 function parseArgs(argv: string[]): Args {
-  const args: Args = { apply: false, max: Infinity, onlyUnverified: false, onlyUnsourced: false };
+  const args: Args = { apply: false, max: Infinity, onlyUnverified: false, onlyUnsourced: false, onlyWithoutPlaceId: false, maxCorrectionDistance: SUSPICIOUS_THRESHOLD_M };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--apply') args.apply = true;
     else if (a === '--dry-run') args.apply = false;
     else if (a === '--only-unverified') args.onlyUnverified = true;
     else if (a === '--only-unsourced') args.onlyUnsourced = true;
+    else if (a === '--only-without-placeid') args.onlyWithoutPlaceId = true;
+    else if (a === '--max-correction-distance') {
+      const next = argv[++i];
+      if (!next) throw new Error('--max-correction-distance requires a number');
+      args.maxCorrectionDistance = parseInt(next, 10);
+    }
     else if (a === '--max') {
       const next = argv[++i];
       if (!next) throw new Error('--max requires a number');
@@ -224,6 +239,7 @@ async function main() {
   let pool = terraces;
   if (args.onlyUnverified) pool = pool.filter((t) => !t.verified);
   if (args.onlyUnsourced) pool = pool.filter((t) => !t.coordSource);
+  if (args.onlyWithoutPlaceId) pool = pool.filter((t) => !t.placeId);
   if (Number.isFinite(args.max)) pool = pool.slice(0, args.max);
   console.log(`Will check ${pool.length} terraces. Mode: ${args.apply ? 'APPLY' : 'DRY-RUN'}`);
 
@@ -325,7 +341,7 @@ async function main() {
         const hit = outcome.result;
         const dist = distanceMeters(t.lat, t.lng, hit.lat, hit.lng);
 
-        if (dist > SUSPICIOUS_THRESHOLD_M) {
+        if (dist > args.maxCorrectionDistance) {
           tooFar++;
           log = {
             timestamp: new Date().toISOString(),
@@ -340,7 +356,7 @@ async function main() {
             matchName: hit.matchName,
             placeId: hit.placeId,
             outcome: 'too_far',
-            reason: `Places result ${Math.round(dist)}m away — likely wrong venue, manual review needed`,
+            reason: `Places result ${Math.round(dist)}m away — exceeds ${args.maxCorrectionDistance}m limit`,
           };
           console.log(`${tag} ${display}  too far (${Math.round(dist)}m) — skipped`);
         } else if (dist < APPLY_THRESHOLD_M) {

@@ -31,6 +31,8 @@ import { Platform } from 'react-native';
 import { fromZonedTime } from 'date-fns-tz';
 
 import { TERRACES } from '@/src/data/terraces';
+import { getBuildingsForTerrace } from '@/src/data/buildings';
+import { getTreesForTerrace } from '@/src/data/trees';
 import { AMSTERDAM_TZ, computeSunScore } from '@/src/engines/scoring';
 import type { Weather } from '@/src/engines/types';
 
@@ -73,9 +75,11 @@ function findSunnyBlock(
   let curStart = -1;
   let curPeak = 0;
 
+  const buildings = getBuildingsForTerrace(terraceId);
+  const trees = getTreesForTerrace(terraceId);
   for (let h = MIN_HOUR; h <= MAX_HOUR; h++) {
     const w = hourly[h];
-    const { score } = computeSunScore(terrace, h, dateStr, 'sunny', w);
+    const { score } = computeSunScore(terrace, h, dateStr, 'sunny', w, buildings, trees);
     if (score >= SUNNY_THRESHOLD) {
       if (curStart < 0) {
         curStart = h;

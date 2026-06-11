@@ -56,10 +56,18 @@ const MIN_DISTANCE_M = 8;
 /**
  * Below this ratio of (apparent building height / sun altitude), the
  * building can't physically block the sun. Above 1.0 it's a full block.
- * Between HEIGHT_RATIO_FLOOR and 1.0 we ramp linearly — covers near-edge
- * cases where the building barely peeks above the sun's path.
+ * Between HEIGHT_RATIO_FLOOR and 1.0 we ramp linearly — this narrow
+ * band models the penumbra just as the sun crests the roofline.
+ *
+ * Physics: a building only blocks the sun when its apparent angular
+ * height (atan(h/d)) >= the sun's altitude, i.e. heightRatio >= 1.0.
+ * The OLD value of 0.8 allowed buildings with heightRatio ≈ 0.87 to
+ * report ~35% coverage even when the sun was clearly above the roof
+ * (F1b audit fixture: 20m building at 15m, summer noon alt 61° →
+ * heightRatio ≈ 53°/61° ≈ 0.87 → falsely shaded). Raising the floor
+ * to 0.95 keeps only the physically plausible near-transition zone.
  */
-const HEIGHT_RATIO_FLOOR = 0.8;
+const HEIGHT_RATIO_FLOOR = 0.95;
 /**
  * Soft penumbra width (degrees) applied at each edge of a polygon
  * building's silhouette. 1° ≈ 1.1 m at 60 m distance — models the narrow

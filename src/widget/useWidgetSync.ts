@@ -24,8 +24,10 @@ import { useEffect, useMemo, useRef } from 'react';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { TERRACES } from '@/src/data/terraces';
+import { getBuildingsForTerrace } from '@/src/data/buildings';
+import { getTreesForTerrace } from '@/src/data/trees';
 import { computeSunScore, AMSTERDAM_TZ } from '@/src/engines/scoring';
-import { selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
+import { todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 
 import { buildSnapshot, writeWidgetSnapshot } from './snapshot';
@@ -51,7 +53,9 @@ function topThreeRightNow(weatherByDate: ReturnType<typeof useWeatherStore.getSt
   const weather = hourly?.[hour];
 
   const scored: ScoredTerrace[] = TERRACES.map((t) => {
-    const r = computeSunScore(t, hour, dateStr, 'sunny', weather);
+    const buildings = getBuildingsForTerrace(t.id);
+    const trees = getTreesForTerrace(t.id);
+    const r = computeSunScore(t, hour, dateStr, 'sunny', weather, buildings, trees);
     return { terrace: t, score: r.score };
   });
   scored.sort((a, b) => b.score - a.score);

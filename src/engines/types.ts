@@ -181,4 +181,10 @@ export interface ScoreResult {
   score: number;
   sun: SunPosition;
   weather: Weather;
+  /**
+   * Combined building + tree shadow coverage, [0, 1].
+   * 0 = no obstruction, 1 = fully blocked.
+   * Computed inside `computeSunScore`; zero when sun is below the horizon.
+   */
+  shadow: number;
 }

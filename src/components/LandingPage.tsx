@@ -42,6 +42,8 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { useStrings } from '@/src/i18n/useStrings';
 import { TERRACES } from '@/src/data/terraces';
+import { getBuildingsForTerrace } from '@/src/data/buildings';
+import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
 import { AMSTERDAM_TZ, computeRangeScore } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
@@ -116,7 +118,9 @@ function pickTopByRegion(
   for (const t of TERRACES) {
     const region = regionForArea(t.area);
     if (region == null) continue;
-    const score = computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly);
+    const buildings = getBuildingsForTerrace(t.id);
+    const trees = getTreesForTerrace(t.id);
+    const score = computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly, buildings, trees);
     const list = scoredByRegion.get(region) ?? [];
     list.push({ terrace: t, score, featured: false });
     scoredByRegion.set(region, list);
@@ -163,10 +167,14 @@ function pickFeaturedTerraces(
 
   return TERRACES
     .filter((t) => t.featured === true)
-    .map((t) => ({
-      terrace: t,
-      score: computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly),
-    }));
+    .map((t) => {
+      const buildings = getBuildingsForTerrace(t.id);
+      const trees = getTreesForTerrace(t.id);
+      return {
+        terrace: t,
+        score: computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly, buildings, trees),
+      };
+    });
 }
 
 export function LandingPage({ onContinue }: LandingPageProps) {

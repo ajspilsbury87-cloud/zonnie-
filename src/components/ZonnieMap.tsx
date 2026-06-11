@@ -14,6 +14,7 @@ import { useHint } from '@/src/onboarding/useHint';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { fonts, fontSizes, palette, spacing } from '@/src/theme/tokens';
+import { bandForScore, type ScoreBand } from '@/src/engines/bands';
 
 // Above this latitude delta (~5km vertical span), the map view spans
 // more than one region so showing a specific region label would lie.
@@ -27,34 +28,8 @@ const AMSTERDAM_REGION: MapRegion = {
   longitudeDelta: 0.05,
 };
 
-/**
- * Score → pin colour band. Mirrors the band thresholds in
- * `engines/scoring.ts#scoreLabel`. Five bands so the visual reads
- * the score class even at extreme map zoom-outs where the number
- * inside the pin becomes too small to read.
- */
-type ScoreBand = 'full' | 'mostly' | 'partial' | 'mshade' | 'shade';
-
-/**
- * Absolute score → colour band. Thresholds mirror scoreLabel() in
- * scoring.ts so pin colour and detail-sheet label always agree.
- *
- * Using absolute (not relative-within-range) thresholds means that a
- * terrace in genuine shadow is always dark regardless of how its
- * neighbours are scoring — which is exactly the signal the user needs
- * ("where to avoid") without any colour mapping trickery.
- *
- * With the altFactor now flat above 25° and a 40% facing spread,
- * the real-world score range (≈ 10%–90%) is wide enough that all five
- * colour bands appear naturally without needing relative normalisation.
- */
-function bandForScore(score: number): ScoreBand {
-  if (score > 0.7) return 'full';
-  if (score > 0.5) return 'mostly';
-  if (score > 0.3) return 'partial';
-  if (score > 0.1) return 'mshade';
-  return 'shade';
-}
+// ScoreBand and bandForScore are imported from src/engines/bands.ts —
+// single source of truth for thresholds shared with scoring.ts and tokens.ts.
 
 /** Half-width margin added to the viewport box when culling markers.
  *  Small fraction of a lat/lng degree — keeps pins at the visible edge

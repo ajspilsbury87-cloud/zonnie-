@@ -49,7 +49,13 @@ const config: ExpoConfig = {
   // `policy: 'fingerprint'` would have given us, achieved manually
   // by version bump. 1.1.0-runtime OTAs that fail-load on build #7
   // are already orphan; they won't accrue further.
-  version: '1.2.0',
+  // Bumped 1.2.0 → 1.2.1 for the App Store screenshot refresh (new build
+  // required: OTA updates don't create an attachable binary, and 1.2.0 is
+  // already the live version so a new App Store version needs 1.2.1).
+  // Same runtime-bump reasoning as the 1.1.0 → 1.2.0 note above: build #11
+  // (v1.2.1) listens for "1.2.1" OTAs and is compiled from current source,
+  // so it already bakes in every fix shipped as a 1.2.0 OTA.
+  version: '1.2.1',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
