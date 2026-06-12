@@ -66,6 +66,8 @@ interface TerracePinProps {
   score: number;
   selected: boolean;
   featured: boolean;
+  /** One of the 3 sunniest pins currently in the viewport — gold crown treatment. */
+  topPick: boolean;
   title: string;
   description: string;
   onPress: () => void;
@@ -100,14 +102,17 @@ const TerracePin = memo(
     score,
     selected,
     featured,
+    topPick,
     title,
     description,
     onPress,
   }: TerracePinProps) {
     // Selected pins get a slight size bump + amber halo so the user
     // can re-locate them on the map after opening the detail sheet.
-    const size = selected ? 38 : 32;
-    const tail = selected ? 13 : 11;
+    // Top picks (3 sunniest in view) get a smaller bump + gold ring +
+    // ☀ badge so "the sunniest near me" is answerable at a glance.
+    const size = selected ? 38 : topPick ? 36 : 32;
+    const tail = selected ? 13 : topPick ? 12 : 11;
     const colors = BAND_COLORS[band];
     // Score on the pin is shown as 0–100 (cleaner read than a 0–1
     // decimal). Always clamp + floor so we never show 100 unless
@@ -149,6 +154,9 @@ const TerracePin = memo(
               // Today no terraces have `featured: true` so this is
               // never visible — plumbing only.
               featured && pinStyles.headFeatured,
+              // Top-pick crown ring wins over featured (it's earned by
+              // sun, not paid) but defers to selection highlight.
+              topPick && !selected && pinStyles.headTopPick,
             ]}
           >
             <Text
@@ -164,6 +172,16 @@ const TerracePin = memo(
             >
               {display}
             </Text>
+            {/* ☀ crown badge — only on the viewport's top picks. Sits on
+                the head's top-right edge; absolute so it doesn't shift
+                the centred score text. */}
+            {topPick && !selected ? (
+              <View style={pinStyles.topPickBadge}>
+                <Text allowFontScaling={false} style={pinStyles.topPickBadgeText}>
+                  ☀
+                </Text>
+              </View>
+            ) : null}
           </View>
           {/* Tail — rotated square pulled up by half its height so its
               top half merges with the head, forming the teardrop seam */}
@@ -188,6 +206,7 @@ const TerracePin = memo(
     prev.score === next.score &&
     prev.selected === next.selected &&
     prev.featured === next.featured &&
+    prev.topPick === next.topPick &&
     prev.latitude === next.latitude &&
     prev.longitude === next.longitude &&
     prev.title === next.title &&
@@ -227,6 +246,31 @@ const pinStyles = StyleSheet.create({
   headFeatured: {
     borderColor: palette.mustard,
     borderWidth: 2.5,
+  },
+  // Top-pick crown: gold ring, slightly heavier than featured so the
+  // viewport's 3 sunniest pins read as a tier above everything else.
+  headTopPick: {
+    borderColor: palette.mustard,
+    borderWidth: 3,
+  },
+  topPickBadge: {
+    position: 'absolute',
+    top: -7,
+    right: -7,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: palette.mustard,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Hairline ink ring so the gold dot stays visible over light tiles.
+    borderWidth: 1,
+    borderColor: palette.cocoa,
+  },
+  topPickBadgeText: {
+    fontSize: 9,
+    lineHeight: 11,
+    color: palette.cocoa,
   },
   tail: {
     // marginTop is set inline (-(tail/2)) so the tail overlaps the head.
@@ -450,6 +494,22 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         ].filter((x): x is ScoredTerrace => !!x)
       : capped;
 
+    // Top picks in view — the 3 sunniest pins currently on screen get a
+    // gold crown treatment. Even with good score spread, a user scanning
+    // 200 pins can't rank them by eye; this answers the app's core job
+    // ("which terrace is THE sunniest near me?") at a glance. Re-sorted
+    // by sun score here because in Hidden-Gems mode `scored` arrives
+    // gem-ordered — the crown must always mean "sunniest", never a
+    // composite. Crowns only above the 'partial' band floor: crowning
+    // the least-shaded pin on an overcast evening would be misleading.
+    const topPickIds = new Set(
+      [...list]
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .filter((s) => s.score > 0.41)
+        .map((s) => s.terrace.id),
+    );
+
     return list.map(({ terrace, score }) => ({
       item: { terrace, score },
       band: bandForScore(score),
@@ -457,6 +517,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       // `featured` flag for paid placement — gold border, no terraces
       // have it today; wired up for the B1 sponsored-pin variant.
       featured: terrace.featured === true,
+      topPick: topPickIds.has(terrace.id),
     }));
   }, [scored, selectedId, mapRegion]);
 
@@ -483,7 +544,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         showsScale
         userInterfaceStyle="light"
       >
-        {markers.map(({ item, band, selected, featured }) => (
+        {markers.map(({ item, band, selected, featured, topPick }) => (
           <TerracePin
             key={item.terrace.id}
             id={item.terrace.id}
@@ -493,6 +554,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
             score={item.score}
             selected={selected}
             featured={featured}
+            topPick={topPick}
             title={item.terrace.name}
             description={item.terrace.vibe}
             onPress={() => {

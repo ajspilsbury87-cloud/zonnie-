@@ -46,10 +46,11 @@ interface AreaState {
    */
   sortByDistance: boolean;
   /**
-   * When true, restrict to terraces with fewer than 200 Google reviews
-   * (or no review data at all). Bottom quartile of the dataset — surfaces
-   * lesser-known spots for users who want "best sun, fewest people".
-   * ANDs with all other active filters.
+   * When true, re-ranks terraces by gemScore (sun 60 % + inverse-tourist 25 % +
+   * rating 15 %) and excludes terraces whose touristProxy exceeds the
+   * TOURIST_TRAP_FLOOR (0.85). Surfaces lesser-known spots for users who want
+   * "best sun, fewest tourists". Displayed scores remain the plain sun score —
+   * gemScore affects only ORDER and INCLUSION. ANDs with all other filters.
    */
   hiddenGemOnly: boolean;
   toggle: (region: Region) => void;

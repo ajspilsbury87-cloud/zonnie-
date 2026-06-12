@@ -6,6 +6,7 @@ import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea } from '@/src/data/regions';
 import { categoriesForTerrace } from '@/src/data/categories';
 import { computeSunScore } from '@/src/engines/scoring';
+import { computeGemScore, computeTouristProxy, TOURIST_TRAP_FLOOR } from '@/src/engines/gems';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
@@ -159,13 +160,14 @@ export function useScoredTerraces(
     if (matchModeOnly) {
       filtered = filtered.filter((t) => (t.outdoorScreens ?? 0) > 0);
     }
-    // Hidden gem: bottom quartile of review count (< 200) plus terraces with
-    // no review data at all. ~364 of 484 terraces pass this threshold — a
-    // meaningful "off the beaten track" subset.
-    const HIDDEN_GEM_MAX_REVIEWS = 200;
+    // Hidden gem: when the 💎 chip is active we exclude tourist traps (those
+    // whose touristProxy exceeds TOURIST_TRAP_FLOOR) at the filter stage so they
+    // don't appear at all — not just rank lower. The re-ranking by gemScore
+    // happens after scoring below. The displayed score for every terrace that
+    // passes the filter is still the plain sun score (gemScore is sort-only).
     if (hiddenGemOnly) {
       filtered = filtered.filter(
-        (t) => !t.googleReviewCount || t.googleReviewCount < HIDDEN_GEM_MAX_REVIEWS,
+        (t) => computeTouristProxy(t) <= TOURIST_TRAP_FLOOR,
       );
     }
     if (selectedRegions.size > 0) {
@@ -203,7 +205,16 @@ export function useScoredTerraces(
       return { terrace, score, distanceM: dist };
     });
 
-    if (sortByDistance && userCoord) {
+    if (hiddenGemOnly) {
+      // Gem mode: rank by gemScore (sun 60 % + inverse-tourist 25 % + rating 15 %).
+      // The score property on each ScoredTerrace is still the plain sun score —
+      // we do not replace it. gemScore is a private sort key only.
+      scored.sort((a, b) => {
+        const ga = computeGemScore(a.score, a.terrace);
+        const gb = computeGemScore(b.score, b.terrace);
+        return gb - ga;
+      });
+    } else if (sortByDistance && userCoord) {
       // Blended sort: sunScore × distanceDecay — nearest+sunniest wins.
       scored.sort((a, b) => {
         const da = distanceDecay(a.distanceM ?? 0) * a.score;

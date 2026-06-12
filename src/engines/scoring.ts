@@ -160,7 +160,7 @@ export function amsterdamLocalToUtc(dateStr: string, hour: number): Date {
 /**
  * Compute the sun score for a single terrace at a given local Amsterdam date/hour.
  *
- * @param terrace          Terrace (only lat/lng/facing are read)
+ * @param terrace          Terrace (only lat/lng/facing/openness are read)
  * @param hour             Hour of day in Amsterdam local time (fractional, e.g. 14.5)
  * @param dateStr          Date in 'YYYY-MM-DD' (interpreted as Amsterdam local)
  * @param weatherProfile   sunny | partlyCloudy | cloudy | overcast
@@ -169,7 +169,7 @@ export function amsterdamLocalToUtc(dateStr: string, hour: number): Date {
  * @param trees            Nearby trees from the Bomenkaart dataset (default: []).
  */
 export function computeSunScore(
-  terrace: Pick<Terrace, 'lat' | 'lng' | 'facing'>,
+  terrace: Pick<Terrace, 'lat' | 'lng' | 'facing' | 'openness'>,
   hour: number,
   dateStr: string,
   weatherProfile: WeatherProfile,
@@ -288,6 +288,22 @@ export function computeSunScore(
       : 0;
     coverage = Math.max(buildingCoverage, treeCoverage);
     score *= 1 - 0.85 * coverage;
+    // Sky openness — static per-terrace multiplier, ×0.85 (deep street
+    // canyon) to ×1.00 (open square / waterfront). Precomputed from the
+    // 3D BAG buildings by `scripts/compute-openness.ts`.
+    //
+    // WHY: at any fixed hour weather/temp/wind are city-wide constants
+    // and facing has only 9 buckets, so unshadowed same-facing terraces
+    // produced literally identical scores — audit script 20 measured 338
+    // pins all displaying "90" (36% of the city) and only 121 distinct
+    // values across 931 terraces. Openness is the honest, data-derived
+    // differentiator: a hemmed-in canal-alley terrace genuinely gets a
+    // narrower direct-sun window and less ambient sky than an open
+    // square, even at an hour when neither is directly shadowed.
+    // Kept modest (≤15%) so it spreads clusters without overpowering
+    // the primary facing/shadow signals. Missing field (test fixtures,
+    // pre-script data) → 1 = no penalty.
+    score *= 0.85 + 0.15 * (terrace.openness ?? 1);
     // Sky transparency — two paths depending on what weather data is available:
     //
     // PATH A — direct_radiation (real forecast from Open-Meteo):
@@ -395,9 +411,9 @@ export function computeSunScore(
   //   W-facing at 7 pm (alt≈19°, golden hour)         → ~0.71  ("Full Sun")
   //   In deep building shadow (any facing / time)      → ~0.12  ("In Shadow")
   //
-  // This is the only change needed — the score label thresholds (0.7/0.5/0.3/
-  // 0.1) remain correct, and relative comparisons across terraces are unaffected
-  // because every terrace's score is divided by the same constant.
+  // This is the only change needed — the score label thresholds (owned by
+  // src/engines/bands.ts) remain correct, and relative comparisons across
+  // terraces are unaffected because every score is divided by the same constant.
   //
   // MAX_RAW = facingBonus_max × tempFactor_max.
   // Facing bonus raised to 1.40 (from 1.25) to match the new +40% cap above.
@@ -418,7 +434,7 @@ export function computeSunScore(
  * per terrace per call. Returns 0 if `toHour < fromHour` (caller should clamp).
  */
 export function computeRangeScore(
-  terrace: Pick<Terrace, 'lat' | 'lng' | 'facing'>,
+  terrace: Pick<Terrace, 'lat' | 'lng' | 'facing' | 'openness'>,
   fromHour: number,
   toHour: number,
   dateStr: string,
@@ -469,14 +485,15 @@ export interface BestWindow {
  *
  * @param hourlyScores  Array of 24 scores, index = Amsterdam local hour.
  * @param windowHours   Width of the window in hours (default 2).
- * @param minScore      Minimum average to qualify (default 0.35 = Partial Sun).
+ * @param minScore      Minimum average to qualify (default 0.41, just above
+ *                      the recalibrated 'partial' band floor in bands.ts).
  * @param searchFrom    Earliest start hour to consider (default 8).
  * @param searchTo      Latest end hour to consider (default 21).
  */
 export function findBestWindow(
   hourlyScores: readonly number[],
   windowHours = 2,
-  minScore = 0.35,
+  minScore = 0.41,
   searchFrom = 8,
   searchTo = 21,
 ): BestWindow | null {
