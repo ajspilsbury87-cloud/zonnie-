@@ -42,11 +42,13 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { useStrings } from '@/src/i18n/useStrings';
 import { TERRACES } from '@/src/data/terraces';
+import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
 import { AMSTERDAM_TZ, computeRangeScore } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
+import { useAreaStore } from '@/src/store/areaStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -177,10 +179,22 @@ function pickFeaturedTerraces(
     });
 }
 
+/**
+ * Number of terraces with at least one outdoor screen in the dataset.
+ * Computed once at module load — TERRACES is a static import.
+ */
+const SCREEN_TERRACE_COUNT = TERRACES.filter((t) => (t.outdoorScreens ?? 0) > 0).length;
+
 export function LandingPage({ onContinue }: LandingPageProps) {
   const t = useStrings();
   const weatherByDate = useWeatherStore((s) => s.byDate);
   const select = useSelectionStore((s) => s.select);
+  const setMatchModeOnly = useAreaStore((s) => s.setMatchModeOnly);
+
+  // Evaluate once per render — cheap string comparison, no side effects.
+  const today = todayAmsterdamDateStr();
+  const wcLive = isWorldCupLive(today);
+  const wcMatch = wcLive ? matchForBanner(today) : null;
 
   // Both recompute when weather data loads — keeps the landing fresh
   // even if the fetch lands while the user is still reading.
@@ -192,6 +206,17 @@ export function LandingPage({ onContinue }: LandingPageProps) {
     () => pickFeaturedTerraces(weatherByDate),
     [weatherByDate],
   );
+
+  /**
+   * Tapping the WC spotlight card or matchday banner activates the
+   * "outdoor screens" filter and navigates straight to the map — same
+   * as tapping the 📺 Match chip in the filter row, plus dismiss.
+   */
+  const handleWcPress = () => {
+    haptics.medium();
+    setMatchModeOnly(true);
+    setTimeout(onContinue, 60);
+  };
 
   /**
    * Tapping a card on the landing page should open that terrace's
@@ -326,6 +351,52 @@ export function LandingPage({ onContinue }: LandingPageProps) {
       </View>
 
       <Animated.View style={[styles.cardStack, cardsStyle]}>
+        {/* ── World Cup 2026 — date-gated; both blocks vanish after 2026-07-19 ── */}
+
+        {/* Match-day banner: slim high-contrast strip shown only when a NL
+            match is today, or when tonight is the evening before a late-night
+            kickoff (Tunisia 01:00). Sits ABOVE the spotlight card. */}
+        {wcMatch !== null ? (
+          <Pressable
+            onPress={handleWcPress}
+            style={({ pressed }) => [
+              styles.wcBanner,
+              pressed && styles.wcBannerPressed,
+            ]}
+            accessibilityLabel={
+              wcMatch.kickoffHour < 6
+                ? t.wcBannerLateNight(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
+                : t.wcBannerEvening(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
+            }
+          >
+            <Text style={styles.wcBannerText} numberOfLines={2}>
+              {wcMatch.kickoffHour < 6
+                ? t.wcBannerLateNight(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
+                : t.wcBannerEvening(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)}
+            </Text>
+          </Pressable>
+        ) : null}
+
+        {/* Spotlight card: present throughout the tournament window.
+            Shows the count of screen terraces and prompts the user to
+            activate the outdoor-screens filter. */}
+        {wcLive ? (
+          <Pressable
+            onPress={handleWcPress}
+            style={({ pressed }) => [
+              styles.wcCard,
+              pressed && styles.wcCardPressed,
+            ]}
+            accessibilityLabel={t.wcSpotlightCta}
+          >
+            <Text style={styles.wcCardTitle}>{t.wcSpotlightTitle}</Text>
+            <Text style={styles.wcCardBody}>{t.wcSpotlightBody(SCREEN_TERRACE_COUNT)}</Text>
+            <View style={styles.wcCardCta}>
+              <Text style={styles.wcCardCtaText}>{t.wcSpotlightCta} →</Text>
+            </View>
+          </Pressable>
+        ) : null}
+
         {/* ── Featured carousel ─────────────────────────────────────────
             Only rendered when there are featured terraces in the dataset.
             Horizontal scroll bleeds to the screen edges by using negative
@@ -779,5 +850,76 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemibold,
     fontSize: fontSizes.md,
     color: palette.cream,
+  },
+
+  // ── World Cup 2026 ─────────────────────────────────────────────────
+
+  // Slim high-contrast matchday banner above the spotlight card.
+  // Ink background makes it pop against the sand page; burnt border
+  // links it visually to the brand. Small top margin separates it
+  // from the brand block above.
+  wcBanner: {
+    backgroundColor: palette.ink,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.xs,
+    borderLeftWidth: 3,
+    borderLeftColor: palette.burnt,
+  },
+  wcBannerPressed: {
+    opacity: 0.82,
+  },
+  wcBannerText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.cream,
+    lineHeight: 18,
+  },
+
+  // Warm terracotta/burnt spotlight card — prominent but tonally
+  // consistent with the existing brand (burnt is already used for
+  // featured pills and score rings). Sits below the banner (if any)
+  // and above the featured carousel.
+  wcCard: {
+    backgroundColor: palette.burnt,
+    borderRadius: radii.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    marginBottom: spacing.md,
+    shadowColor: palette.cocoa,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  wcCardPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.98 }],
+  },
+  wcCardTitle: {
+    fontFamily: fonts.displayBold,
+    fontSize: fontSizes.lg,
+    color: palette.cream,
+    letterSpacing: -0.3,
+    marginBottom: 2,
+  },
+  wcCardBody: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    color: 'rgba(255,229,194,0.85)', // cream at 85% — readable on burnt
+    marginBottom: spacing.sm,
+  },
+  wcCardCta: {
+    alignSelf: 'flex-start',
+    backgroundColor: palette.cream,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  wcCardCtaText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.burnt,
   },
 });

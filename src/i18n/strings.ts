@@ -107,6 +107,17 @@ export const strings = {
     featured: 'Uitgelicht',
     featuredSection: 'UITGELICHT',
 
+    // World Cup 2026 — date-gated, auto-retires after WC_END (2026-07-19)
+    wcSpotlightTitle: '⚽ Kijk het WK in de zon',
+    wcSpotlightBody: (n: number) => `${n} terrassen met groot scherm`,
+    wcSpotlightCta: 'Vind je scherm-terras',
+    // Banner shown on matchdays and the evening before a late-night kickoff.
+    // 'vanavond' = this evening; 'vannacht' = tonight/late-night.
+    wcBannerEvening: (flag: string, opponent: string, time: string) =>
+      `🇳🇱 Nederland – ${opponent} ${flag} vanavond ${time} · vind je scherm-terras`,
+    wcBannerLateNight: (flag: string, opponent: string, time: string) =>
+      `🇳🇱 Nederland – ${opponent} ${flag} vannacht ${time} · vind je scherm-terras`,
+
     // Search box
     searchPlaceholder: 'Zoek terrassen, vibes, adressen…',
 
@@ -335,6 +346,16 @@ export const strings = {
     seeAllTerraces: 'See all terraces',
     featured: 'Featured',
     featuredSection: 'FEATURED',
+
+    // World Cup 2026 — date-gated, auto-retires after WC_END (2026-07-19)
+    wcSpotlightTitle: '⚽ Watch the World Cup in the sun',
+    wcSpotlightBody: (n: number) => `${n} terraces with a big screen`,
+    wcSpotlightCta: 'Find your screen terrace',
+    // Banner shown on matchdays and the evening before a late-night kickoff.
+    wcBannerEvening: (flag: string, opponent: string, time: string) =>
+      `🇳🇱 Netherlands – ${opponent} ${flag} tonight ${time} · find your screen terrace`,
+    wcBannerLateNight: (flag: string, opponent: string, time: string) =>
+      `🇳🇱 Netherlands – ${opponent} ${flag} late-night ${time} · find your screen terrace`,
 
     // Search box
     searchPlaceholder: 'Search terraces, vibes, addresses…',
