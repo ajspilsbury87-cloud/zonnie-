@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 
 import { MapRegionPill } from '@/src/components/MapRegionPill';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
+import { isWorldCupLive } from '@/src/data/worldcup';
 import type { Region } from '@/src/data/regions';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
@@ -13,6 +14,7 @@ import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, spacing } from '@/src/theme/tokens';
 import { bandForScore, type ScoreBand } from '@/src/engines/bands';
 
@@ -68,6 +70,12 @@ interface TerracePinProps {
   featured: boolean;
   /** One of the 3 sunniest pins currently in the viewport — gold crown treatment. */
   topPick: boolean;
+  /**
+   * When true (and isWorldCupLive today), shows a small 📺 badge at
+   * the head's TOP-LEFT so screen terraces are identifiable at a glance.
+   * Only passed as true during the 2026 tournament window.
+   */
+  screens: boolean;
   title: string;
   description: string;
   onPress: () => void;
@@ -103,6 +111,7 @@ const TerracePin = memo(
     selected,
     featured,
     topPick,
+    screens,
     title,
     description,
     onPress,
@@ -182,6 +191,18 @@ const TerracePin = memo(
                 </Text>
               </View>
             ) : null}
+            {/* 📺 screen badge — visible only during the WC 2026 window,
+                on pins whose terrace has outdoorScreens > 0. Sits on the
+                head's TOP-LEFT so it can coexist with the ☀ badge on
+                the right. Subtle: ink background + cream border so it
+                reads on any band colour without fighting the score number. */}
+            {screens ? (
+              <View style={pinStyles.screensBadge}>
+                <Text allowFontScaling={false} style={pinStyles.screensBadgeText}>
+                  📺
+                </Text>
+              </View>
+            ) : null}
           </View>
           {/* Tail — rotated square pulled up by half its height so its
               top half merges with the head, forming the teardrop seam */}
@@ -207,6 +228,7 @@ const TerracePin = memo(
     prev.selected === next.selected &&
     prev.featured === next.featured &&
     prev.topPick === next.topPick &&
+    prev.screens === next.screens &&
     prev.latitude === next.latitude &&
     prev.longitude === next.longitude &&
     prev.title === next.title &&
@@ -272,6 +294,26 @@ const pinStyles = StyleSheet.create({
     lineHeight: 11,
     color: palette.cocoa,
   },
+  // 📺 screen badge — World Cup 2026 only. Mirrors topPickBadge geometry
+  // but sits TOP-LEFT so both badges can coexist on the same pin.
+  // Ink background + cream border keeps it subtle against any band colour.
+  screensBadge: {
+    position: 'absolute',
+    top: -7,
+    left: -7,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: palette.ink,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: palette.cream,
+  },
+  screensBadgeText: {
+    fontSize: 8,
+    lineHeight: 10,
+  },
   tail: {
     // marginTop is set inline (-(tail/2)) so the tail overlaps the head.
     transform: [{ rotate: '45deg' }],
@@ -322,6 +364,11 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   const panTo = useSelectionStore((s) => s.panTo);
   const clearPanTo = useSelectionStore((s) => s.clearPanTo);
   const userLoc = useUserLocation();
+
+  // Gate the 📺 badge once per render — cheap string comparison, not per-pin.
+  // We don't need this to react to a store; it only needs to be correct on
+  // each fresh render (the map re-renders when scored changes anyway).
+  const wcLiveToday = isWorldCupLive(todayAmsterdamDateStr());
 
   // Tracks which macro-region the map is currently centred on, driving
   // the floating region pill. Updates on gesture-settle (not during the
@@ -518,8 +565,13 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       // have it today; wired up for the B1 sponsored-pin variant.
       featured: terrace.featured === true,
       topPick: topPickIds.has(terrace.id),
+      // Show the 📺 badge only during the WC 2026 window AND when the
+      // terrace actually has outdoor screens. Both conditions must be true
+      // so the badge auto-retires when the tournament ends without any
+      // code change.
+      screens: wcLiveToday && (terrace.outdoorScreens ?? 0) > 0,
     }));
-  }, [scored, selectedId, mapRegion]);
+  }, [scored, selectedId, mapRegion, wcLiveToday]);
 
   return (
     <View style={styles.container}>
@@ -544,7 +596,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         showsScale
         userInterfaceStyle="light"
       >
-        {markers.map(({ item, band, selected, featured, topPick }) => (
+        {markers.map(({ item, band, selected, featured, topPick, screens }) => (
           <TerracePin
             key={item.terrace.id}
             id={item.terrace.id}
@@ -555,6 +607,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
             selected={selected}
             featured={featured}
             topPick={topPick}
+            screens={screens}
             title={item.terrace.name}
             description={item.terrace.vibe}
             onPress={() => {
