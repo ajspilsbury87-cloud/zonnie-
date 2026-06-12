@@ -149,6 +149,19 @@ describe('computeSunScore — shadow attenuation regression', () => {
     expect(midnight.score).toBe(0);
   });
 
+  test('openness multiplier: canyon terrace scores ×0.85 of an open one', () => {
+    const open = computeSunScore(
+      { ...terrace('S'), openness: 1 }, 13, '2025-06-21', 'sunny',
+    );
+    const canyon = computeSunScore(
+      { ...terrace('S'), openness: 0 }, 13, '2025-06-21', 'sunny',
+    );
+    const missing = computeSunScore(terrace('S'), 13, '2025-06-21', 'sunny');
+    expect(canyon.score).toBeCloseTo(open.score * 0.85, 5);
+    // Absent field (fixtures / legacy data) behaves like fully open.
+    expect(missing.score).toBeCloseTo(open.score, 5);
+  });
+
   test('tall tree to the south at winter noon reduces score (tree shadow path)', () => {
     const t = terrace('S');
     // Crown 15m tall (12m above a 3m trunk) ~15m due south → squarely
@@ -232,10 +245,12 @@ describe('windShelterFactor', () => {
 
 describe('label/color thresholds', () => {
   test('scoreLabel buckets (Dutch)', () => {
+    // Sample values sit mid-band for the recalibrated thresholds
+    // (0.85/0.65/0.4/0.15 — see bands.ts rationale, audit finding 20).
     expect(scoreLabel(0.9)).toBe('Volle zon');
-    expect(scoreLabel(0.6)).toBe('Grotendeels zonnig');
-    expect(scoreLabel(0.4)).toBe('Deels zonnig');
-    expect(scoreLabel(0.2)).toBe('Grotendeels schaduw');
+    expect(scoreLabel(0.75)).toBe('Grotendeels zonnig');
+    expect(scoreLabel(0.5)).toBe('Deels zonnig');
+    expect(scoreLabel(0.25)).toBe('Grotendeels schaduw');
     expect(scoreLabel(0.05)).toBe('In de schaduw');
   });
 
@@ -316,25 +331,28 @@ describe('computeSunScore — NaN weather guard (Fix C1)', () => {
 // The thresholds are strict > so an exact boundary value falls into the
 // LOWER band. These tests pin that contract so a future edit to the
 // numbers in bands.ts is visible as a test failure, not a silent change.
-describe('bandForScore — boundary semantics (Fix B5-1)', () => {
-  test('0.7 is NOT "full" (strict >)', () => {
-    expect(bandForScore(0.7)).toBe('mostly');
+describe('bandForScore — boundary semantics (Fix B5-1, recalibrated finding 20)', () => {
+  // Thresholds recalibrated 2026-06 (0.85/0.65/0.4/0.15 — see bands.ts
+  // rationale): "Volle zon" is now earned (~18% of pins at sunny peak,
+  // was 56%). Strict > semantics unchanged.
+  test('0.85 is NOT "full" (strict >)', () => {
+    expect(bandForScore(0.85)).toBe('mostly');
   });
 
-  test('0.70001 is "full"', () => {
-    expect(bandForScore(0.70001)).toBe('full');
+  test('0.85001 is "full"', () => {
+    expect(bandForScore(0.85001)).toBe('full');
   });
 
-  test('0.5 is NOT "mostly" (strict >)', () => {
-    expect(bandForScore(0.5)).toBe('partial');
+  test('0.65 is NOT "mostly" (strict >)', () => {
+    expect(bandForScore(0.65)).toBe('partial');
   });
 
-  test('0.3 is NOT "partial" (strict >)', () => {
-    expect(bandForScore(0.3)).toBe('mshade');
+  test('0.4 is NOT "partial" (strict >)', () => {
+    expect(bandForScore(0.4)).toBe('mshade');
   });
 
-  test('0.1 is NOT "mshade" (strict >)', () => {
-    expect(bandForScore(0.1)).toBe('shade');
+  test('0.15 is NOT "mshade" (strict >)', () => {
+    expect(bandForScore(0.15)).toBe('shade');
   });
 
   test('0 → shade, 1 → full', () => {

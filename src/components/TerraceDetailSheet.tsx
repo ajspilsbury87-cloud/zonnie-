@@ -262,7 +262,8 @@ export function TerraceDetailSheet() {
    * eat, have a drink, and not feel rushed. The result powers the
    * "Best time to visit" banner below the timeline.
    *
-   * Returns null when no 2-hour window reaches Partial Sun (0.35) —
+   * Returns null when no 2-hour window clears the 'partial' band floor
+   * (0.41 — see findBestWindow default / bands.ts) —
    * e.g. a north-facing terrace on an overcast day. In that case the
    * banner is hidden entirely.
    */
