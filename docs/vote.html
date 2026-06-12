@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zonnie — Terrasje kiezen?</title>
+<meta name="description" content="Stem mee welk terras jullie kiezen — bekijk de zonnigste opties van het moment.">
+<style>
+  :root {
+    --sand:       #FFF8F0;
+    --sand-deep:  #F4ECE0;
+    --cream:      #FFE5C2;
+    --mustard:    #F4D58D;
+    --peach:      #FBA85A;
+    --burnt:      #D9633E;
+    --terracotta: #B14222;
+    --ink:        #2A1F15;
+    --ink-soft:   #5A4A38;
+    --mist:       #E8DCC8;
+    --white:      #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--sand);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .atmos {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 45% at 80% -5%, rgba(232,156,90,0.20) 0%, transparent 55%),
+      radial-gradient(ellipse 55% 35% at 10% 20%, rgba(255,229,194,0.40) 0%, transparent 60%);
+  }
+  main { position: relative; z-index: 1; flex: 1; max-width: 480px;
+         width: 100%; margin: 0 auto; padding: 0 16px 32px; }
+</style>
+</head>
+<body>
+<div class="atmos"></div>
+<main>
+
+  <!-- ── Header ───────────────────────────────────────────────── -->
+  <header style="padding: 28px 0 20px; text-align: center;">
+    <div style="font-size: 28px; margin-bottom: 6px;">☀️</div>
+    <h1 style="font-family: Georgia, 'Times New Roman', serif; font-size: 26px;
+                font-weight: 700; color: var(--ink); letter-spacing: -0.3px;">
+      Zonnie
+    </h1>
+    <p style="font-size: 13px; color: var(--ink-soft); margin-top: 2px;">
+      Terrasje kiezen?
+      <span style="color: var(--mist);">·</span>
+      <em>Choosing a terrace?</em>
+    </p>
+  </header>
+
+  <!-- ── Terrace cards — filled by JS ─────────────────────────── -->
+  <section id="cards" aria-label="Terrasopties"></section>
+
+  <!-- ── Empty / error state ───────────────────────────────────── -->
+  <section id="empty" style="display:none; text-align:center; padding: 48px 0;">
+    <p style="font-size: 40px; margin-bottom: 12px;">🌤️</p>
+    <p style="font-family: Georgia, serif; font-size: 20px; font-weight: 700;
+              color: var(--ink); margin-bottom: 8px;">
+      Geen terrassen gevonden
+    </p>
+    <p style="font-size: 14px; color: var(--ink-soft); max-width: 280px; margin: 0 auto 24px;">
+      De link lijkt onvolledig. Open Zonnie om zelf de zonnigste terrassen te bekijken.
+    </p>
+  </section>
+
+  <!-- ── CTA footer ─────────────────────────────────────────────── -->
+  <footer id="cta" style="display:none; margin-top: 32px; padding: 24px 0 0;
+            border-top: 1px solid var(--mist); text-align: center;">
+    <p style="font-family: Georgia, serif; font-size: 18px; font-weight: 700;
+              color: var(--ink); margin-bottom: 6px;">
+      Vind de zonnigste terrassen in Amsterdam
+    </p>
+    <p style="font-size: 13px; color: var(--ink-soft); margin-bottom: 20px;">
+      Uur voor uur · Per buurt · Gratis
+      <br><em style="font-size: 12px;">Hour by hour · By neighbourhood · Free</em>
+    </p>
+    <a id="open-app-link" href="zonnie://"
+       style="display: inline-block; background: var(--ink); color: var(--white);
+              font-size: 15px; font-weight: 600; text-decoration: none;
+              padding: 12px 28px; border-radius: 999px; margin-bottom: 12px;">
+      Open de app
+    </a>
+    <br>
+    <a href="https://apps.apple.com/app/id6767790487"
+       style="display: inline-block; background: var(--burnt); color: var(--white);
+              font-size: 15px; font-weight: 700; text-decoration: none;
+              padding: 13px 32px; border-radius: 999px; font-family: Georgia, serif;">
+      Gratis op iOS ☀️
+    </a>
+    <p style="font-size: 11px; color: var(--mist); margin-top: 16px;">
+      Zonnie — Amsterdam terrace finder
+    </p>
+  </footer>
+
+</main>
+
+<style>
+/* ── Card styles ─────────────────────────────────────────────────── */
+.terrace-card {
+  background: var(--white);
+  border: 1px solid rgba(217,99,62,0.15);
+  border-radius: 16px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 12px rgba(42,31,21,0.06);
+}
+.terrace-card-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+  line-height: 1.25;
+}
+.terrace-card-area {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+.terrace-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sun-badge {
+  background: var(--terracotta);
+  color: var(--white);
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 12px;
+  line-height: 1;
+}
+.sun-badge-label {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.85;
+  display: block;
+  margin-top: 2px;
+  font-family: -apple-system, sans-serif;
+  letter-spacing: 0.2px;
+}
+.meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.facing-pill {
+  display: inline-block;
+  background: var(--cream);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.rating-row {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.rating-row .star { color: var(--peach); }
+.map-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--burnt);
+  text-decoration: none;
+  font-weight: 600;
+}
+.map-link:hover { text-decoration: underline; }
+</style>
+
+<script>
+// ── Facing → friendly Dutch label ────────────────────────────────
+const FACING_LABELS = {
+  N:  'Noord terras · North facing',
+  NE: 'Noordoost terras · North-east facing',
+  E:  'Oost terras · East facing',
+  SE: 'Zuidoost terras · South-east facing',
+  S:  'Zuid terras · South facing',
+  SW: 'Zuidwest terras · South-west facing',
+  W:  'West terras · West facing',
+  NW: 'Noordwest terras · North-west facing',
+  All:'Alle kanten · All-facing',
+};
+
+// ── Parse hash fragment → { ids, scores, date? } ─────────────────
+function parseHash() {
+  const hash = location.hash.replace(/^#/, '');
+  if (!hash) return null;
+  const params = {};
+  for (const part of hash.split('&')) {
+    const eq = part.indexOf('=');
+    if (eq < 0) continue;
+    params[part.slice(0, eq)] = decodeURIComponent(part.slice(eq + 1));
+  }
+  if (!params.t || !params.s) return null;
+  const ids = params.t.split(',').map(Number).filter(n => Number.isFinite(n) && n > 0);
+  const scores = params.s.split(',').map(Number).filter(n => Number.isFinite(n));
+  if (ids.length === 0 || ids.length !== scores.length) return null;
+  return { ids, scores, date: params.d ?? null };
+}
+
+// ── Build a terrace card element ──────────────────────────────────
+function buildCard(terrace, score) {
+  const card = document.createElement('div');
+  card.className = 'terrace-card';
+
+  const name = document.createElement('div');
+  name.className = 'terrace-card-name';
+  name.textContent = terrace.name;
+  card.appendChild(name);
+
+  const area = document.createElement('div');
+  area.className = 'terrace-card-area';
+  area.textContent = '📍 ' + terrace.area + ', Amsterdam';
+  card.appendChild(area);
+
+  const metaRow = document.createElement('div');
+  metaRow.className = 'terrace-card-meta';
+
+  // Sun score badge
+  const badge = document.createElement('div');
+  badge.className = 'sun-badge';
+  const scoreNum = document.createElement('span');
+  scoreNum.textContent = score;
+  const scoreLabel = document.createElement('span');
+  scoreLabel.className = 'sun-badge-label';
+  scoreLabel.textContent = 'zonscore bij delen';
+  badge.appendChild(scoreNum);
+  badge.appendChild(scoreLabel);
+  metaRow.appendChild(badge);
+
+  // Right-hand meta: facing + rating
+  const meta = document.createElement('div');
+  meta.className = 'meta-row';
+
+  const facingLabel = FACING_LABELS[terrace.facing] || terrace.facing;
+  const facingEl = document.createElement('span');
+  facingEl.className = 'facing-pill';
+  facingEl.textContent = '☀️ ' + facingLabel;
+  meta.appendChild(facingEl);
+
+  if (terrace.googleRating != null) {
+    const ratingEl = document.createElement('div');
+    ratingEl.className = 'rating-row';
+    const reviewText = terrace.googleReviewCount != null
+      ? ` (${terrace.googleReviewCount.toLocaleString('nl')})`
+      : '';
+    ratingEl.innerHTML = '<span class="star">★</span> ' +
+      terrace.googleRating.toFixed(1) + reviewText;
+    meta.appendChild(ratingEl);
+  }
+
+  metaRow.appendChild(meta);
+  card.appendChild(metaRow);
+
+  // Maps link — no API key needed, uses lat/lng coordinates directly
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${terrace.lat},${terrace.lng}`;
+  const mapsLink = document.createElement('a');
+  mapsLink.className = 'map-link';
+  mapsLink.href = mapsUrl;
+  mapsLink.target = '_blank';
+  mapsLink.rel = 'noopener noreferrer';
+  mapsLink.textContent = '📍 kaart · map';
+  card.appendChild(mapsLink);
+
+  return card;
+}
+
+// ── Main: fetch terraces-lite.json and render ────────────────────
+(async function main() {
+  const parsed = parseHash();
+  const empty = document.getElementById('empty');
+  const cards = document.getElementById('cards');
+  const cta = document.getElementById('cta');
+
+  if (!parsed) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  let liteData;
+  try {
+    // terraces-lite.json lives in the same folder (docs/) on GitHub Pages.
+    const res = await fetch('./terraces-lite.json');
+    if (!res.ok) throw new Error('fetch failed ' + res.status);
+    liteData = await res.json();
+  } catch (err) {
+    empty.style.display = 'block';
+    console.error('Failed to load terraces-lite.json:', err);
+    return;
+  }
+
+  // Build a quick lookup map by id
+  const byId = new Map(liteData.map(t => [t.id, t]));
+
+  let rendered = 0;
+  for (let i = 0; i < parsed.ids.length; i++) {
+    const terrace = byId.get(parsed.ids[i]);
+    if (!terrace) continue;
+    const score = parsed.scores[i];
+    if (!Number.isFinite(score)) continue;
+    cards.appendChild(buildCard(terrace, score));
+    rendered++;
+  }
+
+  if (rendered === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  cta.style.display = 'block';
+})();
+</script>
+</body>
+</html>

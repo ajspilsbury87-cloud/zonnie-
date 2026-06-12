@@ -92,6 +92,14 @@ export const strings = {
     share: 'Delen ☀️',
     getDirections: 'Routebeschrijving',
 
+    // Group vote shortlist
+    askTheGroup: (n: number) => `Vraag de groep (${n})`,
+    askTheGroupA11y: 'Deel terrassenselectie met de groep',
+    cancelShortlist: '✕',
+    cancelShortlistA11y: 'Selectie annuleren',
+    voteShareMessage: (url: string) => `Terras? ☀️ Stem hier: ${url}`,
+    shortlistFull: 'Max. 3 terrassen — oudste vervangen',
+
     // Landing page
     tagline: 'De zonnigste terrassen van Amsterdam',
     sunniestNow: 'NU ZONNIGST',
@@ -312,6 +320,14 @@ export const strings = {
     viewInMaps: 'View in Maps',
     share: 'Share ☀️',
     getDirections: 'Get Directions',
+
+    // Group vote shortlist
+    askTheGroup: (n: number) => `Ask the group (${n})`,
+    askTheGroupA11y: 'Share terrace shortlist with the group',
+    cancelShortlist: '✕',
+    cancelShortlistA11y: 'Cancel selection',
+    voteShareMessage: (url: string) => `Terrace? ☀️ Vote here: ${url}`,
+    shortlistFull: 'Max 3 terraces — oldest replaced',
 
     // Landing page
     tagline: 'The sunniest terraces in Amsterdam',

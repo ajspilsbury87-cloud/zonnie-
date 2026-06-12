@@ -30,6 +30,7 @@
     "audit:orientation-vs-shadow": "tsx scripts/audit/11b-orientation-vs-shadow.ts",
     "audit:b": "npm run audit:solar && npm run audit:shadow-fixtures && npm run audit:orientation-vs-shadow",
     "backfill-place-ids": "tsx scripts/backfill-place-ids.ts",
+    "build-terraces-lite": "tsx scripts/build-terraces-lite.ts",
     "postinstall": "node scripts/ensure-expo-cache.js",
     "eas-build-pre-install": "node scripts/ensure-expo-cache.js"
   },

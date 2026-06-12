@@ -1,0 +1,9170 @@
+[
+  {
+    "id": 1,
+    "name": "De Drie Graefjes",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36837,
+    "lng": 4.89211,
+    "googleRating": 4.1,
+    "googleReviewCount": 1963
+  },
+  {
+    "id": 2,
+    "name": "Café de Jaren",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.36807,
+    "lng": 4.89542,
+    "googleRating": 4.2,
+    "googleReviewCount": 5505
+  },
+  {
+    "id": 3,
+    "name": "Café Luxembourg",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.36866,
+    "lng": 4.88871,
+    "googleRating": 4.1,
+    "googleReviewCount": 1599
+  },
+  {
+    "id": 4,
+    "name": "In de Waag",
+    "area": "Centrum",
+    "facing": "All",
+    "lat": 52.37271,
+    "lng": 4.9004,
+    "googleRating": 4.1,
+    "googleReviewCount": 4025
+  },
+  {
+    "id": 5,
+    "name": "Café Fonteyn",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.37236,
+    "lng": 4.90091,
+    "googleRating": 4.5,
+    "googleReviewCount": 1300
+  },
+  {
+    "id": 7,
+    "name": "De Bakkerswinkel",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.37509,
+    "lng": 4.89794,
+    "googleRating": 4.6,
+    "googleReviewCount": 1117
+  },
+  {
+    "id": 8,
+    "name": "Greenwoods",
+    "area": "Centrum",
+    "facing": "SE",
+    "lat": 52.3758,
+    "lng": 4.8913,
+    "googleRating": 4.6,
+    "googleReviewCount": 5263
+  },
+  {
+    "id": 9,
+    "name": "Café Bern",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.37251,
+    "lng": 4.90098,
+    "googleRating": 4.3,
+    "googleReviewCount": 1137
+  },
+  {
+    "id": 10,
+    "name": "Kapitein Zeppos",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36965,
+    "lng": 4.89373,
+    "googleRating": 4.4,
+    "googleReviewCount": 2735
+  },
+  {
+    "id": 11,
+    "name": "Tales & Spirits",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.37613,
+    "lng": 4.89172,
+    "googleRating": 4.6,
+    "googleReviewCount": 1974
+  },
+  {
+    "id": 13,
+    "name": "SkyLounge",
+    "area": "Centrum",
+    "facing": "All",
+    "lat": 52.37657,
+    "lng": 4.90545,
+    "googleRating": 4.4,
+    "googleReviewCount": 2860
+  },
+  {
+    "id": 14,
+    "name": "Café de Dokter",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.36925,
+    "lng": 4.89081,
+    "googleRating": 4.8,
+    "googleReviewCount": 571
+  },
+  {
+    "id": 15,
+    "name": "Café Het Schuim",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.372,
+    "lng": 4.88963,
+    "googleRating": 4.2,
+    "googleReviewCount": 1354
+  },
+  {
+    "id": 16,
+    "name": "Blauw aan de Wal",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.37232,
+    "lng": 4.89848,
+    "googleRating": 4.4,
+    "googleReviewCount": 184
+  },
+  {
+    "id": 17,
+    "name": "NRC Restaurant",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.367379799999995,
+    "lng": 4.8944062,
+    "googleRating": 4.4,
+    "googleReviewCount": 1616
+  },
+  {
+    "id": 18,
+    "name": "Café Karpershoek",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.37819,
+    "lng": 4.89672,
+    "googleRating": 4,
+    "googleReviewCount": 1413
+  },
+  {
+    "id": 19,
+    "name": "De Sluyswacht",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.36987,
+    "lng": 4.90172,
+    "googleRating": 4.4,
+    "googleReviewCount": 1880
+  },
+  {
+    "id": 20,
+    "name": "Café Belgique",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.37433,
+    "lng": 4.89309,
+    "googleRating": 4.6,
+    "googleReviewCount": 1167
+  },
+  {
+    "id": 21,
+    "name": "De Drie Fleschjes",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.37428,
+    "lng": 4.89231,
+    "googleRating": 4.8,
+    "googleReviewCount": 703
+  },
+  {
+    "id": 22,
+    "name": "Wynand Fockink",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.37231,
+    "lng": 4.89533,
+    "googleRating": 4.7,
+    "googleReviewCount": 2212
+  },
+  {
+    "id": 23,
+    "name": "De Bekeerde Suster",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.37206,
+    "lng": 4.89923,
+    "googleRating": 4.6,
+    "googleReviewCount": 1902
+  },
+  {
+    "id": 24,
+    "name": "Café Koosje",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.36664,
+    "lng": 4.91165,
+    "googleRating": 4.3,
+    "googleReviewCount": 1627
+  },
+  {
+    "id": 25,
+    "name": "Café de Engelbewaarder",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.37025,
+    "lng": 4.89842,
+    "googleRating": 4.4,
+    "googleReviewCount": 1076
+  },
+  {
+    "id": 26,
+    "name": "Café de Doelen",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36838,
+    "lng": 4.89673,
+    "googleRating": 4,
+    "googleReviewCount": 1136
+  },
+  {
+    "id": 27,
+    "name": "Dwaze Zaken",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.37654,
+    "lng": 4.89932,
+    "googleRating": 4.2,
+    "googleReviewCount": 1344
+  },
+  {
+    "id": 28,
+    "name": "Café Brix",
+    "area": "Centrum",
+    "facing": "SE",
+    "lat": 52.383175699999995,
+    "lng": 4.8865133,
+    "googleRating": 4.9,
+    "googleReviewCount": 256
+  },
+  {
+    "id": 29,
+    "name": "De Vergulden Eenhoorn",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.35104,
+    "lng": 4.92074,
+    "googleRating": 4.3,
+    "googleReviewCount": 1502
+  },
+  {
+    "id": 30,
+    "name": "Loetje Centraal",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3776,
+    "lng": 4.9002,
+    "googleRating": 4.1,
+    "googleReviewCount": 6915
+  },
+  {
+    "id": 31,
+    "name": "Café Americain",
+    "area": "Leidseplein",
+    "facing": "SW",
+    "lat": 52.36383,
+    "lng": 4.88154,
+    "googleRating": 4,
+    "googleReviewCount": 2099
+  },
+  {
+    "id": 32,
+    "name": "Door74",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36594,
+    "lng": 4.8936,
+    "googleRating": 4.5,
+    "googleReviewCount": 1848
+  },
+  {
+    "id": 33,
+    "name": "Dante Kitchen & Bar",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36915,
+    "lng": 4.88859,
+    "googleRating": 3.8,
+    "googleReviewCount": 1996
+  },
+  {
+    "id": 34,
+    "name": "Café de Kring",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36359,
+    "lng": 4.88355,
+    "googleRating": 4.3,
+    "googleReviewCount": 73
+  },
+  {
+    "id": 36,
+    "name": "Café Katoen",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36777,
+    "lng": 4.89415,
+    "googleRating": 4.3,
+    "googleReviewCount": 924
+  },
+  {
+    "id": 37,
+    "name": "Café Langereis",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36613,
+    "lng": 4.90014,
+    "googleRating": 4.5,
+    "googleReviewCount": 996
+  },
+  {
+    "id": 38,
+    "name": "Café de Kroon",
+    "area": "Rembrandtplein",
+    "facing": "W",
+    "lat": 52.36645,
+    "lng": 4.89664,
+    "googleRating": 4,
+    "googleReviewCount": 1048
+  },
+  {
+    "id": 39,
+    "name": "De Nachtwacht",
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "lat": 52.36569,
+    "lng": 4.89546,
+    "googleRating": 4.3,
+    "googleReviewCount": 2761
+  },
+  {
+    "id": 40,
+    "name": "Escape Café",
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "lat": 52.36639,
+    "lng": 4.89639,
+    "googleRating": 4.6,
+    "googleReviewCount": 13278
+  },
+  {
+    "id": 41,
+    "name": "Café Leentje",
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "lat": 52.3655,
+    "lng": 4.89604,
+    "googleRating": 4.5,
+    "googleReviewCount": 171
+  },
+  {
+    "id": 42,
+    "name": "Café Winkel 43",
+    "area": "Jordaan",
+    "facing": "W",
+    "lat": 52.37909,
+    "lng": 4.88628,
+    "googleRating": 4.5,
+    "googleReviewCount": 15633
+  },
+  {
+    "id": 43,
+    "name": "Café Thijssen",
+    "area": "Jordaan",
+    "facing": "E",
+    "lat": 52.38081,
+    "lng": 4.8873,
+    "googleRating": 4.2,
+    "googleReviewCount": 2043
+  },
+  {
+    "id": 45,
+    "name": "Café Papeneiland",
+    "area": "Jordaan",
+    "facing": "NW",
+    "lat": 52.38046,
+    "lng": 4.88797,
+    "googleRating": 4.5,
+    "googleReviewCount": 2655
+  },
+  {
+    "id": 46,
+    "name": "Café Nol",
+    "area": "Jordaan",
+    "facing": "W",
+    "lat": 52.37829,
+    "lng": 4.88339,
+    "googleRating": 4,
+    "googleReviewCount": 498
+  },
+  {
+    "id": 47,
+    "name": "De Reiger",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37574,
+    "lng": 4.88265,
+    "googleRating": 4.5,
+    "googleReviewCount": 674
+  },
+  {
+    "id": 48,
+    "name": "Café Chris",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37428,
+    "lng": 4.88161,
+    "googleRating": 4.7,
+    "googleReviewCount": 1196
+  },
+  {
+    "id": 49,
+    "name": "Café Saarein",
+    "area": "Jordaan",
+    "facing": "E",
+    "lat": 52.37028,
+    "lng": 4.88024,
+    "googleRating": 4.5,
+    "googleReviewCount": 420
+  },
+  {
+    "id": 50,
+    "name": "Café Soundgarden",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37292,
+    "lng": 4.87574,
+    "googleRating": 4.5,
+    "googleReviewCount": 2253
+  },
+  {
+    "id": 51,
+    "name": "La Perla",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37703,
+    "lng": 4.88201,
+    "googleRating": 4.4,
+    "googleReviewCount": 4117
+  },
+  {
+    "id": 52,
+    "name": "Festina Lente",
+    "area": "Jordaan",
+    "facing": "SW",
+    "lat": 52.36865,
+    "lng": 4.88139,
+    "googleRating": 4.4,
+    "googleReviewCount": 709
+  },
+  {
+    "id": 53,
+    "name": "Café de Tuin",
+    "area": "Jordaan",
+    "facing": "SW",
+    "lat": 52.37721,
+    "lng": 4.88193,
+    "googleRating": 4.4,
+    "googleReviewCount": 788
+  },
+  {
+    "id": 54,
+    "name": "Small World Catering",
+    "area": "Jordaan",
+    "facing": "W",
+    "lat": 52.38226,
+    "lng": 4.88704,
+    "googleRating": 4.8,
+    "googleReviewCount": 528
+  },
+  {
+    "id": 56,
+    "name": "De Blaffende Vis",
+    "area": "Jordaan",
+    "facing": "E",
+    "lat": 52.37853,
+    "lng": 4.88329,
+    "googleRating": 4.4,
+    "googleReviewCount": 993
+  },
+  {
+    "id": 57,
+    "name": "Twee Prinsen",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37789,
+    "lng": 4.88648,
+    "googleRating": 4.3,
+    "googleReviewCount": 552
+  },
+  {
+    "id": 59,
+    "name": "Café Tabac",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.38018,
+    "lng": 4.88852,
+    "googleRating": 4.4,
+    "googleReviewCount": 714
+  },
+  {
+    "id": 60,
+    "name": "Café de Laurierboom",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3723,
+    "lng": 4.88095,
+    "googleRating": 4.7,
+    "googleReviewCount": 409
+  },
+  {
+    "id": 61,
+    "name": "Vesper Bar",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.38216,
+    "lng": 4.88692,
+    "googleRating": 4.6,
+    "googleReviewCount": 515
+  },
+  {
+    "id": 62,
+    "name": "Bar Parry",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.36899,
+    "lng": 4.88118,
+    "googleRating": 4.6,
+    "googleReviewCount": 283
+  },
+  {
+    "id": 63,
+    "name": "Café Kalkhoven",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37389,
+    "lng": 4.88361,
+    "googleRating": 4.2,
+    "googleReviewCount": 637
+  },
+  {
+    "id": 64,
+    "name": "De Blauwe Pan",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37822,
+    "lng": 4.88133,
+    "googleRating": 4.3,
+    "googleReviewCount": 508
+  },
+  {
+    "id": 65,
+    "name": "Kikkies",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37807,
+    "lng": 4.8866,
+    "googleRating": 4.2,
+    "googleReviewCount": 735
+  },
+  {
+    "id": 66,
+    "name": "Dulcie",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3537843,
+    "lng": 4.8560156
+  },
+  {
+    "id": 67,
+    "name": "Louie Louie",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.3630521,
+    "lng": 4.9238802999999995
+  },
+  {
+    "id": 68,
+    "name": "Bakers & Roasters (De Pijp)",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35729,
+    "lng": 4.88986,
+    "googleRating": 4.6,
+    "googleReviewCount": 4794
+  },
+  {
+    "id": 69,
+    "name": "CT Coffee & Coconuts",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35261,
+    "lng": 4.89143,
+    "googleRating": 4.3,
+    "googleReviewCount": 5681
+  },
+  {
+    "id": 70,
+    "name": "Bar Botanique",
+    "area": "De Pijp",
+    "facing": "SW",
+    "lat": 52.363422,
+    "lng": 4.930292199999999
+  },
+  {
+    "id": 71,
+    "name": "Café Berkhout",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35793,
+    "lng": 4.89068,
+    "googleRating": 4.4,
+    "googleReviewCount": 892
+  },
+  {
+    "id": 72,
+    "name": "Barca",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.35707,
+    "lng": 4.89174,
+    "googleRating": 4.2,
+    "googleReviewCount": 2408
+  },
+  {
+    "id": 73,
+    "name": "Scandinavian Embassy",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.35346,
+    "lng": 4.89422,
+    "googleRating": 4.4,
+    "googleReviewCount": 1828
+  },
+  {
+    "id": 74,
+    "name": "Le Fournil de Sébastien",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3463012,
+    "lng": 4.867900700000001,
+    "googleRating": 4.8,
+    "googleReviewCount": 1559
+  },
+  {
+    "id": 75,
+    "name": "Café Krull",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.35443,
+    "lng": 4.8936,
+    "googleRating": 4,
+    "googleReviewCount": 596
+  },
+  {
+    "id": 76,
+    "name": "Little Collins",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35583,
+    "lng": 4.89808,
+    "googleRating": 4.5,
+    "googleReviewCount": 1906
+  },
+  {
+    "id": 77,
+    "name": "Café Binnen Buiten",
+    "area": "De Pijp",
+    "facing": "SE",
+    "lat": 52.3548,
+    "lng": 4.88722,
+    "googleRating": 4.3,
+    "googleReviewCount": 792
+  },
+  {
+    "id": 78,
+    "name": "Café Sarphaat",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35437,
+    "lng": 4.89927,
+    "googleRating": 3.9,
+    "googleReviewCount": 998
+  },
+  {
+    "id": 79,
+    "name": "De Pilsvogel",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35584,
+    "lng": 4.89278,
+    "googleRating": 4.3,
+    "googleReviewCount": 1055
+  },
+  {
+    "id": 80,
+    "name": "Meneer Nilsson",
+    "area": "De Pijp",
+    "facing": "SW",
+    "lat": 52.35499,
+    "lng": 4.88795
+  },
+  {
+    "id": 81,
+    "name": "Café Bloemers",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35559,
+    "lng": 4.90315,
+    "googleRating": 4.1,
+    "googleReviewCount": 537
+  },
+  {
+    "id": 83,
+    "name": "Bar Mash",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35613,
+    "lng": 4.89284,
+    "googleRating": 4.4,
+    "googleReviewCount": 673
+  },
+  {
+    "id": 84,
+    "name": "Café de Toog",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.3622034,
+    "lng": 4.8676620999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 522
+  },
+  {
+    "id": 86,
+    "name": "Firma Pekelharingen",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35331,
+    "lng": 4.90274,
+    "googleRating": 4.3,
+    "googleReviewCount": 847
+  },
+  {
+    "id": 87,
+    "name": "Sir Hummus",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35252,
+    "lng": 4.8869,
+    "googleRating": 4.7,
+    "googleReviewCount": 1379
+  },
+  {
+    "id": 89,
+    "name": "De Biertuin",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.36232,
+    "lng": 4.92424,
+    "googleRating": 4.4,
+    "googleReviewCount": 2300
+  },
+  {
+    "id": 90,
+    "name": "Roest",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.37197,
+    "lng": 4.92656,
+    "googleRating": 4.4,
+    "googleReviewCount": 1562
+  },
+  {
+    "id": 91,
+    "name": "Canvas",
+    "area": "Oost",
+    "facing": "All",
+    "lat": 52.35377,
+    "lng": 4.91165,
+    "googleRating": 4.2,
+    "googleReviewCount": 1731
+  },
+  {
+    "id": 92,
+    "name": "Bar Bukowski",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.35796,
+    "lng": 4.91767,
+    "googleRating": 4.4,
+    "googleReviewCount": 2417
+  },
+  {
+    "id": 93,
+    "name": "Wilde Zwijnen",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.363584599999996,
+    "lng": 4.940446800000001,
+    "googleRating": 4.4,
+    "googleReviewCount": 1380
+  },
+  {
+    "id": 94,
+    "name": "Café Hesp",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.34982,
+    "lng": 4.91258,
+    "googleRating": 4.3,
+    "googleReviewCount": 1592
+  },
+  {
+    "id": 95,
+    "name": "De Ysbreeker",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.35746,
+    "lng": 4.90676,
+    "googleRating": 4.2,
+    "googleReviewCount": 3242
+  },
+  {
+    "id": 96,
+    "name": "Rum Baba (Oost)",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.35599,
+    "lng": 4.92654,
+    "googleRating": 4.5,
+    "googleReviewCount": 902
+  },
+  {
+    "id": 97,
+    "name": "Coffee Bru",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.35709,
+    "lng": 4.9177,
+    "googleRating": 4.5,
+    "googleReviewCount": 766
+  },
+  {
+    "id": 99,
+    "name": "Hiding in Plain Sight",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.37172,
+    "lng": 4.90771,
+    "googleRating": 4.6,
+    "googleReviewCount": 987
+  },
+  {
+    "id": 100,
+    "name": "Bar Fisk",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.355762299999995,
+    "lng": 4.8981382,
+    "googleRating": 4.5,
+    "googleReviewCount": 531
+  },
+  {
+    "id": 101,
+    "name": "Walter Woodbury Bar",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3634917,
+    "lng": 4.9334333,
+    "googleRating": 4.3,
+    "googleReviewCount": 644
+  },
+  {
+    "id": 102,
+    "name": "Poesiat & Kater",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.35767,
+    "lng": 4.93572,
+    "googleRating": 4.2,
+    "googleReviewCount": 1554
+  },
+  {
+    "id": 103,
+    "name": "GAPP",
+    "area": "Oost",
+    "facing": "All",
+    "lat": 52.35837,
+    "lng": 4.91169
+  },
+  {
+    "id": 105,
+    "name": "Clos",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.35671,
+    "lng": 4.91808,
+    "googleRating": 4.8,
+    "googleReviewCount": 710
+  },
+  {
+    "id": 106,
+    "name": "Café Langendijk",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.3668402,
+    "lng": 4.9258644,
+    "googleRating": 4.3,
+    "googleReviewCount": 678
+  },
+  {
+    "id": 107,
+    "name": "Café Dauphine",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.34838,
+    "lng": 4.91733,
+    "googleRating": 4.1,
+    "googleReviewCount": 2546
+  },
+  {
+    "id": 108,
+    "name": "Waterkant",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.3699808,
+    "lng": 4.8760914
+  },
+  {
+    "id": 109,
+    "name": "Pllek",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.39916,
+    "lng": 4.89288,
+    "googleRating": 4.4,
+    "googleReviewCount": 9439
+  },
+  {
+    "id": 110,
+    "name": "Tolhuistuin",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.38318,
+    "lng": 4.90321,
+    "googleRating": 4.3,
+    "googleReviewCount": 2341
+  },
+  {
+    "id": 111,
+    "name": "Café de Ceuvel",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.39331,
+    "lng": 4.91069,
+    "googleRating": 4.5,
+    "googleReviewCount": 2401
+  },
+  {
+    "id": 112,
+    "name": "IJ-Kantine",
+    "area": "Noord",
+    "facing": "SW",
+    "lat": 52.40149,
+    "lng": 4.89116,
+    "googleRating": 3.7,
+    "googleReviewCount": 2246
+  },
+  {
+    "id": 113,
+    "name": "Café Noorderlicht",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.39957,
+    "lng": 4.89683,
+    "googleRating": 4.3,
+    "googleReviewCount": 3606
+  },
+  {
+    "id": 114,
+    "name": "Eye Bar",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.38433,
+    "lng": 4.90093,
+    "googleRating": 3.7,
+    "googleReviewCount": 609
+  },
+  {
+    "id": 115,
+    "name": "Oedipus Brewing",
+    "area": "Noord",
+    "facing": "All",
+    "lat": 52.385357,
+    "lng": 4.9241202
+  },
+  {
+    "id": 116,
+    "name": "Stork",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.3821601,
+    "lng": 4.9202771,
+    "googleRating": 4.2,
+    "googleReviewCount": 1579
+  },
+  {
+    "id": 117,
+    "name": "FC Hyena",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.383386099999996,
+    "lng": 4.9290579999999995
+  },
+  {
+    "id": 119,
+    "name": "IJver",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.40133,
+    "lng": 4.89505,
+    "googleRating": 4.5,
+    "googleReviewCount": 2589
+  },
+  {
+    "id": 120,
+    "name": "Polly Goudvisch",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.38245,
+    "lng": 4.90328,
+    "googleRating": 4.3,
+    "googleReviewCount": 1112
+  },
+  {
+    "id": 121,
+    "name": "Lagerwal",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.4058302,
+    "lng": 4.8848012
+  },
+  {
+    "id": 122,
+    "name": "De Hallen Food",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.36679,
+    "lng": 4.86791,
+    "googleRating": 4.5,
+    "googleReviewCount": 22597
+  },
+  {
+    "id": 124,
+    "name": "Bar Spek",
+    "area": "Oud-West",
+    "facing": "W",
+    "lat": 52.37013,
+    "lng": 4.86448,
+    "googleRating": 4.2,
+    "googleReviewCount": 898
+  },
+  {
+    "id": 125,
+    "name": "Café Brecht",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.359805200000004,
+    "lng": 4.8900679,
+    "googleRating": 4.6,
+    "googleReviewCount": 1853
+  },
+  {
+    "id": 126,
+    "name": "Café Cook",
+    "area": "Oud-West",
+    "facing": "SE",
+    "lat": 52.37129,
+    "lng": 4.85262,
+    "googleRating": 4.6,
+    "googleReviewCount": 997
+  },
+  {
+    "id": 127,
+    "name": "Café Kobalt",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3795194,
+    "lng": 4.8942993
+  },
+  {
+    "id": 128,
+    "name": "Morgan & Mees",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.37435,
+    "lng": 4.87456,
+    "googleRating": 4.5,
+    "googleReviewCount": 1064
+  },
+  {
+    "id": 129,
+    "name": "Bar Centraal",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.36733,
+    "lng": 4.86648,
+    "googleRating": 4.3,
+    "googleReviewCount": 526
+  },
+  {
+    "id": 130,
+    "name": "Café Thuys",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.36991,
+    "lng": 4.86538,
+    "googleRating": 4.5,
+    "googleReviewCount": 654
+  },
+  {
+    "id": 131,
+    "name": "Bar Brandstof",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.3725151,
+    "lng": 4.8760965,
+    "googleRating": 4.3,
+    "googleReviewCount": 736
+  },
+  {
+    "id": 132,
+    "name": "Zurich",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.36897,
+    "lng": 4.85045
+  },
+  {
+    "id": 133,
+    "name": "Frits",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.37008,
+    "lng": 4.85146,
+    "googleRating": 4.3,
+    "googleReviewCount": 499
+  },
+  {
+    "id": 134,
+    "name": "Café Bax",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.36561,
+    "lng": 4.86794,
+    "googleRating": 4.3,
+    "googleReviewCount": 474
+  },
+  {
+    "id": 135,
+    "name": "Back to Black (Witte de Withstraat)",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.36748,
+    "lng": 4.85048
+  },
+  {
+    "id": 136,
+    "name": "Pendergast",
+    "area": "De Baarsjes",
+    "facing": "W",
+    "lat": 52.384736399999994,
+    "lng": 4.8713559
+  },
+  {
+    "id": 137,
+    "name": "Bar Kosta",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.35796,
+    "lng": 4.85561,
+    "googleRating": 4.5,
+    "googleReviewCount": 859
+  },
+  {
+    "id": 138,
+    "name": "Bar Roseval",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.3829,
+    "lng": 4.85103,
+    "googleRating": 4.1,
+    "googleReviewCount": 97
+  },
+  {
+    "id": 139,
+    "name": "Bureau",
+    "area": "West",
+    "facing": "All",
+    "lat": 52.36489,
+    "lng": 4.86354
+  },
+  {
+    "id": 140,
+    "name": "Piet de Gruyter",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.3665,
+    "lng": 4.84898
+  },
+  {
+    "id": 141,
+    "name": "Pacific Park",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.38593,
+    "lng": 4.87147,
+    "googleRating": 4.1,
+    "googleReviewCount": 1775
+  },
+  {
+    "id": 142,
+    "name": "WestWeelde",
+    "area": "Westerpark",
+    "facing": "SW",
+    "lat": 52.38713,
+    "lng": 4.87002,
+    "googleRating": 4.6,
+    "googleReviewCount": 127
+  },
+  {
+    "id": 143,
+    "name": "Mossel & Gin",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.38648,
+    "lng": 4.86803,
+    "googleRating": 4.5,
+    "googleReviewCount": 1980
+  },
+  {
+    "id": 144,
+    "name": "Brouwerij Troost",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.38608,
+    "lng": 4.87282,
+    "googleRating": 4.4,
+    "googleReviewCount": 1932
+  },
+  {
+    "id": 145,
+    "name": "Café Amsterdam",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.38414,
+    "lng": 4.86833,
+    "googleRating": 4.2,
+    "googleReviewCount": 2721
+  },
+  {
+    "id": 146,
+    "name": "Bar Kantoor",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.38661,
+    "lng": 4.8753,
+    "googleRating": 4.1,
+    "googleReviewCount": 942
+  },
+  {
+    "id": 147,
+    "name": "Café Edel",
+    "area": "Spaarndammer",
+    "facing": "S",
+    "lat": 52.364059,
+    "lng": 4.8590879
+  },
+  {
+    "id": 148,
+    "name": "REM Eiland",
+    "area": "Houthavens",
+    "facing": "All",
+    "lat": 52.39872,
+    "lng": 4.88323,
+    "googleRating": 4.6,
+    "googleReviewCount": 899
+  },
+  {
+    "id": 149,
+    "name": "Pont 13",
+    "area": "Houthavens",
+    "facing": "S",
+    "lat": 52.39758,
+    "lng": 4.88303,
+    "googleRating": 4.9,
+    "googleReviewCount": 315
+  },
+  {
+    "id": 150,
+    "name": "Vondelpark3",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.36104,
+    "lng": 4.87496,
+    "googleRating": 3.8,
+    "googleReviewCount": 1283
+  },
+  {
+    "id": 151,
+    "name": "Het Blauwe Theehuis",
+    "area": "Oud-Zuid",
+    "facing": "All",
+    "lat": 52.35883,
+    "lng": 4.87255,
+    "googleRating": 4.4,
+    "googleReviewCount": 3354
+  },
+  {
+    "id": 152,
+    "name": "Groot Melkhuis",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.35847,
+    "lng": 4.8683,
+    "googleRating": 4.1,
+    "googleReviewCount": 2624
+  },
+  {
+    "id": 153,
+    "name": "Café Wildschut",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.35342,
+    "lng": 4.88229,
+    "googleRating": 4.1,
+    "googleReviewCount": 1750
+  },
+  {
+    "id": 154,
+    "name": "George W.P.A.",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.35729,
+    "lng": 4.87478,
+    "googleRating": 3.4,
+    "googleReviewCount": 1039
+  },
+  {
+    "id": 155,
+    "name": "Café Toussaint",
+    "area": "Oud-Zuid",
+    "facing": "E",
+    "lat": 52.36577,
+    "lng": 4.87619,
+    "googleRating": 4.2,
+    "googleReviewCount": 601
+  },
+  {
+    "id": 156,
+    "name": "Cobra Café",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.35891,
+    "lng": 4.88436,
+    "googleRating": 3.8,
+    "googleReviewCount": 1405
+  },
+  {
+    "id": 157,
+    "name": "De Balie",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.36306,
+    "lng": 4.88304,
+    "googleRating": 4.1,
+    "googleReviewCount": 2257
+  },
+  {
+    "id": 158,
+    "name": "Gent aan de Schinkel",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.35467,
+    "lng": 4.85299,
+    "googleRating": 4.3,
+    "googleReviewCount": 1170
+  },
+  {
+    "id": 160,
+    "name": "Café Bédier",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.35249,
+    "lng": 4.85652,
+    "googleRating": 4.1,
+    "googleReviewCount": 237
+  },
+  {
+    "id": 161,
+    "name": "Café Welling",
+    "area": "Zuid",
+    "facing": "W",
+    "lat": 52.35599,
+    "lng": 4.87726,
+    "googleRating": 4.5,
+    "googleReviewCount": 513
+  },
+  {
+    "id": 162,
+    "name": "De Italiaan",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.3655,
+    "lng": 4.8764,
+    "googleRating": 4.3,
+    "googleReviewCount": 1102
+  },
+  {
+    "id": 163,
+    "name": "Café Loetje",
+    "area": "Zuid",
+    "facing": "SW",
+    "lat": 52.35438,
+    "lng": 4.88417,
+    "googleRating": 4.3,
+    "googleReviewCount": 4113
+  },
+  {
+    "id": 164,
+    "name": "The Butcher Social Club",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.3554837,
+    "lng": 4.8923081999999996,
+    "googleRating": 4.2,
+    "googleReviewCount": 2150
+  },
+  {
+    "id": 165,
+    "name": "Floor 17",
+    "area": "Zuidas",
+    "facing": "All",
+    "lat": 52.33701,
+    "lng": 4.86921
+  },
+  {
+    "id": 166,
+    "name": "George Marina",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.341979599999995,
+    "lng": 4.9187423
+  },
+  {
+    "id": 167,
+    "name": "Ventuno",
+    "area": "Zuid",
+    "facing": "All",
+    "lat": 52.33828,
+    "lng": 4.92091,
+    "googleRating": 4.5,
+    "googleReviewCount": 1068
+  },
+  {
+    "id": 168,
+    "name": "CIMA Rooftop Bar",
+    "area": "Centrum",
+    "facing": "All",
+    "lat": 52.37771,
+    "lng": 4.89504,
+    "googleRating": 4.9,
+    "googleReviewCount": 603
+  },
+  {
+    "id": 170,
+    "name": "De Plantage",
+    "area": "Plantage",
+    "facing": "SW",
+    "lat": 52.36675,
+    "lng": 4.91248,
+    "googleRating": 4.2,
+    "googleReviewCount": 3350
+  },
+  {
+    "id": 171,
+    "name": "Café Heffer",
+    "area": "Plantage",
+    "facing": "E",
+    "lat": 52.365727799999995,
+    "lng": 4.910724999999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 503
+  },
+  {
+    "id": 172,
+    "name": "Amstelhaven",
+    "area": "Amstel",
+    "facing": "W",
+    "lat": 52.35936,
+    "lng": 4.90604,
+    "googleRating": 4,
+    "googleReviewCount": 773
+  },
+  {
+    "id": 173,
+    "name": "Bar Amstelhoek",
+    "area": "Amstel",
+    "facing": "S",
+    "lat": 52.34861,
+    "lng": 4.90306,
+    "googleRating": 4.7,
+    "googleReviewCount": 517
+  },
+  {
+    "id": 174,
+    "name": "Café Magere Brug",
+    "area": "Amstel",
+    "facing": "S",
+    "lat": 52.36369,
+    "lng": 4.90323,
+    "googleRating": 4.2,
+    "googleReviewCount": 1000
+  },
+  {
+    "id": 175,
+    "name": "Halvemaan",
+    "area": "Amstel",
+    "facing": "W",
+    "lat": 52.37802010000001,
+    "lng": 4.8956263
+  },
+  {
+    "id": 177,
+    "name": "Meneer Nieges",
+    "area": "9 Straatjes",
+    "facing": "S",
+    "lat": 52.3876615,
+    "lng": 4.8927255
+  },
+  {
+    "id": 178,
+    "name": "Screaming Beans",
+    "area": "9 Straatjes",
+    "facing": "S",
+    "lat": 52.36896,
+    "lng": 4.8839,
+    "googleRating": 4.7,
+    "googleReviewCount": 731
+  },
+  {
+    "id": 179,
+    "name": "Van Zuylen",
+    "area": "9 Straatjes",
+    "facing": "W",
+    "lat": 52.37458,
+    "lng": 4.88985,
+    "googleRating": 4.2,
+    "googleReviewCount": 2512
+  },
+  {
+    "id": 180,
+    "name": "Café de Pels",
+    "area": "9 Straatjes",
+    "facing": "E",
+    "lat": 52.36876,
+    "lng": 4.88526,
+    "googleRating": 4.5,
+    "googleReviewCount": 546
+  },
+  {
+    "id": 181,
+    "name": "Café Soleil",
+    "area": "9 Straatjes",
+    "facing": "S",
+    "lat": 52.3934867,
+    "lng": 4.9118251
+  },
+  {
+    "id": 182,
+    "name": "Café Vyne",
+    "area": "Haarlemmerbrt",
+    "facing": "S",
+    "lat": 52.3843793,
+    "lng": 4.8831798,
+    "googleRating": 4.8,
+    "googleReviewCount": 199
+  },
+  {
+    "id": 183,
+    "name": "Café Staal",
+    "area": "Haarlemmerbrt",
+    "facing": "E",
+    "lat": 52.3476146,
+    "lng": 4.850613
+  },
+  {
+    "id": 184,
+    "name": "Café Vrijdag",
+    "area": "Rivierenbuurt",
+    "facing": "S",
+    "lat": 52.34667,
+    "lng": 4.91111,
+    "googleRating": 4.2,
+    "googleReviewCount": 1697
+  },
+  {
+    "id": 185,
+    "name": "IJscuypje",
+    "area": "Rivierenbuurt",
+    "facing": "S",
+    "lat": 52.401448599999995,
+    "lng": 4.891981299999999
+  },
+  {
+    "id": 186,
+    "name": "Vessel",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.394417399999995,
+    "lng": 4.881958399999999
+  },
+  {
+    "id": 187,
+    "name": "Blijburg",
+    "area": "IJburg",
+    "facing": "S",
+    "lat": 52.35798,
+    "lng": 4.95798
+  },
+  {
+    "id": 188,
+    "name": "Nautisch Kwartier",
+    "area": "IJburg",
+    "facing": "SW",
+    "lat": 52.35698,
+    "lng": 4.95198
+  },
+  {
+    "id": 189,
+    "name": "W Lounge",
+    "area": "Centrum",
+    "facing": "All",
+    "lat": 52.37302,
+    "lng": 4.88984,
+    "googleRating": 4,
+    "googleReviewCount": 933
+  },
+  {
+    "id": 191,
+    "name": "Zoku Rooftop",
+    "area": "Oost",
+    "facing": "All",
+    "lat": 52.36379,
+    "lng": 4.90673,
+    "googleRating": 4.7,
+    "googleReviewCount": 3032
+  },
+  {
+    "id": 192,
+    "name": "Blue Amsterdam",
+    "area": "Centrum",
+    "facing": "All",
+    "lat": 52.36743,
+    "lng": 4.89149,
+    "googleRating": 4.5,
+    "googleReviewCount": 4551
+  },
+  {
+    "id": 193,
+    "name": "NEMO Rooftop",
+    "area": "Centrum",
+    "facing": "All",
+    "lat": 52.37417,
+    "lng": 4.91233,
+    "googleRating": 4.5,
+    "googleReviewCount": 36643
+  },
+  {
+    "id": 194,
+    "name": "Skybar Malabar",
+    "area": "Oost",
+    "facing": "All",
+    "lat": 52.37941,
+    "lng": 4.92239,
+    "googleRating": 4.4,
+    "googleReviewCount": 350
+  },
+  {
+    "id": 195,
+    "name": "Twenty Third Bar",
+    "area": "Zuid",
+    "facing": "All",
+    "lat": 52.3487,
+    "lng": 4.89393,
+    "googleRating": 4.4,
+    "googleReviewCount": 205
+  },
+  {
+    "id": 196,
+    "name": "Café Alto",
+    "area": "Leidseplein",
+    "facing": "S",
+    "lat": 52.36351,
+    "lng": 4.88447,
+    "googleRating": 4.6,
+    "googleReviewCount": 2991
+  },
+  {
+    "id": 197,
+    "name": "Café t Centrum",
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "lat": 52.36611,
+    "lng": 4.89556,
+    "googleRating": 4.4,
+    "googleReviewCount": 704
+  },
+  {
+    "id": 198,
+    "name": "Hoopman",
+    "area": "Leidseplein",
+    "facing": "S",
+    "lat": 52.3646,
+    "lng": 4.88301,
+    "googleRating": 3.9,
+    "googleReviewCount": 1561
+  },
+  {
+    "id": 199,
+    "name": "De Zotte",
+    "area": "Leidseplein",
+    "facing": "S",
+    "lat": 52.36608,
+    "lng": 4.88103,
+    "googleRating": 4.5,
+    "googleReviewCount": 895
+  },
+  {
+    "id": 200,
+    "name": "Café Waterhole",
+    "area": "Leidseplein",
+    "facing": "S",
+    "lat": 52.36486,
+    "lng": 4.88259,
+    "googleRating": 4.5,
+    "googleReviewCount": 4144
+  },
+  {
+    "id": 201,
+    "name": "Nel",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36221,
+    "lng": 4.89669,
+    "googleRating": 4.2,
+    "googleReviewCount": 1494
+  },
+  {
+    "id": 202,
+    "name": "Café Kadijk",
+    "area": "Plantage",
+    "facing": "S",
+    "lat": 52.37014,
+    "lng": 4.91211,
+    "googleRating": 4.4,
+    "googleReviewCount": 646
+  },
+  {
+    "id": 203,
+    "name": "Café Krom",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36295,
+    "lng": 4.89855,
+    "googleRating": 4.2,
+    "googleReviewCount": 645
+  },
+  {
+    "id": 204,
+    "name": "Le Patron",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36019,
+    "lng": 4.89123,
+    "googleRating": 4.2,
+    "googleReviewCount": 464
+  },
+  {
+    "id": 205,
+    "name": "De Bierhut",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3645,
+    "lng": 4.9225
+  },
+  {
+    "id": 206,
+    "name": "Café Bascule",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.39957,
+    "lng": 4.93467
+  },
+  {
+    "id": 207,
+    "name": "Oslo Beers",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.35767,
+    "lng": 4.85424,
+    "googleRating": 4.2,
+    "googleReviewCount": 1092
+  },
+  {
+    "id": 209,
+    "name": "Fabus",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.36999,
+    "lng": 4.86669,
+    "googleRating": 4.8,
+    "googleReviewCount": 670
+  },
+  {
+    "id": 210,
+    "name": "Hotel Buiten",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.38262,
+    "lng": 4.85793,
+    "googleRating": 2.1,
+    "googleReviewCount": 273
+  },
+  {
+    "id": 211,
+    "name": "Karavaan",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.3689651,
+    "lng": 4.870426999999999,
+    "googleRating": 4.2,
+    "googleReviewCount": 1183
+  },
+  {
+    "id": 212,
+    "name": "Café Vita Lente",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.36363,
+    "lng": 4.86323,
+    "googleRating": 4.7,
+    "googleReviewCount": 86
+  },
+  {
+    "id": 213,
+    "name": "Dilettante",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35588,
+    "lng": 4.8885,
+    "googleRating": 4.8,
+    "googleReviewCount": 353
+  },
+  {
+    "id": 214,
+    "name": "Oocker",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.36139,
+    "lng": 4.90057,
+    "googleRating": 4.8,
+    "googleReviewCount": 371
+  },
+  {
+    "id": 215,
+    "name": "R de Rosa",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.37908,
+    "lng": 4.88463,
+    "googleRating": 4.7,
+    "googleReviewCount": 166
+  },
+  {
+    "id": 216,
+    "name": "Café Vlaming",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.36502,
+    "lng": 4.92593,
+    "googleRating": 4.9,
+    "googleReviewCount": 108
+  },
+  {
+    "id": 218,
+    "name": "Sol",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3601393,
+    "lng": 4.877841399999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 34
+  },
+  {
+    "id": 219,
+    "name": "Jinja",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.37023,
+    "lng": 4.86803,
+    "googleRating": 4.7,
+    "googleReviewCount": 351
+  },
+  {
+    "id": 220,
+    "name": "Cantine de Caron",
+    "area": "Haarlemmerbrt",
+    "facing": "S",
+    "lat": 52.38634,
+    "lng": 4.87282,
+    "googleRating": 4.3,
+    "googleReviewCount": 944
+  },
+  {
+    "id": 233,
+    "name": "Brasserie Nonnetje",
+    "area": "9 Straatjes",
+    "facing": "SE",
+    "lat": 52.37047,
+    "lng": 4.88388
+  },
+  {
+    "id": 237,
+    "name": "Brasserie Dolfijn a/h Plein",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36564,
+    "lng": 4.88528
+  },
+  {
+    "id": 241,
+    "name": "Eetcafé Zwaluw",
+    "area": "9 Straatjes",
+    "facing": "All",
+    "lat": 52.3657537,
+    "lng": 4.8824436,
+    "googleRating": 4.6,
+    "googleReviewCount": 40
+  },
+  {
+    "id": 257,
+    "name": "Bistro Vlinder",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.35537,
+    "lng": 4.89302,
+    "googleRating": 4.1,
+    "googleReviewCount": 588
+  },
+  {
+    "id": 275,
+    "name": "Bar Duif",
+    "area": "Leidseplein",
+    "facing": "SE",
+    "lat": 52.36142,
+    "lng": 4.89673,
+    "googleRating": 4.5,
+    "googleReviewCount": 799
+  },
+  {
+    "id": 285,
+    "name": "Koffiehuis Spreeuw",
+    "area": "Amstelkwartier",
+    "facing": "N",
+    "lat": 52.384177799999996,
+    "lng": 4.9132356999999995
+  },
+  {
+    "id": 297,
+    "name": "Grand Café Roos",
+    "area": "Amstel",
+    "facing": "S",
+    "lat": 52.3586214,
+    "lng": 4.8754808,
+    "googleRating": 4.5,
+    "googleReviewCount": 51
+  },
+  {
+    "id": 302,
+    "name": "Bistro Nonnetje",
+    "area": "Oud-West",
+    "facing": "All",
+    "lat": 52.36274,
+    "lng": 4.86372
+  },
+  {
+    "id": 350,
+    "name": "Koffiehuis Gouden Hoek",
+    "area": "Rembrandtplein",
+    "facing": "SE",
+    "lat": 52.37233,
+    "lng": 4.88325,
+    "googleRating": 4.3,
+    "googleReviewCount": 985
+  },
+  {
+    "id": 377,
+    "name": "Eetcafé Anker",
+    "area": "Rivierenbuurt",
+    "facing": "E",
+    "lat": 52.35079,
+    "lng": 4.90329
+  },
+  {
+    "id": 380,
+    "name": "Brasserie Haas",
+    "area": "De Pijp",
+    "facing": "NE",
+    "lat": 52.370233,
+    "lng": 4.880096,
+    "googleRating": 4.7,
+    "googleReviewCount": 14
+  },
+  {
+    "id": 394,
+    "name": "Lounge Scholekster",
+    "area": "Rembrandtplein",
+    "facing": "All",
+    "lat": 52.3512744,
+    "lng": 4.8968634
+  },
+  {
+    "id": 434,
+    "name": "Lounge Anker",
+    "area": "Zuidas",
+    "facing": "NW",
+    "lat": 52.33589,
+    "lng": 4.87482
+  },
+  {
+    "id": 449,
+    "name": "Brasserie Haven",
+    "area": "9 Straatjes",
+    "facing": "N",
+    "lat": 52.36944,
+    "lng": 4.88722
+  },
+  {
+    "id": 454,
+    "name": "Koffiehuis Nachtegaal",
+    "area": "Plantage",
+    "facing": "All",
+    "lat": 52.35403,
+    "lng": 4.91929,
+    "googleRating": 3.9,
+    "googleReviewCount": 117
+  },
+  {
+    "id": 475,
+    "name": "Lounge Kade & Co",
+    "area": "9 Straatjes",
+    "facing": "SW",
+    "lat": 52.343483,
+    "lng": 4.8642756
+  },
+  {
+    "id": 488,
+    "name": "Bistro Dolfijn",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.38293,
+    "lng": 4.88689,
+    "googleRating": 4.7,
+    "googleReviewCount": 110
+  },
+  {
+    "id": 501,
+    "name": "Café Kiebêrt",
+    "area": "Stadionbuurt",
+    "facing": "SW",
+    "lat": 52.3483706,
+    "lng": 4.8605911,
+    "googleRating": 4.1,
+    "googleReviewCount": 746
+  },
+  {
+    "id": 502,
+    "name": "Bar Bonnie",
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "lat": 52.350895699999995,
+    "lng": 4.8565299,
+    "googleRating": 4.3,
+    "googleReviewCount": 1029
+  },
+  {
+    "id": 503,
+    "name": "Bar Grill Marathonweg",
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "lat": 52.3486019,
+    "lng": 4.8608627,
+    "googleRating": 4.5,
+    "googleReviewCount": 846
+  },
+  {
+    "id": 504,
+    "name": "End of the world",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.3773865,
+    "lng": 4.9321487,
+    "googleRating": 4.4,
+    "googleReviewCount": 104
+  },
+  {
+    "id": 505,
+    "name": "Aloha",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.3777847,
+    "lng": 4.9096384,
+    "googleRating": 4,
+    "googleReviewCount": 4651
+  },
+  {
+    "id": 506,
+    "name": "Restaurant Wolf Atelier",
+    "area": "Houthavens",
+    "facing": "E",
+    "lat": 52.3830859,
+    "lng": 4.8924236,
+    "googleRating": 4.7,
+    "googleReviewCount": 1461
+  },
+  {
+    "id": 507,
+    "name": "Café Restaurant Camping Zeeburg",
+    "area": "IJburg",
+    "facing": "S",
+    "lat": 52.365401399999996,
+    "lng": 4.9594916,
+    "googleRating": 4.1,
+    "googleReviewCount": 187
+  },
+  {
+    "id": 508,
+    "name": "Strand van Oost",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.362170199999994,
+    "lng": 4.923161299999999,
+    "googleRating": 4.8,
+    "googleReviewCount": 78
+  },
+  {
+    "id": 509,
+    "name": "BUITEN | Café & Restaurant",
+    "area": "West",
+    "facing": "N",
+    "lat": 52.3714626,
+    "lng": 4.8212529,
+    "googleRating": 4.4,
+    "googleReviewCount": 203
+  },
+  {
+    "id": 510,
+    "name": "Minigolf Amstelpark",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3318027,
+    "lng": 4.893272200000001,
+    "googleRating": 4.5,
+    "googleReviewCount": 719
+  },
+  {
+    "id": 511,
+    "name": "Café \"De Bult\" B.V.",
+    "area": "Noord",
+    "facing": "SW",
+    "lat": 52.391596,
+    "lng": 4.913067,
+    "googleRating": 4.4,
+    "googleReviewCount": 201
+  },
+  {
+    "id": 512,
+    "name": "The Traveller Zuidoost",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.314900599999994,
+    "lng": 4.9504939,
+    "googleRating": 4.4,
+    "googleReviewCount": 878
+  },
+  {
+    "id": 513,
+    "name": "Ichi-E",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.3130786,
+    "lng": 4.9453681,
+    "googleRating": 4.3,
+    "googleReviewCount": 2911
+  },
+  {
+    "id": 514,
+    "name": "Hangar Amsterdam",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.383642099999996,
+    "lng": 4.9308765,
+    "googleRating": 4,
+    "googleReviewCount": 1292
+  },
+  {
+    "id": 515,
+    "name": "Eetcafé KANIS",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.376408299999994,
+    "lng": 4.9406555999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 631
+  },
+  {
+    "id": 516,
+    "name": "Bar Brother",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.361929499999995,
+    "lng": 4.8517905,
+    "googleRating": 4.9,
+    "googleReviewCount": 265
+  },
+  {
+    "id": 517,
+    "name": "Bo's Amsterdam",
+    "area": "West",
+    "facing": "SW",
+    "lat": 52.364872999999996,
+    "lng": 4.8597585,
+    "googleRating": 4.9,
+    "googleReviewCount": 40
+  },
+  {
+    "id": 518,
+    "name": "De Jonge Admiraal",
+    "area": "Oost",
+    "facing": "NE",
+    "lat": 52.363943,
+    "lng": 4.93825,
+    "googleRating": 4.2,
+    "googleReviewCount": 478
+  },
+  {
+    "id": 519,
+    "name": "Ikaria Park",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.372120499999994,
+    "lng": 4.8701488,
+    "googleRating": 4.8,
+    "googleReviewCount": 589
+  },
+  {
+    "id": 520,
+    "name": "Sea Palace Restaurant",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.3757708,
+    "lng": 4.9062822,
+    "googleRating": 4.2,
+    "googleReviewCount": 9163
+  },
+  {
+    "id": 521,
+    "name": "Restaurant V12",
+    "area": "Noord",
+    "facing": "W",
+    "lat": 52.3942844,
+    "lng": 4.9082662,
+    "googleRating": 4.9,
+    "googleReviewCount": 239
+  },
+  {
+    "id": 522,
+    "name": "Café Cress",
+    "area": "Noord",
+    "facing": "W",
+    "lat": 52.395785,
+    "lng": 4.904281699999999,
+    "googleRating": 4.9,
+    "googleReviewCount": 269
+  },
+  {
+    "id": 523,
+    "name": "Brasserie 't Siertje",
+    "area": "West",
+    "facing": "E",
+    "lat": 52.3558959,
+    "lng": 4.8265023,
+    "googleRating": 4.2,
+    "googleReviewCount": 206
+  },
+  {
+    "id": 524,
+    "name": "'t Zusje Amsterdam",
+    "area": "Zuidas",
+    "facing": "W",
+    "lat": 52.3286371,
+    "lng": 4.8778862,
+    "googleRating": 4.2,
+    "googleReviewCount": 971
+  },
+  {
+    "id": 525,
+    "name": "Café Zomerlust",
+    "area": "Bos en Lommer",
+    "facing": "W",
+    "lat": 52.381276799999995,
+    "lng": 4.8239225999999995,
+    "googleRating": 3.8,
+    "googleReviewCount": 29
+  },
+  {
+    "id": 526,
+    "name": "Ox & Bucks",
+    "area": "Zuidas",
+    "facing": "E",
+    "lat": 52.3399,
+    "lng": 4.8735921,
+    "googleRating": 3.8,
+    "googleReviewCount": 415
+  },
+  {
+    "id": 527,
+    "name": "BISOUS",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3547351,
+    "lng": 4.8878091,
+    "googleRating": 4.3,
+    "googleReviewCount": 217
+  },
+  {
+    "id": 528,
+    "name": "La Fucina",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3638986,
+    "lng": 4.9360754,
+    "googleRating": 4.3,
+    "googleReviewCount": 625
+  },
+  {
+    "id": 529,
+    "name": "TonTon Club Westergas",
+    "area": "Westerpark",
+    "facing": "NW",
+    "lat": 52.3860206,
+    "lng": 4.8660624,
+    "googleRating": 4.2,
+    "googleReviewCount": 1745
+  },
+  {
+    "id": 530,
+    "name": "Studio/K",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.36524250000001,
+    "lng": 4.9360272,
+    "googleRating": 4.4,
+    "googleReviewCount": 1753
+  },
+  {
+    "id": 531,
+    "name": "il Pecorino",
+    "area": "Noord",
+    "facing": "SW",
+    "lat": 52.386841000000004,
+    "lng": 4.908531,
+    "googleRating": 4.2,
+    "googleReviewCount": 1427
+  },
+  {
+    "id": 532,
+    "name": "De Drie Graefjes Zuid",
+    "area": "Stadionbuurt",
+    "facing": "SW",
+    "lat": 52.3442917,
+    "lng": 4.857416199999999,
+    "googleRating": 4.1,
+    "googleReviewCount": 784
+  },
+  {
+    "id": 533,
+    "name": "Calf & Bloom",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3671824,
+    "lng": 4.8915377,
+    "googleRating": 4.3,
+    "googleReviewCount": 785
+  },
+  {
+    "id": 535,
+    "name": "Breman Brasserie",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.374241399999995,
+    "lng": 4.934660099999999,
+    "googleRating": 4.1,
+    "googleReviewCount": 186
+  },
+  {
+    "id": 536,
+    "name": "Blend Coffee & Wine",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3565034,
+    "lng": 4.9302914,
+    "googleRating": 4,
+    "googleReviewCount": 413
+  },
+  {
+    "id": 537,
+    "name": "Restaurant Nomads",
+    "area": "Oost",
+    "facing": "SE",
+    "lat": 52.3564173,
+    "lng": 4.9299214,
+    "googleRating": 4.4,
+    "googleReviewCount": 776
+  },
+  {
+    "id": 538,
+    "name": "Café Mulder",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.359727799999995,
+    "lng": 4.8912908999999996,
+    "googleRating": 4.2,
+    "googleReviewCount": 848
+  },
+  {
+    "id": 539,
+    "name": "Vlees & Co Amsterdam",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.3941972,
+    "lng": 4.898582,
+    "googleRating": 4.4,
+    "googleReviewCount": 487
+  },
+  {
+    "id": 540,
+    "name": "Café Van Leeuwen",
+    "area": "Rembrandtplein",
+    "facing": "W",
+    "lat": 52.364070999999996,
+    "lng": 4.898372,
+    "googleRating": 4.2,
+    "googleReviewCount": 984
+  },
+  {
+    "id": 541,
+    "name": "Bar Coco Vin",
+    "area": "Haarlemmerbrt",
+    "facing": "N",
+    "lat": 52.386387,
+    "lng": 4.8724491,
+    "googleRating": 4.3,
+    "googleReviewCount": 243
+  },
+  {
+    "id": 542,
+    "name": "Vertigo",
+    "area": "Oud-Zuid",
+    "facing": "NW",
+    "lat": 52.3611107,
+    "lng": 4.8749943,
+    "googleRating": 4.4,
+    "googleReviewCount": 146
+  },
+  {
+    "id": 543,
+    "name": "Gollem Aan Het Water",
+    "area": "Plantage",
+    "facing": "N",
+    "lat": 52.368095499999995,
+    "lng": 4.9164407,
+    "googleRating": 4.6,
+    "googleReviewCount": 474
+  },
+  {
+    "id": 544,
+    "name": "Zizou Coffee",
+    "area": "Oud-West",
+    "facing": "N",
+    "lat": 52.3704985,
+    "lng": 4.8645612,
+    "googleRating": 4.9,
+    "googleReviewCount": 158
+  },
+  {
+    "id": 545,
+    "name": "Selma's",
+    "area": "Oud-West",
+    "facing": "E",
+    "lat": 52.3751971,
+    "lng": 4.8616092,
+    "googleRating": 4.4,
+    "googleReviewCount": 513
+  },
+  {
+    "id": 546,
+    "name": "Maydanoz",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.352447299999994,
+    "lng": 4.8873141,
+    "googleRating": 4.4,
+    "googleReviewCount": 862
+  },
+  {
+    "id": 547,
+    "name": "Caramba",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3798166,
+    "lng": 4.8808922
+  },
+  {
+    "id": 548,
+    "name": "de Akermolen",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.3460312,
+    "lng": 4.7812396999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 379
+  },
+  {
+    "id": 549,
+    "name": "Sapporo Ramen SORA",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.3526289,
+    "lng": 4.8887013,
+    "googleRating": 4.5,
+    "googleReviewCount": 1765
+  },
+  {
+    "id": 550,
+    "name": "Eetcafé Edita",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.375110299999996,
+    "lng": 4.8606032,
+    "googleRating": 4.8,
+    "googleReviewCount": 178
+  },
+  {
+    "id": 551,
+    "name": "Restaurant De Belhamel",
+    "area": "Haarlemmerbrt",
+    "facing": "S",
+    "lat": 52.3794184,
+    "lng": 4.8920452999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 1919
+  },
+  {
+    "id": 552,
+    "name": "Sahan Amsterdam",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.358398,
+    "lng": 4.8001968999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 1228
+  },
+  {
+    "id": 553,
+    "name": "Eetcafé van Houten",
+    "area": "Spaarndammer",
+    "facing": "N",
+    "lat": 52.3900163,
+    "lng": 4.885850899999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 220
+  },
+  {
+    "id": 554,
+    "name": "Terras Café De Monico",
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "lat": 52.3663729,
+    "lng": 4.8962297999999995,
+    "googleRating": 3.6,
+    "googleReviewCount": 178
+  },
+  {
+    "id": 555,
+    "name": "Domenica",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.380116199999996,
+    "lng": 4.8874645999999995,
+    "googleRating": 4.2,
+    "googleReviewCount": 603
+  },
+  {
+    "id": 556,
+    "name": "Cheeky",
+    "area": "Westerpark",
+    "facing": "NE",
+    "lat": 52.3845106,
+    "lng": 4.8732028,
+    "googleRating": 5,
+    "googleReviewCount": 105
+  },
+  {
+    "id": 557,
+    "name": "Boothuis",
+    "area": "West",
+    "facing": "W",
+    "lat": 52.360322599999996,
+    "lng": 4.8158353,
+    "googleRating": 4.3,
+    "googleReviewCount": 697
+  },
+  {
+    "id": 558,
+    "name": "De Kat in de Wijngaert",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3803202,
+    "lng": 4.884081999999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 374
+  },
+  {
+    "id": 559,
+    "name": "Café 't Vossie",
+    "area": "West",
+    "facing": "SE",
+    "lat": 52.359536,
+    "lng": 4.8518858,
+    "googleRating": 4.7,
+    "googleReviewCount": 189
+  },
+  {
+    "id": 560,
+    "name": "Vascobelo V-Bar NoMA House",
+    "area": "Zuidas",
+    "facing": "SE",
+    "lat": 52.3368569,
+    "lng": 4.8682662,
+    "googleRating": 4.3,
+    "googleReviewCount": 249
+  },
+  {
+    "id": 561,
+    "name": "Duende Tapas Bar",
+    "area": "Leidseplein",
+    "facing": "N",
+    "lat": 52.3806343,
+    "lng": 4.8861083999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 1435
+  },
+  {
+    "id": 562,
+    "name": "Sportclub Match & Eetcafé Thijs",
+    "area": "Oud-Zuid",
+    "facing": "SW",
+    "lat": 52.345196599999994,
+    "lng": 4.8093525999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 434
+  },
+  {
+    "id": 563,
+    "name": "Restaurant Daalder*",
+    "area": "Leidseplein",
+    "facing": "NE",
+    "lat": 52.3805567,
+    "lng": 4.8856506,
+    "googleRating": 4.4,
+    "googleReviewCount": 814
+  },
+  {
+    "id": 564,
+    "name": "White Label Coffee North",
+    "area": "Noord",
+    "facing": "N",
+    "lat": 52.412772,
+    "lng": 4.8907644999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 233
+  },
+  {
+    "id": 565,
+    "name": "Osteria Bella Ciao Italian Restaurant",
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "lat": 52.345214399999996,
+    "lng": 4.8550321,
+    "googleRating": 4.7,
+    "googleReviewCount": 1121
+  },
+  {
+    "id": 566,
+    "name": "Vascobelo V-Bar Stadionplein",
+    "area": "Stadionbuurt",
+    "facing": "W",
+    "lat": 52.3444444,
+    "lng": 4.8580556,
+    "googleRating": 4.3,
+    "googleReviewCount": 655
+  },
+  {
+    "id": 567,
+    "name": "Bar Hout",
+    "area": "Spaarndammer",
+    "facing": "S",
+    "lat": 52.3924634,
+    "lng": 4.8786913,
+    "googleRating": 4.5,
+    "googleReviewCount": 460
+  },
+  {
+    "id": 568,
+    "name": "Spanjer en van Twist",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.375948,
+    "lng": 4.884936,
+    "googleRating": 4.3,
+    "googleReviewCount": 908
+  },
+  {
+    "id": 569,
+    "name": "Spring Cafe Brasserie Amsterdam",
+    "area": "Watergraafsmeer",
+    "facing": "N",
+    "lat": 52.3621937,
+    "lng": 4.9196841000000004,
+    "googleRating": 4.4,
+    "googleReviewCount": 197
+  },
+  {
+    "id": 570,
+    "name": "Coba",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.384977199999994,
+    "lng": 4.9251429,
+    "googleRating": 4.3,
+    "googleReviewCount": 893
+  },
+  {
+    "id": 571,
+    "name": "Landmarkt De Proeverij",
+    "area": "IJburg",
+    "facing": "SE",
+    "lat": 52.3808587,
+    "lng": 4.9687439,
+    "googleRating": 4,
+    "googleReviewCount": 370
+  },
+  {
+    "id": 572,
+    "name": "Bello Gio's by the River - Italian Restaurant",
+    "area": "Noord",
+    "facing": "SW",
+    "lat": 52.4019056,
+    "lng": 4.890742599999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 802
+  },
+  {
+    "id": 573,
+    "name": "Café Parlotte",
+    "area": "Jordaan",
+    "facing": "SW",
+    "lat": 52.3782572,
+    "lng": 4.8817517,
+    "googleRating": 4.4,
+    "googleReviewCount": 474
+  },
+  {
+    "id": 574,
+    "name": "Ristorante San Remo Pizzeria",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.391885300000006,
+    "lng": 4.9140375999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 267
+  },
+  {
+    "id": 575,
+    "name": "Café 't Mannetje🍺",
+    "area": "West",
+    "facing": "NE",
+    "lat": 52.3748912,
+    "lng": 4.8766602,
+    "googleRating": 4.4,
+    "googleReviewCount": 116
+  },
+  {
+    "id": 576,
+    "name": "Café Slijterij Oosterling",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.3610581,
+    "lng": 4.8992838,
+    "googleRating": 4.8,
+    "googleReviewCount": 1268
+  },
+  {
+    "id": 577,
+    "name": "Restaurant FIVE",
+    "area": "IJburg",
+    "facing": "SE",
+    "lat": 52.3542742,
+    "lng": 5.0053921,
+    "googleRating": 4,
+    "googleReviewCount": 114
+  },
+  {
+    "id": 578,
+    "name": "The Harbour Club Amsterdam - East",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.3688988,
+    "lng": 4.9477804999999995,
+    "googleRating": 4,
+    "googleReviewCount": 1808
+  },
+  {
+    "id": 579,
+    "name": "de Willem",
+    "area": "Haarlemmerbrt",
+    "facing": "W",
+    "lat": 52.3849429,
+    "lng": 4.8829166,
+    "googleRating": 4.3,
+    "googleReviewCount": 350
+  },
+  {
+    "id": 580,
+    "name": "Bam Boa",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.3496664,
+    "lng": 4.912773,
+    "googleRating": 4.5,
+    "googleReviewCount": 1496
+  },
+  {
+    "id": 581,
+    "name": "Libertine Petit Café",
+    "area": "Jordaan",
+    "facing": "SE",
+    "lat": 52.3802476,
+    "lng": 4.8875857,
+    "googleRating": 3.8,
+    "googleReviewCount": 350
+  },
+  {
+    "id": 582,
+    "name": "Restaurant Barracuda Amsterdam",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.384541399999996,
+    "lng": 4.9282077,
+    "googleRating": 4.4,
+    "googleReviewCount": 861
+  },
+  {
+    "id": 583,
+    "name": "Kebec corner",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.4036117,
+    "lng": 4.8919489,
+    "googleRating": 4.9,
+    "googleReviewCount": 691
+  },
+  {
+    "id": 584,
+    "name": "Nieuwe Diep Distillery",
+    "area": "IJburg",
+    "facing": "NW",
+    "lat": 52.3620528,
+    "lng": 4.9501333,
+    "googleRating": 4.8,
+    "googleReviewCount": 603
+  },
+  {
+    "id": 585,
+    "name": "Skatecafe",
+    "area": "Noord",
+    "facing": "E",
+    "lat": 52.3854027,
+    "lng": 4.9255933999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 1149
+  },
+  {
+    "id": 586,
+    "name": "Stacks Diner",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3713546,
+    "lng": 4.871369,
+    "googleRating": 4.4,
+    "googleReviewCount": 507
+  },
+  {
+    "id": 587,
+    "name": "La Contessa, Ristorante Italiano & Gelateria",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.36859880000001,
+    "lng": 4.9523727,
+    "googleRating": 4,
+    "googleReviewCount": 456
+  },
+  {
+    "id": 588,
+    "name": "Restaurant Turquoise Meating",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.3969454,
+    "lng": 4.9141634,
+    "googleRating": 4.5,
+    "googleReviewCount": 891
+  },
+  {
+    "id": 589,
+    "name": "Bar BAUT",
+    "area": "Stadionbuurt",
+    "facing": "NW",
+    "lat": 52.3457423,
+    "lng": 4.859712399999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 904
+  },
+  {
+    "id": 590,
+    "name": "Jack Dish",
+    "area": "Stadionbuurt",
+    "facing": "SW",
+    "lat": 52.3444526,
+    "lng": 4.8584137,
+    "googleRating": 4.2,
+    "googleReviewCount": 639
+  },
+  {
+    "id": 591,
+    "name": "Barracuda Bar",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.383562999999995,
+    "lng": 4.9296484,
+    "googleRating": 4.4,
+    "googleReviewCount": 47
+  },
+  {
+    "id": 592,
+    "name": "Café Kramer",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.365429999999996,
+    "lng": 4.892567199999999,
+    "googleRating": 4.2,
+    "googleReviewCount": 1444
+  },
+  {
+    "id": 593,
+    "name": "Deck Amsterdam",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.3916976,
+    "lng": 4.9019371,
+    "googleRating": 4.3,
+    "googleReviewCount": 93
+  },
+  {
+    "id": 594,
+    "name": "PepeNero Cucina",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.379507,
+    "lng": 4.9255764,
+    "googleRating": 4.6,
+    "googleReviewCount": 592
+  },
+  {
+    "id": 595,
+    "name": "LOVERS Cafe",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.3787458,
+    "lng": 4.8969043999999995,
+    "googleRating": 4,
+    "googleReviewCount": 511
+  },
+  {
+    "id": 596,
+    "name": "Spaghetteria Pasta-bar (Daniël Stalpertstraat)",
+    "area": "De Pijp",
+    "facing": "SW",
+    "lat": 52.356221999999995,
+    "lng": 4.891716,
+    "googleRating": 4.3,
+    "googleReviewCount": 700
+  },
+  {
+    "id": 597,
+    "name": "Restaurant Oeverzicht",
+    "area": "West",
+    "facing": "W",
+    "lat": 52.370136900000006,
+    "lng": 4.8301652,
+    "googleRating": 4.1,
+    "googleReviewCount": 575
+  },
+  {
+    "id": 598,
+    "name": "Snackbar Van Vliet",
+    "area": "West",
+    "facing": "SE",
+    "lat": 52.3624711,
+    "lng": 4.8010386,
+    "googleRating": 4.2,
+    "googleReviewCount": 395
+  },
+  {
+    "id": 599,
+    "name": "De Proefzaak Amsterdam",
+    "area": "Zuid",
+    "facing": "N",
+    "lat": 52.3035771,
+    "lng": 4.9511329,
+    "googleRating": 4.3,
+    "googleReviewCount": 851
+  },
+  {
+    "id": 600,
+    "name": "Pazzi Oost",
+    "area": "Oost",
+    "facing": "NE",
+    "lat": 52.355261299999995,
+    "lng": 4.9229158,
+    "googleRating": 4.5,
+    "googleReviewCount": 455
+  },
+  {
+    "id": 601,
+    "name": "De Smoeshaan",
+    "area": "Leidseplein",
+    "facing": "W",
+    "lat": 52.3641149,
+    "lng": 4.8803357,
+    "googleRating": 4.3,
+    "googleReviewCount": 140
+  },
+  {
+    "id": 602,
+    "name": "BAUT Oost",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3546395,
+    "lng": 4.9126921,
+    "googleRating": 4.3,
+    "googleReviewCount": 1322
+  },
+  {
+    "id": 603,
+    "name": "Brasserie George",
+    "area": "Houthavens",
+    "facing": "NW",
+    "lat": 52.3958028,
+    "lng": 4.880019,
+    "googleRating": 4.2,
+    "googleReviewCount": 135
+  },
+  {
+    "id": 604,
+    "name": "Tweede Thuys",
+    "area": "De Baarsjes",
+    "facing": "N",
+    "lat": 52.364507599999996,
+    "lng": 4.8569072,
+    "googleRating": 4.7,
+    "googleReviewCount": 516
+  },
+  {
+    "id": 605,
+    "name": "café smit & voogt",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.367362899999996,
+    "lng": 4.9095989,
+    "googleRating": 4.5,
+    "googleReviewCount": 691
+  },
+  {
+    "id": 606,
+    "name": "Miss Scarlett",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.2977188,
+    "lng": 4.9579007,
+    "googleRating": 4.4,
+    "googleReviewCount": 477
+  },
+  {
+    "id": 607,
+    "name": "Titus Parrillas",
+    "area": "Rembrandtplein",
+    "facing": "SE",
+    "lat": 52.3664569,
+    "lng": 4.8961058,
+    "googleRating": 3.5,
+    "googleReviewCount": 481
+  },
+  {
+    "id": 608,
+    "name": "TULA cantina - cocktail bar",
+    "area": "Noord",
+    "facing": "E",
+    "lat": 52.385013099999995,
+    "lng": 4.9250646,
+    "googleRating": 4.4,
+    "googleReviewCount": 85
+  },
+  {
+    "id": 609,
+    "name": "Screaming Beans Waterlooplein",
+    "area": "Centrum",
+    "facing": "SE",
+    "lat": 52.3686094,
+    "lng": 4.9021188,
+    "googleRating": 4.2,
+    "googleReviewCount": 316
+  },
+  {
+    "id": 610,
+    "name": "Benelux Bar",
+    "area": "Noord",
+    "facing": "NW",
+    "lat": 52.383935400000006,
+    "lng": 4.9217292,
+    "googleRating": 3.7,
+    "googleReviewCount": 84
+  },
+  {
+    "id": 611,
+    "name": "Iets Aparts",
+    "area": "De Baarsjes",
+    "facing": "SW",
+    "lat": 52.364415,
+    "lng": 4.851471999999999,
+    "googleRating": 4.8,
+    "googleReviewCount": 318
+  },
+  {
+    "id": 612,
+    "name": "Cafe de Ebeling",
+    "area": "Zuid",
+    "facing": "SE",
+    "lat": 52.363288399999995,
+    "lng": 4.8765635,
+    "googleRating": 4.1,
+    "googleReviewCount": 1271
+  },
+  {
+    "id": 613,
+    "name": "Secret Garden",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.3662857,
+    "lng": 4.8910769,
+    "googleRating": 4.5,
+    "googleReviewCount": 2451
+  },
+  {
+    "id": 614,
+    "name": "Café CASA SOFIA",
+    "area": "Oud-Zuid",
+    "facing": "E",
+    "lat": 52.3475253,
+    "lng": 4.8256263,
+    "googleRating": 4,
+    "googleReviewCount": 221
+  },
+  {
+    "id": 615,
+    "name": "Beest Boulders Amsterdam",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.381673899999996,
+    "lng": 4.8594025,
+    "googleRating": 4.7,
+    "googleReviewCount": 1125
+  },
+  {
+    "id": 616,
+    "name": "Rafi",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.381941999999995,
+    "lng": 4.883675,
+    "googleRating": 4.4,
+    "googleReviewCount": 594
+  },
+  {
+    "id": 617,
+    "name": "Cafe Kosmos",
+    "area": "Westerpark",
+    "facing": "E",
+    "lat": 52.3812697,
+    "lng": 4.8735123,
+    "googleRating": 4.7,
+    "googleReviewCount": 153
+  },
+  {
+    "id": 618,
+    "name": "I Dock",
+    "area": "Houthavens",
+    "facing": "N",
+    "lat": 52.384875799999996,
+    "lng": 4.8939996,
+    "googleRating": 4.1,
+    "googleReviewCount": 337
+  },
+  {
+    "id": 619,
+    "name": "Pizza Beppe Keizersgracht - Amsterdam Centrum",
+    "area": "Haarlemmerbrt",
+    "facing": "W",
+    "lat": 52.3659561,
+    "lng": 4.8870034,
+    "googleRating": 4.5,
+    "googleReviewCount": 56
+  },
+  {
+    "id": 620,
+    "name": "Morlang Café Restaurant Amsterdam",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.366414,
+    "lng": 4.886483999999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 1722
+  },
+  {
+    "id": 621,
+    "name": "Café Treffers",
+    "area": "Oud-West",
+    "facing": "NE",
+    "lat": 52.371021299999995,
+    "lng": 4.863151200000001,
+    "googleRating": 4.4,
+    "googleReviewCount": 197
+  },
+  {
+    "id": 622,
+    "name": "Brasserie Margaux",
+    "area": "Oud-Zuid",
+    "facing": "SW",
+    "lat": 52.3490658,
+    "lng": 4.8777246000000005,
+    "googleRating": 4.5,
+    "googleReviewCount": 467
+  },
+  {
+    "id": 623,
+    "name": "Krux Brouwwerf",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.368341699999995,
+    "lng": 4.9526794,
+    "googleRating": 4.7,
+    "googleReviewCount": 391
+  },
+  {
+    "id": 624,
+    "name": "Bar Guzzo",
+    "area": "Plantage",
+    "facing": "S",
+    "lat": 52.37089640000001,
+    "lng": 4.9163342,
+    "googleRating": 4.3,
+    "googleReviewCount": 227
+  },
+  {
+    "id": 625,
+    "name": "Spirit Amsterdam",
+    "area": "Indische Buurt",
+    "facing": "SW",
+    "lat": 52.367680799999995,
+    "lng": 4.9260018,
+    "googleRating": 4.4,
+    "googleReviewCount": 1686
+  },
+  {
+    "id": 626,
+    "name": "Café Lomans",
+    "area": "Stadionbuurt",
+    "facing": "W",
+    "lat": 52.3503658,
+    "lng": 4.8574665,
+    "googleRating": 4.6,
+    "googleReviewCount": 244
+  },
+  {
+    "id": 627,
+    "name": "CAMARAT",
+    "area": "Noord",
+    "facing": "NW",
+    "lat": 52.3858245,
+    "lng": 4.9264911,
+    "googleRating": 4.7,
+    "googleReviewCount": 216
+  },
+  {
+    "id": 628,
+    "name": "Noof Amsterdam",
+    "area": "Westerpark",
+    "facing": "E",
+    "lat": 52.384595,
+    "lng": 4.8749079,
+    "googleRating": 4.5,
+    "googleReviewCount": 371
+  },
+  {
+    "id": 629,
+    "name": "Ron Gastrobar",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.35222340000001,
+    "lng": 4.8566914,
+    "googleRating": 4.3,
+    "googleReviewCount": 1852
+  },
+  {
+    "id": 630,
+    "name": "Elsa's Café",
+    "area": "Oost",
+    "facing": "SE",
+    "lat": 52.353186099999995,
+    "lng": 4.9319667,
+    "googleRating": 4.4,
+    "googleReviewCount": 1100
+  },
+  {
+    "id": 631,
+    "name": "de Neef van Fred",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.37104610000001,
+    "lng": 4.8571007,
+    "googleRating": 4.3,
+    "googleReviewCount": 388
+  },
+  {
+    "id": 632,
+    "name": "Café Restaurant Piet de Gruyter",
+    "area": "Westerpark",
+    "facing": "SW",
+    "lat": 52.384578,
+    "lng": 4.875246,
+    "googleRating": 4.4,
+    "googleReviewCount": 514
+  },
+  {
+    "id": 633,
+    "name": "Wils Bakery Café",
+    "area": "Stadionbuurt",
+    "facing": "W",
+    "lat": 52.3431753,
+    "lng": 4.8561748,
+    "googleRating": 4.5,
+    "googleReviewCount": 271
+  },
+  {
+    "id": 634,
+    "name": "Café 't Ruysje",
+    "area": "West",
+    "facing": "W",
+    "lat": 52.382533699999996,
+    "lng": 4.804799699999999,
+    "googleRating": 4.1,
+    "googleReviewCount": 52
+  },
+  {
+    "id": 635,
+    "name": "De Spiegel",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.3622336,
+    "lng": 4.8863385,
+    "googleRating": 4.3,
+    "googleReviewCount": 813
+  },
+  {
+    "id": 636,
+    "name": "Cups & Chapters Cafe",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.3848407,
+    "lng": 4.9169338,
+    "googleRating": 5,
+    "googleReviewCount": 99
+  },
+  {
+    "id": 637,
+    "name": "De Nieuwe RAI",
+    "area": "Rivierenbuurt",
+    "facing": "N",
+    "lat": 52.343875,
+    "lng": 4.891424,
+    "googleRating": 4.3,
+    "googleReviewCount": 815
+  },
+  {
+    "id": 638,
+    "name": "Cafe Scharrebier",
+    "area": "Plantage",
+    "facing": "SE",
+    "lat": 52.3704529,
+    "lng": 4.9111601,
+    "googleRating": 4.5,
+    "googleReviewCount": 335
+  },
+  {
+    "id": 639,
+    "name": "Grieks Restaurant Athene",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3558579,
+    "lng": 4.9074076,
+    "googleRating": 3.6,
+    "googleReviewCount": 446
+  },
+  {
+    "id": 641,
+    "name": "Podium Mozaïek",
+    "area": "Spaarndammer",
+    "facing": "N",
+    "lat": 52.380097,
+    "lng": 4.854324,
+    "googleRating": 4.3,
+    "googleReviewCount": 1327
+  },
+  {
+    "id": 642,
+    "name": "Morris & Bella",
+    "area": "Spaarndammer",
+    "facing": "W",
+    "lat": 52.3908998,
+    "lng": 4.8785973,
+    "googleRating": 4.8,
+    "googleReviewCount": 266
+  },
+  {
+    "id": 643,
+    "name": "Taj Indian Restaurant",
+    "area": "Zuid",
+    "facing": "W",
+    "lat": 52.357438699999996,
+    "lng": 4.891096699999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 1683
+  },
+  {
+    "id": 644,
+    "name": "Marmaris Restaurant Hoekenrode",
+    "area": "Zuid",
+    "facing": "SW",
+    "lat": 52.312964199999996,
+    "lng": 4.9491789,
+    "googleRating": 4,
+    "googleReviewCount": 2373
+  },
+  {
+    "id": 645,
+    "name": "Pelusa",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.393651999999996,
+    "lng": 4.899987299999999,
+    "googleRating": 4.9,
+    "googleReviewCount": 232
+  },
+  {
+    "id": 646,
+    "name": "Waterlooplein",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3677503,
+    "lng": 4.9027389,
+    "googleRating": 4.4,
+    "googleReviewCount": 490
+  },
+  {
+    "id": 647,
+    "name": "Terrasmus",
+    "area": "Oud-West",
+    "facing": "NE",
+    "lat": 52.374103000000005,
+    "lng": 4.850274,
+    "googleRating": 4.6,
+    "googleReviewCount": 918
+  },
+  {
+    "id": 648,
+    "name": "The Greek Embassy - Coffee Bar Kouzina",
+    "area": "Oost",
+    "facing": "NW",
+    "lat": 52.352961699999994,
+    "lng": 4.910444399999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 1314
+  },
+  {
+    "id": 649,
+    "name": "Grolsch Boulevard Fourteen",
+    "area": "Zuid",
+    "facing": "N",
+    "lat": 52.3123864,
+    "lng": 4.9452035,
+    "googleRating": 3.3,
+    "googleReviewCount": 852
+  },
+  {
+    "id": 650,
+    "name": "Coffee Room.",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.367047199999995,
+    "lng": 4.8711193999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 904
+  },
+  {
+    "id": 651,
+    "name": "Eetcafé 100% Zuid-oost",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.3148165,
+    "lng": 4.9535450999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 199
+  },
+  {
+    "id": 652,
+    "name": "Barricade",
+    "area": "West",
+    "facing": "SW",
+    "lat": 52.3662296,
+    "lng": 4.8620477,
+    "googleRating": 4.5,
+    "googleReviewCount": 192
+  },
+  {
+    "id": 653,
+    "name": "Temple Bar",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.3721397,
+    "lng": 4.8993578,
+    "googleRating": 4.2,
+    "googleReviewCount": 1880
+  },
+  {
+    "id": 654,
+    "name": "L'Osteria",
+    "area": "Zuid",
+    "facing": "SE",
+    "lat": 52.3409927,
+    "lng": 4.918114,
+    "googleRating": 4.1,
+    "googleReviewCount": 3765
+  },
+  {
+    "id": 655,
+    "name": "Café Mads.",
+    "area": "Spaarndammer",
+    "facing": "SE",
+    "lat": 52.3885736,
+    "lng": 4.8861621,
+    "googleRating": 4.4,
+    "googleReviewCount": 507
+  },
+  {
+    "id": 656,
+    "name": "Majestic",
+    "area": "Oud-West",
+    "facing": "W",
+    "lat": 52.3730556,
+    "lng": 4.8941666999999995,
+    "googleRating": 3.7,
+    "googleReviewCount": 2486
+  },
+  {
+    "id": 657,
+    "name": "Pancakes Amsterdam at the IJ",
+    "area": "Noord",
+    "facing": "N",
+    "lat": 52.3805303,
+    "lng": 4.900009300000001,
+    "googleRating": 4.4,
+    "googleReviewCount": 1186
+  },
+  {
+    "id": 658,
+    "name": "Café Jacob Amsterdam",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.365860299999994,
+    "lng": 4.8733914,
+    "googleRating": 4.4,
+    "googleReviewCount": 151
+  },
+  {
+    "id": 659,
+    "name": "Brasserie Hoekenrode",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.3131046,
+    "lng": 4.9482374,
+    "googleRating": 3.7,
+    "googleReviewCount": 1173
+  },
+  {
+    "id": 660,
+    "name": "Mexican Restaurant",
+    "area": "Spaarndammer",
+    "facing": "NE",
+    "lat": 52.376691099999995,
+    "lng": 4.902021599999999,
+    "googleRating": 4,
+    "googleReviewCount": 1391
+  },
+  {
+    "id": 661,
+    "name": "Massalia Restobar",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3571928,
+    "lng": 4.9184186,
+    "googleRating": 4.6,
+    "googleReviewCount": 344
+  },
+  {
+    "id": 662,
+    "name": "De Eeuwige Jeugd",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3614031,
+    "lng": 4.924726499999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 283
+  },
+  {
+    "id": 663,
+    "name": "De Biertuin Mercatorplein",
+    "area": "De Baarsjes",
+    "facing": "W",
+    "lat": 52.370079999999994,
+    "lng": 4.8514645,
+    "googleRating": 4.4,
+    "googleReviewCount": 389
+  },
+  {
+    "id": 664,
+    "name": "The Lobby Fizeaustraat",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3453606,
+    "lng": 4.9255584,
+    "googleRating": 4.5,
+    "googleReviewCount": 1034
+  },
+  {
+    "id": 665,
+    "name": "SUBCULT",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.3841191,
+    "lng": 4.9132009,
+    "googleRating": 4.9,
+    "googleReviewCount": 172
+  },
+  {
+    "id": 666,
+    "name": "Eetcafé de Avonden",
+    "area": "Indische Buurt",
+    "facing": "SE",
+    "lat": 52.342945,
+    "lng": 4.947223,
+    "googleRating": 4.6,
+    "googleReviewCount": 572
+  },
+  {
+    "id": 667,
+    "name": "Bosco",
+    "area": "Oud-West",
+    "facing": "N",
+    "lat": 52.365212799999995,
+    "lng": 4.8739235999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 961
+  },
+  {
+    "id": 669,
+    "name": "Café De Fluiter",
+    "area": "Spaarndammer",
+    "facing": "SW",
+    "lat": 52.3792717,
+    "lng": 4.8568463,
+    "googleRating": 4.6,
+    "googleReviewCount": 171
+  },
+  {
+    "id": 755,
+    "name": "Café P96",
+    "area": "Jordaan",
+    "facing": "E",
+    "lat": 52.377067399999994,
+    "lng": 4.884866,
+    "googleRating": 4.4,
+    "googleReviewCount": 1037
+  },
+  {
+    "id": 756,
+    "name": "The Social Hub Amsterdam City - Restaurant & Bar",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.354228,
+    "lng": 4.9128826,
+    "googleRating": 3.8,
+    "googleReviewCount": 510
+  },
+  {
+    "id": 757,
+    "name": "Boulevard Café",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3686133,
+    "lng": 4.934453899999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 350
+  },
+  {
+    "id": 758,
+    "name": "Little Bonfire",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3664391,
+    "lng": 4.8864135,
+    "googleRating": 4.7,
+    "googleReviewCount": 276
+  },
+  {
+    "id": 759,
+    "name": "Oceaan",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.371436900000006,
+    "lng": 4.946712799999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 473
+  },
+  {
+    "id": 760,
+    "name": "Bakhuys Amsterdam",
+    "area": "Amstel",
+    "facing": "SE",
+    "lat": 52.3611217,
+    "lng": 4.9068606,
+    "googleRating": 4.4,
+    "googleReviewCount": 2351
+  },
+  {
+    "id": 761,
+    "name": "Papillon Bakery-Café & Restaurant",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.39663040000001,
+    "lng": 4.906659500000001,
+    "googleRating": 4.5,
+    "googleReviewCount": 237
+  },
+  {
+    "id": 762,
+    "name": "Café Café Amsterdam",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.3676906,
+    "lng": 4.8994808999999995,
+    "googleRating": 4.2,
+    "googleReviewCount": 284
+  },
+  {
+    "id": 763,
+    "name": "Oma Ietje",
+    "area": "Zuid",
+    "facing": "NE",
+    "lat": 52.306494699999995,
+    "lng": 4.9539175,
+    "googleRating": 4.5,
+    "googleReviewCount": 1281
+  },
+  {
+    "id": 764,
+    "name": "Gertrude Rest. & Bar",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.3656952,
+    "lng": 4.8761247,
+    "googleRating": 4.4,
+    "googleReviewCount": 621
+  },
+  {
+    "id": 765,
+    "name": "Eetcafé Menora",
+    "area": "Noord",
+    "facing": "SW",
+    "lat": 52.411944999999996,
+    "lng": 4.8861738,
+    "googleRating": 3.4,
+    "googleReviewCount": 230
+  },
+  {
+    "id": 766,
+    "name": "Café Pieper",
+    "area": "9 Straatjes",
+    "facing": "NE",
+    "lat": 52.366192899999994,
+    "lng": 4.8823496,
+    "googleRating": 4.4,
+    "googleReviewCount": 664
+  },
+  {
+    "id": 768,
+    "name": "Orchid House",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.362170199999994,
+    "lng": 4.923161299999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 389
+  },
+  {
+    "id": 769,
+    "name": "La Trattoria Ferilli’s Uptown",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.336864500000004,
+    "lng": 4.8777662,
+    "googleRating": 3.8,
+    "googleReviewCount": 222
+  },
+  {
+    "id": 770,
+    "name": "Espressofabriek",
+    "area": "Westerpark",
+    "facing": "N",
+    "lat": 52.3861402,
+    "lng": 4.8719319,
+    "googleRating": 4.3,
+    "googleReviewCount": 517
+  },
+  {
+    "id": 771,
+    "name": "The College Bar & Lounge",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.352769099999996,
+    "lng": 4.8837413000000005,
+    "googleRating": 3.9,
+    "googleReviewCount": 16
+  },
+  {
+    "id": 772,
+    "name": "Café Square '40-'45",
+    "area": "Bos en Lommer",
+    "facing": "W",
+    "lat": 52.379487999999995,
+    "lng": 4.821522000000001,
+    "googleRating": 3.6,
+    "googleReviewCount": 88
+  },
+  {
+    "id": 773,
+    "name": "Brasserie Bâton/ Espressamente Baton",
+    "area": "Haarlemmerbrt",
+    "facing": "S",
+    "lat": 52.3769146,
+    "lng": 4.889535599999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 1025
+  },
+  {
+    "id": 774,
+    "name": "Restaurant Johannes",
+    "area": "Haarlemmerbrt",
+    "facing": "S",
+    "lat": 52.367613999999996,
+    "lng": 4.8873549999999994,
+    "googleRating": 4.5,
+    "googleReviewCount": 422
+  },
+  {
+    "id": 775,
+    "name": "The Bulldog Mack",
+    "area": "9 Straatjes",
+    "facing": "SE",
+    "lat": 52.3732681,
+    "lng": 4.8971443,
+    "googleRating": 4.2,
+    "googleReviewCount": 3057
+  },
+  {
+    "id": 776,
+    "name": "Bar Billie",
+    "area": "Oud-West",
+    "facing": "N",
+    "lat": 52.3668596,
+    "lng": 4.8712371,
+    "googleRating": 4.6,
+    "googleReviewCount": 106
+  },
+  {
+    "id": 777,
+    "name": "Cafe Restaurant Sandberg",
+    "area": "Oud-West",
+    "facing": "NW",
+    "lat": 52.358011,
+    "lng": 4.8797556,
+    "googleRating": 4,
+    "googleReviewCount": 145
+  },
+  {
+    "id": 778,
+    "name": "La Parole",
+    "area": "De Baarsjes",
+    "facing": "SW",
+    "lat": 52.368467599999995,
+    "lng": 4.8683179,
+    "googleRating": 4.5,
+    "googleReviewCount": 307
+  },
+  {
+    "id": 779,
+    "name": "Spritz Bar Amsterdam",
+    "area": "Leidseplein",
+    "facing": "W",
+    "lat": 52.363203,
+    "lng": 4.8809922,
+    "googleRating": 4.5,
+    "googleReviewCount": 32
+  },
+  {
+    "id": 780,
+    "name": "Alba Restaurant & Wijnbar",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3560247,
+    "lng": 4.9118732,
+    "googleRating": 4.6,
+    "googleReviewCount": 403
+  },
+  {
+    "id": 781,
+    "name": "Taparia Amsterdam",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.374572699999995,
+    "lng": 4.9346631,
+    "googleRating": 4,
+    "googleReviewCount": 1185
+  },
+  {
+    "id": 782,
+    "name": "Tasca Bellota",
+    "area": "Houthavens",
+    "facing": "NE",
+    "lat": 52.385579899999996,
+    "lng": 4.8902249,
+    "googleRating": 4.6,
+    "googleReviewCount": 783
+  },
+  {
+    "id": 783,
+    "name": "Loulou Pizzabar",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3558236,
+    "lng": 4.907488799999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 2224
+  },
+  {
+    "id": 784,
+    "name": "Dopey's Elixer",
+    "area": "Rembrandtplein",
+    "facing": "NE",
+    "lat": 52.3505556,
+    "lng": 4.894444399999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 595
+  },
+  {
+    "id": 785,
+    "name": "Bar Barolo",
+    "area": "Oud-Zuid",
+    "facing": "E",
+    "lat": 52.354288999999994,
+    "lng": 4.868810600000001,
+    "googleRating": 4.5,
+    "googleReviewCount": 125
+  },
+  {
+    "id": 786,
+    "name": "Bar Restaurant 1900",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.354797399999995,
+    "lng": 4.933161699999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 508
+  },
+  {
+    "id": 787,
+    "name": "Your Daily Cruquius",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.36970410000001,
+    "lng": 4.9552664,
+    "googleRating": 4.6,
+    "googleReviewCount": 78
+  },
+  {
+    "id": 788,
+    "name": "Tolbar",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.3527291,
+    "lng": 4.906675700000001,
+    "googleRating": 4.4,
+    "googleReviewCount": 347
+  },
+  {
+    "id": 789,
+    "name": "Beest Boulders het Lab Amsterdam",
+    "area": "Spaarndammer",
+    "facing": "S",
+    "lat": 52.3925,
+    "lng": 4.8513889,
+    "googleRating": 4.7,
+    "googleReviewCount": 686
+  },
+  {
+    "id": 790,
+    "name": "de Kade café",
+    "area": "Oud-West",
+    "facing": "NW",
+    "lat": 52.366822299999995,
+    "lng": 4.8712246,
+    "googleRating": 4.6,
+    "googleReviewCount": 77
+  },
+  {
+    "id": 791,
+    "name": "Vegan Junk Food Bar",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.3572385,
+    "lng": 4.891575,
+    "googleRating": 4.5,
+    "googleReviewCount": 3851
+  },
+  {
+    "id": 793,
+    "name": "Het Bosch Waterfront Kitchen",
+    "area": "Stadionbuurt",
+    "facing": "E",
+    "lat": 52.3355159,
+    "lng": 4.8492841,
+    "googleRating": 4.3,
+    "googleReviewCount": 543
+  },
+  {
+    "id": 794,
+    "name": "Tazzina",
+    "area": "Jordaan",
+    "facing": "SE",
+    "lat": 52.3815453,
+    "lng": 4.8860524,
+    "googleRating": 4.4,
+    "googleReviewCount": 414
+  },
+  {
+    "id": 795,
+    "name": "Moeders",
+    "area": "De Baarsjes",
+    "facing": "W",
+    "lat": 52.3718246,
+    "lng": 4.8749712999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 5733
+  },
+  {
+    "id": 796,
+    "name": "Frenzi Italian Restaurant",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.3681355,
+    "lng": 4.8985175,
+    "googleRating": 4.3,
+    "googleReviewCount": 1287
+  },
+  {
+    "id": 797,
+    "name": "Badhuis Amsterdam | Restaurant Amsterdam",
+    "area": "Oost",
+    "facing": "NE",
+    "lat": 52.3635346,
+    "lng": 4.9399918,
+    "googleRating": 4.3,
+    "googleReviewCount": 440
+  },
+  {
+    "id": 798,
+    "name": "Cafe Kooper | bar & restaurant Leidseplein",
+    "area": "Leidseplein",
+    "facing": "E",
+    "lat": 52.364591,
+    "lng": 4.8824184,
+    "googleRating": 3.7,
+    "googleReviewCount": 369
+  },
+  {
+    "id": 799,
+    "name": "Cafe Wiesje",
+    "area": "Oud-Zuid",
+    "facing": "SE",
+    "lat": 52.351966000000004,
+    "lng": 4.8532574,
+    "googleRating": 4.8,
+    "googleReviewCount": 74
+  },
+  {
+    "id": 800,
+    "name": "Krusta Pizza Bar & Restaurant",
+    "area": "Rivierenbuurt",
+    "facing": "NW",
+    "lat": 52.3436595,
+    "lng": 4.8916398,
+    "googleRating": 4.6,
+    "googleReviewCount": 582
+  },
+  {
+    "id": 804,
+    "name": "Café Conrad",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.357568,
+    "lng": 4.8575156999999995,
+    "googleRating": 5,
+    "googleReviewCount": 195
+  },
+  {
+    "id": 805,
+    "name": "V R R",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.3719008,
+    "lng": 4.931308,
+    "googleRating": 4.1,
+    "googleReviewCount": 412
+  },
+  {
+    "id": 806,
+    "name": "LUPE",
+    "area": "West",
+    "facing": "E",
+    "lat": 52.3819715,
+    "lng": 4.8577292,
+    "googleRating": 4.7,
+    "googleReviewCount": 583
+  },
+  {
+    "id": 807,
+    "name": "Cafe 't Molentje",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3722675,
+    "lng": 4.8880459,
+    "googleRating": 4.1,
+    "googleReviewCount": 739
+  },
+  {
+    "id": 808,
+    "name": "Café Reynders",
+    "area": "Leidseplein",
+    "facing": "NE",
+    "lat": 52.3646634,
+    "lng": 4.882987099999999,
+    "googleRating": 3.3,
+    "googleReviewCount": 329
+  },
+  {
+    "id": 809,
+    "name": "The Magpie",
+    "area": "Stadionbuurt",
+    "facing": "SE",
+    "lat": 52.3495083,
+    "lng": 4.848912599999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 215
+  },
+  {
+    "id": 810,
+    "name": "Le French Café - Admiraal de Ruijterweg",
+    "area": "Oud-West",
+    "facing": "N",
+    "lat": 52.3701322,
+    "lng": 4.8644805,
+    "googleRating": 4.5,
+    "googleReviewCount": 390
+  },
+  {
+    "id": 811,
+    "name": "Cruquius Docks",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.3700403,
+    "lng": 4.9550477,
+    "googleRating": 4.2,
+    "googleReviewCount": 19
+  },
+  {
+    "id": 812,
+    "name": "PAMELA",
+    "area": "Oud-West",
+    "facing": "W",
+    "lat": 52.3660411,
+    "lng": 4.8719842,
+    "googleRating": 4.5,
+    "googleReviewCount": 399
+  },
+  {
+    "id": 813,
+    "name": "Café L'Affiche",
+    "area": "Oud-West",
+    "facing": "W",
+    "lat": 52.366595399999994,
+    "lng": 4.8746902,
+    "googleRating": 4.6,
+    "googleReviewCount": 542
+  },
+  {
+    "id": 814,
+    "name": "Cafe Restaurant Metro",
+    "area": "Noord",
+    "facing": "SW",
+    "lat": 52.3911235,
+    "lng": 4.904046699999999,
+    "googleRating": 4.2,
+    "googleReviewCount": 293
+  },
+  {
+    "id": 815,
+    "name": "Leidseplein",
+    "area": "Leidseplein",
+    "facing": "NE",
+    "lat": 52.363765,
+    "lng": 4.8822544
+  },
+  {
+    "id": 816,
+    "name": "Keizersgracht 157",
+    "area": "Noord",
+    "facing": "E",
+    "lat": 52.3753873,
+    "lng": 4.8865038
+  },
+  {
+    "id": 817,
+    "name": "Saffraan",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3554566,
+    "lng": 4.9076523,
+    "googleRating": 4.4,
+    "googleReviewCount": 508
+  },
+  {
+    "id": 818,
+    "name": "Café Kuijper",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.359885999999996,
+    "lng": 4.925751399999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 934
+  },
+  {
+    "id": 819,
+    "name": "Espressofabriek IJburg",
+    "area": "IJburg",
+    "facing": "W",
+    "lat": 52.351933499999994,
+    "lng": 5.0019646,
+    "googleRating": 4.4,
+    "googleReviewCount": 331
+  },
+  {
+    "id": 820,
+    "name": "Rayleigh & Ramsay Westerpark",
+    "area": "Spaarndammer",
+    "facing": "S",
+    "lat": 52.389275299999994,
+    "lng": 4.8797568,
+    "googleRating": 4.5,
+    "googleReviewCount": 159
+  },
+  {
+    "id": 822,
+    "name": "De Luwte",
+    "area": "Noord",
+    "facing": "W",
+    "lat": 52.375250699999995,
+    "lng": 4.8868501,
+    "googleRating": 4,
+    "googleReviewCount": 936
+  },
+  {
+    "id": 823,
+    "name": "Café 't Gasthuys",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3694444,
+    "lng": 4.8936111,
+    "googleRating": 4.4,
+    "googleReviewCount": 1216
+  },
+  {
+    "id": 824,
+    "name": "Bar Douwes",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.359626299999995,
+    "lng": 4.9136074,
+    "googleRating": 4.6,
+    "googleReviewCount": 109
+  },
+  {
+    "id": 825,
+    "name": "Gollem's Proeflokaal",
+    "area": "Oud-Zuid",
+    "facing": "SW",
+    "lat": 52.362338900000005,
+    "lng": 4.8729917,
+    "googleRating": 4.5,
+    "googleReviewCount": 1735
+  },
+  {
+    "id": 826,
+    "name": "Lokaal 't Loosje",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.372397199999995,
+    "lng": 4.899575,
+    "googleRating": 4.3,
+    "googleReviewCount": 1316
+  },
+  {
+    "id": 828,
+    "name": "Spazio - Pizzeria & Lunchroom",
+    "area": "Oost",
+    "facing": "NW",
+    "lat": 52.3573405,
+    "lng": 4.918336,
+    "googleRating": 4.8,
+    "googleReviewCount": 355
+  },
+  {
+    "id": 829,
+    "name": "Brasserie Blazer",
+    "area": "Jordaan",
+    "facing": "SW",
+    "lat": 52.3684556,
+    "lng": 4.8788944,
+    "googleRating": 4.4,
+    "googleReviewCount": 807
+  },
+  {
+    "id": 830,
+    "name": "Le Pub",
+    "area": "Leidseplein",
+    "facing": "S",
+    "lat": 52.364486899999996,
+    "lng": 4.8830789,
+    "googleRating": 3.3,
+    "googleReviewCount": 623
+  },
+  {
+    "id": 831,
+    "name": "Loop 51 - Vinyl Brunch Bar",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.351320199999996,
+    "lng": 4.8895518,
+    "googleRating": 4.7,
+    "googleReviewCount": 514
+  },
+  {
+    "id": 832,
+    "name": "Braai Vondelpark",
+    "area": "West",
+    "facing": "NW",
+    "lat": 52.3561985,
+    "lng": 4.8544504,
+    "googleRating": 3.9,
+    "googleReviewCount": 290
+  },
+  {
+    "id": 833,
+    "name": "Café Emmelot",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.374788699999996,
+    "lng": 4.899060899999999,
+    "googleRating": 3.9,
+    "googleReviewCount": 1487
+  },
+  {
+    "id": 834,
+    "name": "Bistro Berlage",
+    "area": "9 Straatjes",
+    "facing": "S",
+    "lat": 52.3746061,
+    "lng": 4.8955296,
+    "googleRating": 4,
+    "googleReviewCount": 752
+  },
+  {
+    "id": 835,
+    "name": "Cafe de Druif",
+    "area": "Plantage",
+    "facing": "NE",
+    "lat": 52.3700809,
+    "lng": 4.9106455,
+    "googleRating": 4.5,
+    "googleReviewCount": 581
+  },
+  {
+    "id": 836,
+    "name": "DOK48 | FOOD & DRINKS AMSTERDAM",
+    "area": "IJburg",
+    "facing": "SW",
+    "lat": 52.352874400000005,
+    "lng": 5.0053925999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 500
+  },
+  {
+    "id": 838,
+    "name": "Cafe Dorst",
+    "area": "Indische Buurt",
+    "facing": "NW",
+    "lat": 52.366067900000004,
+    "lng": 4.9270553999999995,
+    "googleRating": 3.9,
+    "googleReviewCount": 223
+  },
+  {
+    "id": 839,
+    "name": "Restaurant Chez Fabrice",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.362033999999994,
+    "lng": 4.9040539999999995,
+    "googleRating": 4.7,
+    "googleReviewCount": 304
+  },
+  {
+    "id": 840,
+    "name": "Eetcafé Frame",
+    "area": "Houthavens",
+    "facing": "E",
+    "lat": 52.3660423,
+    "lng": 4.8955006,
+    "googleRating": 3.8,
+    "googleReviewCount": 219
+  },
+  {
+    "id": 927,
+    "name": "Juliette Private Dining",
+    "area": "Oud-Zuid",
+    "facing": "NE",
+    "lat": 52.352975799999996,
+    "lng": 4.863398699999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 63
+  },
+  {
+    "id": 928,
+    "name": "Buno Coffee Hoofddorpplein",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.3513152,
+    "lng": 4.850585199999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 480
+  },
+  {
+    "id": 929,
+    "name": "Pizza Beppe Nassaukade - Amsterdam West",
+    "area": "Leidseplein",
+    "facing": "E",
+    "lat": 52.364830999999995,
+    "lng": 4.87842,
+    "googleRating": 4.3,
+    "googleReviewCount": 723
+  },
+  {
+    "id": 930,
+    "name": "Sham Oost",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3697601,
+    "lng": 4.9369375,
+    "googleRating": 4.7,
+    "googleReviewCount": 1780
+  },
+  {
+    "id": 931,
+    "name": "Burgerbar Zuid",
+    "area": "Stadionbuurt",
+    "facing": "NW",
+    "lat": 52.3451927,
+    "lng": 4.8590933,
+    "googleRating": 4.4,
+    "googleReviewCount": 366
+  },
+  {
+    "id": 932,
+    "name": "Cafe De Regent van Amsterdam",
+    "area": "Spaarndammer",
+    "facing": "NW",
+    "lat": 52.375783399999996,
+    "lng": 4.8999634,
+    "googleRating": 4.3,
+    "googleReviewCount": 1176
+  },
+  {
+    "id": 933,
+    "name": "The Traveller",
+    "area": "Rivierenbuurt",
+    "facing": "S",
+    "lat": 52.3434562,
+    "lng": 4.8901164,
+    "googleRating": 4.3,
+    "googleReviewCount": 550
+  },
+  {
+    "id": 934,
+    "name": "Le 4 Stagioni",
+    "area": "Zuid",
+    "facing": "NE",
+    "lat": 52.3555681,
+    "lng": 4.8754564,
+    "googleRating": 4.2,
+    "googleReviewCount": 1090
+  },
+  {
+    "id": 935,
+    "name": "La Madonnina",
+    "area": "Houthavens",
+    "facing": "SE",
+    "lat": 52.365926599999995,
+    "lng": 4.8954987999999995,
+    "googleRating": 4.1,
+    "googleReviewCount": 3665
+  },
+  {
+    "id": 936,
+    "name": "Café Hegeraad",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3793461,
+    "lng": 4.8860358,
+    "googleRating": 4.3,
+    "googleReviewCount": 801
+  },
+  {
+    "id": 937,
+    "name": "Boka's",
+    "area": "Noord",
+    "facing": "N",
+    "lat": 52.38809380000001,
+    "lng": 4.9094264999999995,
+    "googleRating": 4.8,
+    "googleReviewCount": 717
+  },
+  {
+    "id": 938,
+    "name": "Bar Restaurant LELY",
+    "area": "West",
+    "facing": "NE",
+    "lat": 52.35722750000001,
+    "lng": 4.8352555,
+    "googleRating": 4.5,
+    "googleReviewCount": 1406
+  },
+  {
+    "id": 939,
+    "name": "KOH - Kitchen of Happiness",
+    "area": "IJburg",
+    "facing": "E",
+    "lat": 52.3529924,
+    "lng": 5.0056522999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 789
+  },
+  {
+    "id": 940,
+    "name": "Strandzuid",
+    "area": "Rivierenbuurt",
+    "facing": "S",
+    "lat": 52.341653,
+    "lng": 4.8865262,
+    "googleRating": 4,
+    "googleReviewCount": 1583
+  },
+  {
+    "id": 941,
+    "name": "Nana coffee house",
+    "area": "Stadionbuurt",
+    "facing": "SE",
+    "lat": 52.3511034,
+    "lng": 4.8492497000000006,
+    "googleRating": 4.8,
+    "googleReviewCount": 415
+  },
+  {
+    "id": 942,
+    "name": "Trinity Cafe",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.374945499999995,
+    "lng": 4.8991929999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 1198
+  },
+  {
+    "id": 943,
+    "name": "Feestcafe Woody's",
+    "area": "Rembrandtplein",
+    "facing": "E",
+    "lat": 52.3652829,
+    "lng": 4.8955589,
+    "googleRating": 4.1,
+    "googleReviewCount": 124
+  },
+  {
+    "id": 944,
+    "name": "Gouden Kom IJburg",
+    "area": "IJburg",
+    "facing": "N",
+    "lat": 52.358053999999996,
+    "lng": 4.991112,
+    "googleRating": 3.9,
+    "googleReviewCount": 179
+  },
+  {
+    "id": 945,
+    "name": "Scheepskameel",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.3755749,
+    "lng": 4.9143599,
+    "googleRating": 4.6,
+    "googleReviewCount": 882
+  },
+  {
+    "id": 946,
+    "name": "il Cavallino",
+    "area": "Rivierenbuurt",
+    "facing": "NW",
+    "lat": 52.3452778,
+    "lng": 4.8955556,
+    "googleRating": 4.6,
+    "googleReviewCount": 361
+  },
+  {
+    "id": 947,
+    "name": "Mamas & Tapas",
+    "area": "West",
+    "facing": "NW",
+    "lat": 52.374762999999994,
+    "lng": 4.8733153,
+    "googleRating": 4.8,
+    "googleReviewCount": 1305
+  },
+  {
+    "id": 948,
+    "name": "Bar du Champagne",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.3701565,
+    "lng": 4.892977,
+    "googleRating": 4.7,
+    "googleReviewCount": 110
+  },
+  {
+    "id": 949,
+    "name": "St. James's Gate",
+    "area": "Houthavens",
+    "facing": "E",
+    "lat": 52.3659597,
+    "lng": 4.8954661,
+    "googleRating": 4.2,
+    "googleReviewCount": 2823
+  },
+  {
+    "id": 950,
+    "name": "Café CHA CHA",
+    "area": "Jordaan",
+    "facing": "NW",
+    "lat": 52.3697768,
+    "lng": 4.8928698,
+    "googleRating": 4.1,
+    "googleReviewCount": 828
+  },
+  {
+    "id": 951,
+    "name": "NAP Amsterdam",
+    "area": "IJburg",
+    "facing": "SW",
+    "lat": 52.352885,
+    "lng": 5.003269599999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 783
+  },
+  {
+    "id": 952,
+    "name": "OTEMBA- gyoza",
+    "area": "De Pijp",
+    "facing": "N",
+    "lat": 52.357040999999995,
+    "lng": 4.8997993,
+    "googleRating": 4.7,
+    "googleReviewCount": 771
+  },
+  {
+    "id": 954,
+    "name": "BRET",
+    "area": "Spaarndammer",
+    "facing": "N",
+    "lat": 52.389852,
+    "lng": 4.8367635,
+    "googleRating": 4,
+    "googleReviewCount": 1634
+  },
+  {
+    "id": 955,
+    "name": "Café Hermans",
+    "area": "Rembrandtplein",
+    "facing": "N",
+    "lat": 52.3517909,
+    "lng": 4.8951455,
+    "googleRating": 5,
+    "googleReviewCount": 53
+  },
+  {
+    "id": 956,
+    "name": "Café het Paleis",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3723178,
+    "lng": 4.8889866,
+    "googleRating": 4.2,
+    "googleReviewCount": 1031
+  },
+  {
+    "id": 957,
+    "name": "Shiraz Jardin des Vins",
+    "area": "De Baarsjes",
+    "facing": "SE",
+    "lat": 52.3623729,
+    "lng": 4.8858728,
+    "googleRating": 4.6,
+    "googleReviewCount": 899
+  },
+  {
+    "id": 958,
+    "name": "De Koffie Broeder",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3706743,
+    "lng": 4.9301778,
+    "googleRating": 4.8,
+    "googleReviewCount": 221
+  },
+  {
+    "id": 959,
+    "name": "NAKED | Amsterdam",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3736185,
+    "lng": 4.8923282,
+    "googleRating": 3.7,
+    "googleReviewCount": 1324
+  },
+  {
+    "id": 960,
+    "name": "OTEMBA RAMEN",
+    "area": "Oud-West",
+    "facing": "E",
+    "lat": 52.3676474,
+    "lng": 4.8730489,
+    "googleRating": 4.6,
+    "googleReviewCount": 1934
+  },
+  {
+    "id": 961,
+    "name": "Ponte arcari",
+    "area": "Rembrandtplein",
+    "facing": "W",
+    "lat": 52.364570699999994,
+    "lng": 4.8961748,
+    "googleRating": 4.1,
+    "googleReviewCount": 517
+  },
+  {
+    "id": 962,
+    "name": "MOKAFE",
+    "area": "Rivierenbuurt",
+    "facing": "W",
+    "lat": 52.344143300000006,
+    "lng": 4.9085551,
+    "googleRating": 4.9,
+    "googleReviewCount": 1285
+  },
+  {
+    "id": 963,
+    "name": "STROOM in de Pijp",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.351330999999995,
+    "lng": 4.891692,
+    "googleRating": 4.3,
+    "googleReviewCount": 520
+  },
+  {
+    "id": 964,
+    "name": "Abbey",
+    "area": "West",
+    "facing": "SE",
+    "lat": 52.382895999999995,
+    "lng": 4.851033,
+    "googleRating": 4.8,
+    "googleReviewCount": 639
+  },
+  {
+    "id": 965,
+    "name": "Dan Murphy's",
+    "area": "Leidseplein",
+    "facing": "SE",
+    "lat": 52.3644943,
+    "lng": 4.8822699,
+    "googleRating": 4.1,
+    "googleReviewCount": 1009
+  },
+  {
+    "id": 966,
+    "name": "turbo",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.360634399999995,
+    "lng": 4.9253402,
+    "googleRating": 4.5,
+    "googleReviewCount": 259
+  },
+  {
+    "id": 967,
+    "name": "Pita Queen",
+    "area": "Plantage",
+    "facing": "NE",
+    "lat": 52.3624939,
+    "lng": 4.927342599999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 355
+  },
+  {
+    "id": 968,
+    "name": "Samen - Lunch and Juices",
+    "area": "Bos en Lommer",
+    "facing": "SE",
+    "lat": 52.3826,
+    "lng": 4.8553111,
+    "googleRating": 4.7,
+    "googleReviewCount": 388
+  },
+  {
+    "id": 969,
+    "name": "Humphrey's",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.376143799999994,
+    "lng": 4.8942438,
+    "googleRating": 4.4,
+    "googleReviewCount": 1814
+  },
+  {
+    "id": 970,
+    "name": "Maximus Steakhouse",
+    "area": "Oud-Zuid",
+    "facing": "NW",
+    "lat": 52.3622398,
+    "lng": 4.8832736,
+    "googleRating": 3.9,
+    "googleReviewCount": 952
+  },
+  {
+    "id": 971,
+    "name": "Bar-Restaurant Het Groene Paleis",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.371040099999995,
+    "lng": 4.8932575,
+    "googleRating": 4,
+    "googleReviewCount": 2002
+  },
+  {
+    "id": 972,
+    "name": "Brasserie Keyzer",
+    "area": "Oud-West",
+    "facing": "E",
+    "lat": 52.3567829,
+    "lng": 4.879154300000001,
+    "googleRating": 3.9,
+    "googleReviewCount": 1023
+  },
+  {
+    "id": 974,
+    "name": "Anne&Max Amsterdam Zeeburg",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3745815,
+    "lng": 4.9351804,
+    "googleRating": 4.2,
+    "googleReviewCount": 665
+  },
+  {
+    "id": 975,
+    "name": "Bacalar",
+    "area": "Noord",
+    "facing": "NW",
+    "lat": 52.391479499999996,
+    "lng": 4.9041505999999995,
+    "googleRating": 4.7,
+    "googleReviewCount": 1333
+  },
+  {
+    "id": 976,
+    "name": "MasMais Taqueria 🌮",
+    "area": "Oud-West",
+    "facing": "NW",
+    "lat": 52.3752423,
+    "lng": 4.8478251,
+    "googleRating": 4.5,
+    "googleReviewCount": 558
+  },
+  {
+    "id": 977,
+    "name": "A Tavola",
+    "area": "Plantage",
+    "facing": "SE",
+    "lat": 52.370213899999996,
+    "lng": 4.912312,
+    "googleRating": 4.5,
+    "googleReviewCount": 491
+  },
+  {
+    "id": 978,
+    "name": "Café Noir",
+    "area": "Amstel",
+    "facing": "W",
+    "lat": 52.361821199999994,
+    "lng": 4.90825,
+    "googleRating": 4.1,
+    "googleReviewCount": 351
+  },
+  {
+    "id": 979,
+    "name": "Dutch Pancake Masters",
+    "area": "9 Straatjes",
+    "facing": "E",
+    "lat": 52.375667899999996,
+    "lng": 4.8958433999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 7537
+  },
+  {
+    "id": 980,
+    "name": "Café Stevens",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.372842,
+    "lng": 4.9011251,
+    "googleRating": 4.4,
+    "googleReviewCount": 1261
+  },
+  {
+    "id": 981,
+    "name": "Bottleshop",
+    "area": "Oost",
+    "facing": "NW",
+    "lat": 52.354613099999995,
+    "lng": 4.911435399999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 183
+  },
+  {
+    "id": 982,
+    "name": "Cafe Heuvel",
+    "area": "De Baarsjes",
+    "facing": "N",
+    "lat": 52.3624788,
+    "lng": 4.8879128,
+    "googleRating": 3.7,
+    "googleReviewCount": 571
+  },
+  {
+    "id": 983,
+    "name": "Bar Kaspar",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.347100999999995,
+    "lng": 4.8772115,
+    "googleRating": 4.5,
+    "googleReviewCount": 879
+  },
+  {
+    "id": 984,
+    "name": "La Vallade",
+    "area": "Oost",
+    "facing": "NE",
+    "lat": 52.354222099999994,
+    "lng": 4.926957799999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 508
+  },
+  {
+    "id": 985,
+    "name": "Hoppe Amsterdam Spui....",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.3688139,
+    "lng": 4.8886278,
+    "googleRating": 4.4,
+    "googleReviewCount": 2211
+  },
+  {
+    "id": 986,
+    "name": "Williams Farmhouse / Botanical Garden",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.347862,
+    "lng": 4.877287,
+    "googleRating": 4.6,
+    "googleReviewCount": 348
+  },
+  {
+    "id": 988,
+    "name": "Fosco Amsterdam",
+    "area": "Oost",
+    "facing": "NW",
+    "lat": 52.3741248,
+    "lng": 4.9354936,
+    "googleRating": 4.8,
+    "googleReviewCount": 139
+  },
+  {
+    "id": 989,
+    "name": "SPARGO",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.372726799999995,
+    "lng": 4.9010731,
+    "googleRating": 3.8,
+    "googleReviewCount": 604
+  },
+  {
+    "id": 990,
+    "name": "Burger Bitch",
+    "area": "Zuid",
+    "facing": "SW",
+    "lat": 52.3131869,
+    "lng": 4.9424562,
+    "googleRating": 3.9,
+    "googleReviewCount": 2727
+  },
+  {
+    "id": 991,
+    "name": "Yuan’s Hot Pot Amsterdam Valley 袁记串串香山谷店",
+    "area": "Zuidas",
+    "facing": "SW",
+    "lat": 52.3372974,
+    "lng": 4.8773374,
+    "googleRating": 4.9,
+    "googleReviewCount": 1058
+  },
+  {
+    "id": 992,
+    "name": "Café @020",
+    "area": "Oud-West",
+    "facing": "SE",
+    "lat": 52.3702866,
+    "lng": 4.8541026,
+    "googleRating": 4.9,
+    "googleReviewCount": 12
+  },
+  {
+    "id": 993,
+    "name": "Braai Westerpark",
+    "area": "Westerpark",
+    "facing": "SE",
+    "lat": 52.3850573,
+    "lng": 4.8749253,
+    "googleRating": 4.3,
+    "googleReviewCount": 780
+  },
+  {
+    "id": 994,
+    "name": "Bakkerij Mas",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3568109,
+    "lng": 4.937013500000001,
+    "googleRating": 4.8,
+    "googleReviewCount": 124
+  },
+  {
+    "id": 995,
+    "name": "Café Restaurant NO NONSENSE",
+    "area": "Spaarndammer",
+    "facing": "SW",
+    "lat": 52.3758542,
+    "lng": 4.9026633,
+    "googleRating": 4.9,
+    "googleReviewCount": 222
+  },
+  {
+    "id": 996,
+    "name": "Caffè Pico",
+    "area": "Oud-Zuid",
+    "facing": "E",
+    "lat": 52.3551989,
+    "lng": 4.8900045,
+    "googleRating": 4.4,
+    "googleReviewCount": 251
+  },
+  {
+    "id": 998,
+    "name": "Coco's Outback",
+    "area": "Rembrandtplein",
+    "facing": "NW",
+    "lat": 52.365533299999996,
+    "lng": 4.8954222,
+    "googleRating": 4.1,
+    "googleReviewCount": 3785
+  },
+  {
+    "id": 999,
+    "name": "Kratiam Thai",
+    "area": "Spaarndammer",
+    "facing": "NW",
+    "lat": 52.3796122,
+    "lng": 4.8536771,
+    "googleRating": 4.5,
+    "googleReviewCount": 410
+  },
+  {
+    "id": 1000,
+    "name": "Petit Lou",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.364104999999995,
+    "lng": 4.906586,
+    "googleRating": 4.3,
+    "googleReviewCount": 694
+  },
+  {
+    "id": 1001,
+    "name": "OMG! Burger",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3761076,
+    "lng": 4.8937804,
+    "googleRating": 3.9,
+    "googleReviewCount": 1350
+  },
+  {
+    "id": 1002,
+    "name": "BAR JOOST",
+    "area": "Oost",
+    "facing": "NW",
+    "lat": 52.3649281,
+    "lng": 4.9397354,
+    "googleRating": 4.7,
+    "googleReviewCount": 612
+  },
+  {
+    "id": 1003,
+    "name": "At Seven",
+    "area": "Rivierenbuurt",
+    "facing": "N",
+    "lat": 52.345203299999994,
+    "lng": 4.8905799,
+    "googleRating": 4.4,
+    "googleReviewCount": 575
+  },
+  {
+    "id": 1004,
+    "name": "Myrabelle bar & restaurant",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.3619207,
+    "lng": 4.8919095,
+    "googleRating": 4.5,
+    "googleReviewCount": 744
+  },
+  {
+    "id": 1005,
+    "name": "Castell",
+    "area": "Leidseplein",
+    "facing": "N",
+    "lat": 52.362862,
+    "lng": 4.8849092999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 2086
+  },
+  {
+    "id": 1006,
+    "name": "Florentin brunch",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.3561465,
+    "lng": 4.8975184,
+    "googleRating": 4.8,
+    "googleReviewCount": 6810
+  },
+  {
+    "id": 1007,
+    "name": "Café CENC",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.3618829,
+    "lng": 4.8918912,
+    "googleRating": 4.4,
+    "googleReviewCount": 64
+  },
+  {
+    "id": 1008,
+    "name": "Craft & Draft",
+    "area": "De Baarsjes",
+    "facing": "N",
+    "lat": 52.359057299999996,
+    "lng": 4.8612011,
+    "googleRating": 4.7,
+    "googleReviewCount": 1327
+  },
+  {
+    "id": 1009,
+    "name": "Café Dapper",
+    "area": "Oost",
+    "facing": "NE",
+    "lat": 52.3641678,
+    "lng": 4.9263202999999995,
+    "googleRating": 4.9,
+    "googleReviewCount": 158
+  },
+  {
+    "id": 1010,
+    "name": "Doppio Espresso Amsterdam VU",
+    "area": "Zuidas",
+    "facing": "NW",
+    "lat": 52.3339764,
+    "lng": 4.8659922,
+    "googleRating": 4.6,
+    "googleReviewCount": 205
+  },
+  {
+    "id": 1011,
+    "name": "NENI Amsterdam",
+    "area": "Stadionbuurt",
+    "facing": "SE",
+    "lat": 52.3443426,
+    "lng": 4.8561534,
+    "googleRating": 4.6,
+    "googleReviewCount": 3854
+  },
+  {
+    "id": 1012,
+    "name": "'t Vliegertje",
+    "area": "Rivierenbuurt",
+    "facing": "NE",
+    "lat": 52.3453452,
+    "lng": 4.8912094999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 1064
+  },
+  {
+    "id": 1013,
+    "name": "ARIE",
+    "area": "De Pijp",
+    "facing": "NE",
+    "lat": 52.3566797,
+    "lng": 4.8904841999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 848
+  },
+  {
+    "id": 1014,
+    "name": "Euro Pizza Restaurant",
+    "area": "Noord",
+    "facing": "NW",
+    "lat": 52.3839406,
+    "lng": 4.9219912,
+    "googleRating": 4.1,
+    "googleReviewCount": 603
+  },
+  {
+    "id": 1015,
+    "name": "El Pimpi Tapas",
+    "area": "Haarlemmerbrt",
+    "facing": "E",
+    "lat": 52.378357099999995,
+    "lng": 4.894074799999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 1785
+  },
+  {
+    "id": 1016,
+    "name": "Oceania",
+    "area": "Rivierenbuurt",
+    "facing": "NW",
+    "lat": 52.345486799999996,
+    "lng": 4.8911872999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 439
+  },
+  {
+    "id": 1017,
+    "name": "ilario",
+    "area": "De Pijp",
+    "facing": "N",
+    "lat": 52.3562461,
+    "lng": 4.8977987,
+    "googleRating": 4.9,
+    "googleReviewCount": 63
+  },
+  {
+    "id": 1018,
+    "name": "🇮🇹 Buon Gusto d’Italia 🇮🇹",
+    "area": "Rivierenbuurt",
+    "facing": "N",
+    "lat": 52.345249,
+    "lng": 4.891138199999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 1297
+  },
+  {
+    "id": 1019,
+    "name": "Bar Bouwmeester",
+    "area": "Amstel",
+    "facing": "NE",
+    "lat": 52.3473341,
+    "lng": 4.904601700000001,
+    "googleRating": 4.8,
+    "googleReviewCount": 380
+  },
+  {
+    "id": 1020,
+    "name": "Borrelbar",
+    "area": "Stadionbuurt",
+    "facing": "W",
+    "lat": 52.3446666,
+    "lng": 4.8583457,
+    "googleRating": 4.5,
+    "googleReviewCount": 127
+  },
+  {
+    "id": 1021,
+    "name": "Fred's Kitchen",
+    "area": "Noord",
+    "facing": "W",
+    "lat": 52.4054912,
+    "lng": 4.8895642,
+    "googleRating": 4.5,
+    "googleReviewCount": 630
+  },
+  {
+    "id": 1022,
+    "name": "Café Blooker",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.3443495,
+    "lng": 4.917268099999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 413
+  },
+  {
+    "id": 1023,
+    "name": "De Pizzabakkers NDSM",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.401672999999995,
+    "lng": 4.891477,
+    "googleRating": 4.1,
+    "googleReviewCount": 400
+  },
+  {
+    "id": 1024,
+    "name": "Mata Hari",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3746613,
+    "lng": 4.90013,
+    "googleRating": 4.3,
+    "googleReviewCount": 1904
+  },
+  {
+    "id": 1025,
+    "name": "Clandestino",
+    "area": "Oud-Zuid",
+    "facing": "E",
+    "lat": 52.3526253,
+    "lng": 4.865177,
+    "googleRating": 4.8,
+    "googleReviewCount": 195
+  },
+  {
+    "id": 1026,
+    "name": "Formosa Argentina",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.376366999999995,
+    "lng": 4.894639,
+    "googleRating": 4.8,
+    "googleReviewCount": 6045
+  },
+  {
+    "id": 1027,
+    "name": "Louis",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.3769883,
+    "lng": 4.8924797,
+    "googleRating": 4.5,
+    "googleReviewCount": 1142
+  },
+  {
+    "id": 1028,
+    "name": "Cafe Mansro",
+    "area": "De Pijp",
+    "facing": "SW",
+    "lat": 52.356082,
+    "lng": 4.8978651,
+    "googleRating": 4.5,
+    "googleReviewCount": 24
+  },
+  {
+    "id": 1029,
+    "name": "Bar Aan de Kade",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3551803,
+    "lng": 4.9288846,
+    "googleRating": 4.8,
+    "googleReviewCount": 68
+  },
+  {
+    "id": 1030,
+    "name": "Vinnies",
+    "area": "Rivierenbuurt",
+    "facing": "SW",
+    "lat": 52.3461254,
+    "lng": 4.8913307,
+    "googleRating": 4.7,
+    "googleReviewCount": 776
+  },
+  {
+    "id": 1031,
+    "name": "Sapporo",
+    "area": "Rivierenbuurt",
+    "facing": "E",
+    "lat": 52.344918,
+    "lng": 4.891159399999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 550
+  },
+  {
+    "id": 1032,
+    "name": "The Meets",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.364157899999995,
+    "lng": 4.9351701,
+    "googleRating": 4.7,
+    "googleReviewCount": 696
+  },
+  {
+    "id": 1033,
+    "name": "St. George Argentine Steakhouse Amsterdam Center",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.374870099999995,
+    "lng": 4.8920721,
+    "googleRating": 4.5,
+    "googleReviewCount": 1132
+  },
+  {
+    "id": 1035,
+    "name": "Stoop Eten en Drinken",
+    "area": "Indische Buurt",
+    "facing": "NW",
+    "lat": 52.352188899999994,
+    "lng": 4.9378833,
+    "googleRating": 4.5,
+    "googleReviewCount": 115
+  },
+  {
+    "id": 1036,
+    "name": "De Blauwe Engel",
+    "area": "Zuidas",
+    "facing": "E",
+    "lat": 52.34059130000001,
+    "lng": 4.8734951,
+    "googleRating": 3.9,
+    "googleReviewCount": 509
+  },
+  {
+    "id": 1037,
+    "name": "Ruk en Pluk",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3574365,
+    "lng": 4.9266877,
+    "googleRating": 4.6,
+    "googleReviewCount": 604
+  },
+  {
+    "id": 1038,
+    "name": "The Bulldog Palace",
+    "area": "Rembrandtplein",
+    "facing": "N",
+    "lat": 52.3640147,
+    "lng": 4.8833372,
+    "googleRating": 4.4,
+    "googleReviewCount": 7162
+  },
+  {
+    "id": 1039,
+    "name": "Kafenion Amsterdam",
+    "area": "Jordaan",
+    "facing": "N",
+    "lat": 52.374677,
+    "lng": 4.8813721999999995,
+    "googleRating": 4.9,
+    "googleReviewCount": 3589
+  },
+  {
+    "id": 1040,
+    "name": "Café40🍺",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3752213,
+    "lng": 4.8974056,
+    "googleRating": 4.2,
+    "googleReviewCount": 308
+  },
+  {
+    "id": 1041,
+    "name": "Sol coffee bar",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.3537798,
+    "lng": 4.8992785,
+    "googleRating": 4.9,
+    "googleReviewCount": 192
+  },
+  {
+    "id": 1042,
+    "name": "ELA Restobar",
+    "area": "Jordaan",
+    "facing": "N",
+    "lat": 52.369517099999996,
+    "lng": 4.8808704999999994,
+    "googleRating": 4.6,
+    "googleReviewCount": 705
+  },
+  {
+    "id": 1043,
+    "name": "Volare",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3713208,
+    "lng": 4.8597144,
+    "googleRating": 4.1,
+    "googleReviewCount": 545
+  },
+  {
+    "id": 1044,
+    "name": "Doppio Espresso Amsterdam Zuidas",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.336807699999994,
+    "lng": 4.8727225999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 327
+  },
+  {
+    "id": 1045,
+    "name": "Gustavino Restaurant & Vinoteca",
+    "area": "Zuidas",
+    "facing": "NE",
+    "lat": 52.3374465,
+    "lng": 4.8730807,
+    "googleRating": 3.9,
+    "googleReviewCount": 548
+  },
+  {
+    "id": 1046,
+    "name": "Glouglou",
+    "area": "Rembrandtplein",
+    "facing": "SW",
+    "lat": 52.3525063,
+    "lng": 4.8950262,
+    "googleRating": 4.6,
+    "googleReviewCount": 1181
+  },
+  {
+    "id": 1047,
+    "name": "Testamatta Ristorante Enoteca",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.362124599999994,
+    "lng": 4.8734791,
+    "googleRating": 4.7,
+    "googleReviewCount": 327
+  },
+  {
+    "id": 1048,
+    "name": "Bariq - Greek Food & Wines",
+    "area": "De Baarsjes",
+    "facing": "W",
+    "lat": 52.3591063,
+    "lng": 4.861316899999999,
+    "googleRating": 4.9,
+    "googleReviewCount": 604
+  },
+  {
+    "id": 1049,
+    "name": "Boefzak",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.368361,
+    "lng": 4.9537889999999996,
+    "googleRating": 5,
+    "googleReviewCount": 119
+  },
+  {
+    "id": 1050,
+    "name": "Portugalia Tasca",
+    "area": "Rembrandtplein",
+    "facing": "NE",
+    "lat": 52.3668091,
+    "lng": 4.89724,
+    "googleRating": 4.6,
+    "googleReviewCount": 2243
+  },
+  {
+    "id": 1051,
+    "name": "Super Lyan",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.377437400000005,
+    "lng": 4.8955622,
+    "googleRating": 4.7,
+    "googleReviewCount": 606
+  },
+  {
+    "id": 1052,
+    "name": "Bar Kauffmann",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.371401,
+    "lng": 4.8626235,
+    "googleRating": 4.7,
+    "googleReviewCount": 648
+  },
+  {
+    "id": 1053,
+    "name": "Café de Huyskamer",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.36145200000001,
+    "lng": 4.8993250999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 473
+  },
+  {
+    "id": 1054,
+    "name": "Dickys Grand Café",
+    "area": "Zuidas",
+    "facing": "SE",
+    "lat": 52.336875299999996,
+    "lng": 4.8730272999999995,
+    "googleRating": 4,
+    "googleReviewCount": 499
+  },
+  {
+    "id": 1055,
+    "name": "Restaurant & Bar Lagerhuys",
+    "area": "Jordaan",
+    "facing": "N",
+    "lat": 52.3699951,
+    "lng": 4.8918463,
+    "googleRating": 4.6,
+    "googleReviewCount": 722
+  },
+  {
+    "id": 1056,
+    "name": "PRIK",
+    "area": "9 Straatjes",
+    "facing": "W",
+    "lat": 52.374727199999995,
+    "lng": 4.890808300000001,
+    "googleRating": 4.5,
+    "googleReviewCount": 962
+  },
+  {
+    "id": 1057,
+    "name": "L'Antica Pizzeria da Michele",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.3547845,
+    "lng": 4.893275399999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 2924
+  },
+  {
+    "id": 1058,
+    "name": "Two Chefs Taproom",
+    "area": "West",
+    "facing": "E",
+    "lat": 52.3742805,
+    "lng": 4.8729214999999995,
+    "googleRating": 4.7,
+    "googleReviewCount": 136
+  },
+  {
+    "id": 1059,
+    "name": "Café De Nieuwe Lelie",
+    "area": "Jordaan",
+    "facing": "NE",
+    "lat": 52.375233,
+    "lng": 4.880817,
+    "googleRating": 4.6,
+    "googleReviewCount": 630
+  },
+  {
+    "id": 1060,
+    "name": "Toscanini",
+    "area": "Leidseplein",
+    "facing": "SE",
+    "lat": 52.3801403,
+    "lng": 4.8853789,
+    "googleRating": 4.4,
+    "googleReviewCount": 1293
+  },
+  {
+    "id": 1061,
+    "name": "Café Waterlooplein 77",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.368364199999995,
+    "lng": 4.9062994,
+    "googleRating": 4.6,
+    "googleReviewCount": 212
+  },
+  {
+    "id": 1062,
+    "name": "Van 't Spit",
+    "area": "West",
+    "facing": "N",
+    "lat": 52.370013,
+    "lng": 4.8671088,
+    "googleRating": 4.5,
+    "googleReviewCount": 682
+  },
+  {
+    "id": 1063,
+    "name": "Mr Haz Taco Bar",
+    "area": "Jordaan",
+    "facing": "SE",
+    "lat": 52.3771853,
+    "lng": 4.8842137,
+    "googleRating": 4.2,
+    "googleReviewCount": 813
+  },
+  {
+    "id": 1064,
+    "name": "Café De Oude Schaeper",
+    "area": "West",
+    "facing": "N",
+    "lat": 52.3742635,
+    "lng": 4.8740502,
+    "googleRating": 4.5,
+    "googleReviewCount": 387
+  },
+  {
+    "id": 1065,
+    "name": "Baibua Thai Restaurant",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3665205,
+    "lng": 4.8914367,
+    "googleRating": 4.6,
+    "googleReviewCount": 909
+  },
+  {
+    "id": 1066,
+    "name": "restaurant calisto",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3823619,
+    "lng": 4.8874647,
+    "googleRating": 4.5,
+    "googleReviewCount": 299
+  },
+  {
+    "id": 1067,
+    "name": "GIA Restaurant",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.3578577,
+    "lng": 4.804663400000001,
+    "googleRating": 4.1,
+    "googleReviewCount": 293
+  },
+  {
+    "id": 1068,
+    "name": "Umami by Han Amsterdam",
+    "area": "Zuid",
+    "facing": "NE",
+    "lat": 52.3631688,
+    "lng": 4.8775723,
+    "googleRating": 4.5,
+    "googleReviewCount": 2151
+  },
+  {
+    "id": 1069,
+    "name": "louf - de pijp",
+    "area": "De Pijp",
+    "facing": "NW",
+    "lat": 52.357161999999995,
+    "lng": 4.8985332999999995,
+    "googleRating": 4.7,
+    "googleReviewCount": 189
+  },
+  {
+    "id": 1070,
+    "name": "Café Lux B.V.",
+    "area": "Leidseplein",
+    "facing": "SW",
+    "lat": 52.3648569,
+    "lng": 4.8806899999999995,
+    "googleRating": 4.2,
+    "googleReviewCount": 412
+  },
+  {
+    "id": 1071,
+    "name": "BUFFET van Odette",
+    "area": "De Baarsjes",
+    "facing": "NE",
+    "lat": 52.3623386,
+    "lng": 4.8890787,
+    "googleRating": 4.2,
+    "googleReviewCount": 1039
+  },
+  {
+    "id": 1072,
+    "name": "De Oranjerie",
+    "area": "Jordaan",
+    "facing": "N",
+    "lat": 52.3819861,
+    "lng": 4.88685,
+    "googleRating": 4.7,
+    "googleReviewCount": 370
+  },
+  {
+    "id": 1073,
+    "name": "Bar Boele",
+    "area": "Zuidas",
+    "facing": "N",
+    "lat": 52.334945499999996,
+    "lng": 4.864260799999999,
+    "googleRating": 4.1,
+    "googleReviewCount": 110
+  },
+  {
+    "id": 1074,
+    "name": "Café Enté",
+    "area": "Jordaan",
+    "facing": "N",
+    "lat": 52.3803774,
+    "lng": 4.8868642,
+    "googleRating": 4.8,
+    "googleReviewCount": 205
+  },
+  {
+    "id": 1075,
+    "name": "SALUT",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.355739199999995,
+    "lng": 4.892500699999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 78
+  },
+  {
+    "id": 1076,
+    "name": "Le French Café - Javastraat",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.3635145,
+    "lng": 4.9334488,
+    "googleRating": 4.4,
+    "googleReviewCount": 492
+  },
+  {
+    "id": 1077,
+    "name": "Libertine Café des Prés",
+    "area": "De Pijp",
+    "facing": "NW",
+    "lat": 52.355768,
+    "lng": 4.892640999999999,
+    "googleRating": 4,
+    "googleReviewCount": 69
+  },
+  {
+    "id": 1078,
+    "name": "Noori Fusion (All You Can Eat Amsterdam)",
+    "area": "Leidseplein",
+    "facing": "SE",
+    "lat": 52.3649607,
+    "lng": 4.8830043,
+    "googleRating": 4.5,
+    "googleReviewCount": 850
+  },
+  {
+    "id": 1079,
+    "name": "O'Reilly's Irish Pub",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.372355,
+    "lng": 4.890033,
+    "googleRating": 4.4,
+    "googleReviewCount": 3874
+  },
+  {
+    "id": 1080,
+    "name": "Café Lowietje",
+    "area": "Jordaan",
+    "facing": "N",
+    "lat": 52.3803738,
+    "lng": 4.8823210999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 573
+  },
+  {
+    "id": 1081,
+    "name": "Cannibale Royale Handboogstraat",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3680453,
+    "lng": 4.8903418,
+    "googleRating": 4.5,
+    "googleReviewCount": 6833
+  },
+  {
+    "id": 1082,
+    "name": "Café De Spuyt",
+    "area": "De Baarsjes",
+    "facing": "SE",
+    "lat": 52.3626109,
+    "lng": 4.8855162,
+    "googleRating": 4.7,
+    "googleReviewCount": 641
+  },
+  {
+    "id": 1083,
+    "name": "Boon & de Koot",
+    "area": "Spaarndammer",
+    "facing": "E",
+    "lat": 52.388827,
+    "lng": 4.887699,
+    "googleRating": 4.7,
+    "googleReviewCount": 92
+  },
+  {
+    "id": 1084,
+    "name": "Law & Order Cocktail Bar",
+    "area": "Centrum",
+    "facing": "NE",
+    "lat": 52.368343,
+    "lng": 4.890591199999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 681
+  },
+  {
+    "id": 1085,
+    "name": "Pata Negra",
+    "area": "Oost",
+    "facing": "NE",
+    "lat": 52.3614117,
+    "lng": 4.8991166999999995,
+    "googleRating": 4.2,
+    "googleReviewCount": 1977
+  },
+  {
+    "id": 1086,
+    "name": "Genki",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.3663889,
+    "lng": 4.8902778,
+    "googleRating": 4.2,
+    "googleReviewCount": 1458
+  },
+  {
+    "id": 1087,
+    "name": "Restaurant Dynasty",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.3663222,
+    "lng": 4.890579799999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 320
+  },
+  {
+    "id": 1088,
+    "name": "Café Baco",
+    "area": "Zuid",
+    "facing": "NE",
+    "lat": 52.3138673,
+    "lng": 4.9394102,
+    "googleRating": 4.5,
+    "googleReviewCount": 247
+  },
+  {
+    "id": 1089,
+    "name": "\"Krua Thai\" Classic",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.3681468,
+    "lng": 4.898026799999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 1452
+  },
+  {
+    "id": 1090,
+    "name": "Meerzicht Farm",
+    "area": "Stadionbuurt",
+    "facing": "NW",
+    "lat": 52.326402400000006,
+    "lng": 4.8208628,
+    "googleRating": 4.3,
+    "googleReviewCount": 3463
+  },
+  {
+    "id": 1091,
+    "name": "La Brochette",
+    "area": "Zuidas",
+    "facing": "NE",
+    "lat": 52.3245473,
+    "lng": 4.8674513,
+    "googleRating": 4.4,
+    "googleReviewCount": 386
+  },
+  {
+    "id": 1092,
+    "name": "Brasserie De Hoge Dijk",
+    "area": "Zuid",
+    "facing": "W",
+    "lat": 52.2864241,
+    "lng": 4.959750199999999,
+    "googleRating": 3.9,
+    "googleReviewCount": 168
+  },
+  {
+    "id": 1093,
+    "name": "Cafe Kale",
+    "area": "Oost",
+    "facing": "SE",
+    "lat": 52.3595298,
+    "lng": 4.8974378,
+    "googleRating": 4.3,
+    "googleReviewCount": 854
+  },
+  {
+    "id": 1094,
+    "name": "Mitts Restaurant Amsterdam",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.363816899999996,
+    "lng": 4.9335217,
+    "googleRating": 4.7,
+    "googleReviewCount": 903
+  },
+  {
+    "id": 1095,
+    "name": "Kaap Amsterdam",
+    "area": "IJburg",
+    "facing": "NW",
+    "lat": 52.3699075,
+    "lng": 4.9768656,
+    "googleRating": 4.2,
+    "googleReviewCount": 451
+  },
+  {
+    "id": 1096,
+    "name": "Cafe Aunt Rosie",
+    "area": "Rembrandtplein",
+    "facing": "E",
+    "lat": 52.366435,
+    "lng": 4.896027999999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 1292
+  },
+  {
+    "id": 1097,
+    "name": "Cafe Bouwman",
+    "area": "Centrum",
+    "facing": "SE",
+    "lat": 52.362308299999995,
+    "lng": 4.8987944,
+    "googleRating": 3.8,
+    "googleReviewCount": 766
+  },
+  {
+    "id": 1098,
+    "name": "Brasserie Vrijburcht",
+    "area": "IJburg",
+    "facing": "W",
+    "lat": 52.361045999999995,
+    "lng": 4.9755471,
+    "googleRating": 4.4,
+    "googleReviewCount": 789
+  },
+  {
+    "id": 1100,
+    "name": "Rembrandt Bar",
+    "area": "Rembrandtplein",
+    "facing": "N",
+    "lat": 52.3663739,
+    "lng": 4.8959668999999995,
+    "googleRating": 3.6,
+    "googleReviewCount": 410
+  },
+  {
+    "id": 1101,
+    "name": "Café ONS",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.384714599999995,
+    "lng": 4.9067457999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 1357
+  },
+  {
+    "id": 1102,
+    "name": "Casa Nostra",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.355581900000004,
+    "lng": 4.9030179,
+    "googleRating": 4.5,
+    "googleReviewCount": 1075
+  },
+  {
+    "id": 1103,
+    "name": "Rayleigh & Ramsay Oost",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3602279,
+    "lng": 4.925582299999999,
+    "googleRating": 4.2,
+    "googleReviewCount": 58
+  },
+  {
+    "id": 1104,
+    "name": "Schumich Café",
+    "area": "Haarlemmerbrt",
+    "facing": "SW",
+    "lat": 52.3794604,
+    "lng": 4.8942106999999995,
+    "googleRating": 4.2,
+    "googleReviewCount": 195
+  },
+  {
+    "id": 1105,
+    "name": "De groene olifant",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.364005999999996,
+    "lng": 4.920014000000001,
+    "googleRating": 4.5,
+    "googleReviewCount": 592
+  },
+  {
+    "id": 1106,
+    "name": "Tap Zuid",
+    "area": "Rivierenbuurt",
+    "facing": "SE",
+    "lat": 52.3452376,
+    "lng": 4.8948366,
+    "googleRating": 4.3,
+    "googleReviewCount": 1156
+  },
+  {
+    "id": 1107,
+    "name": "Olidò - Pizzeria Amsterdam Oost",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.35540590000001,
+    "lng": 4.9337756,
+    "googleRating": 4.8,
+    "googleReviewCount": 1041
+  },
+  {
+    "id": 1108,
+    "name": "Amando Italia restaurant",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.373428399999995,
+    "lng": 4.889386399999999,
+    "googleRating": 4.1,
+    "googleReviewCount": 1236
+  },
+  {
+    "id": 1109,
+    "name": "Café Rock Planet",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.3717967,
+    "lng": 4.8954018999999995,
+    "googleRating": 3.7,
+    "googleReviewCount": 901
+  },
+  {
+    "id": 1110,
+    "name": "Cafe del Mondo",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.3724753,
+    "lng": 4.8995748,
+    "googleRating": 4,
+    "googleReviewCount": 721
+  },
+  {
+    "id": 1111,
+    "name": "Café MOJO Amsterdam",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.354799199999995,
+    "lng": 4.928054299999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 711
+  },
+  {
+    "id": 1112,
+    "name": "Esh Pitabar",
+    "area": "Leidseplein",
+    "facing": "SW",
+    "lat": 52.3555795,
+    "lng": 4.8806012,
+    "googleRating": 4.7,
+    "googleReviewCount": 2880
+  },
+  {
+    "id": 1113,
+    "name": "Burger Zaken Oudezijds Voorburgwal Amsterdam",
+    "area": "Rembrandtplein",
+    "facing": "SE",
+    "lat": 52.3724787,
+    "lng": 4.8962219,
+    "googleRating": 4.1,
+    "googleReviewCount": 1202
+  },
+  {
+    "id": 1114,
+    "name": "De Pizzabakkers",
+    "area": "Plantage",
+    "facing": "NE",
+    "lat": 52.365636599999995,
+    "lng": 4.9113020999999994,
+    "googleRating": 4.3,
+    "googleReviewCount": 1763
+  },
+  {
+    "id": 1115,
+    "name": "Café Brel🍺",
+    "area": "Westerpark",
+    "facing": "SW",
+    "lat": 52.3841654,
+    "lng": 4.870256599999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 189
+  },
+  {
+    "id": 1116,
+    "name": "Stadscafé van Mechelen",
+    "area": "Oud-Zuid",
+    "facing": "NE",
+    "lat": 52.3527298,
+    "lng": 4.8524728,
+    "googleRating": 4.3,
+    "googleReviewCount": 1425
+  },
+  {
+    "id": 1117,
+    "name": "Q-Café",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3574975,
+    "lng": 4.9303346,
+    "googleRating": 3.5,
+    "googleReviewCount": 110
+  },
+  {
+    "id": 1118,
+    "name": "Rick's Tavern",
+    "area": "Centrum",
+    "facing": "E",
+    "lat": 52.3716985,
+    "lng": 4.8952778,
+    "googleRating": 3.3,
+    "googleReviewCount": 1100
+  },
+  {
+    "id": 1119,
+    "name": "Bunk Restaurant Amsterdam",
+    "area": "Noord",
+    "facing": "NE",
+    "lat": 52.3880994,
+    "lng": 4.9144029,
+    "googleRating": 4.6,
+    "googleReviewCount": 794
+  },
+  {
+    "id": 1120,
+    "name": "Euro Pub",
+    "area": "Oud-West",
+    "facing": "SE",
+    "lat": 52.373005899999995,
+    "lng": 4.8943348,
+    "googleRating": 3.9,
+    "googleReviewCount": 945
+  },
+  {
+    "id": 1121,
+    "name": "De Deli - Plantagebuurt",
+    "area": "Plantage",
+    "facing": "SW",
+    "lat": 52.3669772,
+    "lng": 4.9120382,
+    "googleRating": 4.6,
+    "googleReviewCount": 1192
+  },
+  {
+    "id": 1122,
+    "name": "Café Schinkelhaven",
+    "area": "Oud-Zuid",
+    "facing": "E",
+    "lat": 52.354577899999995,
+    "lng": 4.8552181,
+    "googleRating": 4.3,
+    "googleReviewCount": 1066
+  },
+  {
+    "id": 1123,
+    "name": "Gewaeght Café",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3727422,
+    "lng": 4.8997974,
+    "googleRating": 4,
+    "googleReviewCount": 710
+  },
+  {
+    "id": 1124,
+    "name": "WG Cafe",
+    "area": "Oud-Zuid",
+    "facing": "N",
+    "lat": 52.3636858,
+    "lng": 4.8705525,
+    "googleRating": 4.1,
+    "googleReviewCount": 456
+  },
+  {
+    "id": 1126,
+    "name": "NRD",
+    "area": "Noord",
+    "facing": "W",
+    "lat": 52.3897669,
+    "lng": 4.9048148,
+    "googleRating": 4.1,
+    "googleReviewCount": 175
+  },
+  {
+    "id": 1127,
+    "name": "Café Brandon",
+    "area": "Noord",
+    "facing": "N",
+    "lat": 52.375444800000004,
+    "lng": 4.8864583,
+    "googleRating": 4.3,
+    "googleReviewCount": 553
+  },
+  {
+    "id": 1128,
+    "name": "PONG - Ping Pong bar",
+    "area": "West",
+    "facing": "W",
+    "lat": 52.3717031,
+    "lng": 4.8455848999999995,
+    "googleRating": 4.7,
+    "googleReviewCount": 1272
+  },
+  {
+    "id": 1129,
+    "name": "Kanarie Club",
+    "area": "Oud-West",
+    "facing": "N",
+    "lat": 52.3673149,
+    "lng": 4.8681182,
+    "googleRating": 4,
+    "googleReviewCount": 748
+  },
+  {
+    "id": 1130,
+    "name": "Chris Scholten Café",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.354293299999995,
+    "lng": 4.9014622,
+    "googleRating": 4.6,
+    "googleReviewCount": 243
+  },
+  {
+    "id": 1131,
+    "name": "Capital Kitchen",
+    "area": "Amstel",
+    "facing": "E",
+    "lat": 52.3619902,
+    "lng": 4.9069378,
+    "googleRating": 4.6,
+    "googleReviewCount": 402
+  },
+  {
+    "id": 1132,
+    "name": "Restaurant Visque",
+    "area": "Oud-Zuid",
+    "facing": "SW",
+    "lat": 52.3554215,
+    "lng": 4.8681206,
+    "googleRating": 4.5,
+    "googleReviewCount": 203
+  },
+  {
+    "id": 1133,
+    "name": "Barpiazza",
+    "area": "Leidseplein",
+    "facing": "W",
+    "lat": 52.356007899999994,
+    "lng": 4.8802936,
+    "googleRating": 4.3,
+    "googleReviewCount": 660
+  },
+  {
+    "id": 1134,
+    "name": "Live Amsterdam Pianobar",
+    "area": "Rembrandtplein",
+    "facing": "N",
+    "lat": 52.365391699999996,
+    "lng": 4.8955139,
+    "googleRating": 3.9,
+    "googleReviewCount": 407
+  },
+  {
+    "id": 1135,
+    "name": "De Pizzabakkers Haarlemmerdijk",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3834476,
+    "lng": 4.8859629,
+    "googleRating": 4.5,
+    "googleReviewCount": 756
+  },
+  {
+    "id": 1136,
+    "name": "Brasserie De Joffers",
+    "area": "Oud-Zuid",
+    "facing": "NW",
+    "lat": 52.355864600000004,
+    "lng": 4.8710715,
+    "googleRating": 4.3,
+    "googleReviewCount": 563
+  },
+  {
+    "id": 1137,
+    "name": "Restaurant & Pizzeria Lucca Due",
+    "area": "Haarlemmerbrt",
+    "facing": "SW",
+    "lat": 52.3811225,
+    "lng": 4.8900883,
+    "googleRating": 4.5,
+    "googleReviewCount": 2337
+  },
+  {
+    "id": 1138,
+    "name": "de Dakduif",
+    "area": "De Pijp",
+    "facing": "NE",
+    "lat": 52.356403,
+    "lng": 4.8973566,
+    "googleRating": 4.6,
+    "googleReviewCount": 515
+  },
+  {
+    "id": 1140,
+    "name": "QV Winebar",
+    "area": "Oud-Zuid",
+    "facing": "SE",
+    "lat": 52.3482734,
+    "lng": 4.876805399999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 256
+  },
+  {
+    "id": 1141,
+    "name": "Sam’s koffie - West",
+    "area": "West",
+    "facing": "N",
+    "lat": 52.36771170000001,
+    "lng": 4.8660551,
+    "googleRating": 4.8,
+    "googleReviewCount": 296
+  },
+  {
+    "id": 1142,
+    "name": "Broodje Daan",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.373373799999996,
+    "lng": 4.8534011,
+    "googleRating": 4.7,
+    "googleReviewCount": 657
+  },
+  {
+    "id": 1143,
+    "name": "Big Shots Cafe Restaurant Amsterdam",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.3750693,
+    "lng": 4.8924286,
+    "googleRating": 4.7,
+    "googleReviewCount": 332
+  },
+  {
+    "id": 1144,
+    "name": "San Giovanni",
+    "area": "Centrum",
+    "facing": "N",
+    "lat": 52.367380399999995,
+    "lng": 4.9028426,
+    "googleRating": 3.3,
+    "googleReviewCount": 413
+  },
+  {
+    "id": 1145,
+    "name": "Bar Jules",
+    "area": "Oud-Zuid",
+    "facing": "E",
+    "lat": 52.3530206,
+    "lng": 4.8633688,
+    "googleRating": 4.3,
+    "googleReviewCount": 293
+  },
+  {
+    "id": 1146,
+    "name": "The Black Dog",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.371380699999996,
+    "lng": 4.889458299999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 1078
+  },
+  {
+    "id": 1147,
+    "name": "Venster 33",
+    "area": "De Pijp",
+    "facing": "SW",
+    "lat": 52.3564206,
+    "lng": 4.8923475,
+    "googleRating": 4.5,
+    "googleReviewCount": 2165
+  },
+  {
+    "id": 1148,
+    "name": "Mayur Indian/Indiaas Restaurant 🇮🇳",
+    "area": "De Baarsjes",
+    "facing": "SE",
+    "lat": 52.3623932,
+    "lng": 4.8862299,
+    "googleRating": 4.2,
+    "googleReviewCount": 1006
+  },
+  {
+    "id": 1149,
+    "name": "De Duvel",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.3548325,
+    "lng": 4.8936383,
+    "googleRating": 4.3,
+    "googleReviewCount": 804
+  },
+  {
+    "id": 1150,
+    "name": "Brasserie Van Dam",
+    "area": "Oud-Zuid",
+    "facing": "N",
+    "lat": 52.3556691,
+    "lng": 4.8706654,
+    "googleRating": 4.3,
+    "googleReviewCount": 2174
+  },
+  {
+    "id": 1151,
+    "name": "Café Gambrinus",
+    "area": "De Pijp",
+    "facing": "N",
+    "lat": 52.3513352,
+    "lng": 4.891223699999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 539
+  },
+  {
+    "id": 1152,
+    "name": "Café Mooy",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.37626840000001,
+    "lng": 4.8951842,
+    "googleRating": 4.4,
+    "googleReviewCount": 379
+  },
+  {
+    "id": 1153,
+    "name": "66 BBQ en hotpotbar",
+    "area": "Leidseplein",
+    "facing": "W",
+    "lat": 52.3637811,
+    "lng": 4.8841476,
+    "googleRating": 4.1,
+    "googleReviewCount": 619
+  },
+  {
+    "id": 1154,
+    "name": "Isola Bella",
+    "area": "Rembrandtplein",
+    "facing": "SW",
+    "lat": 52.365311,
+    "lng": 4.8961613,
+    "googleRating": 4.1,
+    "googleReviewCount": 1092
+  },
+  {
+    "id": 1155,
+    "name": "Het Paardje",
+    "area": "De Pijp",
+    "facing": "SW",
+    "lat": 52.356127099999995,
+    "lng": 4.8926946,
+    "googleRating": 4.1,
+    "googleReviewCount": 1269
+  },
+  {
+    "id": 1156,
+    "name": "De Waterkant Restaurant",
+    "area": "Plantage",
+    "facing": "S",
+    "lat": 52.3665965,
+    "lng": 4.9189279,
+    "googleRating": 2.3,
+    "googleReviewCount": 274
+  },
+  {
+    "id": 1157,
+    "name": "Café Gijs de Rooy",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.3636111,
+    "lng": 4.9316667,
+    "googleRating": 4.6,
+    "googleReviewCount": 388
+  },
+  {
+    "id": 1159,
+    "name": "Bar Lempicka",
+    "area": "Amstel",
+    "facing": "N",
+    "lat": 52.3607136,
+    "lng": 4.9048663999999995,
+    "googleRating": 4,
+    "googleReviewCount": 2561
+  },
+  {
+    "id": 1160,
+    "name": "Café 't Smalle",
+    "area": "Leidseplein",
+    "facing": "E",
+    "lat": 52.3767128,
+    "lng": 4.8841696,
+    "googleRating": 4.6,
+    "googleReviewCount": 1484
+  },
+  {
+    "id": 1162,
+    "name": "Hannekes Boom",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.376247,
+    "lng": 4.911607,
+    "googleRating": 4.3,
+    "googleReviewCount": 3726
+  },
+  {
+    "id": 1163,
+    "name": "Huize Frankendael / restaurant Merkelbach",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3510917,
+    "lng": 4.9334777999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 426
+  },
+  {
+    "id": 1164,
+    "name": "Visaandeschelde",
+    "area": "Rivierenbuurt",
+    "facing": "SE",
+    "lat": 52.34464200000001,
+    "lng": 4.8903855,
+    "googleRating": 4.6,
+    "googleReviewCount": 897
+  },
+  {
+    "id": 1165,
+    "name": "Het Ketelhuis (Movie Theater and Bar)",
+    "area": "Haarlemmerbrt",
+    "facing": "NW",
+    "lat": 52.386375,
+    "lng": 4.8735,
+    "googleRating": 4.3,
+    "googleReviewCount": 1073
+  },
+  {
+    "id": 1166,
+    "name": "Garage Noord",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.3855729,
+    "lng": 4.9257197,
+    "googleRating": 3.8,
+    "googleReviewCount": 440
+  },
+  {
+    "id": 1167,
+    "name": "Billiards Cafe Hermes",
+    "area": "Oud-Zuid",
+    "facing": "SW",
+    "lat": 52.352700000000006,
+    "lng": 4.889200000000001,
+    "googleRating": 4.7,
+    "googleReviewCount": 355
+  },
+  {
+    "id": 1168,
+    "name": "Gloria's (de Tulp)",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.356840999999996,
+    "lng": 4.8916512,
+    "googleRating": 4,
+    "googleReviewCount": 1763
+  },
+  {
+    "id": 1169,
+    "name": "Espressobar Puccini",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3682346,
+    "lng": 4.898634299999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 747
+  },
+  {
+    "id": 1170,
+    "name": "Tai Yu (Japans & Chinees restaurant)",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.392029199999996,
+    "lng": 4.941661,
+    "googleRating": 4.6,
+    "googleReviewCount": 310
+  },
+  {
+    "id": 1171,
+    "name": "Het Stadspaleis",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.371113699999995,
+    "lng": 4.8907101,
+    "googleRating": 4.6,
+    "googleReviewCount": 476
+  },
+  {
+    "id": 1172,
+    "name": "Het Punt",
+    "area": "Spaarndammer",
+    "facing": "W",
+    "lat": 52.3909479,
+    "lng": 4.8784551,
+    "googleRating": 4.5,
+    "googleReviewCount": 27
+  },
+  {
+    "id": 1173,
+    "name": "PARCK aka Ping Pong Bar",
+    "area": "Bos en Lommer",
+    "facing": "E",
+    "lat": 52.359997199999995,
+    "lng": 4.863377799999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 673
+  },
+  {
+    "id": 1174,
+    "name": "Bloem op IJburg",
+    "area": "IJburg",
+    "facing": "NE",
+    "lat": 52.3545081,
+    "lng": 4.9971483999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 285
+  },
+  {
+    "id": 1175,
+    "name": "Restaurant Black",
+    "area": "Haarlemmerbrt",
+    "facing": "NW",
+    "lat": 52.365353400000004,
+    "lng": 4.884468099999999,
+    "googleRating": 4.2,
+    "googleReviewCount": 1806
+  },
+  {
+    "id": 1176,
+    "name": "Restaurant Mchi",
+    "area": "IJburg",
+    "facing": "NW",
+    "lat": 52.354195,
+    "lng": 4.997927499999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 711
+  },
+  {
+    "id": 1177,
+    "name": "'t Nieuwe Kafé",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3737103,
+    "lng": 4.8920303999999994,
+    "googleRating": 4.1,
+    "googleReviewCount": 640
+  },
+  {
+    "id": 1178,
+    "name": "Café Restaurant Czaar",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.37184740000001,
+    "lng": 4.9318251,
+    "googleRating": 4.3,
+    "googleReviewCount": 894
+  },
+  {
+    "id": 1179,
+    "name": "Saigon Caphé Gelderlandplein",
+    "area": "Zuidas",
+    "facing": "E",
+    "lat": 52.330901,
+    "lng": 4.8760236,
+    "googleRating": 4.1,
+    "googleReviewCount": 839
+  },
+  {
+    "id": 1180,
+    "name": "Pakhuis de Zwijger",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.37676510000001,
+    "lng": 4.9221266,
+    "googleRating": 4.4,
+    "googleReviewCount": 1251
+  },
+  {
+    "id": 1181,
+    "name": "Poco Loco",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.372555899999995,
+    "lng": 4.8995894,
+    "googleRating": 3.9,
+    "googleReviewCount": 1185
+  },
+  {
+    "id": 1182,
+    "name": "Grieks restaurant Plato",
+    "area": "West",
+    "facing": "W",
+    "lat": 52.3744659,
+    "lng": 4.8131566,
+    "googleRating": 4.6,
+    "googleReviewCount": 1040
+  },
+  {
+    "id": 1183,
+    "name": "Eetcafé Maxwell",
+    "area": "Oost",
+    "facing": "NW",
+    "lat": 52.356801999999995,
+    "lng": 4.9186499999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 1072
+  },
+  {
+    "id": 1184,
+    "name": "Brewed by Women BAR",
+    "area": "Oud-West",
+    "facing": "W",
+    "lat": 52.362525,
+    "lng": 4.864332999999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 505
+  },
+  {
+    "id": 1185,
+    "name": "Renato's Spaarndammerbuurt",
+    "area": "Spaarndammer",
+    "facing": "SW",
+    "lat": 52.3906381,
+    "lng": 4.8786739,
+    "googleRating": 4.6,
+    "googleReviewCount": 434
+  },
+  {
+    "id": 1186,
+    "name": "Blushing",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3588108,
+    "lng": 4.8803583999999995,
+    "googleRating": 4.1,
+    "googleReviewCount": 3204
+  },
+  {
+    "id": 1187,
+    "name": "Bar Blij",
+    "area": "Oud-West",
+    "facing": "NW",
+    "lat": 52.370020499999995,
+    "lng": 4.8541964,
+    "googleRating": 4.9,
+    "googleReviewCount": 268
+  },
+  {
+    "id": 1188,
+    "name": "Café Garçon",
+    "area": "Oud-Zuid",
+    "facing": "SW",
+    "lat": 52.354382,
+    "lng": 4.8723179,
+    "googleRating": 4.5,
+    "googleReviewCount": 535
+  },
+  {
+    "id": 1189,
+    "name": "Benji's",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.352363499999996,
+    "lng": 4.9127833999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 1419
+  },
+  {
+    "id": 1190,
+    "name": "Agabi Santa Maria",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.3666224,
+    "lng": 4.9021167,
+    "googleRating": 4.3,
+    "googleReviewCount": 450
+  },
+  {
+    "id": 1191,
+    "name": "Pastis",
+    "area": "Oud-West",
+    "facing": "N",
+    "lat": 52.3649528,
+    "lng": 4.8744035,
+    "googleRating": 4.5,
+    "googleReviewCount": 611
+  },
+  {
+    "id": 1192,
+    "name": "Casa Del Toro",
+    "area": "Centrum",
+    "facing": "NW",
+    "lat": 52.375140699999996,
+    "lng": 4.892381299999999,
+    "googleRating": 3.8,
+    "googleReviewCount": 846
+  },
+  {
+    "id": 1193,
+    "name": "Restaurant Two Chefs",
+    "area": "West",
+    "facing": "SE",
+    "lat": 52.3743183,
+    "lng": 4.8728681,
+    "googleRating": 4.4,
+    "googleReviewCount": 564
+  },
+  {
+    "id": 1194,
+    "name": "Hongdae Amsterdam",
+    "area": "Leidseplein",
+    "facing": "SE",
+    "lat": 52.3638313,
+    "lng": 4.8849668,
+    "googleRating": 4.4,
+    "googleReviewCount": 816
+  },
+  {
+    "id": 1195,
+    "name": "De Heeren Van Aemstel",
+    "area": "Rembrandtplein",
+    "facing": "W",
+    "lat": 52.36541330000001,
+    "lng": 4.8960406,
+    "googleRating": 4.6,
+    "googleReviewCount": 2691
+  },
+  {
+    "id": 1196,
+    "name": "Sushi Fanatics",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.3593009,
+    "lng": 4.9138098999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 1193
+  },
+  {
+    "id": 1197,
+    "name": "Club Prime",
+    "area": "Rembrandtplein",
+    "facing": "SW",
+    "lat": 52.365645699999995,
+    "lng": 4.896298499999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 3163
+  },
+  {
+    "id": 1198,
+    "name": "Liever Hier",
+    "area": "Noord",
+    "facing": "N",
+    "lat": 52.3896087,
+    "lng": 4.9438707,
+    "googleRating": 4.9,
+    "googleReviewCount": 212
+  },
+  {
+    "id": 1199,
+    "name": "De VerbroederIJ",
+    "area": "Noord",
+    "facing": "N",
+    "lat": 52.3848122,
+    "lng": 4.9298454,
+    "googleRating": 4.4,
+    "googleReviewCount": 952
+  },
+  {
+    "id": 1200,
+    "name": "Sjefietshé",
+    "area": "De Pijp",
+    "facing": "E",
+    "lat": 52.3516313,
+    "lng": 4.8870853,
+    "googleRating": 4.4,
+    "googleReviewCount": 606
+  },
+  {
+    "id": 1201,
+    "name": "Italiaanse cateraar - Eatalia Gastronomia",
+    "area": "Rivierenbuurt",
+    "facing": "S",
+    "lat": 52.343011999999995,
+    "lng": 4.9068629999999995,
+    "googleRating": 4.7,
+    "googleReviewCount": 274
+  },
+  {
+    "id": 1202,
+    "name": "De Lachende Gulden",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.364433,
+    "lng": 4.9261896,
+    "googleRating": 4.5,
+    "googleReviewCount": 166
+  },
+  {
+    "id": 1203,
+    "name": "Cafe Restaurant Polder",
+    "area": "IJburg",
+    "facing": "NW",
+    "lat": 52.354635599999995,
+    "lng": 4.9526721,
+    "googleRating": 4.3,
+    "googleReviewCount": 1306
+  },
+  {
+    "id": 1204,
+    "name": "Café Restaurant Orff",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.3695406,
+    "lng": 4.9017159,
+    "googleRating": 4.2,
+    "googleReviewCount": 743
+  },
+  {
+    "id": 1205,
+    "name": "d'Overkant",
+    "area": "Rivierenbuurt",
+    "facing": "NE",
+    "lat": 52.344784,
+    "lng": 4.891132,
+    "googleRating": 4.1,
+    "googleReviewCount": 707
+  },
+  {
+    "id": 1206,
+    "name": "Cafe de krul",
+    "area": "Leidseplein",
+    "facing": "W",
+    "lat": 52.3630998,
+    "lng": 4.8843046,
+    "googleRating": 4.1,
+    "googleReviewCount": 205
+  },
+  {
+    "id": 1207,
+    "name": "Toastable",
+    "area": "Centrum",
+    "facing": "SE",
+    "lat": 52.3673553,
+    "lng": 4.890312199999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 1705
+  },
+  {
+    "id": 1208,
+    "name": "Loetje Oost / Amsterdam Restaurant",
+    "area": "Oost",
+    "facing": "E",
+    "lat": 52.3571788,
+    "lng": 4.9083116,
+    "googleRating": 4.3,
+    "googleReviewCount": 2277
+  },
+  {
+    "id": 1209,
+    "name": "Bar Shaffy",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3598626,
+    "lng": 4.891259499999999,
+    "googleRating": 4.8,
+    "googleReviewCount": 346
+  },
+  {
+    "id": 1210,
+    "name": "Brasserie De Serre",
+    "area": "West",
+    "facing": "E",
+    "lat": 52.358805499999995,
+    "lng": 4.8051639999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 434
+  },
+  {
+    "id": 1211,
+    "name": "Jondani Downtown",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.349908199999994,
+    "lng": 4.877856599999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 396
+  },
+  {
+    "id": 1212,
+    "name": "De Haven van Texel",
+    "area": "Spaarndammer",
+    "facing": "NE",
+    "lat": 52.3758233,
+    "lng": 4.900238,
+    "googleRating": 4.4,
+    "googleReviewCount": 1243
+  },
+  {
+    "id": 1213,
+    "name": "Café Gruter",
+    "area": "Oud-Zuid",
+    "facing": "W",
+    "lat": 52.3570244,
+    "lng": 4.8749493,
+    "googleRating": 4.1,
+    "googleReviewCount": 774
+  },
+  {
+    "id": 1214,
+    "name": "Nawaab",
+    "area": "Rivierenbuurt",
+    "facing": "N",
+    "lat": 52.3450454,
+    "lng": 4.8905259999999995,
+    "googleRating": 4.3,
+    "googleReviewCount": 667
+  },
+  {
+    "id": 1215,
+    "name": "Spaghetteria",
+    "area": "De Pijp",
+    "facing": "W",
+    "lat": 52.353578299999995,
+    "lng": 4.9025202,
+    "googleRating": 4.4,
+    "googleReviewCount": 854
+  },
+  {
+    "id": 1216,
+    "name": "Oliver's",
+    "area": "Zuidas",
+    "facing": "SW",
+    "lat": 52.337537499999996,
+    "lng": 4.8709241,
+    "googleRating": 4.2,
+    "googleReviewCount": 545
+  },
+  {
+    "id": 1217,
+    "name": "Onder de Ooievaar",
+    "area": "Oost",
+    "facing": "W",
+    "lat": 52.3619424,
+    "lng": 4.8991443,
+    "googleRating": 4.4,
+    "googleReviewCount": 981
+  },
+  {
+    "id": 1218,
+    "name": "Café Saté",
+    "area": "West",
+    "facing": "W",
+    "lat": 52.3743917,
+    "lng": 4.8732197,
+    "googleRating": 4.8,
+    "googleReviewCount": 175
+  },
+  {
+    "id": 1219,
+    "name": "Pasta e Basta 2.0",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.36497,
+    "lng": 4.889786,
+    "googleRating": 4.5,
+    "googleReviewCount": 1926
+  },
+  {
+    "id": 1220,
+    "name": "MasMais Cantina 🌵",
+    "area": "Spaarndammer",
+    "facing": "E",
+    "lat": 52.3788725,
+    "lng": 4.856559,
+    "googleRating": 4.6,
+    "googleReviewCount": 259
+  },
+  {
+    "id": 1221,
+    "name": "The Pool Bar",
+    "area": "Centrum",
+    "facing": "W",
+    "lat": 52.3685701,
+    "lng": 4.8906426,
+    "googleRating": 4.5,
+    "googleReviewCount": 1703
+  },
+  {
+    "id": 1222,
+    "name": "Hoofdkantoor Lowlander",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.3820683,
+    "lng": 4.9202486,
+    "googleRating": 4.4,
+    "googleReviewCount": 46
+  },
+  {
+    "id": 1223,
+    "name": "Bar Borisov",
+    "area": "Houthavens",
+    "facing": "SW",
+    "lat": 52.395324099999996,
+    "lng": 4.874694799999999,
+    "googleRating": 4.3,
+    "googleReviewCount": 71
+  },
+  {
+    "id": 1224,
+    "name": "Bar & Kitchen De Zuid",
+    "area": "Oost",
+    "facing": "N",
+    "lat": 52.3765412,
+    "lng": 4.9377379999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 614
+  },
+  {
+    "id": 1225,
+    "name": "Café Sportpark",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.374724099999995,
+    "lng": 4.8577004,
+    "googleRating": 4.6,
+    "googleReviewCount": 189
+  },
+  {
+    "id": 1226,
+    "name": "Restaurant Vooges aan 't IJ",
+    "area": "Houthavens",
+    "facing": "W",
+    "lat": 52.387641900000006,
+    "lng": 4.892586,
+    "googleRating": 4.6,
+    "googleReviewCount": 351
+  },
+  {
+    "id": 1227,
+    "name": "Lokaal van de Stad",
+    "area": "Stadionbuurt",
+    "facing": "SW",
+    "lat": 52.3517303,
+    "lng": 4.846176499999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 1557
+  },
+  {
+    "id": 1228,
+    "name": "Cannibale Royale Ruysdael",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.3536429,
+    "lng": 4.8872304,
+    "googleRating": 4.5,
+    "googleReviewCount": 2998
+  },
+  {
+    "id": 1229,
+    "name": "Eetcafé Roem",
+    "area": "Noord",
+    "facing": "E",
+    "lat": 52.376098299999995,
+    "lng": 4.8839996999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 598
+  },
+  {
+    "id": 1230,
+    "name": "Captein & Co",
+    "area": "Oost",
+    "facing": "SE",
+    "lat": 52.3736122,
+    "lng": 4.9029058,
+    "googleRating": 4.4,
+    "googleReviewCount": 638
+  },
+  {
+    "id": 1231,
+    "name": "Buurman De With",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.368753399999996,
+    "lng": 4.8592885,
+    "googleRating": 4.6,
+    "googleReviewCount": 196
+  },
+  {
+    "id": 1232,
+    "name": "Miri Mary Indian Restaurant Amsterdam",
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "lat": 52.3515522,
+    "lng": 4.8952183,
+    "googleRating": 4.7,
+    "googleReviewCount": 4990
+  },
+  {
+    "id": 1233,
+    "name": "Cafe Nassau",
+    "area": "Westerpark",
+    "facing": "W",
+    "lat": 52.3828713,
+    "lng": 4.8771830000000005,
+    "googleRating": 4.4,
+    "googleReviewCount": 614
+  },
+  {
+    "id": 1234,
+    "name": "Renato’s Pizza De Pijp",
+    "area": "Rembrandtplein",
+    "facing": "SE",
+    "lat": 52.3511885,
+    "lng": 4.8945159,
+    "googleRating": 4.4,
+    "googleReviewCount": 842
+  },
+  {
+    "id": 1235,
+    "name": "Barrica Food & Wine Bar",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.3612447,
+    "lng": 4.862534999999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 414
+  },
+  {
+    "id": 1236,
+    "name": "Lova - All Day Brunch & Breakfast",
+    "area": "Haarlemmerbrt",
+    "facing": "SW",
+    "lat": 52.384194699999995,
+    "lng": 4.8846434,
+    "googleRating": 4.7,
+    "googleReviewCount": 690
+  },
+  {
+    "id": 1237,
+    "name": "Cultureel Eetcafé 'Skek",
+    "area": "Spaarndammer",
+    "facing": "N",
+    "lat": 52.376065,
+    "lng": 4.900176,
+    "googleRating": 4.5,
+    "googleReviewCount": 953
+  },
+  {
+    "id": 1238,
+    "name": "Renato's Osteria - De Pijp",
+    "area": "Rembrandtplein",
+    "facing": "W",
+    "lat": 52.3514902,
+    "lng": 4.8952219999999995,
+    "googleRating": 4.5,
+    "googleReviewCount": 1211
+  },
+  {
+    "id": 1239,
+    "name": "Amstel Boathouse",
+    "area": "Rivierenbuurt",
+    "facing": "N",
+    "lat": 52.338436099999996,
+    "lng": 4.9066227,
+    "googleRating": 4.2,
+    "googleReviewCount": 1263
+  },
+  {
+    "id": 1240,
+    "name": "Fa. Cafe-Bistro Hansel and Gretel",
+    "area": "De Baarsjes",
+    "facing": "N",
+    "lat": 52.3617899,
+    "lng": 4.8873837,
+    "googleRating": 4.1,
+    "googleReviewCount": 2812
+  },
+  {
+    "id": 1241,
+    "name": "Hendrix",
+    "area": "West",
+    "facing": "SW",
+    "lat": 52.3707358,
+    "lng": 4.8686881,
+    "googleRating": 4.4,
+    "googleReviewCount": 982
+  },
+  {
+    "id": 1242,
+    "name": "Café Anno 1890",
+    "area": "Zuidas",
+    "facing": "SW",
+    "lat": 52.322358799999996,
+    "lng": 4.8572017999999995,
+    "googleRating": 4.2,
+    "googleReviewCount": 1691
+  },
+  {
+    "id": 1243,
+    "name": "Staring at Jacob",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.36231,
+    "lng": 4.861847099999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 2645
+  },
+  {
+    "id": 1244,
+    "name": "Café Beurre",
+    "area": "Westerpark",
+    "facing": "NE",
+    "lat": 52.3837972,
+    "lng": 4.876297999999999,
+    "googleRating": 4.4,
+    "googleReviewCount": 273
+  },
+  {
+    "id": 1245,
+    "name": "Van Puffelen",
+    "area": "Rembrandtplein",
+    "facing": "W",
+    "lat": 52.3716667,
+    "lng": 4.883333299999999,
+    "googleRating": 4.1,
+    "googleReviewCount": 964
+  },
+  {
+    "id": 1246,
+    "name": "Corner Bakery",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.3547191,
+    "lng": 4.8840308,
+    "googleRating": 4.2,
+    "googleReviewCount": 1529
+  },
+  {
+    "id": 1247,
+    "name": "Spaghetteria Pasta-bar (Olympiaplein)",
+    "area": "De Pijp",
+    "facing": "N",
+    "lat": 52.346115600000005,
+    "lng": 4.866899,
+    "googleRating": 4.2,
+    "googleReviewCount": 678
+  },
+  {
+    "id": 1248,
+    "name": "Café brasserie Helden",
+    "area": "Spaarndammer",
+    "facing": "S",
+    "lat": 52.3905921,
+    "lng": 4.8399,
+    "googleRating": 3.9,
+    "googleReviewCount": 508
+  },
+  {
+    "id": 1249,
+    "name": "Café Keppler",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.386958899999996,
+    "lng": 4.9080783,
+    "googleRating": 4.5,
+    "googleReviewCount": 681
+  },
+  {
+    "id": 1250,
+    "name": "Eetwinkel Buurman & Buurman",
+    "area": "Oud-West",
+    "facing": "N",
+    "lat": 52.375350499999996,
+    "lng": 4.8483168999999995,
+    "googleRating": 4.4,
+    "googleReviewCount": 776
+  },
+  {
+    "id": 1251,
+    "name": "Bloem Eten & Drinken",
+    "area": "Plantage",
+    "facing": "W",
+    "lat": 52.3688757,
+    "lng": 4.914257699999999,
+    "googleRating": 4.5,
+    "googleReviewCount": 570
+  },
+  {
+    "id": 1252,
+    "name": "Mr. Sam Asian Bistro",
+    "area": "Stadionbuurt",
+    "facing": "SE",
+    "lat": 52.345497699999996,
+    "lng": 4.857264499999999,
+    "googleRating": 4.6,
+    "googleReviewCount": 872
+  },
+  {
+    "id": 1253,
+    "name": "Cafe Wester",
+    "area": "Noord",
+    "facing": "SE",
+    "lat": 52.376018699999996,
+    "lng": 4.8838742,
+    "googleRating": 4.3,
+    "googleReviewCount": 968
+  },
+  {
+    "id": 1254,
+    "name": "tHUIS aan de AMSTEL",
+    "area": "Zuid",
+    "facing": "W",
+    "lat": 52.3395222,
+    "lng": 4.9148999,
+    "googleRating": 4.4,
+    "googleReviewCount": 1921
+  },
+  {
+    "id": 1255,
+    "name": "Rainarai Westerpark",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.385701,
+    "lng": 4.865627,
+    "googleRating": 4,
+    "googleReviewCount": 712
+  },
+  {
+    "id": 1256,
+    "name": "Café Lust!",
+    "area": "Oud-Zuid",
+    "facing": "SW",
+    "lat": 52.3507369,
+    "lng": 4.8890655999999995,
+    "googleRating": 4.2,
+    "googleReviewCount": 344
+  },
+  {
+    "id": 1257,
+    "name": "Berry Amsterdam",
+    "area": "De Baarsjes",
+    "facing": "NW",
+    "lat": 52.3683963,
+    "lng": 4.8702043,
+    "googleRating": 4.7,
+    "googleReviewCount": 494
+  },
+  {
+    "id": 1258,
+    "name": "Koffie ende Koeck",
+    "area": "Westerpark",
+    "facing": "E",
+    "lat": 52.385247,
+    "lng": 4.8717768999999995,
+    "googleRating": 4.8,
+    "googleReviewCount": 693
+  },
+  {
+    "id": 1259,
+    "name": "Westergasterras",
+    "area": "Westerpark",
+    "facing": "All",
+    "lat": 52.3870141,
+    "lng": 4.8699152
+  },
+  {
+    "id": 1260,
+    "name": "Westerunie",
+    "area": "Westerpark",
+    "facing": "All",
+    "lat": 52.3871283,
+    "lng": 4.8700218
+  },
+  {
+    "id": 1261,
+    "name": "Vondeltuin",
+    "area": "Vondelpark",
+    "facing": "SW",
+    "lat": 52.3549253,
+    "lng": 4.8565105
+  },
+  {
+    "id": 1262,
+    "name": "Radio Radio",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.3860704,
+    "lng": 4.8740538
+  },
+  {
+    "id": 1263,
+    "name": "Hangar Oost",
+    "area": "Zeeburgereiland",
+    "facing": "SW",
+    "lat": 52.3686274,
+    "lng": 4.9681847999999995
+  },
+  {
+    "id": 1264,
+    "name": "Watts Hub",
+    "area": "Sloterdijk",
+    "facing": "S",
+    "lat": 52.3863105,
+    "lng": 4.8350925
+  },
+  {
+    "id": 1265,
+    "name": "Dak Showroom by Dak Coffee Roasters",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.3684127,
+    "lng": 4.867310499999999,
+    "googleRating": 4.8,
+    "googleReviewCount": 292
+  },
+  {
+    "id": 1266,
+    "name": "YUSU",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3598821,
+    "lng": 4.9110865,
+    "googleRating": 4.6,
+    "googleReviewCount": 1143
+  },
+  {
+    "id": 1267,
+    "name": "Caffènation Amsterdam",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.354718,
+    "lng": 4.8493189999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 906
+  },
+  {
+    "id": 1268,
+    "name": "Uncommon Cafe",
+    "area": "Zuid",
+    "facing": "S",
+    "lat": 52.3632851,
+    "lng": 4.8751823,
+    "googleRating": 4.5,
+    "googleReviewCount": 1199
+  },
+  {
+    "id": 1269,
+    "name": "Screaming Beans Utrechtsestraat",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3633046,
+    "lng": 4.8986994,
+    "googleRating": 4.4,
+    "googleReviewCount": 172
+  },
+  {
+    "id": 1270,
+    "name": "Elevate Coffee Lab",
+    "area": "Rembrandtplein",
+    "facing": "S",
+    "lat": 52.351573200000004,
+    "lng": 4.8945191999999995,
+    "googleRating": 4.9,
+    "googleReviewCount": 372
+  },
+  {
+    "id": 1271,
+    "name": "Friedhats FUKU Cafe",
+    "area": "Spaarndammer",
+    "facing": "S",
+    "lat": 52.3812737,
+    "lng": 4.855158100000001,
+    "googleRating": 4.8,
+    "googleReviewCount": 1065
+  },
+  {
+    "id": 1272,
+    "name": "Rum Baba (Jordaan)",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3691337,
+    "lng": 4.8787234,
+    "googleRating": 4.7,
+    "googleReviewCount": 493
+  },
+  {
+    "id": 1273,
+    "name": "Bocca Coffee",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.3643905,
+    "lng": 4.8868164,
+    "googleRating": 4.4,
+    "googleReviewCount": 2009
+  },
+  {
+    "id": 1274,
+    "name": "taal.coffee",
+    "area": "Bos en Lommer",
+    "facing": "S",
+    "lat": 52.3600735,
+    "lng": 4.8581158,
+    "googleRating": 4.9,
+    "googleReviewCount": 145
+  },
+  {
+    "id": 1275,
+    "name": "Badeta Koffiebranders Watergraafsmeer",
+    "area": "Indische Buurt",
+    "facing": "S",
+    "lat": 52.3505682,
+    "lng": 4.9385593,
+    "googleRating": 4.7,
+    "googleReviewCount": 176
+  },
+  {
+    "id": 1276,
+    "name": "Clapham Specialty Coffee",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.3562255,
+    "lng": 4.8710219,
+    "googleRating": 4.7,
+    "googleReviewCount": 344
+  },
+  {
+    "id": 1277,
+    "name": "Margo's Amsterdam",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3777616,
+    "lng": 4.8835489999999995,
+    "googleRating": 4.8,
+    "googleReviewCount": 1133
+  },
+  {
+    "id": 1278,
+    "name": "Esthétique cafe",
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "lat": 52.350439099999996,
+    "lng": 4.8602669999999994,
+    "googleRating": 4.7,
+    "googleReviewCount": 373
+  },
+  {
+    "id": 1279,
+    "name": "Back to Black (Westerpark)",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.379399299999996,
+    "lng": 4.8714727,
+    "googleRating": 4.7,
+    "googleReviewCount": 605
+  },
+  {
+    "id": 1280,
+    "name": "Badeta Coffee Van Wou/ Albert Cuyp Market",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3569733,
+    "lng": 4.8994519,
+    "googleRating": 4.7,
+    "googleReviewCount": 182
+  },
+  {
+    "id": 1281,
+    "name": "NU koffie & delicatessen",
+    "area": "Houthavens",
+    "facing": "S",
+    "lat": 52.37659310000001,
+    "lng": 4.8822931,
+    "googleRating": 4.8,
+    "googleReviewCount": 436
+  },
+  {
+    "id": 1282,
+    "name": "Five Ways Coffee Roasters",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3598712,
+    "lng": 4.9123059,
+    "googleRating": 4.7,
+    "googleReviewCount": 712
+  },
+  {
+    "id": 1283,
+    "name": "Alpha coffee Amsterdam",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3662631,
+    "lng": 4.9018763,
+    "googleRating": 4.9,
+    "googleReviewCount": 360
+  },
+  {
+    "id": 1284,
+    "name": "Harmani Coffee & Brunch",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.354886799999996,
+    "lng": 4.888565,
+    "googleRating": 4.9,
+    "googleReviewCount": 1574
+  },
+  {
+    "id": 1285,
+    "name": "Cafecito | Nassaukade | ℃ Coffeebar",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3683996,
+    "lng": 4.8759174,
+    "googleRating": 4.2,
+    "googleReviewCount": 356
+  },
+  {
+    "id": 1286,
+    "name": "Monks Coffee Roasters",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3712151,
+    "lng": 4.8702463,
+    "googleRating": 4.7,
+    "googleReviewCount": 928
+  },
+  {
+    "id": 1287,
+    "name": "white label coffee",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.370430999999996,
+    "lng": 4.851578,
+    "googleRating": 4.5,
+    "googleReviewCount": 686
+  },
+  {
+    "id": 1288,
+    "name": "Wakuli Coffee | Vijzelgracht",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3608019,
+    "lng": 4.8914608,
+    "googleRating": 4.6,
+    "googleReviewCount": 107
+  },
+  {
+    "id": 1289,
+    "name": "Priesthood",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.376584,
+    "lng": 4.899513,
+    "googleRating": 4.8,
+    "googleReviewCount": 203
+  },
+  {
+    "id": 1290,
+    "name": "Haku Specialty Coffee",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.373287999999995,
+    "lng": 4.880800499999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 479
+  },
+  {
+    "id": 1291,
+    "name": "Fournos Greek Coffee Bakery",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.376127,
+    "lng": 4.8928104999999995,
+    "googleRating": 5,
+    "googleReviewCount": 159
+  },
+  {
+    "id": 1292,
+    "name": "Good Beans",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.382381,
+    "lng": 4.887274199999999,
+    "googleRating": 4.8,
+    "googleReviewCount": 544
+  },
+  {
+    "id": 1293,
+    "name": "Maracuyá",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.363878199999995,
+    "lng": 4.8634461,
+    "googleRating": 4.8,
+    "googleReviewCount": 163
+  },
+  {
+    "id": 1294,
+    "name": "Skina",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.3688481,
+    "lng": 4.8713153,
+    "googleRating": 4.5,
+    "googleReviewCount": 202
+  },
+  {
+    "id": 1295,
+    "name": "a Sense of Place - Hi-Fidelity Coffee",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.380877999999996,
+    "lng": 4.8826239,
+    "googleRating": 5,
+    "googleReviewCount": 79
+  },
+  {
+    "id": 1296,
+    "name": "Cafecito Overtoom | Specialty Coffee & Matcha",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.358904499999994,
+    "lng": 4.8606422,
+    "googleRating": 4.4,
+    "googleReviewCount": 230
+  },
+  {
+    "id": 1297,
+    "name": "Black Gold Amsterdam",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.371787999999995,
+    "lng": 4.9030432,
+    "googleRating": 4.7,
+    "googleReviewCount": 843
+  },
+  {
+    "id": 1298,
+    "name": "Cafecito (Beethovenstraat)",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.3492805,
+    "lng": 4.8778543999999995,
+    "googleRating": 4,
+    "googleReviewCount": 116
+  },
+  {
+    "id": 1299,
+    "name": "Back to Black (Weteringstraat)",
+    "area": "De Baarsjes",
+    "facing": "S",
+    "lat": 52.361076999999995,
+    "lng": 4.888494,
+    "googleRating": 4.7,
+    "googleReviewCount": 1914
+  },
+  {
+    "id": 1300,
+    "name": "SAINT-JEAN Bakery",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3803056,
+    "lng": 4.884282400000001,
+    "googleRating": 4.4,
+    "googleReviewCount": 2983
+  },
+  {
+    "id": 1301,
+    "name": "Toki",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3829109,
+    "lng": 4.885517500000001,
+    "googleRating": 4.5,
+    "googleReviewCount": 1211
+  },
+  {
+    "id": 1302,
+    "name": "Gentle Place Coffee",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.394723000000006,
+    "lng": 4.8998311,
+    "googleRating": 4.9,
+    "googleReviewCount": 367
+  },
+  {
+    "id": 1303,
+    "name": "Trakteren",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3626072,
+    "lng": 4.8642517,
+    "googleRating": 4.7,
+    "googleReviewCount": 321
+  },
+  {
+    "id": 1304,
+    "name": "Barmhartig Koffie",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.374092,
+    "lng": 4.938664999999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 284
+  },
+  {
+    "id": 1305,
+    "name": "Coffee District Willemsparkweg",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3580214,
+    "lng": 4.8776462,
+    "googleRating": 4.7,
+    "googleReviewCount": 910
+  },
+  {
+    "id": 1306,
+    "name": "Cafecito (Van Baerlestraat)",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.3542065,
+    "lng": 4.8816198,
+    "googleRating": 4.4,
+    "googleReviewCount": 569
+  },
+  {
+    "id": 1307,
+    "name": "Luuk's Coffee Noordermarkt",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.378763899999996,
+    "lng": 4.8862575,
+    "googleRating": 4.8,
+    "googleReviewCount": 1004
+  },
+  {
+    "id": 1308,
+    "name": "Catcha",
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "lat": 52.351846678073464,
+    "lng": 4.856761668693709
+  },
+  {
+    "id": 1309,
+    "name": "The Coffee Virus",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.384204999999994,
+    "lng": 4.902947999999999,
+    "googleRating": 4.7,
+    "googleReviewCount": 152
+  },
+  {
+    "id": 1310,
+    "name": "Werkplaats",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3535816,
+    "lng": 4.9120349,
+    "googleRating": 4.3,
+    "googleReviewCount": 69
+  },
+  {
+    "id": 1311,
+    "name": "KOF Amsterdam Coffee Roasters",
+    "area": "9 Straatjes",
+    "facing": "S",
+    "lat": 52.368895599999995,
+    "lng": 4.8851448,
+    "googleRating": 4.5,
+    "googleReviewCount": 231
+  },
+  {
+    "id": 1312,
+    "name": "CoffeeConcepts",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.3577782,
+    "lng": 4.874293199999999,
+    "googleRating": 4.1,
+    "googleReviewCount": 603
+  },
+  {
+    "id": 1313,
+    "name": "Bakers & Roasters (Plantage)",
+    "area": "Plantage",
+    "facing": "S",
+    "lat": 52.3701953,
+    "lng": 4.9126142,
+    "googleRating": 4.6,
+    "googleReviewCount": 2292
+  },
+  {
+    "id": 1314,
+    "name": "Coffee & Coconuts Zuidas | Specialty Coffee Bar | Pastry | Matcha | Food to go",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.337125,
+    "lng": 4.87311,
+    "googleRating": 4.2,
+    "googleReviewCount": 224
+  },
+  {
+    "id": 1315,
+    "name": "Drovers Dog Atjehstraat",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3625098,
+    "lng": 4.9348415999999995,
+    "googleRating": 4.6,
+    "googleReviewCount": 772
+  },
+  {
+    "id": 1316,
+    "name": "Fanke Coffee Amsterdam",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3731553,
+    "lng": 4.8803854,
+    "googleRating": 4.9,
+    "googleReviewCount": 71
+  },
+  {
+    "id": 1317,
+    "name": "LOT61 Coffee Roasters (Stadionbuurt)",
+    "area": "Stadionbuurt",
+    "facing": "S",
+    "lat": 52.35155,
+    "lng": 4.86019
+  },
+  {
+    "id": 1318,
+    "name": "Coffee Atelier",
+    "area": "Nieuw-West",
+    "facing": "S",
+    "lat": 52.3546325,
+    "lng": 4.8412185,
+    "googleRating": 5,
+    "googleReviewCount": 128
+  },
+  {
+    "id": 1319,
+    "name": "Ikinari Coffee",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3692767,
+    "lng": 4.8729469,
+    "googleRating": 5,
+    "googleReviewCount": 74
+  },
+  {
+    "id": 1320,
+    "name": "Vanaut",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3641188,
+    "lng": 4.8556174,
+    "googleRating": 4.9,
+    "googleReviewCount": 585
+  },
+  {
+    "id": 1321,
+    "name": "Morning Owl Coffee",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3746793,
+    "lng": 4.9008684,
+    "googleRating": 4.9,
+    "googleReviewCount": 283
+  },
+  {
+    "id": 1322,
+    "name": "WesterPerk Coffee & Shop",
+    "area": "Westerpark",
+    "facing": "S",
+    "lat": 52.3786067,
+    "lng": 4.8740747,
+    "googleRating": 4.9,
+    "googleReviewCount": 230
+  },
+  {
+    "id": 1323,
+    "name": "Reload Coffee",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3556369,
+    "lng": 4.8887303,
+    "googleRating": 4.9,
+    "googleReviewCount": 166
+  },
+  {
+    "id": 1324,
+    "name": "Tea's Delight",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3676224,
+    "lng": 4.8729506,
+    "googleRating": 4.9,
+    "googleReviewCount": 114
+  },
+  {
+    "id": 1325,
+    "name": "Machu",
+    "area": "Nieuw-West",
+    "facing": "S",
+    "lat": 52.3629297,
+    "lng": 4.8381649,
+    "googleRating": 4.9,
+    "googleReviewCount": 74
+  },
+  {
+    "id": 1326,
+    "name": "Viet Drip Coffee",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.360407,
+    "lng": 4.9184237,
+    "googleRating": 4.9,
+    "googleReviewCount": 63
+  },
+  {
+    "id": 1327,
+    "name": "Kaffe Amsterdam",
+    "area": "Bos en Lommer",
+    "facing": "S",
+    "lat": 52.3790201,
+    "lng": 4.838235,
+    "googleRating": 4.9,
+    "googleReviewCount": 53
+  },
+  {
+    "id": 1328,
+    "name": "Blin Queen",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3669242,
+    "lng": 4.8968502,
+    "googleRating": 4.8,
+    "googleReviewCount": 2269
+  },
+  {
+    "id": 1329,
+    "name": "The Cottage",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3561204,
+    "lng": 4.9272931,
+    "googleRating": 4.8,
+    "googleReviewCount": 1893
+  },
+  {
+    "id": 1330,
+    "name": "Coffee Bru (Van Woustraat)",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3538168,
+    "lng": 4.9023608,
+    "googleRating": 4.8,
+    "googleReviewCount": 276
+  },
+  {
+    "id": 1331,
+    "name": "Kaldi Cafe Coffee & Tea",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3573119,
+    "lng": 4.8996717,
+    "googleRating": 4.8,
+    "googleReviewCount": 248
+  },
+  {
+    "id": 1332,
+    "name": "Podieum",
+    "area": "Nieuw-West",
+    "facing": "S",
+    "lat": 52.349356,
+    "lng": 4.8287581,
+    "googleRating": 4.8,
+    "googleReviewCount": 244
+  },
+  {
+    "id": 1333,
+    "name": "Sam's Koffie - Noord",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.3866968,
+    "lng": 4.9236732,
+    "googleRating": 4.8,
+    "googleReviewCount": 160
+  },
+  {
+    "id": 1334,
+    "name": "KAFFEE Dapperplein",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3620055,
+    "lng": 4.9282681,
+    "googleRating": 4.8,
+    "googleReviewCount": 132
+  },
+  {
+    "id": 1335,
+    "name": "Nous - Coffee Store Noord",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.3881378,
+    "lng": 4.9049721,
+    "googleRating": 4.8,
+    "googleReviewCount": 130
+  },
+  {
+    "id": 1336,
+    "name": "Wakuli Coffee Wagenaarstraat",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3630664,
+    "lng": 4.9269935,
+    "googleRating": 4.8,
+    "googleReviewCount": 102
+  },
+  {
+    "id": 1337,
+    "name": "YNK Coffee",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3583248,
+    "lng": 4.8569079,
+    "googleRating": 4.8,
+    "googleReviewCount": 99
+  },
+  {
+    "id": 1338,
+    "name": "Lucca Espressobar",
+    "area": "Nieuw-West",
+    "facing": "S",
+    "lat": 52.3598733,
+    "lng": 4.8062751,
+    "googleRating": 4.8,
+    "googleReviewCount": 60
+  },
+  {
+    "id": 1339,
+    "name": "BLUEY'S Coffee & Kitchen",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.3404041,
+    "lng": 4.8734731,
+    "googleRating": 4.8,
+    "googleReviewCount": 57
+  },
+  {
+    "id": 1340,
+    "name": "De Koffieschenkerij",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3741148,
+    "lng": 4.8983467,
+    "googleRating": 4.7,
+    "googleReviewCount": 3534
+  },
+  {
+    "id": 1341,
+    "name": "Box Sociaal",
+    "area": "Plantage",
+    "facing": "S",
+    "lat": 52.3662418,
+    "lng": 4.9118704,
+    "googleRating": 4.7,
+    "googleReviewCount": 2922
+  },
+  {
+    "id": 1342,
+    "name": "Moods Coffee & Brunch",
+    "area": "Oud-Zuid",
+    "facing": "S",
+    "lat": 52.3537185,
+    "lng": 4.8729239,
+    "googleRating": 4.7,
+    "googleReviewCount": 1219
+  },
+  {
+    "id": 1343,
+    "name": "Sango Specialty Coffee Roasters",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3785368,
+    "lng": 4.8945098,
+    "googleRating": 4.7,
+    "googleReviewCount": 1185
+  },
+  {
+    "id": 1344,
+    "name": "Tea Culture Club & Tea House Moychay",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.373264,
+    "lng": 4.8795767,
+    "googleRating": 4.7,
+    "googleReviewCount": 1146
+  },
+  {
+    "id": 1345,
+    "name": "Hummingbird Coffee Amsterdam",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3715868,
+    "lng": 4.8895103,
+    "googleRating": 4.7,
+    "googleReviewCount": 1059
+  },
+  {
+    "id": 1346,
+    "name": "Bali Brunch 82",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3577487,
+    "lng": 4.8931673,
+    "googleRating": 4.7,
+    "googleReviewCount": 925
+  },
+  {
+    "id": 1347,
+    "name": "Flow All Day Brunch",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.357509,
+    "lng": 4.889818,
+    "googleRating": 4.7,
+    "googleReviewCount": 430
+  },
+  {
+    "id": 1348,
+    "name": "Harvey Amsterdam",
+    "area": "Watergraafsmeer",
+    "facing": "S",
+    "lat": 52.3544733,
+    "lng": 4.9415582,
+    "googleRating": 4.7,
+    "googleReviewCount": 385
+  },
+  {
+    "id": 1349,
+    "name": "Cafe 1981",
+    "area": "Leidseplein",
+    "facing": "S",
+    "lat": 52.3623932,
+    "lng": 4.8862299,
+    "googleRating": 4.7,
+    "googleReviewCount": 225
+  },
+  {
+    "id": 1350,
+    "name": "Wanakam",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3570743,
+    "lng": 4.909156,
+    "googleRating": 4.7,
+    "googleReviewCount": 124
+  },
+  {
+    "id": 1351,
+    "name": "MIRO Specialty Coffee",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3525758,
+    "lng": 4.8908212,
+    "googleRating": 4.7,
+    "googleReviewCount": 81
+  },
+  {
+    "id": 1352,
+    "name": "Stooker Roasting Company",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3589078,
+    "lng": 4.9232471,
+    "googleRating": 4.7,
+    "googleReviewCount": 38
+  },
+  {
+    "id": 1353,
+    "name": "Omelegg City Centre",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3760641,
+    "lng": 4.8998055,
+    "googleRating": 4.6,
+    "googleReviewCount": 6238
+  },
+  {
+    "id": 1354,
+    "name": "Cafe Hill Street Blues",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.375479,
+    "lng": 4.898224,
+    "googleRating": 4.6,
+    "googleReviewCount": 3985
+  },
+  {
+    "id": 1355,
+    "name": "LOT61 Coffee Roasters (Oud-West)",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3668272,
+    "lng": 4.870314,
+    "googleRating": 4.6,
+    "googleReviewCount": 2022
+  },
+  {
+    "id": 1356,
+    "name": "Coffee and Cakes",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3738628,
+    "lng": 4.8961208,
+    "googleRating": 4.6,
+    "googleReviewCount": 1244
+  },
+  {
+    "id": 1357,
+    "name": "Caffe il Momento",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3746845,
+    "lng": 4.8890461,
+    "googleRating": 4.6,
+    "googleReviewCount": 1004
+  },
+  {
+    "id": 1359,
+    "name": "LOCALS BRUNCH - DS",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3563191,
+    "lng": 4.8898936,
+    "googleRating": 4.6,
+    "googleReviewCount": 881
+  },
+  {
+    "id": 1360,
+    "name": "La Panetteria Amsterdam",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3686325,
+    "lng": 4.8918341,
+    "googleRating": 4.6,
+    "googleReviewCount": 433
+  },
+  {
+    "id": 1361,
+    "name": "BLCK Coffee and The Masters",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.3371896,
+    "lng": 4.8695535,
+    "googleRating": 4.6,
+    "googleReviewCount": 382
+  },
+  {
+    "id": 1362,
+    "name": "Five Ways Coffee Roasters (Kinkerstraat)",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.366029,
+    "lng": 4.8673108,
+    "googleRating": 4.6,
+    "googleReviewCount": 353
+  },
+  {
+    "id": 1363,
+    "name": "Coffee District Buitenveldert",
+    "area": "Buitenveldert",
+    "facing": "S",
+    "lat": 52.3271221,
+    "lng": 4.8683449,
+    "googleRating": 4.6,
+    "googleReviewCount": 250
+  },
+  {
+    "id": 1364,
+    "name": "Lagom Amsterdam",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3705716,
+    "lng": 4.900796,
+    "googleRating": 4.5,
+    "googleReviewCount": 2071
+  },
+  {
+    "id": 1365,
+    "name": "LOT61 Amsterdam Centraal",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.376894,
+    "lng": 4.9043325,
+    "googleRating": 4.5,
+    "googleReviewCount": 1376
+  },
+  {
+    "id": 1366,
+    "name": "Quartier Putain",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3746117,
+    "lng": 4.898705,
+    "googleRating": 4.5,
+    "googleReviewCount": 1301
+  },
+  {
+    "id": 1367,
+    "name": "Theewinkel Het Kleinste Huis",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3712062,
+    "lng": 4.8977044,
+    "googleRating": 4.5,
+    "googleReviewCount": 726
+  },
+  {
+    "id": 1368,
+    "name": "Koffiespot",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3694002,
+    "lng": 4.8805982,
+    "googleRating": 4.5,
+    "googleReviewCount": 648
+  },
+  {
+    "id": 1369,
+    "name": "Cafe de Eland",
+    "area": "Jordaan",
+    "facing": "S",
+    "lat": 52.3699937,
+    "lng": 4.8823104,
+    "googleRating": 4.5,
+    "googleReviewCount": 606
+  },
+  {
+    "id": 1370,
+    "name": "The Stroopist",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3736381,
+    "lng": 4.8957822,
+    "googleRating": 4.5,
+    "googleReviewCount": 576
+  },
+  {
+    "id": 1371,
+    "name": "The Block Coffee",
+    "area": "Rivierenbuurt",
+    "facing": "S",
+    "lat": 52.3376425,
+    "lng": 4.8934371,
+    "googleRating": 4.5,
+    "googleReviewCount": 347
+  },
+  {
+    "id": 1372,
+    "name": "Peacock Alley",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3646586,
+    "lng": 4.8969547,
+    "googleRating": 4.5,
+    "googleReviewCount": 83
+  },
+  {
+    "id": 1373,
+    "name": "Teds Amsterdam East",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3569007,
+    "lng": 4.9177956,
+    "googleRating": 4.5,
+    "googleReviewCount": 72
+  },
+  {
+    "id": 1374,
+    "name": "Vascobelo V-point Eurocenter",
+    "area": "Zuidas",
+    "facing": "S",
+    "lat": 52.3358406,
+    "lng": 4.8892962,
+    "googleRating": 4.5,
+    "googleReviewCount": 61
+  },
+  {
+    "id": 1375,
+    "name": "Dignita Hoftuin",
+    "area": "Plantage",
+    "facing": "S",
+    "lat": 52.3656404,
+    "lng": 4.9044574,
+    "googleRating": 4.4,
+    "googleReviewCount": 3237
+  },
+  {
+    "id": 1376,
+    "name": "LOCALS COFFEE TO GO",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3561044,
+    "lng": 4.890694,
+    "googleRating": 4.4,
+    "googleReviewCount": 287
+  },
+  {
+    "id": 1377,
+    "name": "Lunchroom Fika Amsterdam",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3671594,
+    "lng": 4.8665605,
+    "googleRating": 4.4,
+    "googleReviewCount": 156
+  },
+  {
+    "id": 1378,
+    "name": "Wakuli Coffee (Van Woustraat)",
+    "area": "De Pijp",
+    "facing": "S",
+    "lat": 52.3559573,
+    "lng": 4.9001328,
+    "googleRating": 4.3,
+    "googleReviewCount": 68
+  },
+  {
+    "id": 1379,
+    "name": "Pancakes Amsterdam",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3764457,
+    "lng": 4.8991937,
+    "googleRating": 4.2,
+    "googleReviewCount": 8820
+  },
+  {
+    "id": 1380,
+    "name": "Teds Amsterdam Oud West",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3653,
+    "lng": 4.8747893,
+    "googleRating": 4.2,
+    "googleReviewCount": 2811
+  },
+  {
+    "id": 1381,
+    "name": "The Breakfast Club (Bellamystraat)",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.3675558,
+    "lng": 4.8673571,
+    "googleRating": 4.2,
+    "googleReviewCount": 1708
+  },
+  {
+    "id": 1382,
+    "name": "Piattini",
+    "area": "Stadionbuurt",
+    "facing": "SW",
+    "lat": 52.348301,
+    "lng": 4.860758
+  },
+  {
+    "id": 1383,
+    "name": "Alba",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.35325,
+    "lng": 4.90794
+  },
+  {
+    "id": 1386,
+    "name": "Café Struis",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3668572,
+    "lng": 4.9258622999999995
+  },
+  {
+    "id": 1387,
+    "name": "Café Restaurant Meyer",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.36226,
+    "lng": 4.8966867999999995
+  },
+  {
+    "id": 1388,
+    "name": "Café Marcella",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.362249,
+    "lng": 4.8982857
+  },
+  {
+    "id": 1389,
+    "name": "Café Nieuw Amsterdam",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3801803,
+    "lng": 4.8919698
+  },
+  {
+    "id": 1390,
+    "name": "Helling 7",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.40591,
+    "lng": 4.885
+  },
+  {
+    "id": 1394,
+    "name": "Canvas (Volkshotel)",
+    "area": "Oost",
+    "facing": "All",
+    "lat": 52.35375,
+    "lng": 4.91179
+  },
+  {
+    "id": 1397,
+    "name": "Badhuis Javaplein",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.36355,
+    "lng": 4.93992
+  },
+  {
+    "id": 1398,
+    "name": "Massalia",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.35721,
+    "lng": 4.91835
+  },
+  {
+    "id": 1401,
+    "name": "Café de Kleine Bes",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.364793999999996,
+    "lng": 4.925039700000001,
+    "googleRating": 4.8,
+    "googleReviewCount": 35
+  },
+  {
+    "id": 1402,
+    "name": "Brouwerij 't IJ",
+    "area": "Oost",
+    "facing": "S",
+    "lat": 52.3666977,
+    "lng": 4.9263471
+  },
+  {
+    "id": 1403,
+    "name": "Café Helmers",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.3634175,
+    "lng": 4.8752407
+  },
+  {
+    "id": 1404,
+    "name": "Café Kompleet",
+    "area": "Oud-West",
+    "facing": "SW",
+    "lat": 52.3638495,
+    "lng": 4.874814
+  },
+  {
+    "id": 1405,
+    "name": "De Zingende Zwaan",
+    "area": "Oud-West",
+    "facing": "S",
+    "lat": 52.359834899999996,
+    "lng": 4.8602099999999995
+  },
+  {
+    "id": 1406,
+    "name": "Star Ferry",
+    "area": "Oost",
+    "facing": "NW",
+    "lat": 52.3782711,
+    "lng": 4.9131079
+  },
+  {
+    "id": 1407,
+    "name": "Café Caron",
+    "area": "De Pijp",
+    "facing": "SW",
+    "lat": 52.35733,
+    "lng": 4.8887719
+  },
+  {
+    "id": 1408,
+    "name": "Café-Restaurant Amsterdam",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.3842205,
+    "lng": 4.8682145
+  },
+  {
+    "id": 1409,
+    "name": "LuminAir",
+    "area": "Centrum",
+    "facing": "S",
+    "lat": 52.3765715,
+    "lng": 4.905451600000001
+  },
+  {
+    "id": 1410,
+    "name": "WET Deck",
+    "area": "Centrum",
+    "facing": "SW",
+    "lat": 52.3727997,
+    "lng": 4.8897582
+  },
+  {
+    "id": 1411,
+    "name": "Madam",
+    "area": "Noord",
+    "facing": "S",
+    "lat": 52.383927799999995,
+    "lng": 4.902386400000001
+  },
+  {
+    "id": 1412,
+    "name": "Fitz's on the Roof",
+    "area": "Oost",
+    "facing": "SW",
+    "lat": 52.3621937,
+    "lng": 4.9196841000000004
+  },
+  {
+    "id": 1413,
+    "name": "Bolenius",
+    "area": "West",
+    "facing": "S",
+    "lat": 52.3593751,
+    "lng": 4.844816499999999
+  },
+  {
+    "id": 1414,
+    "name": "Chateau Amsterdam",
+    "area": "Noord",
+    "facing": "SW",
+    "lat": 52.386100299999995,
+    "lng": 4.9264071
+  },
+  {
+    "id": 1415,
+    "name": "Market 33",
+    "area": "Zuidas",
+    "facing": "All",
+    "lat": 52.3373734,
+    "lng": 4.8714165,
+    "googleRating": 4.4,
+    "googleReviewCount": 1704
+  }
+]

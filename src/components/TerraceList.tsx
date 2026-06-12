@@ -1,7 +1,10 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Share, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
+
+import { useShortlistStore } from '@/src/store/shortlistStore';
+import { buildVoteUrl } from '@/src/lib/voteLink';
 
 import { DatePicker } from '@/src/components/DatePicker';
 import { MoreFiltersToggle } from '@/src/components/MoreFiltersToggle';
@@ -37,9 +40,24 @@ interface RowProps {
   isSelected: boolean;
   onPress?: (item: ScoredTerrace) => void;
   showDistance?: boolean;
+  /** True while the group-vote shortlist picker is active. */
+  isSelectingShortlist?: boolean;
+  /** True if this specific row is in the shortlist. */
+  isShortlisted?: boolean;
+  /** Called when the user long-presses to enter shortlist mode. */
+  onLongPress?: (item: ScoredTerrace) => void;
 }
 
-const Row = memo(function Row({ rank, item, isSelected, onPress, showDistance }: RowProps) {
+const Row = memo(function Row({
+  rank,
+  item,
+  isSelected,
+  onPress,
+  showDistance,
+  isSelectingShortlist,
+  isShortlisted,
+  onLongPress,
+}: RowProps) {
   const { terrace, score, distanceM } = item;
   const pct = Math.round(score * 100);
   const color = scoreToColor(score);
@@ -53,12 +71,28 @@ const Row = memo(function Row({ rank, item, isSelected, onPress, showDistance }:
     <TouchableOpacity
       onPress={() => {
         haptics.light();
-        onPress?.(item);
+        if (isSelectingShortlist) {
+          // In shortlist mode, taps toggle selection rather than opening the detail sheet.
+          onLongPress?.(item);
+        } else {
+          onPress?.(item);
+        }
+      }}
+      onLongPress={() => {
+        haptics.medium();
+        onLongPress?.(item);
       }}
       activeOpacity={0.6}
       style={[styles.row, isSelected && styles.rowSelected]}
     >
-      <Text style={styles.rank}>{rank}</Text>
+      {/* In shortlist mode, replace rank number with a checkbox. */}
+      {isSelectingShortlist ? (
+        <View style={[styles.checkbox, isShortlisted && styles.checkboxChecked]}>
+          {isShortlisted ? <Text style={styles.checkboxTick}>✓</Text> : null}
+        </View>
+      ) : (
+        <Text style={styles.rank}>{rank}</Text>
+      )}
       <View style={styles.rowBody}>
         <Text style={styles.name} numberOfLines={1}>
           {terrace.name}
@@ -95,6 +129,16 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   const clearAreas = useAreaStore((s) => s.clear);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const listRef = useRef<BottomSheetFlatListMethods>(null);
+
+  // Shortlist ("Terras?") state — multi-select for group vote.
+  const shortlistIds = useShortlistStore((s) => s.selectedIds);
+  const isSelectingShortlist = useShortlistStore((s) => s.isSelecting);
+  const toggleShortlist = useShortlistStore((s) => s.toggle);
+  const clearShortlist = useShortlistStore((s) => s.clear);
+  const enterSelectingShortlist = useShortlistStore((s) => s.enterSelecting);
+  // Memoised so renderItem's dependency array is stable — avoids re-rendering
+  // every row on every unrelated state update.
+  const shortlistSet = useMemo(() => new Set(shortlistIds), [shortlistIds]);
 
   // Secondary filter section (time sliders / search / neighborhood
   // chips) is hidden by default to give the terrace list more screen
@@ -157,6 +201,40 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   }, [clearSearch, clearAreas]);
 
   /**
+   * Long-press (or in-selection tap) handler for a terrace row.
+   * First long-press enters selection mode AND selects that terrace.
+   * Subsequent taps inside selection mode toggle the terrace.
+   */
+  const handleLongPress = useCallback(
+    (item: ScoredTerrace) => {
+      if (!isSelectingShortlist) {
+        enterSelectingShortlist();
+      }
+      toggleShortlist(item.terrace.id);
+      haptics.selection();
+    },
+    [isSelectingShortlist, enterSelectingShortlist, toggleShortlist],
+  );
+
+  /**
+   * Build URL from the current shortlist and fire the native share sheet.
+   * We look up each selected terrace's score from the ranked list at this
+   * exact moment — point-in-time snapshot, as documented in voteLink.ts.
+   */
+  const handleShareShortlist = useCallback(async () => {
+    const items = shortlistIds.flatMap((id) => {
+      const scored = ranked.find((r) => r.terrace.id === id);
+      return scored ? [{ id, score: scored.score }] : [];
+    });
+    if (items.length === 0) return;
+    const url = buildVoteUrl(items);
+    const message = t.voteShareMessage(url);
+    haptics.success();
+    clearShortlist();
+    await Share.share({ message, url });
+  }, [shortlistIds, ranked, t, clearShortlist]);
+
+  /**
    * Scroll the list so the just-shown terrace sits at the top — so when
    * the user dismisses the detail sheet, the row + its score chip is the
    * first thing they see.
@@ -211,9 +289,12 @@ export function TerraceList({ onSelect }: TerraceListProps) {
         isSelected={item.terrace.id === stickySelectedId}
         onPress={onSelect}
         showDistance={sortByDistance && coord != null}
+        isSelectingShortlist={isSelectingShortlist}
+        isShortlisted={shortlistSet.has(item.terrace.id)}
+        onLongPress={handleLongPress}
       />
     ),
-    [onSelect, stickySelectedId, sortByDistance, coord],
+    [onSelect, stickySelectedId, sortByDistance, coord, isSelectingShortlist, shortlistSet, handleLongPress],
   );
 
   // BottomSheetFlatList integrates with Gorhom's gesture system so the list
@@ -225,65 +306,104 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   // The TimeRangePicker + NeighborhoodFilter ride as a sticky header so they
   // stay pinned at the top while the list scrolls below.
   return (
-    <BottomSheetFlatList
-      ref={listRef}
-      data={ranked}
-      keyExtractor={(item) => String(item.terrace.id)}
-      renderItem={renderItem}
-      ItemSeparatorComponent={Separator}
-      contentContainerStyle={styles.listContent}
-      ListHeaderComponent={
-        <View style={styles.header}>
-          {/*
-            Two-tier header layout (v1.1 polish):
-              Tier 1 — ALWAYS VISIBLE. Decision tools the average user
-                       needs every time: which day, which time window,
-                       what's the weather, which venue type.
-              Tier 2 — COLLAPSED BEHIND TOGGLE. Refine tools used less
-                       often: time fine-tune sliders, free-text search,
-                       neighborhood multi-select.
-            User feedback was the all-expanded layout crowded the list
-            out — Tier 2 hidden by default reclaims ~190px for terraces.
-          */}
-          <DatePicker />
-          <WeatherStrip />
-          <TimeRangeQuickPicker />
-          <VenueTypeFilter />
-          <MoreFiltersToggle
-            expanded={filtersExpanded}
-            onToggle={toggleFiltersExpanded}
-          />
-          {showFilterHint && !filtersExpanded ? (
-            <HintBubble onDismiss={dismissFilterHint} style={styles.inlineHint}>
-              {t.filterHint}
-            </HintBubble>
-          ) : null}
-          {filtersExpanded ? (
-            <View style={styles.refinePanel}>
-              <TimeRangeFineTune />
-              <SearchBox />
-              <NeighborhoodFilter />
-            </View>
-          ) : null}
-        </View>
-      }
-      ListEmptyComponent={
-        <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>{emptyState.title}</Text>
-          <Text style={styles.emptyBody}>{emptyState.body}</Text>
-          <TouchableOpacity onPress={handleResetFilters} style={styles.emptyButton}>
-            <Text style={styles.emptyButtonText}>Clear filters</Text>
+    <View style={styles.container}>
+      <BottomSheetFlatList
+        ref={listRef}
+        data={ranked}
+        keyExtractor={(item) => String(item.terrace.id)}
+        renderItem={renderItem}
+        ItemSeparatorComponent={Separator}
+        contentContainerStyle={[
+          styles.listContent,
+          // Push the last rows up when the floating bar is showing, so
+          // they aren't hidden behind it.
+          isSelectingShortlist && styles.listContentWithBar,
+        ]}
+        ListHeaderComponent={
+          <View style={styles.header}>
+            {/*
+              Two-tier header layout (v1.1 polish):
+                Tier 1 — ALWAYS VISIBLE. Decision tools the average user
+                         needs every time: which day, which time window,
+                         what's the weather, which venue type.
+                Tier 2 — COLLAPSED BEHIND TOGGLE. Refine tools used less
+                         often: time fine-tune sliders, free-text search,
+                         neighborhood multi-select.
+              User feedback was the all-expanded layout crowded the list
+              out — Tier 2 hidden by default reclaims ~190px for terraces.
+            */}
+            <DatePicker />
+            <WeatherStrip />
+            <TimeRangeQuickPicker />
+            <VenueTypeFilter />
+            <MoreFiltersToggle
+              expanded={filtersExpanded}
+              onToggle={toggleFiltersExpanded}
+            />
+            {showFilterHint && !filtersExpanded ? (
+              <HintBubble onDismiss={dismissFilterHint} style={styles.inlineHint}>
+                {t.filterHint}
+              </HintBubble>
+            ) : null}
+            {filtersExpanded ? (
+              <View style={styles.refinePanel}>
+                <TimeRangeFineTune />
+                <SearchBox />
+                <NeighborhoodFilter />
+              </View>
+            ) : null}
+          </View>
+        }
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Text style={styles.emptyTitle}>{emptyState.title}</Text>
+            <Text style={styles.emptyBody}>{emptyState.body}</Text>
+            <TouchableOpacity onPress={handleResetFilters} style={styles.emptyButton}>
+              <Text style={styles.emptyButtonText}>Clear filters</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        // Header scrolls with the list so users can scroll past the filters
+        // to see more terraces. stickyHeaderIndices removed intentionally.
+        // 378 rows × ~70px = comfortably fast as a windowed FlatList; no need
+        // for heroics with FlashList until the dataset grows past ~2k.
+        windowSize={5}
+        initialNumToRender={12}
+        maxToRenderPerBatch={8}
+      />
+
+      {/*
+        Floating bottom bar — visible only while in shortlist selection mode.
+        Sits above the list (absolute, bottom-anchored) so it doesn't push
+        the FlatList upward and cause a layout shift on appear.
+        The listContent gets extra paddingBottom while this is showing so the
+        last rows don't hide behind the bar.
+      */}
+      {isSelectingShortlist ? (
+        <View style={styles.shortlistBar}>
+          <TouchableOpacity
+            onPress={clearShortlist}
+            style={styles.shortlistCancel}
+            accessibilityLabel={t.cancelShortlistA11y}
+          >
+            <Text style={styles.shortlistCancelText}>{t.cancelShortlist}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => void handleShareShortlist()}
+            style={[
+              styles.shortlistShare,
+              shortlistIds.length === 0 && styles.shortlistShareDisabled,
+            ]}
+            disabled={shortlistIds.length === 0}
+            accessibilityLabel={t.askTheGroupA11y}
+          >
+            <Text style={styles.shortlistShareText}>
+              {t.askTheGroup(shortlistIds.length)}
+            </Text>
           </TouchableOpacity>
         </View>
-      }
-      // Header scrolls with the list so users can scroll past the filters
-      // to see more terraces. stickyHeaderIndices removed intentionally.
-      // 378 rows × ~70px = comfortably fast as a windowed FlatList; no need
-      // for heroics with FlashList until the dataset grows past ~2k.
-      windowSize={5}
-      initialNumToRender={12}
-      maxToRenderPerBatch={8}
-    />
+      ) : null}
+    </View>
   );
 }
 
@@ -390,5 +510,81 @@ const styles = StyleSheet.create({
   refinePanel: {
     backgroundColor: palette.white,
     paddingBottom: spacing.sm,
+  },
+
+  // Outer wrapper needed so the floating shortlist bar can be positioned
+  // absolutely relative to the list area, not the whole screen.
+  container: {
+    flex: 1,
+  },
+  // Extra bottom padding to prevent the floating bar overlapping the last rows.
+  listContentWithBar: {
+    paddingBottom: 80,
+  },
+
+  // Checkbox shown in the rank column during shortlist selection mode.
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: radii.sm,
+    borderWidth: 2,
+    borderColor: palette.mist,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: palette.burnt,
+    borderColor: palette.burnt,
+  },
+  checkboxTick: {
+    color: palette.white,
+    fontSize: fontSizes.sm,
+    fontFamily: fonts.bodySemibold,
+  },
+
+  // Floating bar that appears at the bottom when in shortlist selection mode.
+  shortlistBar: {
+    position: 'absolute',
+    bottom: spacing.lg,
+    left: spacing.lg,
+    right: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: palette.ink,
+    borderRadius: radii.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    // Warm shadow so the bar reads as elevated over the list.
+    shadowColor: palette.ink,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  shortlistCancel: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  shortlistCancelText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.md,
+    color: palette.mistDeep,
+  },
+  shortlistShare: {
+    flex: 1,
+    backgroundColor: palette.burnt,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+  },
+  shortlistShareDisabled: {
+    opacity: 0.4,
+  },
+  shortlistShareText: {
+    fontFamily: fonts.displayBold,
+    fontSize: fontSizes.md,
+    color: palette.white,
   },
 });
