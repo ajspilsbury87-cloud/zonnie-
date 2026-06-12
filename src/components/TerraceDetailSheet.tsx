@@ -38,7 +38,15 @@ import {
 import { SunTimeline } from '@/src/components/SunTimeline';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { getTreesForTerrace } from '@/src/data/trees';
-import { computeRangeScore, computeSunScore, findBestWindow } from '@/src/engines/scoring';
+import { formatInTimeZone } from 'date-fns-tz';
+
+import {
+  AMSTERDAM_TZ,
+  computeRangeScore,
+  computeSunScore,
+  findBestWindow,
+} from '@/src/engines/scoring';
+import { sundownerMinutes } from '@/src/engines/golden';
 import { bandForScore } from '@/src/engines/bands';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
@@ -258,7 +266,7 @@ export function TerraceDetailSheet() {
    * e.g. a north-facing terrace on an overcast day. In that case the
    * banner is hidden entirely.
    */
-  const bestWindow = useMemo(() => {
+  const hourlyScores = useMemo(() => {
     if (!terrace) return null;
     const buildings = getBuildingsForTerrace(terrace.id);
     const trees = getTreesForTerrace(terrace.id);
@@ -266,7 +274,7 @@ export function TerraceDetailSheet() {
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
     // Compute the full 24-hour score array (same as SunTimeline does internally).
-    const hourlyScores = Array.from({ length: 24 }, (_, h) =>
+    return Array.from({ length: 24 }, (_, h) =>
       computeSunScore(
         terrace,
         h,
@@ -277,8 +285,28 @@ export function TerraceDetailSheet() {
         trees,
       ).score,
     );
-    return findBestWindow(hourlyScores);
   }, [terrace, dateOffset, weatherProfile, weatherByDate]);
+
+  const bestWindow = useMemo(
+    () => (hourlyScores ? findBestWindow(hourlyScores) : null),
+    [hourlyScores],
+  );
+
+  /**
+   * Sundowner countdown — minutes until the sun leaves this terrace,
+   * shown only for TODAY and only when the drop is ≤ 90 min away.
+   * "Now" is read once per render; the sheet re-renders on open and on
+   * any store change, which keeps the number fresh enough for a pill
+   * whose resolution is minutes.
+   */
+  const sundownerMin = useMemo(() => {
+    if (!hourlyScores || dateOffset !== 0) return null;
+    const now = new Date();
+    const nowHour =
+      parseInt(formatInTimeZone(now, AMSTERDAM_TZ, 'HH'), 10) +
+      parseInt(formatInTimeZone(now, AMSTERDAM_TZ, 'mm'), 10) / 60;
+    return sundownerMinutes(hourlyScores, nowHour);
+  }, [hourlyScores, dateOffset]);
 
   const setRange = useTimeStore((s) => s.setRange);
 
@@ -500,6 +528,17 @@ export function TerraceDetailSheet() {
                   <Text style={styles.bestWindowScoreUnit}>%</Text>
                 </View>
               </Pressable>
+            ) : null}
+
+            {/* Sundowner countdown — urgency pill when the sun leaves this
+                terrace within 90 minutes (today only). The fact someone
+                announces to the table. */}
+            {sundownerMin != null ? (
+              <View style={styles.sundownerPill}>
+                <Text style={styles.sundownerText}>
+                  {t.sundownerLeaves(sundownerMin)}
+                </Text>
+              </View>
             ) : null}
 
             <View style={styles.infoChipRow}>
@@ -1130,6 +1169,24 @@ const styles = StyleSheet.create({
     color: palette.white,
     marginLeft: 1,
     marginBottom: 2,
+  },
+  // Sundowner countdown — amber urgency pill. Mustard ground + ink text
+  // so it reads as "warm warning", distinct from the cream best-window
+  // card above it and the neutral info chips below.
+  sundownerPill: {
+    alignSelf: 'flex-start',
+    marginTop: spacing.sm,
+    marginHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: palette.mustard,
+  },
+  sundownerText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    lineHeight: Math.round(fontSizes.sm * 1.3),
+    color: palette.ink,
   },
   // Share button — full-width secondary, sits between the two-up row and
   // the primary "Get Directions" CTA. Peach border + ink text so it reads

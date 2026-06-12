@@ -69,6 +69,7 @@ export const strings = {
     // Terrace detail sheet
     sunToday: 'Zon vandaag',
     bestVisitTime: 'Beste bezoektijd',
+    sundownerLeaves: (min: number) => `☀️ Zon verlaat dit terras over ${min} min`,
     sunBuilding: '↑ Zon in opkomst',
     sunFading: '↓ Zon neemt af',
     sunHolding: '→ Zon stabiel',
@@ -289,6 +290,7 @@ export const strings = {
     // Terrace detail sheet
     sunToday: 'Sun today',
     bestVisitTime: 'Best time to visit',
+    sundownerLeaves: (min: number) => `☀️ Sun leaves this terrace in ${min} min`,
     sunBuilding: '↑ Sun building',
     sunFading: '↓ Sun fading',
     sunHolding: '→ Sun holding',
