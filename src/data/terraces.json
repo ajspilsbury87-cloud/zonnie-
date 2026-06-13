@@ -17075,7 +17075,7 @@
     "lat": 52.3644131,
     "lng": 4.858970300000001,
     "area": "West",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "All-day café, waterside terrace, evening sun, boat-reachable",
     "address": "Postjesweg 1, 1057 DT Amsterdam, Netherlands",
@@ -17084,7 +17084,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJT9BL4iLjxUcRbF-9yrU42oQ",
     "googleRating": 4.4,
-    "googleReviewCount": 32
+    "googleReviewCount": 32,
+    "openness": 0.448
   },
   {
     "id": 1417,
@@ -17092,7 +17093,7 @@
     "lat": 52.352782399999995,
     "lng": 4.8899634999999995,
     "area": "De Pijp",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Scandi-Indonesian fusion, small outdoor benches on Ceintuurbaan",
     "address": "Ceintuurbaan 71 H, 1072 EW Amsterdam, Netherlands",
@@ -17101,7 +17102,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJzdWdNHUJxkcRrOlwURA6Z-o",
     "googleRating": 4.5,
-    "googleReviewCount": 279
+    "googleReviewCount": 279,
+    "openness": 0.827
   },
   {
     "id": 1418,
@@ -17109,7 +17111,7 @@
     "lat": 52.3881264,
     "lng": 4.8899512,
     "area": "West",
-    "facing": "S",
+    "facing": "E",
     "capacity": "M",
     "vibe": "French by Caron family, IJ + drawbridge view, Zandhoek terrace",
     "address": "Zandhoek 14, 1013 KT Amsterdam, Netherlands",
@@ -17118,7 +17120,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJFel0fRYJxkcR5itPZDja0t0",
     "googleRating": 4.8,
-    "googleReviewCount": 244
+    "googleReviewCount": 244,
+    "openness": 0.497
   },
   {
     "id": 1419,
@@ -17135,7 +17138,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJ6XBeeuoJxkcRHBnYtomuArg",
     "googleRating": 4.3,
-    "googleReviewCount": 893
+    "googleReviewCount": 893,
+    "openness": 0.361
   },
   {
     "id": 1420,
@@ -17152,7 +17156,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJfd0TMAwJxkcRauYYoF90hQQ",
     "googleRating": 4.3,
-    "googleReviewCount": 475
+    "googleReviewCount": 475,
+    "openness": 0.377
   },
   {
     "id": 1421,
@@ -17169,7 +17174,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJy3zD9cIJxkcRxfIlpjk47JQ",
     "googleRating": 4.5,
-    "googleReviewCount": 302
+    "googleReviewCount": 302,
+    "openness": 0.691
   },
   {
     "id": 1422,
@@ -17186,7 +17192,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJdSrEBoAJxkcRZI_FkUichxk",
     "googleRating": 4,
-    "googleReviewCount": 46
+    "googleReviewCount": 46,
+    "openness": 0.512
   },
   {
     "id": 1423,
@@ -17194,7 +17201,7 @@
     "lat": 52.3906182,
     "lng": 4.8740746,
     "area": "Spaarndammer",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "In-house roasts, sunny Spaarndammer terrace, opened Nov 2025",
     "address": "Oostzaanstraat 96, 1013 WN Amsterdam, Netherlands",
@@ -17206,7 +17213,8 @@
     "googleReviewCount": 93,
     "category": [
       "coffee"
-    ]
+    ],
+    "openness": 1
   },
   {
     "id": 1424,
@@ -17214,7 +17222,7 @@
     "lat": 52.3977612,
     "lng": 4.8732372999999995,
     "area": "Houthavens",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Floating Vietnamese coffee house, waterfront terrace",
     "address": "Moermanskkade 4, 1013 BC Amsterdam, Netherlands",
@@ -17226,7 +17234,8 @@
     "googleReviewCount": 327,
     "category": [
       "coffee"
-    ]
+    ],
+    "openness": 0.817
   },
   {
     "id": 1425,
@@ -17234,7 +17243,7 @@
     "lat": 52.3662698,
     "lng": 4.8822697999999995,
     "area": "Centrum",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Sommelier wine cellar-bar, small canal terrace under big tree",
     "address": "Prinsengracht 422, 1016 JC Amsterdam, Netherlands",
@@ -17243,7 +17252,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJOynuceEJxkcRx6D0xVq7Wt4",
     "googleRating": 4.8,
-    "googleReviewCount": 336
+    "googleReviewCount": 336,
+    "openness": 0.588
   },
   {
     "id": 1426,
@@ -17251,7 +17261,7 @@
     "lat": 52.3577937,
     "lng": 4.913378,
     "area": "Oost",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Coffee by day, wine by night, Star Wine List 2025 gold, corner terrace",
     "address": "Camperstraat 48-50, 1091 CP Amsterdam, Netherlands",
@@ -17263,7 +17273,8 @@
     "googleReviewCount": 1040,
     "category": [
       "coffee"
-    ]
+    ],
+    "openness": 0.545
   },
   {
     "id": 1427,
@@ -17280,7 +17291,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJ9xyKZpzhxUcR7graspftNwc",
     "googleRating": 3.5,
-    "googleReviewCount": 337
+    "googleReviewCount": 337,
+    "openness": 0.996
   },
   {
     "id": 1428,
@@ -17297,7 +17309,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJnzJ_tjkLxkcRxx2dMCzrxCk",
     "googleRating": 4.1,
-    "googleReviewCount": 258
+    "googleReviewCount": 258,
+    "openness": 1
   },
   {
     "id": 1429,
@@ -17305,7 +17318,7 @@
     "lat": 52.3112205,
     "lng": 4.9449841,
     "area": "Zuidoost",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Ghanaian/West-African flavours, waterside terrace in Zuidoost",
     "address": "De Corridor 2, 1101 BD Amsterdam, Netherlands",
@@ -17314,7 +17327,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJafAK4_ILxkcRGIc2zwtUM_g",
     "googleRating": 3.7,
-    "googleReviewCount": 282
+    "googleReviewCount": 282,
+    "openness": 0.665
   },
   {
     "id": 1430,
@@ -17322,7 +17336,7 @@
     "lat": 52.3145394,
     "lng": 4.9602132,
     "area": "Zuidoost",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Theatre café terrace at Nelson Mandelapark edge, seasonal",
     "address": "Anton de Komplein 240, 1102 DR Amsterdam, Netherlands",
@@ -17331,7 +17345,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJ26nQOYkLxkcRY_sjt0CAcSs",
     "googleRating": 4.4,
-    "googleReviewCount": 516
+    "googleReviewCount": 516,
+    "openness": 0.872
   },
   {
     "id": 1431,
@@ -17348,7 +17363,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJtW22IK_jxUcR0I6IaaQ52zI",
     "googleRating": 3.9,
-    "googleReviewCount": 594
+    "googleReviewCount": 594,
+    "openness": 0.856
   },
   {
     "id": 1432,
@@ -17356,7 +17372,7 @@
     "lat": 52.3729223,
     "lng": 4.8383473,
     "area": "Nieuw-West",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Community café, sun-drenched terrace in Nieuw-West",
     "address": "Jan van Galenstraat 418 A, 1061 AZ Amsterdam, Netherlands",
@@ -17368,7 +17384,8 @@
     "googleReviewCount": 791,
     "category": [
       "coffee"
-    ]
+    ],
+    "openness": 0.973
   },
   {
     "id": 1433,
@@ -17385,7 +17402,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJec01r5DjxUcRZKRSsnsFsp4",
     "googleRating": 4.6,
-    "googleReviewCount": 1715
+    "googleReviewCount": 1715,
+    "openness": 1
   },
   {
     "id": 1434,
@@ -17402,7 +17420,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJFwLKlZrjxUcRkVDbZvjgbek",
     "googleRating": 4.6,
-    "googleReviewCount": 76
+    "googleReviewCount": 76,
+    "openness": 1
   },
   {
     "id": 1435,
@@ -17419,7 +17438,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJJ-S23XoJxkcRDsSNU2mgH34",
     "googleRating": 4.7,
-    "googleReviewCount": 3623
+    "googleReviewCount": 3623,
+    "openness": 0.988
   },
   {
     "id": 1436,
@@ -17427,7 +17447,7 @@
     "lat": 52.3742461,
     "lng": 4.8560861,
     "area": "Bos en Lommer",
-    "facing": "S",
+    "facing": "SW",
     "capacity": "M",
     "vibe": "Pintxos + cocktails, waterfront terrace on Jan van Galenstraat",
     "address": "Jan van Galenstraat 169, 1056 BR Amsterdam, Netherlands",
@@ -17436,7 +17456,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJWSSyCTnjxUcRH8CPyIVuBps",
     "googleRating": 4.5,
-    "googleReviewCount": 341
+    "googleReviewCount": 341,
+    "openness": 0.389
   },
   {
     "id": 1437,
@@ -17444,7 +17465,7 @@
     "lat": 52.363622299999996,
     "lng": 4.935834,
     "area": "Indische Buurt",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Colourful all-day bar with a lively Javastraat street terrace",
     "address": "Javastraat 88-90, 1094 LN Amsterdam, Netherlands",
@@ -17453,7 +17474,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJ29HIP20JxkcR5fR0alvUGz0",
     "googleRating": 4.3,
-    "googleReviewCount": 1164
+    "googleReviewCount": 1164,
+    "openness": 0.557
   },
   {
     "id": 1438,
@@ -17461,7 +17483,7 @@
     "lat": 52.3635174,
     "lng": 4.9404041,
     "area": "Indische Buurt",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Levantine small plates + natural wine, sunny Javaplein terrace",
     "address": "Javaplein 25, 1095 HR Amsterdam, Netherlands",
@@ -17470,7 +17492,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJbYrXFc8JxkcRrBc2JW844uw",
     "googleRating": 4.6,
-    "googleReviewCount": 268
+    "googleReviewCount": 268,
+    "openness": 0.568
   },
   {
     "id": 1439,
@@ -17478,7 +17501,7 @@
     "lat": 52.331392099999995,
     "lng": 4.8790056,
     "area": "Buitenveldert",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Large mall-square terrace, popular morning coffee spot",
     "address": "Van Leijenberghlaan 130, 1082 DC Amsterdam, Netherlands",
@@ -17490,7 +17513,8 @@
     "googleReviewCount": 633,
     "category": [
       "coffee"
-    ]
+    ],
+    "openness": 0.917
   },
   {
     "id": 1440,
@@ -17498,7 +17522,7 @@
     "lat": 52.335625099999994,
     "lng": 4.8730915999999995,
     "area": "Zuidas",
-    "facing": "S",
+    "facing": "All",
     "capacity": "L",
     "vibe": "German biergarten vibe on Gershwinplein, lively lunch terrace",
     "address": "George Gershwinplein 6, 1082 MV Amsterdam, Netherlands",
@@ -17507,7 +17531,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJlfooqOkJxkcRVCLmV3JTvWk",
     "googleRating": 4.5,
-    "googleReviewCount": 2313
+    "googleReviewCount": 2313,
+    "openness": 0.797
   },
   {
     "id": 1441,
@@ -17515,7 +17540,7 @@
     "lat": 52.373423499999994,
     "lng": 4.9601767,
     "area": "Zeeburgereiland",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Cultural anchor: bar + artist workspaces in Sluisbuurt",
     "address": "Rudi van Dantzigstraat 1, 1095 PK Amsterdam, Netherlands",
@@ -17524,7 +17549,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJyXXwyfsJxkcR54XmJHkdzOM",
     "googleRating": 4.5,
-    "googleReviewCount": 152
+    "googleReviewCount": 152,
+    "openness": 0.991
   },
   {
     "id": 1442,
@@ -17541,7 +17567,8 @@
     "verifiedAt": "2026-06-12T07:05:00.810Z",
     "placeId": "ChIJG5-iRwjixUcRnGBE626hhx0",
     "googleRating": 4.3,
-    "googleReviewCount": 219
+    "googleReviewCount": 219,
+    "openness": 0.943
   },
   {
     "id": 1443,
@@ -17549,7 +17576,7 @@
     "lat": 52.366902599999996,
     "lng": 4.9272032999999995,
     "area": "Oost",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Waterside ~100-seat terrace facing De Gooyer windmill",
     "address": "Zeeburgerpad 1, 1018 AH Amsterdam, Netherlands",
@@ -17558,7 +17585,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJ-85XZgsJxkcRNvLvjwNntPk",
     "googleRating": 4.3,
-    "googleReviewCount": 814
+    "googleReviewCount": 814,
+    "openness": 0.704
   },
   {
     "id": 1444,
@@ -17575,7 +17603,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJwVJ0z5AOxkcRPR7qXaxqZX4",
     "googleRating": 4.1,
-    "googleReviewCount": 376
+    "googleReviewCount": 376,
+    "openness": 0.781
   },
   {
     "id": 1445,
@@ -17583,7 +17612,7 @@
     "lat": 52.3624702,
     "lng": 4.921960599999999,
     "area": "Oost",
-    "facing": "S",
+    "facing": "All",
     "capacity": "L",
     "vibe": "Monumental grand café inside Tropen museum, huge Oosterpark terrace",
     "address": "Mauritskade 64, 1092 CK Amsterdam, Netherlands",
@@ -17592,7 +17621,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJ-2qUpHUJxkcRDMbYcHVqOKE",
     "googleRating": 4,
-    "googleReviewCount": 207
+    "googleReviewCount": 207,
+    "openness": 0.863
   },
   {
     "id": 1446,
@@ -17600,7 +17630,7 @@
     "lat": 52.3490855,
     "lng": 4.937587700000001,
     "area": "Watergraafsmeer",
-    "facing": "S",
+    "facing": "All",
     "capacity": "L",
     "vibe": "120-year-old nostalgic grand café, sunny street terrace on Middenweg",
     "address": "Middenweg 116, 1097 BT Amsterdam, Netherlands",
@@ -17609,7 +17639,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJ3SgxAWQJxkcRr5YY99jYS4o",
     "googleRating": 4,
-    "googleReviewCount": 513
+    "googleReviewCount": 513,
+    "openness": 0.918
   },
   {
     "id": 1447,
@@ -17626,7 +17657,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJteIIqGnixUcRxgUrapQOtO8",
     "googleRating": 4.2,
-    "googleReviewCount": 4506
+    "googleReviewCount": 4506,
+    "openness": 0.878
   },
   {
     "id": 1448,
@@ -17634,7 +17666,7 @@
     "lat": 52.334164099999995,
     "lng": 4.863878,
     "area": "Buitenveldert",
-    "facing": "S",
+    "facing": "All",
     "capacity": "L",
     "vibe": "VU campus square terrace + roof terrace, popular student hangout",
     "address": "De Boelelaan 1111G, 1081 HV Amsterdam, Netherlands",
@@ -17643,7 +17675,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJjwNJsAwLxkcRi27GkBEuzwo",
     "googleRating": 4.2,
-    "googleReviewCount": 113
+    "googleReviewCount": 113,
+    "openness": 0.906
   },
   {
     "id": 1449,
@@ -17651,7 +17684,7 @@
     "lat": 52.3882639,
     "lng": 4.8367539,
     "area": "Sloterdijk",
-    "facing": "S",
+    "facing": "All",
     "capacity": "L",
     "vibe": "Big open station-square terrace at Sloterdijk station",
     "address": "Orlyplein 150, 1043 DV Amsterdam, Netherlands",
@@ -17660,7 +17693,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJbam851jixUcREm-t7Zmmqjw",
     "googleRating": 4.1,
-    "googleReviewCount": 1287
+    "googleReviewCount": 1287,
+    "openness": 0.847
   },
   {
     "id": 1450,
@@ -17668,7 +17702,7 @@
     "lat": 52.388987799999995,
     "lng": 4.905255599999999,
     "area": "Noord",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "15 taps, south-facing sun terrace, relocated to Asterweg 2 (2025)",
     "address": "Asterweg 2, 1031 HN Amsterdam, Netherlands",
@@ -17677,7 +17711,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJFYL9UqoJxkcRjn3IfdDjqnU",
     "googleRating": 4.8,
-    "googleReviewCount": 393
+    "googleReviewCount": 393,
+    "openness": 0.629
   },
   {
     "id": 1451,
@@ -17685,7 +17720,7 @@
     "lat": 52.3434384,
     "lng": 4.914918000000001,
     "area": "Amstelkwartier",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Affordable riverside all-day café, Sunday brunch, Amstel terrace",
     "address": "Amstelboulevard 1, 1096 HH Amsterdam, Netherlands",
@@ -17694,7 +17729,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJVVVxlCoKxkcR6Dsy49SRGcE",
     "googleRating": 4.2,
-    "googleReviewCount": 597
+    "googleReviewCount": 597,
+    "openness": 0.751
   },
   {
     "id": 1452,
@@ -17702,7 +17738,7 @@
     "lat": 52.3413742,
     "lng": 4.799673299999999,
     "area": "Nieuw-West",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Village café on Sloten church square, family-run neighbourhood gem",
     "address": "Sloterweg 1209, 1066 CG Amsterdam, Netherlands",
@@ -17711,7 +17747,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJi9vGZhPhxUcRJvkasP6htPo",
     "googleRating": 4.5,
-    "googleReviewCount": 48
+    "googleReviewCount": 48,
+    "openness": 0.985
   },
   {
     "id": 1453,
@@ -17719,7 +17756,7 @@
     "lat": 52.330605600000005,
     "lng": 4.8789298,
     "area": "Buitenveldert",
-    "facing": "S",
+    "facing": "All",
     "capacity": "L",
     "vibe": "Big sunny Gelderlandplein mall-square terrace",
     "address": "Van Leijenberghlaan 252, 1082 DC Amsterdam, Netherlands",
@@ -17728,7 +17765,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJM9gcgxEKxkcR__N2Y1nPaMQ",
     "googleRating": 4,
-    "googleReviewCount": 738
+    "googleReviewCount": 738,
+    "openness": 0.968
   },
   {
     "id": 1454,
@@ -17736,7 +17774,7 @@
     "lat": 52.363954799999995,
     "lng": 4.9384996,
     "area": "Indische Buurt",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Cosy brown café overlooking the Javaplein square",
     "address": "Borneostraat 112, 1094 CR Amsterdam, Netherlands",
@@ -17745,7 +17783,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJITcixGwJxkcRKkWPJfLT-l4",
     "googleRating": 4.4,
-    "googleReviewCount": 65
+    "googleReviewCount": 65,
+    "openness": 0.346
   },
   {
     "id": 1455,
@@ -17753,7 +17792,7 @@
     "lat": 52.3760183,
     "lng": 4.8669888,
     "area": "West",
-    "facing": "S",
+    "facing": "W",
     "capacity": "L",
     "vibe": "Beer hall + biergarten, 10 taps (Butcher's Tears brand)",
     "address": "Jan van Galenstraat 10, 1051 KM Amsterdam, Netherlands",
@@ -17762,7 +17801,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJ0YE_3AXjxUcRCYS1Mj_i900",
     "googleRating": 4.7,
-    "googleReviewCount": 46
+    "googleReviewCount": 46,
+    "openness": 0.365
   },
   {
     "id": 1456,
@@ -17770,7 +17810,7 @@
     "lat": 52.3383095,
     "lng": 4.920840699999999,
     "area": "Amstelkwartier",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Dutch cuisine, public terrace, rooftop-greenhouse produce (QO hotel)",
     "address": "Amstelvlietstraat 4a, 1096 GG Amsterdam, Netherlands",
@@ -17779,7 +17819,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJMcwvkNMLxkcR20S2qKt3JCw",
     "googleRating": 4.1,
-    "googleReviewCount": 122
+    "googleReviewCount": 122,
+    "openness": 0.97
   },
   {
     "id": 1457,
@@ -17796,7 +17837,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJXYL8HvoPxkcRk-rERWw2pOQ",
     "googleRating": 4.1,
-    "googleReviewCount": 300
+    "googleReviewCount": 300,
+    "openness": 1
   },
   {
     "id": 1458,
@@ -17804,7 +17846,7 @@
     "lat": 52.354653299999995,
     "lng": 4.8892676,
     "area": "De Pijp",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "French bistro, white-linen outside terrace on Albert Cuyp",
     "address": "Albert Cuypstraat 58-60, 1072 CV Amsterdam, Netherlands",
@@ -17813,7 +17855,8 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJv9bC9fIJxkcR6yB8g18FHJk",
     "googleRating": 4.4,
-    "googleReviewCount": 533
+    "googleReviewCount": 533,
+    "openness": 0.437
   },
   {
     "id": 1459,
@@ -17821,7 +17864,7 @@
     "lat": 52.3128252,
     "lng": 4.9448913999999995,
     "area": "Zuidoost",
-    "facing": "S",
+    "facing": "All",
     "capacity": "M",
     "vibe": "Pan-Asian glass pavilion on the ArenA boulevard terrace",
     "address": "Johan Cruijff Boulevard 155, 1101 EJ Amsterdam, Netherlands",
@@ -17830,6 +17873,7 @@
     "verifiedAt": "2026-06-12T07:08:01.317Z",
     "placeId": "ChIJyx8-y5ALxkcRiMIAE6Ble5I",
     "googleRating": 3.7,
-    "googleReviewCount": 3299
+    "googleReviewCount": 3299,
+    "openness": 0.763
   }
 ]
