@@ -33,6 +33,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 
 import { TerraceList } from '@/src/components/TerraceList';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { useShortlistStore } from '@/src/store/shortlistStore';
 import type { ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { palette, radii } from '@/src/theme/tokens';
 
@@ -50,6 +51,14 @@ export function MainSheet({ onSelect }: MainSheetProps) {
   // Subscribe to panTo; on transition null → non-null, snap to index 0.
   const panTo = useSelectionStore((s) => s.panTo);
 
+  // Group-vote shortlist mode. The floating "Ask the group" bar is rendered
+  // absolute-bottom inside the sheet content, which Gorhom lays out at the
+  // MAX snap height — so at the 60% peek it sits below the fold and the user
+  // can't see it after selecting terraces. Expanding to full (index 2) when
+  // selection mode turns on brings the bar into view (and gives the full list
+  // to pick from, which is what you want while shortlisting anyway).
+  const isSelectingShortlist = useShortlistStore((s) => s.isSelecting);
+
   const handleSelect = useCallback(
     (item: ScoredTerrace) => {
       onSelect?.(item);
@@ -63,12 +72,25 @@ export function MainSheet({ onSelect }: MainSheetProps) {
     }
   }, [panTo]);
 
+  useEffect(() => {
+    if (isSelectingShortlist) {
+      ref.current?.snapToIndex(2);
+    }
+  }, [isSelectingShortlist]);
+
   return (
     <BottomSheet
       ref={ref}
       snapPoints={snapPoints}
       index={1}
       enableDynamicSizing={false}
+      // Keyboard handling for the in-header search field (a BottomSheetTextInput).
+      // Without this the keyboard covered the bottom of the list and the scroll
+      // extent couldn't reach past it. "extend" gives the list the full sheet
+      // height while typing; "restore" returns to the prior snap on dismiss.
+      keyboardBehavior="extend"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
       handleIndicatorStyle={styles.handle}
       backgroundStyle={styles.background}
     >

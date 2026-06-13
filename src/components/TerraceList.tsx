@@ -370,6 +370,11 @@ export function TerraceList({ onSelect }: TerraceListProps) {
         windowSize={5}
         initialNumToRender={12}
         maxToRenderPerBatch={8}
+        // Dragging the list dismisses the search keyboard so the full set of
+        // filtered results is reachable (previously the keyboard blocked the
+        // bottom of the list). `handled` keeps row taps working while it's up.
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
       />
 
       {/*
