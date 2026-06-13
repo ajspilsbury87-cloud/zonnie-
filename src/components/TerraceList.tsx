@@ -1,10 +1,9 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Share, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 
 import { useShortlistStore } from '@/src/store/shortlistStore';
-import { buildVoteUrl } from '@/src/lib/voteLink';
 
 import { DatePicker } from '@/src/components/DatePicker';
 import { MoreFiltersToggle } from '@/src/components/MoreFiltersToggle';
@@ -134,7 +133,6 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   const shortlistIds = useShortlistStore((s) => s.selectedIds);
   const isSelectingShortlist = useShortlistStore((s) => s.isSelecting);
   const toggleShortlist = useShortlistStore((s) => s.toggle);
-  const clearShortlist = useShortlistStore((s) => s.clear);
   const enterSelectingShortlist = useShortlistStore((s) => s.enterSelecting);
   // Memoised so renderItem's dependency array is stable — avoids re-rendering
   // every row on every unrelated state update.
@@ -215,24 +213,6 @@ export function TerraceList({ onSelect }: TerraceListProps) {
     },
     [isSelectingShortlist, enterSelectingShortlist, toggleShortlist],
   );
-
-  /**
-   * Build URL from the current shortlist and fire the native share sheet.
-   * We look up each selected terrace's score from the ranked list at this
-   * exact moment — point-in-time snapshot, as documented in voteLink.ts.
-   */
-  const handleShareShortlist = useCallback(async () => {
-    const items = shortlistIds.flatMap((id) => {
-      const scored = ranked.find((r) => r.terrace.id === id);
-      return scored ? [{ id, score: scored.score }] : [];
-    });
-    if (items.length === 0) return;
-    const url = buildVoteUrl(items);
-    const message = t.voteShareMessage(url);
-    haptics.success();
-    clearShortlist();
-    await Share.share({ message, url });
-  }, [shortlistIds, ranked, t, clearShortlist]);
 
   /**
    * Scroll the list so the just-shown terrace sits at the top — so when
@@ -376,38 +356,6 @@ export function TerraceList({ onSelect }: TerraceListProps) {
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
       />
-
-      {/*
-        Floating bottom bar — visible only while in shortlist selection mode.
-        Sits above the list (absolute, bottom-anchored) so it doesn't push
-        the FlatList upward and cause a layout shift on appear.
-        The listContent gets extra paddingBottom while this is showing so the
-        last rows don't hide behind the bar.
-      */}
-      {isSelectingShortlist ? (
-        <View style={styles.shortlistBar}>
-          <TouchableOpacity
-            onPress={clearShortlist}
-            style={styles.shortlistCancel}
-            accessibilityLabel={t.cancelShortlistA11y}
-          >
-            <Text style={styles.shortlistCancelText}>{t.cancelShortlist}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => void handleShareShortlist()}
-            style={[
-              styles.shortlistShare,
-              shortlistIds.length === 0 && styles.shortlistShareDisabled,
-            ]}
-            disabled={shortlistIds.length === 0}
-            accessibilityLabel={t.askTheGroupA11y}
-          >
-            <Text style={styles.shortlistShareText}>
-              {t.askTheGroup(shortlistIds.length)}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -517,16 +465,14 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
   },
 
-  // Outer wrapper needed so the floating shortlist bar can be positioned
-  // absolutely relative to the list area, not the whole screen.
   container: {
     flex: 1,
   },
-  // Extra bottom padding to prevent the floating bar overlapping the last rows.
+  // Extra bottom padding to prevent the screen-level ShortlistBar overlay
+  // from covering the last rows when shortlist selection mode is active.
   listContentWithBar: {
     paddingBottom: 80,
   },
-
   // Checkbox shown in the rank column during shortlist selection mode.
   checkbox: {
     width: 24,
@@ -547,49 +493,4 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemibold,
   },
 
-  // Floating bar that appears at the bottom when in shortlist selection mode.
-  shortlistBar: {
-    position: 'absolute',
-    bottom: spacing.lg,
-    left: spacing.lg,
-    right: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: palette.ink,
-    borderRadius: radii.lg,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    // Warm shadow so the bar reads as elevated over the list.
-    shadowColor: palette.ink,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  shortlistCancel: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-  },
-  shortlistCancelText: {
-    fontFamily: fonts.bodySemibold,
-    fontSize: fontSizes.md,
-    color: palette.mistDeep,
-  },
-  shortlistShare: {
-    flex: 1,
-    backgroundColor: palette.burnt,
-    borderRadius: radii.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-  },
-  shortlistShareDisabled: {
-    opacity: 0.4,
-  },
-  shortlistShareText: {
-    fontFamily: fonts.displayBold,
-    fontSize: fontSizes.md,
-    color: palette.white,
-  },
 });
