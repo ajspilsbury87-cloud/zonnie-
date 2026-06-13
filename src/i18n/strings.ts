@@ -117,6 +117,24 @@ export const strings = {
       `🇳🇱 Nederland – ${opponent} ${flag} vanavond ${time} · vind je scherm-terras`,
     wcBannerLateNight: (flag: string, opponent: string, time: string) =>
       `🇳🇱 Nederland – ${opponent} ${flag} vannacht ${time} · vind je scherm-terras`,
+    // Detail-sheet World Cup section headers (by tier).
+    // 'confirmed' — sourced from the venue's own website/socials.
+    // 'likely'    — listed in a credible guide but not first-party confirmed.
+    // 'fallback'  — screen terrace; we infer they'll show Oranje, not confirmed.
+    wcShowingHere: '📺 WK kijken hier',
+    wcLikelyListed: '📺 Vermoedelijk WK hier',
+    wcBigScreen: '📺 Groot scherm',
+    // Coverage body lines.
+    wcAllMatches: 'Toont alle WK-wedstrijden',
+    wcOranjeMatches: 'Toont de Oranje WK-wedstrijden',
+    // Fallback body — reads as a likelihood, never a venue promise.
+    wcFallbackBody: 'Vermoedelijk Oranje-wedstrijden op het scherm',
+    // Single fixture line — flag + opponent + date + time.
+    // e.g. "🇯🇵 vs Japan · za 14 jun · 22:00"
+    wcFixture: (flag: string, opponent: string, dateLabel: string, time: string) =>
+      `${flag} vs ${opponent} · ${dateLabel} · ${time}`,
+    // Source / citation link label.
+    wcSource: 'Bron',
 
     // Search box
     searchPlaceholder: 'Zoek terrassen, vibes, adressen…',
@@ -356,6 +374,21 @@ export const strings = {
       `🇳🇱 Netherlands – ${opponent} ${flag} tonight ${time} · find your screen terrace`,
     wcBannerLateNight: (flag: string, opponent: string, time: string) =>
       `🇳🇱 Netherlands – ${opponent} ${flag} late-night ${time} · find your screen terrace`,
+    // Detail-sheet World Cup section headers (by tier).
+    wcShowingHere: '📺 Showing the World Cup here',
+    wcLikelyListed: '📺 Likely showing the World Cup',
+    wcBigScreen: '📺 Big screen venue',
+    // Coverage body lines.
+    wcAllMatches: 'Showing all World Cup matches',
+    wcOranjeMatches: 'Showing the Dutch World Cup matches',
+    // Fallback body — reads as a likelihood, never a venue promise.
+    wcFallbackBody: 'Likely showing the Oranje matches on the screen',
+    // Single fixture line — flag + opponent + date + time.
+    // e.g. "🇯🇵 vs Japan · Sat 14 Jun · 22:00"
+    wcFixture: (flag: string, opponent: string, dateLabel: string, time: string) =>
+      `${flag} vs ${opponent} · ${dateLabel} · ${time}`,
+    // Source / citation link label.
+    wcSource: 'Source',
 
     // Search box
     searchPlaceholder: 'Search terraces, vibes, addresses…',
