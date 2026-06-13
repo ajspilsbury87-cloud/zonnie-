@@ -48,8 +48,9 @@ import {
 } from '@/src/engines/scoring';
 import { sundownerMinutes } from '@/src/engines/golden';
 import { bandForScore } from '@/src/engines/bands';
+import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
 import { useSelectionStore } from '@/src/store/selectionStore';
-import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
+import { selectedDateStr, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { usePlacesStore } from '@/src/store/placesStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
@@ -66,6 +67,12 @@ import {
   spacing,
 } from '@/src/theme/tokens';
 import { useStrings } from '@/src/i18n/useStrings';
+import { useLanguageStore } from '@/src/store/languageStore';
+
+// ─── WCSection ────────────────────────────────────────────────────────────────
+
+import type { WCViewingInfo } from '@/src/data/worldcupVenues';
+import type { Strings } from '@/src/i18n/strings';
 
 const FACING_LABELS: Record<string, string> = {
   N: 'North',
@@ -112,6 +119,7 @@ export function TerraceDetailSheet() {
   const ensurePlace = usePlacesStore((s) => s.ensure);
   const isFavorite = useFavoritesStore((s) => (selectedId != null ? s.favoriteIds.has(selectedId) : false));
   const toggleFavorite = useFavoritesStore((s) => s.toggle);
+  const lang = useLanguageStore((s) => s.lang);
 
   const terrace = useMemo(() => {
     if (selectedId == null) return null;
@@ -246,6 +254,20 @@ export function TerraceDetailSheet() {
     if (!terrace || !terrace.verified) return null;
     return t.curatedByZonnie;
   }, [terrace, t]);
+
+  /**
+   * World Cup viewing info for this terrace (tournament window only).
+   * wcViewingForTerrace is pure and cheap; wrapping in useMemo keeps renders
+   * consistent with the rest of the memo pattern in this component.
+   */
+  const wcViewing = useMemo(() => {
+    if (!terrace) return null;
+    return wcViewingForTerrace(
+      terrace.id,
+      terrace.outdoorScreens ?? 0,
+      todayAmsterdamDateStr(),
+    );
+  }, [terrace]);
 
   const rangeLabel = useMemo(() => {
     const f = fromHour.toString().padStart(2, '0');
@@ -590,6 +612,13 @@ export function TerraceDetailSheet() {
               ) : null}
             </View>
 
+            {/* World Cup section — auto-gated by isWorldCupLive inside
+                wcViewingForTerrace, so it disappears after 2026-07-19
+                without any follow-up release. */}
+            {wcViewing !== null ? (
+              <WCSection viewing={wcViewing} lang={lang} t={t} />
+            ) : null}
+
             {terrace.vibe ? (
               <>
                 <Text style={styles.sectionLabel}>{t.vibe}</Text>
@@ -873,6 +902,177 @@ function PlacesCard({
     </View>
   );
 }
+
+// ─── Short date formatter ─────────────────────────────────────────────────────
+
+/**
+ * Formats a YYYY-MM-DD string as a short weekday + day + month label,
+ * localized to the current app language.
+ *
+ * Why manual rather than Intl.DateTimeFormat: we parse the ISO date parts
+ * directly to avoid any timezone ambiguity — the dateStr is already
+ * Amsterdam-local, so we treat it as a pure calendar string.
+ *
+ * NL example: "za 14 jun"
+ * EN example: "Sat 14 Jun"
+ */
+function formatMatchDate(dateStr: string, lang: 'nl' | 'en'): string {
+  const parts = dateStr.split('-').map(Number);
+  const y = parts[0] ?? 2026;
+  const m = parts[1] ?? 1;
+  const d = parts[2] ?? 1;
+  // Use UTC to avoid local-TZ shift when constructing from year/month/day.
+  const date = new Date(Date.UTC(y, m - 1, d));
+  const weekday = date.toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-GB', {
+    weekday: 'short',
+    timeZone: 'UTC',
+  });
+  const month = date.toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-GB', {
+    month: 'short',
+    timeZone: 'UTC',
+  });
+  return `${weekday} ${d} ${month}`;
+}
+
+interface WCSectionProps {
+  viewing: WCViewingInfo;
+  lang: 'nl' | 'en';
+  t: Strings;
+}
+
+/**
+ * The "📺 World Cup" card shown in TerraceDetailSheet when the venue has
+ * outdoor screens and the tournament is live.
+ *
+ * Design goal: matches the warm cream/peach treatment of the bestWindowCard
+ * so it reads as a seasonal highlight, not a generic info block. The tier
+ * drives the headline so 'likely'/'fallback' always reads as a probability,
+ * never a venue-confirmed promise.
+ */
+function WCSection({ viewing, lang, t }: WCSectionProps) {
+  // Pick the section header by certainty tier.
+  const header =
+    viewing.tier === 'confirmed'
+      ? t.wcShowingHere
+      : viewing.tier === 'likely'
+        ? t.wcLikelyListed
+        : t.wcBigScreen;
+
+  // Pick the coverage body line.
+  const coverageBody =
+    viewing.tier === 'fallback'
+      ? t.wcFallbackBody
+      : viewing.coverageLabel === 'all'
+        ? t.wcAllMatches
+        : t.wcOranjeMatches;
+
+  return (
+    <View style={wcStyles.card}>
+      {/* Section header — same uppercase label style as the rest of the sheet */}
+      <Text style={wcStyles.header}>{header}</Text>
+
+      {/* Coverage description */}
+      <Text style={wcStyles.coverageLine}>{coverageBody}</Text>
+
+      {/* extra — e.g. "incl. semi-finals & the Final (19 Jul)" */}
+      {viewing.extra ? (
+        <Text style={wcStyles.extraLine}>{viewing.extra}</Text>
+      ) : null}
+
+      {/* Fixture list */}
+      {viewing.fixtures.map((match) => (
+        <Text key={match.dateStr} style={wcStyles.fixtureLine}>
+          {t.wcFixture(
+            match.opponentFlag,
+            match.opponent,
+            formatMatchDate(match.dateStr, lang),
+            match.kickoffLabel,
+          )}
+        </Text>
+      ))}
+
+      {/* Venue-specific note */}
+      {viewing.note ? (
+        <Text style={wcStyles.noteLine}>{viewing.note}</Text>
+      ) : null}
+
+      {/* Source link — tappable, opens the URL. Same pattern as
+          ProPaywall legal links: openURL().catch(()=>{}) */}
+      {viewing.source ? (
+        <Pressable
+          onPress={() => {
+            // Non-null assertion is safe: the condition above guards it.
+            Linking.openURL(viewing.source!).catch(() => {});
+          }}
+          hitSlop={8}
+          accessibilityRole="link"
+          style={({ pressed }) => pressed && wcStyles.sourceLinkPressed}
+        >
+          <Text style={wcStyles.sourceLink}>{t.wcSource} →</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+const wcStyles = StyleSheet.create({
+  // Warm cream card, matching bestWindowCard treatment.
+  card: {
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    backgroundColor: palette.cream,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: palette.peach,
+  },
+  header: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.xs,
+    color: palette.inkSoft,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.xs,
+  },
+  coverageLine: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.md,
+    color: palette.ink,
+  },
+  // "incl. semi-finals & the Final" — small emphasis below the coverage line.
+  extraLine: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.burnt,
+    marginTop: 2,
+  },
+  fixtureLine: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    color: palette.ink,
+    marginTop: spacing.xs,
+    lineHeight: fontSizes.sm * 1.4,
+  },
+  // Venue note — muted detail (price, ticket info, screens count).
+  noteLine: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+    fontStyle: 'italic',
+    marginTop: spacing.xs,
+    lineHeight: fontSizes.sm * 1.4,
+  },
+  // Source citation — subtle link in the brand colour.
+  sourceLink: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.xs,
+    color: palette.burnt,
+    marginTop: spacing.sm,
+  },
+  sourceLinkPressed: {
+    opacity: 0.6,
+  },
+});
 
 const styles = StyleSheet.create({
   background: {
