@@ -4,6 +4,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 
 import { useShortlistStore } from '@/src/store/shortlistStore';
+import { usePurchaseStore } from '@/src/store/purchaseStore';
+import { useProPaywallStore } from '@/src/components/ProPaywall';
 
 import { DatePicker } from '@/src/components/DatePicker';
 import { MoreFiltersToggle } from '@/src/components/MoreFiltersToggle';
@@ -117,6 +119,8 @@ interface TerraceListProps {
 
 export function TerraceList({ onSelect }: TerraceListProps) {
   const t = useStrings();
+  const isPro = usePurchaseStore((s) => s.isPro);
+  const showPaywall = useProPaywallStore((s) => s.show);
 
   // Get user location — used for "Near me" sort mode. The hook asks for
   // foreground permission once, resolves a single low-accuracy fix, and
@@ -301,6 +305,22 @@ export function TerraceList({ onSelect }: TerraceListProps) {
         ]}
         ListHeaderComponent={
           <View style={styles.header}>
+            {/* Pro entry pill — always visible so Apple reviewers (and users)
+                can find the IAP without having to trigger a locked feature.
+                A pro user sees the ✓ label and a "subscribed" info view
+                instead of the purchase flow when they tap. */}
+            <TouchableOpacity
+              onPress={() => { haptics.light(); showPaywall(); }}
+              activeOpacity={0.7}
+              style={styles.proEntryPill}
+              accessibilityRole="button"
+              accessibilityLabel={isPro ? t.proEntryActive : t.proEntryButton}
+            >
+              <Text style={styles.proEntryText}>
+                {isPro ? t.proEntryActive : t.proEntryButton}
+              </Text>
+            </TouchableOpacity>
+
             {/*
               Two-tier header layout (v1.1 polish):
                 Tier 1 — ALWAYS VISIBLE. Decision tools the average user
@@ -463,6 +483,27 @@ const styles = StyleSheet.create({
   refinePanel: {
     backgroundColor: palette.white,
     paddingBottom: spacing.sm,
+  },
+
+  // Pro entry pill — sits at the very top of the header, always visible
+  // at the default peek snap. Brand-coloured but deliberately compact so
+  // it reads as a feature badge rather than a promotional banner.
+  // right-aligned within a row so it doesn't crowd the left edge.
+  proEntryPill: {
+    alignSelf: 'flex-end',
+    marginTop: spacing.sm,
+    marginRight: spacing.lg,
+    marginBottom: spacing.xs,
+    backgroundColor: palette.burnt,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  proEntryText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.xs,
+    color: palette.cream,
+    letterSpacing: 0.3,
   },
 
   container: {
