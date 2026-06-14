@@ -271,6 +271,12 @@ export const strings = {
     alertOk: 'OK',
     closePaywall: 'Sluiten',
     closePaywallA11y: 'Sluiten',
+
+    // Pro entry pill (TerraceList header) + subscribed state (ProPaywall)
+    proEntryButton: '⭐ Zonnie Pro',
+    proEntryActive: '⭐ Zonnie Pro ✓',
+    proActiveTitle: 'Je hebt Zonnie Pro',
+    proActiveManageHint: 'Beheer je abonnement via iOS Instellingen',
   },
 
   // ─────────────────────────────────────────────────────────────────────
@@ -524,6 +530,12 @@ export const strings = {
     alertOk: 'OK',
     closePaywall: 'Close',
     closePaywallA11y: 'Close',
+
+    // Pro entry pill (TerraceList header) + subscribed state (ProPaywall)
+    proEntryButton: '⭐ Zonnie Pro',
+    proEntryActive: '⭐ Zonnie Pro ✓',
+    proActiveTitle: 'You have Zonnie Pro',
+    proActiveManageHint: 'Manage your subscription in iOS Settings',
   },
 } as const;
 

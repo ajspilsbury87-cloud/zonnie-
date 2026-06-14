@@ -65,7 +65,6 @@ import {
   Alert,
   Linking,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -199,18 +198,34 @@ export function ProPaywall() {
   // Which tier the user has highlighted — defaults to yearly (best value).
   const [selectedType, setSelectedType] = useState<'monthly' | 'yearly' | 'lifetime'>('yearly');
 
+  // Track whether the user was already Pro when the sheet opened, so we
+  // can distinguish "just purchased" (false→true while open) from
+  // "already subscribed" (was true at open time).
+  // We intentionally do NOT include isPro in the deps array of this ref
+  // setter — the ref is a snapshot taken at open time, updated only on
+  // the transition edge.
+  const wasProAtOpenRef = useRef(false);
+
   // Imperative open/close — same pattern as TerraceDetailSheet.
   useEffect(() => {
     if (isOpen) {
+      // Snapshot the Pro state at the moment the sheet opens. This is
+      // what lets an already-Pro user view the subscribed screen rather
+      // than getting immediately bounced out.
+      wasProAtOpenRef.current = isPro;
       ref.current?.snapToIndex(0);
     } else {
       ref.current?.close();
     }
+    // isPro is intentionally excluded: we only re-run when isOpen changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  // If the user just became Pro (purchase succeeded), close the paywall.
+  // Auto-close only on a FRESH purchase (isPro transitions false→true
+  // while the sheet is open). An already-Pro user who opens the sheet
+  // deliberately should see the subscribed view, not an instant close.
   useEffect(() => {
-    if (isPro && isOpen) {
+    if (isOpen && isPro && !wasProAtOpenRef.current) {
       haptics.success();
       hide();
     }
@@ -320,7 +335,7 @@ export function ProPaywall() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Close button ── */}
+        {/* ── Close button — shown in both Pro and non-Pro states ── */}
         <Pressable
           onPress={handleClose}
           style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}
@@ -330,140 +345,181 @@ export function ProPaywall() {
           <Text style={styles.closeButtonText}>✕</Text>
         </Pressable>
 
-        {/* ── Hero ── */}
-        <Text style={styles.heroEmoji}>{copy.emoji}</Text>
-        <Text style={styles.heroTitle}>{copy.headline}</Text>
-        <Text style={styles.heroSub}>{copy.sub}</Text>
+        {isPro ? (
+          /* ── Subscribed state ─────────────────────────────────────────────
+             Shown when an already-Pro user opens the sheet via the pill.
+             No tier selector, no buy button, no legal links (those are
+             subscription-purchase requirements, not required for info views).
+             Apple Guideline 3.1.2 legal text only applies inside the
+             purchase flow — this screen is informational only. */
+          <>
+            {/* Hero check mark */}
+            <Text style={styles.heroEmoji}>✓</Text>
+            <Text style={styles.heroTitle}>{t.proActiveTitle}</Text>
+            <Text style={styles.heroSub}>{t.proActiveManageHint}</Text>
 
-        {/* ── Feature list ── */}
-        <View style={styles.featureList}>
-          {proFeatures(t).map((f) => (
-            <View key={f.label} style={styles.featureRow}>
-              <Text style={styles.featureEmoji}>{f.emoji}</Text>
-              <Text style={styles.featureLabel}>{f.label}</Text>
+            {/* Existing Pro feature list — same component, reused */}
+            <View style={styles.featureList}>
+              {proFeatures(t).map((f) => (
+                <View key={f.label} style={styles.featureRow}>
+                  <Text style={styles.featureEmoji}>{f.emoji}</Text>
+                  <Text style={styles.featureLabel}>{f.label}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
 
-        {/* ── Tier selector ── */}
-        <View style={styles.tierRow}>
+            {/* Restore link — useful if a Pro user reinstalled and wants
+                to manually re-link their purchase */}
+            <Pressable
+              onPress={handleRestore}
+              disabled={isLoading}
+              style={({ pressed }) => [styles.restoreButton, pressed && styles.pressed]}
+              accessibilityLabel={t.restoreA11y}
+            >
+              <Text style={styles.restoreText}>{t.restorePurchases}</Text>
+            </Pressable>
+          </>
+        ) : (
+          /* ── Purchase flow (non-Pro users) ───────────────────────────────
+             Unchanged from before: hero, features, tier selector, buy
+             button, legal text, legal links, restore. */
+          <>
+            {/* ── Hero ── */}
+            <Text style={styles.heroEmoji}>{copy.emoji}</Text>
+            <Text style={styles.heroTitle}>{copy.headline}</Text>
+            <Text style={styles.heroSub}>{copy.sub}</Text>
 
-          {/* Monthly */}
-          <Pressable
-            onPress={() => { haptics.selection(); setSelectedType('monthly'); }}
-            style={({ pressed }) => [
-              styles.tierCard,
-              selectedType === 'monthly' && styles.tierCardSelected,
-              pressed && styles.pressed,
-            ]}
-            accessibilityLabel={t.tierMonthlyA11y(priceStringForType('monthly'))}
-          >
-            <Text style={styles.tierName}>{t.tierMonthly}</Text>
-            <Text style={[styles.tierPrice, selectedType === 'monthly' && styles.tierPriceSelected]}>
-              {priceStringForType('monthly')}
-            </Text>
-            <Text style={styles.tierPeriod}>{t.tierMonthlyPeriod}</Text>
-          </Pressable>
-
-          {/* Yearly — highlighted */}
-          <Pressable
-            onPress={() => { haptics.selection(); setSelectedType('yearly'); }}
-            style={({ pressed }) => [
-              styles.tierCard,
-              styles.tierCardYearly,
-              selectedType === 'yearly' && styles.tierCardSelected,
-              pressed && styles.pressed,
-            ]}
-            accessibilityLabel={t.tierYearlyA11y(priceStringForType('yearly'))}
-          >
-            <View style={styles.bestValueBadge}>
-              <Text style={styles.bestValueText}>{t.bestDeal}</Text>
+            {/* ── Feature list ── */}
+            <View style={styles.featureList}>
+              {proFeatures(t).map((f) => (
+                <View key={f.label} style={styles.featureRow}>
+                  <Text style={styles.featureEmoji}>{f.emoji}</Text>
+                  <Text style={styles.featureLabel}>{f.label}</Text>
+                </View>
+              ))}
             </View>
-            <Text style={styles.tierName}>{t.tierYearly}</Text>
-            <Text style={[styles.tierPrice, selectedType === 'yearly' && styles.tierPriceSelected]}>
-              {priceStringForType('yearly')}
-            </Text>
-            <Text style={styles.tierPeriod}>{t.tierYearlyPeriod}</Text>
-          </Pressable>
 
-          {/* Lifetime */}
-          <Pressable
-            onPress={() => { haptics.selection(); setSelectedType('lifetime'); }}
-            style={({ pressed }) => [
-              styles.tierCard,
-              selectedType === 'lifetime' && styles.tierCardSelected,
-              pressed && styles.pressed,
-            ]}
-            accessibilityLabel={t.tierLifetimeA11y(priceStringForType('lifetime'))}
-          >
-            <Text style={styles.tierName}>{t.tierLifetime}</Text>
-            <Text style={[styles.tierPrice, selectedType === 'lifetime' && styles.tierPriceSelected]}>
-              {priceStringForType('lifetime')}
-            </Text>
-            <Text style={styles.tierPeriod}>{t.tierLifetimePeriod}</Text>
-          </Pressable>
+            {/* ── Tier selector ── */}
+            <View style={styles.tierRow}>
 
-        </View>
+              {/* Monthly */}
+              <Pressable
+                onPress={() => { haptics.selection(); setSelectedType('monthly'); }}
+                style={({ pressed }) => [
+                  styles.tierCard,
+                  selectedType === 'monthly' && styles.tierCardSelected,
+                  pressed && styles.pressed,
+                ]}
+                accessibilityLabel={t.tierMonthlyA11y(priceStringForType('monthly'))}
+              >
+                <Text style={styles.tierName}>{t.tierMonthly}</Text>
+                <Text style={[styles.tierPrice, selectedType === 'monthly' && styles.tierPriceSelected]}>
+                  {priceStringForType('monthly')}
+                </Text>
+                <Text style={styles.tierPeriod}>{t.tierMonthlyPeriod}</Text>
+              </Pressable>
 
-        {/* ── Buy button ── */}
-        <Pressable
-          onPress={handleBuy}
-          disabled={isLoading || !offersLoaded}
-          style={({ pressed }) => [
-            styles.buyButton,
-            (isLoading || !offersLoaded) && styles.buyButtonDisabled,
-            pressed && styles.pressed,
-          ]}
-          accessibilityLabel={
-            selectedType === 'yearly'  ? t.buyYearlyA11y  :
-            selectedType === 'monthly' ? t.buyMonthlyA11y :
-                                         t.buyLifetimeA11y
-          }
-        >
-          {isLoading ? (
-            <ActivityIndicator color={palette.cream} />
-          ) : (
-            <Text style={styles.buyButtonText}>
-              {selectedType === 'yearly'  ? t.buyYearly(priceStringForType('yearly'))    :
-               selectedType === 'monthly' ? t.buyMonthly(priceStringForType('monthly'))  :
-                                            t.buyLifetime(priceStringForType('lifetime'))}
-            </Text>
-          )}
-        </Pressable>
+              {/* Yearly — highlighted */}
+              <Pressable
+                onPress={() => { haptics.selection(); setSelectedType('yearly'); }}
+                style={({ pressed }) => [
+                  styles.tierCard,
+                  styles.tierCardYearly,
+                  selectedType === 'yearly' && styles.tierCardSelected,
+                  pressed && styles.pressed,
+                ]}
+                accessibilityLabel={t.tierYearlyA11y(priceStringForType('yearly'))}
+              >
+                <View style={styles.bestValueBadge}>
+                  <Text style={styles.bestValueText}>{t.bestDeal}</Text>
+                </View>
+                <Text style={styles.tierName}>{t.tierYearly}</Text>
+                <Text style={[styles.tierPrice, selectedType === 'yearly' && styles.tierPriceSelected]}>
+                  {priceStringForType('yearly')}
+                </Text>
+                <Text style={styles.tierPeriod}>{t.tierYearlyPeriod}</Text>
+              </Pressable>
 
-        {/* ── Legal / restore ── */}
-        <Text style={styles.legal}>{t.legalText}</Text>
+              {/* Lifetime */}
+              <Pressable
+                onPress={() => { haptics.selection(); setSelectedType('lifetime'); }}
+                style={({ pressed }) => [
+                  styles.tierCard,
+                  selectedType === 'lifetime' && styles.tierCardSelected,
+                  pressed && styles.pressed,
+                ]}
+                accessibilityLabel={t.tierLifetimeA11y(priceStringForType('lifetime'))}
+              >
+                <Text style={styles.tierName}>{t.tierLifetime}</Text>
+                <Text style={[styles.tierPrice, selectedType === 'lifetime' && styles.tierPriceSelected]}>
+                  {priceStringForType('lifetime')}
+                </Text>
+                <Text style={styles.tierPeriod}>{t.tierLifetimePeriod}</Text>
+              </Pressable>
 
-        {/* Required subscription links (App Store Guideline 3.1.2):
-            functional Terms of Use (EULA) + Privacy Policy. */}
-        <View style={styles.legalLinks}>
-          <Pressable
-            onPress={() => { Linking.openURL(TERMS_URL).catch(() => {}); }}
-            hitSlop={8}
-            accessibilityRole="link"
-            accessibilityLabel={t.termsOfUse}
-          >
-            <Text style={styles.legalLink}>{t.termsOfUse}</Text>
-          </Pressable>
-          <Text style={styles.legalLinkSep}>·</Text>
-          <Pressable
-            onPress={() => { Linking.openURL(PRIVACY_URL).catch(() => {}); }}
-            hitSlop={8}
-            accessibilityRole="link"
-            accessibilityLabel={t.privacyPolicy}
-          >
-            <Text style={styles.legalLink}>{t.privacyPolicy}</Text>
-          </Pressable>
-        </View>
+            </View>
 
-        <Pressable
-          onPress={handleRestore}
-          disabled={isLoading}
-          style={({ pressed }) => [styles.restoreButton, pressed && styles.pressed]}
-          accessibilityLabel={t.restoreA11y}
-        >
-          <Text style={styles.restoreText}>{t.restorePurchases}</Text>
-        </Pressable>
+            {/* ── Buy button ── */}
+            <Pressable
+              onPress={handleBuy}
+              disabled={isLoading || !offersLoaded}
+              style={({ pressed }) => [
+                styles.buyButton,
+                (isLoading || !offersLoaded) && styles.buyButtonDisabled,
+                pressed && styles.pressed,
+              ]}
+              accessibilityLabel={
+                selectedType === 'yearly'  ? t.buyYearlyA11y  :
+                selectedType === 'monthly' ? t.buyMonthlyA11y :
+                                             t.buyLifetimeA11y
+              }
+            >
+              {isLoading ? (
+                <ActivityIndicator color={palette.cream} />
+              ) : (
+                <Text style={styles.buyButtonText}>
+                  {selectedType === 'yearly'  ? t.buyYearly(priceStringForType('yearly'))    :
+                   selectedType === 'monthly' ? t.buyMonthly(priceStringForType('monthly'))  :
+                                                t.buyLifetime(priceStringForType('lifetime'))}
+                </Text>
+              )}
+            </Pressable>
+
+            {/* ── Legal / restore ── */}
+            <Text style={styles.legal}>{t.legalText}</Text>
+
+            {/* Required subscription links (App Store Guideline 3.1.2):
+                functional Terms of Use (EULA) + Privacy Policy. */}
+            <View style={styles.legalLinks}>
+              <Pressable
+                onPress={() => { Linking.openURL(TERMS_URL).catch(() => {}); }}
+                hitSlop={8}
+                accessibilityRole="link"
+                accessibilityLabel={t.termsOfUse}
+              >
+                <Text style={styles.legalLink}>{t.termsOfUse}</Text>
+              </Pressable>
+              <Text style={styles.legalLinkSep}>·</Text>
+              <Pressable
+                onPress={() => { Linking.openURL(PRIVACY_URL).catch(() => {}); }}
+                hitSlop={8}
+                accessibilityRole="link"
+                accessibilityLabel={t.privacyPolicy}
+              >
+                <Text style={styles.legalLink}>{t.privacyPolicy}</Text>
+              </Pressable>
+            </View>
+
+            <Pressable
+              onPress={handleRestore}
+              disabled={isLoading}
+              style={({ pressed }) => [styles.restoreButton, pressed && styles.pressed]}
+              accessibilityLabel={t.restoreA11y}
+            >
+              <Text style={styles.restoreText}>{t.restorePurchases}</Text>
+            </Pressable>
+          </>
+        )}
 
         {/* Bottom padding for home indicator */}
         <View style={styles.bottomSpacer} />
