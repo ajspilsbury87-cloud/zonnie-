@@ -22,7 +22,7 @@ import { useStrings } from '@/src/i18n/useStrings';
 import { haptics } from '@/src/lib/haptics';
 import { buildVoteUrl } from '@/src/lib/voteLink';
 import { useShortlistStore } from '@/src/store/shortlistStore';
-import { useScoredTerraces } from '@/src/hooks/useScoredTerraces';
+import { useShortlistScores } from '@/src/hooks/useScoredTerraces';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 export function ShortlistBar() {
@@ -34,16 +34,16 @@ export function ShortlistBar() {
   const isSelecting = useShortlistStore((s) => s.isSelecting);
   const clear = useShortlistStore((s) => s.clear);
 
-  // We call useScoredTerraces with no coord argument so we get the full ranked
-  // list with scores, filtered by whatever the user has active. Scores are
-  // coord-independent (sun geometry only) — we just need them to build the URL.
-  // The coord param only affects sort order, which we don't need here.
-  const ranked = useScoredTerraces();
+  // Score every selected terrace from the FULL terrace set (filter-independent).
+  // Using the ranked/filtered list here would silently drop a terrace from the
+  // vote URL if the user changed a filter (search/region/match/etc.) after
+  // selecting it. Scores still match the list (same scoring path + cache).
+  const scores = useShortlistScores(selectedIds);
 
   const handleShare = useCallback(async () => {
     const items = selectedIds.flatMap((id) => {
-      const scored = ranked.find((r) => r.terrace.id === id);
-      return scored ? [{ id, score: scored.score }] : [];
+      const score = scores.get(id);
+      return score != null ? [{ id, score }] : [];
     });
     // Guard: nothing to share (shouldn't reach here since button is disabled
     // when count === 0, but defensive programming is always worth it).
@@ -60,7 +60,7 @@ export function ShortlistBar() {
     // surprising UX: re-opening the shortlist picker would feel odd).
     await Share.share({ message, url });
     clear();
-  }, [selectedIds, ranked, t, clear]);
+  }, [selectedIds, scores, t, clear]);
 
   // Not in selection mode — render nothing. This is the component's off state;
   // it costs zero paint time when the shortlist is inactive.

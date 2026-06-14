@@ -1,18 +1,16 @@
 import { useMemo } from 'react';
 
 import { TERRACES } from '@/src/data/terraces';
-import { getBuildingsForTerrace } from '@/src/data/buildings';
-import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea } from '@/src/data/regions';
 import { categoriesForTerrace } from '@/src/data/categories';
-import { computeSunScore } from '@/src/engines/scoring';
 import { computeGemScore, computeTouristProxy, TOURIST_TRAP_FLOOR } from '@/src/engines/gems';
+import { cachedHourScore, rangeScoreForTerrace } from '@/src/hooks/scoreCache';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
-import type { Terrace, Weather } from '@/src/engines/types';
+import type { Terrace } from '@/src/engines/types';
 
 export interface ScoredTerrace {
   terrace: Terrace;
@@ -40,55 +38,8 @@ for (const t of TERRACES) {
   HAYSTACK.set(t.id, fold(`${t.name} ${t.area} ${t.vibe} ${t.address}`));
 }
 
-// ─── Per-hour scoring cache ──────────────────────────────────────────────────
-//
-// Caching at (terrace, hour, date, weather-bucket) means time-window shifts
-// reuse most of the prior computation — going 14:00–17:00 → 15:00–18:00
-// only computes the new hour 18, the others are O(1) lookups.
-//
-// Bounded by MAX_CACHE_SIZE. When exceeded, the oldest 20% of entries are
-// dropped (FIFO is fine — the user's recent time selections are most likely
-// to be revisited).
-
-const HOUR_SCORE_CACHE = new Map<string, number>();
-const MAX_CACHE_SIZE = 8000;
-
-function weatherBucket(w: Weather | undefined): string {
-  if (!w) return 'syn';
-  return `${Math.round(w.cloudCover / 5) * 5}`;
-}
-
-function cachedHourScore(
-  terrace: Pick<Terrace, 'id' | 'lat' | 'lng' | 'facing'>,
-  hour: number,
-  dateStr: string,
-  weather: Weather | undefined,
-): number {
-  const key = `${terrace.id}|${hour}|${dateStr}|${weatherBucket(weather)}`;
-  const hit = HOUR_SCORE_CACHE.get(key);
-  if (hit != null) return hit;
-  const buildings = getBuildingsForTerrace(terrace.id);
-  const trees = getTreesForTerrace(terrace.id);
-  const score = computeSunScore(
-    terrace,
-    hour,
-    dateStr,
-    'sunny',
-    weather,
-    buildings,
-    trees,
-  ).score;
-  if (HOUR_SCORE_CACHE.size >= MAX_CACHE_SIZE) {
-    const dropCount = Math.floor(MAX_CACHE_SIZE * 0.2);
-    let i = 0;
-    for (const k of HOUR_SCORE_CACHE.keys()) {
-      if (i++ >= dropCount) break;
-      HOUR_SCORE_CACHE.delete(k);
-    }
-  }
-  HOUR_SCORE_CACHE.set(key, score);
-  return score;
-}
+// Per-hour scoring + the visit-window range score live in `scoreCache.ts`
+// (pure, no React/store imports) so they're testable and shared across callers.
 
 // ─── Distance helpers ────────────────────────────────────────────────────────
 
@@ -226,6 +177,7 @@ export function useScoredTerraces(
     }
 
     return scored;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `coordKey` (lat/lng rounded to 4dp) is the intentional dep proxy for `userCoord`, so minor GPS jitter doesn't bust the memo (see coordKey above).
   }, [
     dateOffset,
     fromHour,
@@ -241,4 +193,35 @@ export function useScoredTerraces(
     weatherByDate,
     coordKey,
   ]);
+}
+
+/**
+ * Sun scores for a specific set of terrace IDs, computed from the FULL terrace
+ * set (NOT the filtered/ranked list). Returns a Map<id, score>.
+ *
+ * The group-vote share bar uses this so every shortlisted terrace gets a score
+ * for the vote URL even if the user has since changed a filter that would hide
+ * it from the visible list. Scores match the list exactly (same per-hour
+ * scoring + cache via `rangeScoreForTerrace`). Cheap: only the (≤3) selected
+ * terraces are scored.
+ */
+export function useShortlistScores(ids: readonly number[]): Map<number, number> {
+  const dateOffset = useTimeStore((s) => s.dateOffset);
+  const fromHour = useTimeStore((s) => s.fromHour);
+  const toHour = useTimeStore((s) => s.toHour);
+  const weatherByDate = useWeatherStore((s) => s.byDate);
+
+  return useMemo(() => {
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const scores = new Map<number, number>();
+    for (const id of ids) {
+      const terrace = TERRACES.find((t) => t.id === id);
+      if (terrace) {
+        scores.set(id, rangeScoreForTerrace(terrace, fromHour, toHour, dateStr, hourlyWeather));
+      }
+    }
+    return scores;
+  }, [ids, dateOffset, fromHour, toHour, weatherByDate]);
 }
