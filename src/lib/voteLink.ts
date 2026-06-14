@@ -3,81 +3,79 @@
  *
  * The URL encodes only what we need to render the static web page:
  *   t  = comma-separated terrace IDs
- *   s  = comma-separated scores (0–100 integer, rounded at share time)
- *   d  = optional ISO-local datetime for the visit window (omitted in Phase A)
+ *   w  = visit window as "fromHour-toHour" (24h local), e.g. "14-17"
+ *   d  = optional ISO date (YYYY-MM-DD); absent ⇒ "today" on the page
+ *
+ * Scores are NOT in the URL. The vote page computes the score itself
+ * from the per-hour snapshot baked into terraces-lite.json. This means:
+ *   (a) the score is always fresh (re-derived on open, not frozen at
+ *       share-time), and
+ *   (b) the URL stays valid even if the scoring engine is improved.
  *
  * Example:
- *   https://ajspilsbury87-cloud.github.io/zonnie-/vote.html#t=812,455,93&s=78,64,51
+ *   https://ajspilsbury87-cloud.github.io/zonnie-/vote.html#t=812,455,93&w=14-17&d=2026-06-20
  *
  * Why a hash fragment instead of query params?
  *   The page is a GitHub Pages static file — the server never sees the URL.
  *   Hash params are client-side only, so the page JS reads them with
  *   `location.hash`. This also means no referrer / tracking leakage.
  *
- * Score semantics:
- *   The score is a point-in-time snapshot: it represents the sun score at the
- *   moment the user tapped "Ask the group", not a live or predicted value.
- *   The web page labels it explicitly so friends aren't misled.
- *
- * Ordering:
- *   IDs and scores are paired by position — ids[0] corresponds to scores[0].
- *   The order matches the user's selection order (from the shortlist store),
- *   not the ranked-list order.
+ * Legacy fallback:
+ *   Old URLs used `s=` for scores (e.g. `#t=812,455&s=78,64`). The vote
+ *   page still handles those gracefully by reading `s=` directly when
+ *   `w=` is absent, so previously-shared links continue to render.
  */
 
 const BASE_URL = 'https://ajspilsbury87-cloud.github.io/zonnie-/vote.html';
 
-export interface VoteItem {
-  id: number;
-  /** Sun score at the moment of share, 0–1. */
-  score: number;
-}
-
 /**
- * Build the share URL.
+ * Build the group-vote share URL.
  *
- * @param items  The shortlisted terraces with their scores. 1–3 items.
- * @param date   Optional visit datetime (Phase A: omit entirely).
- *               When provided, encoded as ISO local time in the `d` param.
+ * @param ids       The shortlisted terrace IDs. 1–3 items.
+ * @param fromHour  Visit window start (Amsterdam local hour, integer 0–23).
+ * @param toHour    Visit window end (Amsterdam local hour, integer 0–23).
+ * @param date      Optional visit date. When provided, encoded as YYYY-MM-DD
+ *                  in the `d` param. When absent the vote page uses "today".
  *
  * @returns Full URL string ready for Share.share().
  *
  * @example
- *   buildVoteUrl([{ id: 812, score: 0.78 }, { id: 455, score: 0.64 }])
- *   // → "https://ajspilsbury87-cloud.github.io/zonnie-/vote.html#t=812,455&s=78,64"
+ *   buildVoteUrl([812, 455], 14, 17, new Date('2026-06-20'))
+ *   // → ".../vote.html#t=812,455&w=14-17&d=2026-06-20"
+ *
+ *   buildVoteUrl([812, 455], 14, 17)
+ *   // → ".../vote.html#t=812,455&w=14-17"
  */
-export function buildVoteUrl(items: VoteItem[], date?: Date): string {
-  if (items.length === 0) {
+export function buildVoteUrl(
+  ids: number[],
+  fromHour: number,
+  toHour: number,
+  date?: Date,
+): string {
+  if (ids.length === 0) {
     // Guard: caller should never send an empty list, but be safe.
     return BASE_URL;
   }
 
-  const ids = items.map((item) => item.id).join(',');
-  // Round score to 0–100 integer. Math.round avoids the 0.5 edge case that
-  // truncation would hit at exactly 50% sun score.
-  const scores = items.map((item) => Math.round(item.score * 100)).join(',');
+  const t = ids.join(',');
+  const w = `${fromHour}-${toHour}`;
 
-  let hash = `t=${ids}&s=${scores}`;
+  let hash = `t=${t}&w=${w}`;
 
   if (date != null) {
-    // ISO local time without timezone offset — the page renders it as "local
-    // Amsterdam time" without needing to resolve the tz offset client-side.
-    // Slice to 'YYYY-MM-DDTHH:MM' (drop seconds + ms) for brevity.
-    const iso = formatLocalIso(date);
-    hash += `&d=${encodeURIComponent(iso)}`;
+    // ISO date only (no time component) — the page uses `w` for the hour
+    // window, so the date just identifies the calendar day.
+    hash += `&d=${formatLocalDate(date)}`;
   }
 
   return `${BASE_URL}#${hash}`;
 }
 
 /**
- * Format a Date as 'YYYY-MM-DDTHH:MM' in LOCAL time (no timezone suffix).
- * Used for the `d` param on vote URLs — the page treats it as Amsterdam local.
+ * Format a Date as 'YYYY-MM-DD' in LOCAL time.
+ * Used for the `d` param on vote URLs — identifies the calendar day.
  */
-function formatLocalIso(date: Date): string {
+function formatLocalDate(date: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0');
-  return (
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
-    `T${pad(date.getHours())}:${pad(date.getMinutes())}`
-  );
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }

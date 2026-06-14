@@ -22,7 +22,7 @@ import { useStrings } from '@/src/i18n/useStrings';
 import { haptics } from '@/src/lib/haptics';
 import { buildVoteUrl } from '@/src/lib/voteLink';
 import { useShortlistStore } from '@/src/store/shortlistStore';
-import { useShortlistScores } from '@/src/hooks/useScoredTerraces';
+import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 export function ShortlistBar() {
@@ -34,22 +34,27 @@ export function ShortlistBar() {
   const isSelecting = useShortlistStore((s) => s.isSelecting);
   const clear = useShortlistStore((s) => s.clear);
 
-  // Score every selected terrace from the FULL terrace set (filter-independent).
-  // Using the ranked/filtered list here would silently drop a terrace from the
-  // vote URL if the user changed a filter (search/region/match/etc.) after
-  // selecting it. Scores still match the list (same scoring path + cache).
-  const scores = useShortlistScores(selectedIds);
+  // Time window — the vote page derives scores from this window + the
+  // hourly snapshot in terraces-lite.json, so we no longer need to pass
+  // scores in the URL. Scores are always recomputed fresh on the page.
+  const fromHour = useTimeStore((s) => s.fromHour);
+  const toHour = useTimeStore((s) => s.toHour);
+  const dateOffset = useTimeStore((s) => s.dateOffset);
 
   const handleShare = useCallback(async () => {
-    const items = selectedIds.flatMap((id) => {
-      const score = scores.get(id);
-      return score != null ? [{ id, score }] : [];
-    });
     // Guard: nothing to share (shouldn't reach here since button is disabled
     // when count === 0, but defensive programming is always worth it).
-    if (items.length === 0) return;
+    if (selectedIds.length === 0) return;
 
-    const url = buildVoteUrl(items);
+    // Build a Date for the currently selected day so the vote page can
+    // show "for Tuesday, 17 June" etc. dateOffset=0 → today.
+    const dateStr = selectedDateStr(dateOffset);
+    // Parse dateStr ('YYYY-MM-DD') into a local Date (midnight) so
+    // formatLocalDate in voteLink works correctly.
+    const [year, month, day] = dateStr.split('-').map(Number) as [number, number, number];
+    const visitDate = new Date(year, month - 1, day);
+
+    const url = buildVoteUrl(selectedIds, fromHour, toHour, visitDate);
     const message = t.voteShareMessage(url);
 
     haptics.success();
@@ -60,7 +65,7 @@ export function ShortlistBar() {
     // surprising UX: re-opening the shortlist picker would feel odd).
     await Share.share({ message, url });
     clear();
-  }, [selectedIds, scores, t, clear]);
+  }, [selectedIds, fromHour, toHour, dateOffset, t, clear]);
 
   // Not in selection mode — render nothing. This is the component's off state;
   // it costs zero paint time when the shortlist is inactive.

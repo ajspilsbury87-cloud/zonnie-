@@ -47,16 +47,19 @@
 
   <!-- ── Header ───────────────────────────────────────────────── -->
   <header style="padding: 28px 0 20px; text-align: center;">
-    <div style="font-size: 28px; margin-bottom: 6px;">☀️</div>
+    <div style="font-size: 28px; margin-bottom: 6px;">&#x2600;&#xFE0F;</div>
     <h1 style="font-family: Georgia, 'Times New Roman', serif; font-size: 26px;
                 font-weight: 700; color: var(--ink); letter-spacing: -0.3px;">
       Zonnie
     </h1>
     <p style="font-size: 13px; color: var(--ink-soft); margin-top: 2px;">
       Terrasje kiezen?
-      <span style="color: var(--mist);">·</span>
+      <span style="color: var(--mist);">&#xB7;</span>
       <em>Choosing a terrace?</em>
     </p>
+    <!-- Window label — filled by JS -->
+    <p id="window-label" style="display:none; font-size: 13px; color: var(--burnt);
+       margin-top: 8px; font-weight: 600;"></p>
   </header>
 
   <!-- ── Terrace cards — filled by JS ─────────────────────────── -->
@@ -64,7 +67,7 @@
 
   <!-- ── Empty / error state ───────────────────────────────────── -->
   <section id="empty" style="display:none; text-align:center; padding: 48px 0;">
-    <p style="font-size: 40px; margin-bottom: 12px;">🌤️</p>
+    <p style="font-size: 40px; margin-bottom: 12px;">&#x1F324;&#xFE0F;</p>
     <p style="font-family: Georgia, serif; font-size: 20px; font-weight: 700;
               color: var(--ink); margin-bottom: 8px;">
       Geen terrassen gevonden
@@ -82,8 +85,8 @@
       Vind de zonnigste terrassen in Amsterdam
     </p>
     <p style="font-size: 13px; color: var(--ink-soft); margin-bottom: 20px;">
-      Uur voor uur · Per buurt · Gratis
-      <br><em style="font-size: 12px;">Hour by hour · By neighbourhood · Free</em>
+      Uur voor uur &#xB7; Per buurt &#xB7; Gratis
+      <br><em style="font-size: 12px;">Hour by hour &#xB7; By neighbourhood &#xB7; Free</em>
     </p>
     <a id="open-app-link" href="zonnie://"
        style="display: inline-block; background: var(--ink); color: var(--white);
@@ -96,10 +99,10 @@
        style="display: inline-block; background: var(--burnt); color: var(--white);
               font-size: 15px; font-weight: 700; text-decoration: none;
               padding: 13px 32px; border-radius: 999px; font-family: Georgia, serif;">
-      Gratis op iOS ☀️
+      Gratis op iOS &#x2600;&#xFE0F;
     </a>
     <p style="font-size: 11px; color: var(--mist); margin-top: 16px;">
-      Zonnie — Amsterdam terrace finder
+      Zonnie &#x2014; Amsterdam terrace finder
     </p>
   </footer>
 
@@ -143,6 +146,7 @@
   padding: 8px 14px;
   border-radius: 12px;
   line-height: 1;
+  text-align: center;
 }
 .sun-badge-label {
   font-size: 10px;
@@ -182,41 +186,109 @@
   font-weight: 600;
 }
 .map-link:hover { text-decoration: underline; }
+/* ── Vote button ──────────────────────────────────────────────────── */
+.vote-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 11px 0;
+  background: var(--ink);
+  color: var(--white);
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+}
+.vote-btn:active { opacity: 0.8; }
 </style>
 
 <script>
 // ── Facing → friendly Dutch label ────────────────────────────────
 const FACING_LABELS = {
-  N:  'Noord terras · North facing',
-  NE: 'Noordoost terras · North-east facing',
-  E:  'Oost terras · East facing',
-  SE: 'Zuidoost terras · South-east facing',
-  S:  'Zuid terras · South facing',
-  SW: 'Zuidwest terras · South-west facing',
-  W:  'West terras · West facing',
-  NW: 'Noordwest terras · North-west facing',
-  All:'Alle kanten · All-facing',
+  N:  'Noord terras \xB7 North facing',
+  NE: 'Noordoost terras \xB7 North-east facing',
+  E:  'Oost terras \xB7 East facing',
+  SE: 'Zuidoost terras \xB7 South-east facing',
+  S:  'Zuid terras \xB7 South facing',
+  SW: 'Zuidwest terras \xB7 South-west facing',
+  W:  'West terras \xB7 West facing',
+  NW: 'Noordwest terras \xB7 North-west facing',
+  All:'Alle kanten \xB7 All-facing',
 };
 
-// ── Parse hash fragment → { ids, scores, date? } ─────────────────
+// ── Parse hash fragment ──────────────────────────────────────────
+// New format:  #t=812,455&w=14-17&d=2026-06-20
+// Legacy:      #t=812,455&s=78,64  (s= still supported)
 function parseHash() {
   const hash = location.hash.replace(/^#/, '');
   if (!hash) return null;
+
   const params = {};
   for (const part of hash.split('&')) {
     const eq = part.indexOf('=');
     if (eq < 0) continue;
     params[part.slice(0, eq)] = decodeURIComponent(part.slice(eq + 1));
   }
-  if (!params.t || !params.s) return null;
+
+  if (!params.t) return null;
+
   const ids = params.t.split(',').map(Number).filter(n => Number.isFinite(n) && n > 0);
-  const scores = params.s.split(',').map(Number).filter(n => Number.isFinite(n));
-  if (ids.length === 0 || ids.length !== scores.length) return null;
-  return { ids, scores, date: params.d ?? null };
+  if (ids.length === 0) return null;
+
+  // New URL shape: w=14-17 means fromHour=14, toHour=17 (inclusive)
+  let fromHour = 14;
+  let toHour   = 17;
+  let legacyScores = null; // only set for old s= links
+
+  if (params.w) {
+    const parts = params.w.split('-').map(Number);
+    if (parts.length === 2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1])) {
+      fromHour = Math.max(0, Math.min(23, parts[0]));
+      toHour   = Math.max(fromHour, Math.min(23, parts[1]));
+    }
+  } else if (params.s) {
+    // Legacy fallback: s= carries the pre-baked scores; use them directly
+    // so old shared links continue to render correctly.
+    const sc = params.s.split(',').map(Number).filter(n => Number.isFinite(n));
+    if (sc.length === ids.length) {
+      legacyScores = sc;
+    }
+  }
+
+  return { ids, fromHour, toHour, legacyScores, date: params.d ?? null };
+}
+
+// ── Window score from h[] snapshot ───────────────────────────────
+// Averages terrace.h[fromHour..toHour] and rounds to an integer.
+// Falls back to the whole-day max if h[] is missing/too short.
+function windowScore(terrace, fromHour, toHour) {
+  const h = terrace.h;
+  if (!Array.isArray(h) || h.length < 24) {
+    // Missing snapshot — show the best single-hour value as a rough fallback.
+    if (Array.isArray(h) && h.length > 0) {
+      return Math.max(...h);
+    }
+    return null; // hide badge entirely
+  }
+  let sum = 0;
+  let count = 0;
+  for (let hour = fromHour; hour <= toHour; hour++) {
+    const v = h[hour];
+    if (typeof v === 'number' && Number.isFinite(v)) {
+      sum += v;
+      count++;
+    }
+  }
+  if (count === 0) return null;
+  return Math.round(sum / count);
 }
 
 // ── Build a terrace card element ──────────────────────────────────
-function buildCard(terrace, score) {
+function buildCard(terrace, score, scoreIsLegacy) {
   const card = document.createElement('div');
   card.className = 'terrace-card';
 
@@ -233,17 +305,22 @@ function buildCard(terrace, score) {
   const metaRow = document.createElement('div');
   metaRow.className = 'terrace-card-meta';
 
-  // Sun score badge
-  const badge = document.createElement('div');
-  badge.className = 'sun-badge';
-  const scoreNum = document.createElement('span');
-  scoreNum.textContent = score;
-  const scoreLabel = document.createElement('span');
-  scoreLabel.className = 'sun-badge-label';
-  scoreLabel.textContent = 'zonscore bij delen';
-  badge.appendChild(scoreNum);
-  badge.appendChild(scoreLabel);
-  metaRow.appendChild(badge);
+  // Sun score badge — only shown when a score is available
+  if (score != null) {
+    const badge = document.createElement('div');
+    badge.className = 'sun-badge';
+    const scoreNum = document.createElement('span');
+    scoreNum.textContent = String(score);
+    const scoreLabel = document.createElement('span');
+    scoreLabel.className = 'sun-badge-label';
+    // Legacy links show the share-time score; new links show the window average.
+    scoreLabel.textContent = scoreIsLegacy
+      ? 'zonscore bij delen'
+      : 'zonpotentieel \xB7 clear-day potential';
+    badge.appendChild(scoreNum);
+    badge.appendChild(scoreLabel);
+    metaRow.appendChild(badge);
+  }
 
   // Right-hand meta: facing + rating
   const meta = document.createElement('div');
@@ -259,7 +336,7 @@ function buildCard(terrace, score) {
     const ratingEl = document.createElement('div');
     ratingEl.className = 'rating-row';
     const reviewText = terrace.googleReviewCount != null
-      ? ` (${terrace.googleReviewCount.toLocaleString('nl')})`
+      ? ' (' + terrace.googleReviewCount.toLocaleString('nl') + ')'
       : '';
     ratingEl.innerHTML = '<span class="star">★</span> ' +
       terrace.googleRating.toFixed(1) + reviewText;
@@ -270,14 +347,36 @@ function buildCard(terrace, score) {
   card.appendChild(metaRow);
 
   // Maps link — no API key needed, uses lat/lng coordinates directly
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${terrace.lat},${terrace.lng}`;
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + terrace.lat + ',' + terrace.lng;
   const mapsLink = document.createElement('a');
   mapsLink.className = 'map-link';
   mapsLink.href = mapsUrl;
   mapsLink.target = '_blank';
   mapsLink.rel = 'noopener noreferrer';
-  mapsLink.textContent = '📍 kaart · map';
+  mapsLink.textContent = '📍 kaart \xB7 map';
   card.appendChild(mapsLink);
+
+  // ── Vote button ─────────────────────────────────────────────────
+  // Tapping opens the device share sheet (or WhatsApp as fallback) pre-filled
+  // with a message naming this terrace and its score. Friends reply in the
+  // group chat to "vote" — zero backend required.
+  const voteBtn = document.createElement('button');
+  voteBtn.className = 'vote-btn';
+  voteBtn.textContent = 'Stem \xB7 Vote';
+  voteBtn.setAttribute('aria-label', 'Stem voor ' + terrace.name);
+  voteBtn.addEventListener('click', function () {
+    const scoreStr = score != null ? ' (zonpotentieel ' + score + ')' : '';
+    const text = 'Ik kies ☀️ ' + terrace.name + '!' + scoreStr;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      navigator.share({ text: text }).catch(function () {
+        // User cancelled or share failed — open WhatsApp as fallback.
+        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+      });
+    } else {
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    }
+  });
+  card.appendChild(voteBtn);
 
   return card;
 }
@@ -288,10 +387,20 @@ function buildCard(terrace, score) {
   const empty = document.getElementById('empty');
   const cards = document.getElementById('cards');
   const cta = document.getElementById('cta');
+  const windowLabel = document.getElementById('window-label');
 
   if (!parsed) {
     empty.style.display = 'block';
     return;
+  }
+
+  // Show the visit window in the header (new URLs only — legacy has no window).
+  if (!parsed.legacyScores && windowLabel) {
+    const from = parsed.fromHour;
+    const to   = parsed.toHour;
+    const label = 'voor ' + from + ':00–' + to + ':00 \xB7 for ' + from + ':00–' + to + ':00';
+    windowLabel.textContent = label;
+    windowLabel.style.display = 'block';
   }
 
   let liteData;
@@ -307,15 +416,26 @@ function buildCard(terrace, score) {
   }
 
   // Build a quick lookup map by id
-  const byId = new Map(liteData.map(t => [t.id, t]));
+  const byId = new Map(liteData.map(function(t) { return [t.id, t]; }));
 
   let rendered = 0;
   for (let i = 0; i < parsed.ids.length; i++) {
     const terrace = byId.get(parsed.ids[i]);
     if (!terrace) continue;
-    const score = parsed.scores[i];
-    if (!Number.isFinite(score)) continue;
-    cards.appendChild(buildCard(terrace, score));
+
+    let score;
+    let isLegacy = false;
+
+    if (parsed.legacyScores) {
+      // Old s= link: use the baked score directly.
+      score = parsed.legacyScores[i];
+      isLegacy = true;
+    } else {
+      // New w= link: derive from the hourly snapshot.
+      score = windowScore(terrace, parsed.fromHour, parsed.toHour);
+    }
+
+    cards.appendChild(buildCard(terrace, score, isLegacy));
     rendered++;
   }
 

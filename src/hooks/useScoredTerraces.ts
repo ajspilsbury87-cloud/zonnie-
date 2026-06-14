@@ -4,7 +4,7 @@ import { TERRACES } from '@/src/data/terraces';
 import { regionForArea } from '@/src/data/regions';
 import { categoriesForTerrace } from '@/src/data/categories';
 import { computeGemScore, computeTouristProxy, TOURIST_TRAP_FLOOR } from '@/src/engines/gems';
-import { cachedHourScore, rangeScoreForTerrace } from '@/src/hooks/scoreCache';
+import { cachedHourScore } from '@/src/hooks/scoreCache';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
@@ -193,35 +193,4 @@ export function useScoredTerraces(
     weatherByDate,
     coordKey,
   ]);
-}
-
-/**
- * Sun scores for a specific set of terrace IDs, computed from the FULL terrace
- * set (NOT the filtered/ranked list). Returns a Map<id, score>.
- *
- * The group-vote share bar uses this so every shortlisted terrace gets a score
- * for the vote URL even if the user has since changed a filter that would hide
- * it from the visible list. Scores match the list exactly (same per-hour
- * scoring + cache via `rangeScoreForTerrace`). Cheap: only the (≤3) selected
- * terraces are scored.
- */
-export function useShortlistScores(ids: readonly number[]): Map<number, number> {
-  const dateOffset = useTimeStore((s) => s.dateOffset);
-  const fromHour = useTimeStore((s) => s.fromHour);
-  const toHour = useTimeStore((s) => s.toHour);
-  const weatherByDate = useWeatherStore((s) => s.byDate);
-
-  return useMemo(() => {
-    const dateStr = selectedDateStr(dateOffset);
-    const entry = weatherByDate[dateStr];
-    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
-    const scores = new Map<number, number>();
-    for (const id of ids) {
-      const terrace = TERRACES.find((t) => t.id === id);
-      if (terrace) {
-        scores.set(id, rangeScoreForTerrace(terrace, fromHour, toHour, dateStr, hourlyWeather));
-      }
-    }
-    return scores;
-  }, [ids, dateOffset, fromHour, toHour, weatherByDate]);
 }
