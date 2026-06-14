@@ -1083,7 +1083,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:03.465Z",
     "placeId": "ChIJ6bKnXwTixUcRJIL9CHtWbmo",
-    "openness": 1
+    "openness": 0.664
   },
   {
     "id": 67,
@@ -1099,7 +1099,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:03.947Z",
     "placeId": "ChIJ6zYl_nQJxkcRfmceVrMKTVU",
-    "openness": 1
+    "openness": 0.899
   },
   {
     "id": 68,
@@ -1156,7 +1156,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:04.288Z",
     "placeId": "ChIJx8jIHXMJxkcRbXr3CkT35hM",
-    "openness": 1
+    "openness": 0.575
   },
   {
     "id": 71,
@@ -1718,7 +1718,7 @@
     "placeId": "ChIJ3QWjFQsJxkcRByiZTvixDZE",
     "googleRating": 4.3,
     "googleReviewCount": 678,
-    "openness": 1
+    "openness": 0.644
   },
   {
     "id": 107,
@@ -1752,7 +1752,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:05.330Z",
     "placeId": "ChIJO5oH0t0JxkcRKkXlC7IYHMA",
-    "openness": 1
+    "openness": 0.644
   },
   {
     "id": 109,
@@ -1878,7 +1878,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:05.689Z",
     "placeId": "ChIJdVWLs6sJxkcRwIZFYv2wOmk",
-    "openness": 1
+    "openness": 0.826
   },
   {
     "id": 116,
@@ -1912,7 +1912,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:06.046Z",
     "placeId": "ChIJV6JTUwAJxkcRzYRCsfJRgoE",
-    "openness": 1
+    "openness": 0.986
   },
   {
     "id": 119,
@@ -2059,7 +2059,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:06.695Z",
     "placeId": "ChIJMxnKT8gJxkcRzU8RA4ssfdw",
-    "openness": 1
+    "openness": 0.674
   },
   {
     "id": 128,
@@ -2211,7 +2211,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:07.693Z",
     "placeId": "ChIJIRuK9NUJxkcRSJz2EFvNEi4",
-    "openness": 1
+    "openness": 0.823
   },
   {
     "id": 137,
@@ -2407,7 +2407,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:08.393Z",
     "placeId": "ChIJK69AQQzixUcRHdpcqTytp7Q",
-    "openness": 1
+    "openness": 0.422
   },
   {
     "id": 148,
@@ -2729,7 +2729,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:08.765Z",
     "placeId": "ChIJvZRYx9QLxkcRTUYpW3Say80",
-    "openness": 1
+    "openness": 0.942
   },
   {
     "id": 167,
@@ -2871,7 +2871,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:09.108Z",
     "placeId": "ChIJoxunGsgJxkcRKhsZdn55IOM",
-    "openness": 1
+    "openness": 0.672
   },
   {
     "id": 177,
@@ -2887,7 +2887,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:09.436Z",
     "placeId": "ChIJjVnvTssJxkcR0SpAFNV358w",
-    "openness": 1
+    "openness": 0.721
   },
   {
     "id": 178,
@@ -2960,7 +2960,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:09.748Z",
     "placeId": "ChIJNz_LWgAJxkcRanlLvP4BHc0",
-    "openness": 1
+    "openness": 0.896
   },
   {
     "id": 182,
@@ -2994,7 +2994,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:10.090Z",
     "placeId": "ChIJpcCAxbLjxUcRo5hrlR8hpv8",
-    "openness": 1
+    "openness": 0.949
   },
   {
     "id": 184,
@@ -3044,7 +3044,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:10.792Z",
     "placeId": "ChIJqeH2OMsJxkcRM_rrrKbl2gY",
-    "openness": 1
+    "openness": 0.609
   },
   {
     "id": 187,
@@ -3686,7 +3686,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:16.995Z",
     "placeId": "ChIJoevUp60JxkcRUFOZb94aqL4",
-    "openness": 1
+    "openness": 0.893
   },
   {
     "id": 297,
@@ -3842,7 +3842,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:43:33.874Z",
     "placeId": "ChIJFdxxhAAKxkcRCQB4teu2dYQ",
-    "openness": 1
+    "openness": 0.835
   },
   {
     "id": 488,
@@ -14187,7 +14187,7 @@
     "coordSource": "places_api",
     "verifiedAt": "2026-06-06T11:36:24.097Z",
     "placeId": "ChIJ8f6sNeQJxkcRcR9CnNqMt_k",
-    "openness": 1
+    "openness": 0.998
   },
   {
     "id": 1264,
@@ -15312,7 +15312,7 @@
       "coffee"
     ],
     "placeId": "ChIJ_3D0x-njxUcRrOfrv8DJtTY",
-    "openness": 1
+    "openness": 0.878
   },
   {
     "id": 1318,
@@ -17196,7 +17196,7 @@
     "category": [
       "coffee"
     ],
-    "openness": 1
+    "openness": 0.997
   },
   {
     "id": 1424,
