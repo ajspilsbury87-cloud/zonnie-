@@ -43,7 +43,10 @@ interface MainSheetProps {
 
 export function MainSheet({ onSelect }: MainSheetProps) {
   const ref = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => [290, '60%', '92%'], []);
+  // 330 (was 290): the search field now sits at the top of the header, so the
+  // peek needs a little more height to keep the date picker + weather strip
+  // visible alongside it.
+  const snapPoints = useMemo(() => [330, '60%', '92%'], []);
   // The detail sheet's "Show on Map" action sets `panTo` then clears
   // selection. ZonnieMap watches `panTo` and animates the map. We
   // also want this sheet to minimise to peek so the user actually
@@ -84,12 +87,13 @@ export function MainSheet({ onSelect }: MainSheetProps) {
       snapPoints={snapPoints}
       index={1}
       enableDynamicSizing={false}
-      // Keyboard handling for the in-header search field (a BottomSheetTextInput).
-      // Without this the keyboard covered the bottom of the list and the scroll
-      // extent couldn't reach past it. "extend" gives the list the full sheet
-      // height while typing; "restore" returns to the prior snap on dismiss.
+      // Keyboard handling for the top search field (a BottomSheetTextInput).
+      // "extend" lifts the sheet to full height on focus so the (now top-of-
+      // header) input clears the keyboard. blurBehavior "none" — NOT "restore"
+      // — keeps the sheet put when the keyboard dismisses on drag; restoring
+      // snapped it back mid-scroll, which read as "the list won't scroll".
       keyboardBehavior="extend"
-      keyboardBlurBehavior="restore"
+      keyboardBlurBehavior="none"
       android_keyboardInputMode="adjustResize"
       handleIndicatorStyle={styles.handle}
       backgroundStyle={styles.background}

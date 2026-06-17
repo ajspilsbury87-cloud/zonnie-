@@ -321,6 +321,12 @@ export function TerraceList({ onSelect }: TerraceListProps) {
               </Text>
             </TouchableOpacity>
 
+            {/* Search — pinned at the top of the header so it's easy to find
+                and, crucially, sits above the keyboard when focused. It used
+                to live at the bottom of "More filters", where the keyboard
+                covered it and blocked the list from scrolling. */}
+            <SearchBox />
+
             {/*
               Two-tier header layout (v1.1 polish):
                 Tier 1 — ALWAYS VISIBLE. Decision tools the average user
@@ -348,7 +354,6 @@ export function TerraceList({ onSelect }: TerraceListProps) {
             {filtersExpanded ? (
               <View style={styles.refinePanel}>
                 <TimeRangeFineTune />
-                <SearchBox />
                 <NeighborhoodFilter />
               </View>
             ) : null}
