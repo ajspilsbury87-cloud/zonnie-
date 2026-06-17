@@ -15,6 +15,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
+import type { Weather } from '@/src/engines/types';
 import { haptics } from '@/src/lib/haptics';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useTimeStore, MAX_DATE_OFFSET, selectedDateStr } from '@/src/store/timeStore';
@@ -58,17 +59,85 @@ function cloudGlyph(avgCloud: number | null): string {
   return '☁';
 }
 
-/** Average daytime cloud cover (10:00–18:00) — the part that matters for terraces. */
-function dayCloudAvg(hourly: { cloudCover: number }[] | undefined): number | null {
-  if (!hourly || hourly.length < 19) return null;
-  let sum = 0;
+// Terrace-relevant daytime window — the hours someone would actually sit out.
+const DAY_START = 10;
+const DAY_END = 18;
+
+const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
+
+interface DayWeather {
+  /** Overall daytime quality 0–1 (sunshine-dominant, small warmth nudge). */
+  quality: number;
+  /** Sunniest single daytime hour 0–1 — drives the "great day" ring. */
+  peakClear: number;
+  /** Average daytime cloud cover — feeds the existing ☀/🌤/☁ glyph. */
+  avgCloud: number;
+}
+
+/**
+ * Collapse a day's hourly forecast into the numbers a chip needs, over the
+ * 10:00–18:00 window. Quality is mostly "how sunny" (inverse cloud cover)
+ * with a gentle nudge for warmth, so a sunny cold day still ranks below a
+ * sunny warm one. Returns null until the forecast for that date loads.
+ */
+function dayWeather(hourly: Weather[] | undefined): DayWeather | null {
+  if (!hourly || hourly.length <= DAY_END) return null;
+  let cloudSum = 0;
+  let tempSum = 0;
+  let minCloud = 100;
   let count = 0;
-  for (let h = 10; h <= 18; h++) {
-    sum += hourly[h]?.cloudCover ?? 0;
+  for (let h = DAY_START; h <= DAY_END; h++) {
+    const w = hourly[h];
+    if (!w) continue;
+    cloudSum += w.cloudCover;
+    tempSum += w.temp;
+    if (w.cloudCover < minCloud) minCloud = w.cloudCover;
     count++;
   }
-  return count > 0 ? sum / count : null;
+  if (count === 0) return null;
+  const avgCloud = cloudSum / count;
+  const sunshine = (100 - avgCloud) / 100;
+  // Map avg daytime temp 10°C→0 … 22°C→1, weighted lightly so sun dominates.
+  const warmth = clamp01((tempSum / count - 10) / 12);
+  return {
+    quality: clamp01(sunshine * 0.85 + warmth * 0.15),
+    peakClear: (100 - minCloud) / 100,
+    avgCloud,
+  };
 }
+
+/** Sunniest daytime hour ≤20% cloud → "very good at some point" → ring. */
+const STANDOUT_PEAK_CLEAR = 0.8;
+
+type WeatherBand = 'great' | 'good' | 'fair' | 'meh' | 'poor';
+
+function weatherBand(quality: number): WeatherBand {
+  if (quality >= 0.82) return 'great';
+  if (quality >= 0.62) return 'good';
+  if (quality >= 0.45) return 'fair';
+  if (quality >= 0.3) return 'meh';
+  return 'poor';
+}
+
+// Warmth bar — full-strength brand colors: deep terracotta (great) fading to
+// a muted taupe (poor). Mirrors the map-pin warmth language.
+const BAR_COLOR: Record<WeatherBand, string> = {
+  great: palette.terracotta,
+  good: palette.burnt,
+  fair: palette.orange,
+  meh: palette.mustard,
+  poor: palette.mistDeep,
+};
+
+// Chip wash — light tints of the same bands. Picker-specific surface colors
+// (not core palette tokens) so the row stays soft against the cream sheet.
+const WASH_COLOR: Record<WeatherBand, string> = {
+  great: '#F2C7B3',
+  good: '#F6D3BE',
+  fair: '#FAE4CA',
+  meh: '#FBEFCF',
+  poor: '#EDE8DE',
+};
 
 export function DatePicker() {
   const t = useStrings();
@@ -95,7 +164,19 @@ export function DatePicker() {
       {dates.map((d) => {
         const active = d.offset === dateOffset;
         const entry = byDate[d.dateStr];
-        const avgCloud = entry?.status === 'ready' ? dayCloudAvg(entry.data) : null;
+        const wx = entry?.status === 'ready' ? dayWeather(entry.data) : null;
+        const band = wx ? weatherBand(wx.quality) : null;
+        // No data yet → neutral sand chip + faint placeholder bar (no jump).
+        const washBg = band ? WASH_COLOR[band] : palette.sandDeep;
+        const barColor = band ? BAR_COLOR[band] : palette.mist;
+        const isStandout = wx != null && wx.peakClear >= STANDOUT_PEAK_CLEAR;
+        // Selected day wins the border (dark ink ring); otherwise a great day
+        // shows the warm terracotta ring. The bar still encodes "great" either way.
+        const borderColor = active
+          ? palette.ink
+          : isStandout
+            ? palette.terracotta
+            : 'transparent';
         return (
           <TouchableOpacity
             key={d.dateStr}
@@ -104,17 +185,18 @@ export function DatePicker() {
               setDateOffset(d.offset);
             }}
             activeOpacity={0.7}
-            style={[styles.chip, active && styles.chipActive]}
+            style={[styles.chip, { backgroundColor: washBg, borderColor }]}
           >
-            <Text style={[styles.topLine, active && styles.activeText]} numberOfLines={1}>
+            <Text style={styles.topLine} numberOfLines={1}>
               {d.topLine}
             </Text>
-            <Text style={[styles.bottomLine, active && styles.activeText]} numberOfLines={1}>
+            <Text style={styles.bottomLine} numberOfLines={1}>
               {d.bottomLine}
             </Text>
-            <Text style={[styles.glyph, active && styles.activeText]}>
-              {cloudGlyph(avgCloud)}
-            </Text>
+            <View style={styles.iconBarRow}>
+              <Text style={styles.glyph}>{cloudGlyph(wx ? wx.avgCloud : null)}</Text>
+              <View style={[styles.bar, { backgroundColor: barColor }]} />
+            </View>
           </TouchableOpacity>
         );
       })}
@@ -135,9 +217,10 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     backgroundColor: palette.sandDeep,
     alignItems: 'center',
-  },
-  chipActive: {
-    backgroundColor: palette.amber,
+    // 2px transparent border by default so the selected (ink) / great-day
+    // (terracotta) ring can colour it in without resizing the chip.
+    borderWidth: 2,
+    borderColor: 'transparent',
   },
   topLine: {
     fontFamily: fonts.bodySemibold,
@@ -150,11 +233,18 @@ const styles = StyleSheet.create({
     color: palette.inkSoft,
     marginTop: 1,
   },
-  glyph: {
-    fontSize: fontSizes.md,
+  iconBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
     marginTop: spacing.xs / 2,
   },
-  activeText: {
-    color: palette.white,
+  glyph: {
+    fontSize: fontSizes.md,
+  },
+  bar: {
+    width: 22,
+    height: 5,
+    borderRadius: radii.pill,
   },
 });
