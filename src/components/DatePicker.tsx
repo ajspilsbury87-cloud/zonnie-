@@ -168,15 +168,21 @@ export function DatePicker() {
         const band = wx ? weatherBand(wx.quality) : null;
         // No data yet → neutral sand chip + faint placeholder bar (no jump).
         const washBg = band ? WASH_COLOR[band] : palette.sandDeep;
-        const barColor = band ? BAR_COLOR[band] : palette.mist;
-        const isStandout = wx != null && wx.peakClear >= STANDOUT_PEAK_CLEAR;
-        // Selected day wins the border (dark ink ring); otherwise a great day
-        // shows the warm terracotta ring. The bar still encodes "great" either way.
-        const borderColor = active
-          ? palette.ink
-          : isStandout
-            ? palette.terracotta
-            : 'transparent';
+        // Selected day = bold solid fill so it clearly reads as the day you're
+        // viewing; unselected days carry their soft weather wash.
+        const chipBg = active ? palette.burnt : washBg;
+        // On the filled selected chip a coloured bar would vanish, so show it
+        // in cream — the WeatherStrip just below already details that day.
+        const barColor = active
+          ? palette.cream
+          : band
+            ? BAR_COLOR[band]
+            : palette.mist;
+        // A great day (very good at some point) gets a terracotta ring, but
+        // only when it isn't the selected day — the fill is emphasis enough.
+        const isStandout =
+          !active && wx != null && wx.peakClear >= STANDOUT_PEAK_CLEAR;
+        const borderColor = isStandout ? palette.terracotta : 'transparent';
         return (
           <TouchableOpacity
             key={d.dateStr}
@@ -185,12 +191,12 @@ export function DatePicker() {
               setDateOffset(d.offset);
             }}
             activeOpacity={0.7}
-            style={[styles.chip, { backgroundColor: washBg, borderColor }]}
+            style={[styles.chip, { backgroundColor: chipBg, borderColor }]}
           >
-            <Text style={styles.topLine} numberOfLines={1}>
+            <Text style={[styles.topLine, active && styles.activeText]} numberOfLines={1}>
               {d.topLine}
             </Text>
-            <Text style={styles.bottomLine} numberOfLines={1}>
+            <Text style={[styles.bottomLine, active && styles.activeText]} numberOfLines={1}>
               {d.bottomLine}
             </Text>
             <View style={styles.iconBarRow}>
@@ -232,6 +238,10 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.xs,
     color: palette.inkSoft,
     marginTop: 1,
+  },
+  // Selected chip uses a solid burnt fill — cream text reads cleanly on it.
+  activeText: {
+    color: palette.cream,
   },
   iconBarRow: {
     flexDirection: 'row',
