@@ -63,7 +63,12 @@ function Cell({ hour, temp, cloudCover, windSpeed, windDirection }: CellProps) {
       <Text style={styles.hour}>{hour.toString().padStart(2, '0')}</Text>
       <Text style={styles.glyph}>{cloudGlyph(cloudCover)}</Text>
       <Text style={styles.temp}>{temp}°</Text>
-      <Text style={styles.detail}>
+      <Text
+        style={styles.detail}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
+      >
         {cloudCover}%{windDirLabel(windDirection, windSpeed)}{windGlyph(windSpeed)}
       </Text>
     </View>
@@ -188,6 +193,11 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.xs,
     color: palette.inkSoft,
     marginTop: 1,
+    // Fill the cell width and stay on a single line. Previously the wind
+    // glyph (🌬️) wrapped below the "%·direction" text in narrow cells; now
+    // the line shrinks slightly (down to 80%) instead of wrapping.
+    alignSelf: 'stretch',
+    textAlign: 'center',
   },
   // Placeholder row matches the cell row's vertical footprint so the
   // strip reserves the same height regardless of data state — keeps the
