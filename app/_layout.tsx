@@ -17,8 +17,8 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import * as Updates from 'expo-updates';
 
-import { LandingPage } from '@/src/components/LandingPage';
 import { NotificationPrompt } from '@/src/components/NotificationPrompt';
+import { useLandingStore } from '@/src/store/landingStore';
 import { shouldShowPrompt } from '@/src/notifications/permission';
 import { useDailyForecastNotification } from '@/src/notifications/useDailyForecastNotification';
 import { useFavouritesSunnyNotifications } from '@/src/notifications/useFavouritesSunnyNotifications';
@@ -126,13 +126,11 @@ export default function RootLayout() {
   }, []);
   const handleIntroDismiss = useCallback(() => setShowIntro(false), []);
 
-  // Branded landing page — sits above the app surface on launch with
-  // the brand sun-and-rays moment + top 3 sunny terraces "right now"
-  // as cards. User taps "See all terraces" to enter the live map.
-  // Native splash hides as soon as fonts load; the landing background
-  // is `palette.sand` to match for a seamless handover.
-  const [showLanding, setShowLanding] = useState(true);
-  const handleLandingContinue = useCallback(() => setShowLanding(false), []);
+  // Landing overlay is now controlled by useLandingStore — see app/index.tsx
+  // for where <LandingPage /> is rendered (above MainSheet, below detail sheet).
+  // We still read visible here to defer the notification prompt until Home is
+  // dismissed — showing both at once would be jarring.
+  const landingVisible = useLandingStore((s) => s.visible);
 
   // Notification permission explainer — shown once on the first
   // launch where permission is undetermined. Self-marks as prompted
@@ -141,7 +139,9 @@ export default function RootLayout() {
   const [showNotifPrompt, setShowNotifPrompt] = useState(false);
   useEffect(() => {
     let cancelled = false;
-    if (showLanding) return;
+    // When Home re-opens, dismiss any orphaned prompt immediately so it
+    // can never be stranded behind the Home overlay.
+    if (landingVisible) { setShowNotifPrompt(false); return; }
     void (async () => {
       const should = await shouldShowPrompt();
       if (!cancelled && should) setShowNotifPrompt(true);
@@ -149,7 +149,7 @@ export default function RootLayout() {
     return () => {
       cancelled = true;
     };
-  }, [showLanding]);
+  }, [landingVisible]);
   const handleNotifPromptDismiss = useCallback(
     () => setShowNotifPrompt(false),
     [],
@@ -171,9 +171,6 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <StatusBar style="auto" />
         <Stack screenOptions={{ headerShown: false }} />
-        {showLanding ? (
-          <LandingPage onContinue={handleLandingContinue} />
-        ) : null}
         {showIntro ? (
           <OnboardingIntro onDismiss={handleIntroDismiss} />
         ) : null}
