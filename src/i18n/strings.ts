@@ -30,6 +30,9 @@ export const strings = {
 
     // Venue type filter
     filterWhat: 'WAT',
+    filterAreas: 'Buurten',
+    filterAreasA11y: 'Open buurtfilter',
+    filterTimeA11y: 'Open tijdkiezer',
     filterBar: '🍺 Bar',
     filterRestaurant: '🍽️ Restaurant',
     filterCoffee: '☕ Koffie',
@@ -294,6 +297,9 @@ export const strings = {
 
     // Venue type filter
     filterWhat: 'WHAT',
+    filterAreas: 'Areas',
+    filterAreasA11y: 'Open neighbourhood filter',
+    filterTimeA11y: 'Open time range picker',
     filterBar: '🍺 Bar',
     filterRestaurant: '🍽️ Restaurant',
     filterCoffee: '☕ Coffee',

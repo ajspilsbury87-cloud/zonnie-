@@ -8,20 +8,12 @@ import { usePurchaseStore, FEATURES_UNLOCKED } from '@/src/store/purchaseStore';
 import { useProPaywallStore } from '@/src/components/ProPaywall';
 
 import { DatePicker } from '@/src/components/DatePicker';
-import { MoreFiltersToggle } from '@/src/components/MoreFiltersToggle';
-import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
 import { SearchBox } from '@/src/components/SearchBox';
-import {
-  TimeRangeFineTune,
-  TimeRangeQuickPicker,
-} from '@/src/components/TimeRangeScrubber';
-import { VenueTypeFilter } from '@/src/components/VenueTypeFilter';
 import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { scoreLabel } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
-import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useAreaStore } from '@/src/store/areaStore';
@@ -142,24 +134,11 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   // every row on every unrelated state update.
   const shortlistSet = useMemo(() => new Set(shortlistIds), [shortlistIds]);
 
-  // Secondary filter section (time sliders / search / neighborhood
-  // chips) is hidden by default to give the terrace list more screen
-  // space. Tap the "More filters" toggle row to expand. The
-  // always-visible row above (date / time presets / weather / venue
-  // type chips) covers the highest-traffic interactions; refine
-  // controls are an opt-in.
-  const [filtersExpanded, setFiltersExpanded] = useState(false);
-  const toggleFiltersExpanded = useCallback(
-    () => setFiltersExpanded((x) => !x),
-    [],
-  );
-
-  // Onboarding hints — show sequentially so they don't pile up.
-  // pin-tap fires first (on the map). Once dismissed, the filters
-  // hint appears on the More-filters toggle to nudge discovery of
-  // the neighborhood filter. Time-scrubber hint was dropped when the
-  // scrubber moved to always-visible (#6c) — it's self-evident now.
-  const [showFilterHint, dismissFilterHint] = useHint('filters', { after: 'pin-tap' });
+  // Onboarding hints — retain the 'filters' hint call so its sequential
+  // chain logic in useHint continues ticking (it gates other hints that
+  // depend on 'pin-tap' being seen first). The hint no longer renders
+  // anything now that the "More filters" toggle is gone; side-effects only.
+  useHint('filters', { after: 'pin-tap' });
 
   // Context-aware empty-state messaging — the user has hit "no results"
   // for a different reason depending on which filter is active. A
@@ -322,45 +301,15 @@ export function TerraceList({ onSelect }: TerraceListProps) {
             ) : null}
 
             {/* Search — pinned at the top of the header so it's easy to find
-                and, crucially, sits above the keyboard when focused. It used
-                to live at the bottom of "More filters", where the keyboard
-                covered it and blocked the list from scrolling. */}
+                and, crucially, sits above the keyboard when focused. */}
             <SearchBox />
 
-            {/*
-              Two-tier header layout (v1.2 — #6c unlock):
-                Tier 1 — ALWAYS VISIBLE. Date, weather strip, time presets,
-                         time fine-tune sliders (now free for all), venue type.
-                Tier 2 — COLLAPSED BEHIND TOGGLE. Neighborhood multi-select
-                         (less frequently used; kept behind toggle to save space).
-              Scrubber moved to Tier 1 (#6c) because it was previously Pro-only;
-              with the lock gone it's a primary control, not a power-user extra.
-            */}
+            {/* Date and weather context — tells the user WHICH day they're
+                scoring terraces for and what the weather looks like.
+                All venue / time / area filters have moved to FilterChips
+                (the floating chip row above the map). */}
             <DatePicker />
             <WeatherStrip />
-            {/* TimeRangeQuickPicker shows the preset chips (Morning/Afternoon/Evening).
-                TimeRangeFineTune is now always-visible (#6c, #10 unlock) — it was
-                previously behind "More filters" because it was Pro-only. Now that the
-                scrubber is free, it surfaces here as a primary control so users can
-                fine-tune without hunting through the collapse panel. Presets above it
-                remain as fast shortcuts. */}
-            <TimeRangeQuickPicker />
-            <TimeRangeFineTune />
-            <VenueTypeFilter />
-            <MoreFiltersToggle
-              expanded={filtersExpanded}
-              onToggle={toggleFiltersExpanded}
-            />
-            {showFilterHint && !filtersExpanded ? (
-              <HintBubble onDismiss={dismissFilterHint} style={styles.inlineHint}>
-                {t.filterHint}
-              </HintBubble>
-            ) : null}
-            {filtersExpanded ? (
-              <View style={styles.refinePanel}>
-                <NeighborhoodFilter />
-              </View>
-            ) : null}
           </View>
         }
         ListEmptyComponent={
@@ -479,21 +428,6 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: palette.white,
   },
-  // Inline hint placement: override HintBubble's default `absolute`
-  // positioning so the bubble flows with the list header rather than
-  // floating over it.
-  inlineHint: {
-    position: 'relative',
-    alignSelf: 'center',
-    marginVertical: spacing.sm,
-  },
-  // Container for the collapsed-by-default refine controls. Plain
-  // wrapper — visual divider lives inside MoreFiltersToggle above it.
-  refinePanel: {
-    backgroundColor: palette.white,
-    paddingBottom: spacing.sm,
-  },
-
   // Pro entry pill — sits at the very top of the header, always visible
   // at the default peek snap. Brand-coloured but deliberately compact so
   // it reads as a feature badge rather than a promotional banner.
