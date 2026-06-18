@@ -274,18 +274,23 @@ describe('computeGemScore', () => {
 // ─── TOURIST_TRAP_FLOOR ───────────────────────────────────────────────────────
 
 describe('TOURIST_TRAP_FLOOR', () => {
-  test('value is 0.85 as documented', () => {
-    expect(TOURIST_TRAP_FLOOR).toBe(0.85);
+  // Threshold lowered from 0.85 → 0.60 in #6b (2026-06-18) to exclude the
+  // top ~30% most touristy (was top 6%). Distribution analysis on 974 terraces:
+  //   0.85 → 59 excluded  (6.1%)  — old value
+  //   0.60 → 286 excluded (29.4%) — new value, target was 25-35%
+  test('value is 0.60 (calibrated to exclude top ~30% most touristy)', () => {
+    expect(TOURIST_TRAP_FLOOR).toBe(0.60);
   });
 
-  test('most Noord and Oost terraces pass the floor (proxy < 0.85)', () => {
+  test('the majority of Noord and Oost terraces still pass the floor', () => {
     const outerTerraces = TERRACES.filter(
       (t) => t.area === 'Noord' || t.area === 'Oost',
     );
     const trapped = outerTerraces.filter(
       (t) => computeTouristProxy(t) > TOURIST_TRAP_FLOOR,
     );
-    // Virtually none should be excluded — Noord/Oost are not tourist-heavy.
-    expect(trapped.length).toBe(0);
+    // At 0.60 a minority of Noord/Oost may be excluded (those with very high
+    // review counts despite being outer areas). The majority should still pass.
+    expect(trapped.length).toBeLessThan(outerTerraces.length * 0.5);
   });
 });

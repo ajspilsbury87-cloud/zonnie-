@@ -38,8 +38,8 @@ export function VenueTypeFilter() {
   const toggleCategory       = useAreaStore((s) => s.toggleCategory);
   const matchModeOnly        = useAreaStore((s) => s.matchModeOnly);
   const toggleMatchModeOnly  = useAreaStore((s) => s.toggleMatchModeOnly);
-  const sortByDistance        = useAreaStore((s) => s.sortByDistance);
-  const toggleSortByDistance  = useAreaStore((s) => s.toggleSortByDistance);
+  // sortByDistance chip removed (#6a). Store field kept so useScoredTerraces
+  // wiring compiles; it will always be false (the default) now.
   const hiddenGemOnly         = useAreaStore((s) => s.hiddenGemOnly);
   const toggleHiddenGemOnly   = useAreaStore((s) => s.toggleHiddenGemOnly);
   const chipWidth             = useChipWidth();
@@ -95,12 +95,10 @@ export function VenueTypeFilter() {
           })}
         </View>
 
-        {/* Row 2: same fixed pixel width as Row 1, so all chips
-            across the card are identical. With only 2 chips in this
-            row, ~92pt of empty space sits on the right.
-            Label "⚽ Outdoor Screen" → "⚽ Outdoor" — 14 chars don't
-            fit a 109pt slot; the football glyph carries the "sports
-            outside" meaning. */}
+        {/* Row 2: Outdoor Screen + Hidden Gem. "Near me" chip removed (#6a)
+            — it sorted rather than filtered, which confused users expecting
+            a distance filter. sortByDistance store field kept intact so
+            useScoredTerraces compiles; it will always be false now. */}
         <View style={styles.modeRow}>
           <TouchableOpacity
             onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
@@ -113,19 +111,6 @@ export function VenueTypeFilter() {
               numberOfLines={1}
             >
               {t.filterOutdoor}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => { haptics.selection(); toggleSortByDistance(); }}
-            activeOpacity={0.7}
-            style={[styles.modeChip, { width: chipWidth }, sortByDistance && styles.modeChipNearMe]}
-            accessibilityLabel={t.filterNearMeA11y}
-          >
-            <Text
-              style={[styles.chipText, sortByDistance && styles.chipTextActive]}
-              numberOfLines={1}
-            >
-              {t.filterNearMe}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -243,13 +228,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
-  modeChipNearMe: {
-    backgroundColor: palette.leaf,
-    shadowOpacity: 0.16,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
+  // modeChipNearMe removed — "Near me" chip cut in #6a.
   modeChipHiddenGem: {
     // Amethyst purple — distinct from burnt (orange) and leaf (green),
     // carries the "rare / special" connotation of a gem.
