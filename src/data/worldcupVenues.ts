@@ -71,6 +71,9 @@ export const WC_VENUES: Record<number, WCVenue> = {
   1388: { status: 'confirmed', coverage: 'oranje', note: 'Packed for Oranje · Amstelveld', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
   1389: { status: 'confirmed', coverage: 'oranje', note: 'NL group games on the terrace & garden', source: 'https://cafenieuwamsterdam.nl/wk-kijken-bij-cafe-nieuw-amsterdam/' },
 
+  // ── De Pijp ───────────────────────────────────────────────────────────
+  1470: { status: 'confirmed', coverage: 'oranje', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
+
   // ── Zuid / Stadionbuurt / Zuidas / Oud-Zuid ───────────────────────────
   151: { status: 'confirmed', coverage: 'oranje', note: 'Festival-like Vondelpark terrace · big screens', source: 'https://www.bartsboekje.com/wk-ek-voetbal-kijken-amsterdam/' },
   152: { status: 'confirmed', coverage: 'oranje', source: 'https://www.man-man.nl/nederlands-elftal-wk-2026-kijken-amsterdam/' },

@@ -189,8 +189,8 @@ describe('Data fixes', () => {
     expect(t?.name).toBe('WestWeelde');
   });
 
-  test('terrace count is 974', () => {
-    expect(TERRACES.length).toBe(974);
+  test('terrace count is 993', () => {
+    expect(TERRACES.length).toBe(993);
   });
 
   test('#70 Bar Botanique is in area Oost', () => {
