@@ -11,6 +11,12 @@
  * SW-facing Stadionbuurt venues at midday), now top-3-per-region so
  * users in any neighbourhood see a sunny option without scrolling.
  *
+ * Restructured 2026-06-18 — full-screen scrollable: brand header scrolls
+ * away with content; "See all terraces" CTA pinned as an absolute footer.
+ * Home overlay is now controlled by useLandingStore (no onContinue prop).
+ * Tapping a card only selects — detail sheet opens OVER the Home overlay,
+ * so closing detail returns to Home without a map flash.
+ *
  * Animation sequence (Reanimated 3, all on the UI thread):
  *   0ms     overlay opaque, sun + text invisible
  *   80ms    sun core scales 0 → 1 (back-easing overshoot)
@@ -19,9 +25,8 @@
  *   600ms   tagline fades + slides up
  *   1100ms  featured cards + region sections fade + slide in
  *   1700ms  "See all terraces" button fades in
- *   user taps card → select(id) + onContinue() (detail sheet animates
- *                    up after landing fades out)
- *   user taps button → onContinue() (lands on map without selection)
+ *   user taps card → select(id) (detail opens over Home)
+ *   user taps button → hideLanding() (lands on map without selection)
  *
  * Scoring uses the CURRENT Amsterdam hour (single point in time, not
  * a window) so the landing answers "where's sunny right now?"
@@ -38,6 +43,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { useStrings } from '@/src/i18n/useStrings';
@@ -49,6 +55,7 @@ import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions'
 import { AMSTERDAM_TZ, computeRangeScore } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
+import { useLandingStore } from '@/src/store/landingStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -67,10 +74,9 @@ const RAY_THICKNESS = 5;
 const FEATURED_CARD_W = 180;
 const FEATURED_CARD_H = 118;
 
-interface LandingPageProps {
-  /** Called when the user taps "Continue"; parent should unmount the landing. */
-  onContinue: () => void;
-}
+// CTA footer height — used to add matching bottom padding inside the
+// ScrollView so the last content row is never hidden under the button.
+const CTA_FOOTER_HEIGHT = 64;
 
 interface TopVenue {
   terrace: Terrace;
@@ -185,11 +191,16 @@ function pickFeaturedTerraces(
  */
 const SCREEN_TERRACE_COUNT = TERRACES.filter((t) => (t.outdoorScreens ?? 0) > 0).length;
 
-export function LandingPage({ onContinue }: LandingPageProps) {
+export function LandingPage() {
   const t = useStrings();
+  const insets = useSafeAreaInsets();
   const weatherByDate = useWeatherStore((s) => s.byDate);
   const select = useSelectionStore((s) => s.select);
   const setMatchModeOnly = useAreaStore((s) => s.setMatchModeOnly);
+  // Store-driven dismiss — no prop needed.
+  const hideLanding = useLandingStore((s) => s.hide);
+  const introPlayed = useLandingStore((s) => s.introPlayed);
+  const markIntroPlayed = useLandingStore((s) => s.markIntroPlayed);
 
   // Evaluate once per render — cheap string comparison, no side effects.
   const today = todayAmsterdamDateStr();
@@ -209,43 +220,47 @@ export function LandingPage({ onContinue }: LandingPageProps) {
 
   /**
    * Tapping the WC spotlight card or matchday banner activates the
-   * "outdoor screens" filter and navigates straight to the map — same
-   * as tapping the 📺 Match chip in the filter row, plus dismiss.
+   * "outdoor screens" filter and navigates straight to the map.
    */
   const handleWcPress = () => {
     haptics.medium();
     setMatchModeOnly(true);
-    setTimeout(onContinue, 60);
+    // Small delay so the filter state lands before Home hides and the
+    // map re-renders with the active filter applied.
+    setTimeout(hideLanding, 60);
   };
 
   /**
-   * Tapping a card on the landing page should open that terrace's
-   * detail directly — set the selection BEFORE we fade out, so by
-   * the time the map is visible the detail sheet has already animated
-   * up. Saves the user a tap.
+   * Tapping a card ONLY selects the terrace. The detail sheet (a later
+   * sibling in index.tsx) renders ABOVE the Home overlay, so it opens
+   * over Home — the user closes the detail to return to Home.
+   * We intentionally do NOT call hideLanding() here.
    */
   const handleCardPress = (terraceId: number) => {
     haptics.light();
     select(terraceId);
-    // Defer onContinue by a frame so the selection has time to land
-    // in the store + the detail sheet has rendered before we unmount
-    // the landing.
-    setTimeout(onContinue, 60);
   };
 
-  // Animation drivers
+  // Animation drivers.
+  // When the intro has already played this session (introPlayed === true),
+  // initialise all values at their final state so Home appears instantly
+  // on return — no re-animation. On first launch they start at 0/hidden.
   const containerOpacity = useSharedValue(1);
-  const sunScale = useSharedValue(0);
-  const rayProgress = useSharedValue(0);
-  const titleOpacity = useSharedValue(0);
-  const titleTranslateY = useSharedValue(8);
-  const taglineOpacity = useSharedValue(0);
-  const taglineTranslateY = useSharedValue(6);
-  const cardsOpacity = useSharedValue(0);
-  const cardsTranslateY = useSharedValue(14);
-  const buttonOpacity = useSharedValue(0);
+  const sunScale = useSharedValue(introPlayed ? 1 : 0);
+  const rayProgress = useSharedValue(introPlayed ? 1 : 0);
+  const titleOpacity = useSharedValue(introPlayed ? 1 : 0);
+  const titleTranslateY = useSharedValue(introPlayed ? 0 : 8);
+  const taglineOpacity = useSharedValue(introPlayed ? 1 : 0);
+  const taglineTranslateY = useSharedValue(introPlayed ? 0 : 6);
+  const cardsOpacity = useSharedValue(introPlayed ? 1 : 0);
+  const cardsTranslateY = useSharedValue(introPlayed ? 0 : 14);
+  const buttonOpacity = useSharedValue(introPlayed ? 1 : 0);
 
   useEffect(() => {
+    // If the intro has already played this session, all shared values were
+    // initialised at their final state above — nothing to animate.
+    if (introPlayed) return;
+
     sunScale.value = withDelay(
       80,
       withSequence(
@@ -286,6 +301,11 @@ export function LandingPage({ onContinue }: LandingPageProps) {
       1700,
       withTiming(1, { duration: 320, easing: Easing.out(Easing.quad) }),
     );
+    // Mark intro as played after the last animation fires (~1700ms + 320ms =
+    // ~2020ms total). setTimeout fires on the JS thread — just needs to be
+    // after the animation completes so re-opens never trigger the sequence.
+    const timer = setTimeout(markIntroPlayed, 2100);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -294,13 +314,8 @@ export function LandingPage({ onContinue }: LandingPageProps) {
     containerOpacity.value = withTiming(
       0,
       { duration: 280, easing: Easing.in(Easing.quad) },
-      (finished) => {
-        if (finished) {
-          // runOnJS not needed — see original comment.
-        }
-      },
     );
-    setTimeout(onContinue, 280);
+    setTimeout(hideLanding, 280);
   };
 
   const containerStyle = useAnimatedStyle(() => ({
@@ -334,95 +349,110 @@ export function LandingPage({ onContinue }: LandingPageProps) {
     [],
   );
 
+  // Bottom safe-area padding so the last content row clears the home
+  // indicator + the pinned CTA footer that sits above it.
+  const scrollBottomPad = insets.bottom + CTA_FOOTER_HEIGHT + spacing.lg;
+
   return (
+    // Full-screen overlay — sits above ZonnieMap + MainSheet but BELOW
+    // TerraceDetailSheet (which is a later sibling in index.tsx).
     <Animated.View style={[styles.container, containerStyle]}>
-      {/* Brand block: sun + title + tagline */}
-      <View style={styles.brandBlock}>
-        <View style={styles.sunGroup}>
-          {rays.map(({ i, angle }) => (
-            <Ray key={i} angle={angle} progress={rayProgress} />
-          ))}
-          <Animated.View style={[styles.sunCore, sunCoreStyle]} />
-        </View>
-        <Animated.Text style={[styles.title, titleStyle]}>Zonnie</Animated.Text>
-        <Animated.Text style={[styles.tagline, taglineStyle]}>
-          {t.tagline}
-        </Animated.Text>
-      </View>
-
-      <Animated.View style={[styles.cardStack, cardsStyle]}>
-        {/* ── World Cup 2026 — date-gated; both blocks vanish after 2026-07-19 ── */}
-
-        {/* Match-day banner: slim high-contrast strip shown only when a NL
-            match is today, or when tonight is the evening before a late-night
-            kickoff (Tunisia 01:00). Sits ABOVE the spotlight card. */}
-        {wcMatch !== null ? (
-          <Pressable
-            onPress={handleWcPress}
-            style={({ pressed }) => [
-              styles.wcBanner,
-              pressed && styles.wcBannerPressed,
-            ]}
-            accessibilityLabel={
-              wcMatch.kickoffHour < 6
-                ? t.wcBannerLateNight(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
-                : t.wcBannerEvening(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
-            }
-          >
-            <Text style={styles.wcBannerText} numberOfLines={2}>
-              {wcMatch.kickoffHour < 6
-                ? t.wcBannerLateNight(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
-                : t.wcBannerEvening(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)}
-            </Text>
-          </Pressable>
-        ) : null}
-
-        {/* Spotlight card: present throughout the tournament window.
-            Shows the count of screen terraces and prompts the user to
-            activate the outdoor-screens filter. */}
-        {wcLive ? (
-          <Pressable
-            onPress={handleWcPress}
-            style={({ pressed }) => [
-              styles.wcCard,
-              pressed && styles.wcCardPressed,
-            ]}
-            accessibilityLabel={t.wcSpotlightCta}
-          >
-            <Text style={styles.wcCardTitle}>{t.wcSpotlightTitle}</Text>
-            <Text style={styles.wcCardBody}>{t.wcSpotlightBody(SCREEN_TERRACE_COUNT)}</Text>
-            <View style={styles.wcCardCta}>
-              <Text style={styles.wcCardCtaText}>{t.wcSpotlightCta} →</Text>
-            </View>
-          </Pressable>
-        ) : null}
-
-        {/* ── Featured carousel ─────────────────────────────────────────
-            Only rendered when there are featured terraces in the dataset.
-            Horizontal scroll bleeds to the screen edges by using negative
-            horizontal margins to escape the container's paddingHorizontal. */}
-        {featuredTerraces.length > 0 && (
-          <View style={styles.featuredSection}>
-            <Text style={styles.sectionLabel}>{t.featuredSection}</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.featuredScroll}
-              contentContainerStyle={styles.featuredScrollContent}
-            >
-              {featuredTerraces.map((v) => (
-                <FeaturedCard key={v.terrace.id} venue={v} onPress={handleCardPress} />
-              ))}
-            </ScrollView>
+      {/* ONE outer vertical ScrollView wrapping ALL content so the brand
+          header scrolls away with the cards — nothing is pinned inside. */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          styles.scrollContent,
+          // Top padding accounts for the status bar / notch area.
+          { paddingTop: insets.top + spacing.xl, paddingBottom: scrollBottomPad },
+        ]}
+      >
+        {/* Brand block: sun + title + tagline — scrolls with content */}
+        <Animated.View style={styles.brandBlock}>
+          <View style={styles.sunGroup}>
+            {rays.map(({ i, angle }) => (
+              <Ray key={i} angle={angle} progress={rayProgress} />
+            ))}
+            <Animated.View style={[styles.sunCore, sunCoreStyle]} />
           </View>
-        )}
+          <Animated.Text style={[styles.title, titleStyle]}>Zonnie</Animated.Text>
+          <Animated.Text style={[styles.tagline, taglineStyle]}>
+            {t.tagline}
+          </Animated.Text>
+        </Animated.View>
 
-        {/* ── Sunniest-now regional sections ──────────────────────────── */}
-        <Text style={styles.sectionLabel}>{t.sunniestNow}</Text>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
+        {/* Card stack: WC blocks + featured carousel + region sections.
+            All fade/slide together as one group. */}
+        <Animated.View style={[styles.cardStack, cardsStyle]}>
+          {/* ── World Cup 2026 — date-gated; both blocks vanish after 2026-07-19 ── */}
+
+          {/* Match-day banner: slim high-contrast strip shown only when a NL
+              match is today, or when tonight is the evening before a late-night
+              kickoff (Tunisia 01:00). Sits ABOVE the spotlight card. */}
+          {wcMatch !== null ? (
+            <Pressable
+              onPress={handleWcPress}
+              style={({ pressed }) => [
+                styles.wcBanner,
+                pressed && styles.wcBannerPressed,
+              ]}
+              accessibilityLabel={
+                wcMatch.kickoffHour < 6
+                  ? t.wcBannerLateNight(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
+                  : t.wcBannerEvening(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
+              }
+            >
+              <Text style={styles.wcBannerText} numberOfLines={2}>
+                {wcMatch.kickoffHour < 6
+                  ? t.wcBannerLateNight(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)
+                  : t.wcBannerEvening(wcMatch.opponentFlag, wcMatch.opponent, wcMatch.kickoffLabel)}
+              </Text>
+            </Pressable>
+          ) : null}
+
+          {/* Spotlight card: present throughout the tournament window. */}
+          {wcLive ? (
+            <Pressable
+              onPress={handleWcPress}
+              style={({ pressed }) => [
+                styles.wcCard,
+                pressed && styles.wcCardPressed,
+              ]}
+              accessibilityLabel={t.wcSpotlightCta}
+            >
+              <Text style={styles.wcCardTitle}>{t.wcSpotlightTitle}</Text>
+              <Text style={styles.wcCardBody}>{t.wcSpotlightBody(SCREEN_TERRACE_COUNT)}</Text>
+              <View style={styles.wcCardCta}>
+                <Text style={styles.wcCardCtaText}>{t.wcSpotlightCta} →</Text>
+              </View>
+            </Pressable>
+          ) : null}
+
+          {/* ── Featured carousel ─────────────────────────────────────────
+              Only rendered when there are featured terraces in the dataset.
+              Horizontal scroll bleeds to the screen edges by using negative
+              horizontal margins to escape the container's paddingHorizontal. */}
+          {featuredTerraces.length > 0 && (
+            <View style={styles.featuredSection}>
+              <Text style={styles.sectionLabel}>{t.featuredSection}</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                nestedScrollEnabled={true}
+                style={styles.featuredScroll}
+                contentContainerStyle={styles.featuredScrollContent}
+              >
+                {featuredTerraces.map((v) => (
+                  <FeaturedCard key={v.terrace.id} venue={v} onPress={handleCardPress} />
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* ── Sunniest-now regional sections ──────────────────────────── */}
+          <Text style={styles.sectionLabel}>{t.sunniestNow}</Text>
+          {/* Sections rendered directly in the outer ScrollView — no nested
+              vertical ScrollView needed since everything scrolls together. */}
           {sections.map((section) => (
             <View key={section.region} style={styles.regionBlock}>
               <Text style={styles.regionLabel}>{section.region}</Text>
@@ -435,11 +465,20 @@ export function LandingPage({ onContinue }: LandingPageProps) {
               ))}
             </View>
           ))}
-        </ScrollView>
-      </Animated.View>
+        </Animated.View>
+      </ScrollView>
 
-      {/* Continue button */}
-      <Animated.View style={[styles.buttonWrap, buttonStyle]}>
+      {/* Pinned CTA footer — always visible over the scrollable content.
+          Sits at the physical bottom of the screen above the home indicator.
+          Using position:absolute so it overlays the scroll area without
+          shrinking the scroll viewport. */}
+      <Animated.View
+        style={[
+          styles.buttonWrap,
+          { bottom: insets.bottom + spacing.md },
+          buttonStyle,
+        ]}
+      >
         <Pressable
           onPress={handleContinue}
           style={({ pressed }) => [
@@ -590,14 +629,17 @@ function VenueCard({ venue, onPress }: VenueCardProps) {
 
 const styles = StyleSheet.create({
   container: {
+    // Full-screen overlay sitting above map + MainSheet but below
+    // TerraceDetailSheet (controlled by render order in index.tsx).
+    // No zIndex/elevation here — sibling document order gives the correct
+    // stack: detail sheet (later sibling) paints over Home naturally.
     ...StyleSheet.absoluteFillObject,
     backgroundColor: palette.sand,
-    zIndex: 1000,
-    elevation: 1000,
+  },
+  // Outer scroll's contentContainer: horizontal padding lives here so
+  // the featured carousel negative-margin trick still works correctly.
+  scrollContent: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xxl + spacing.lg,
-    paddingBottom: spacing.lg,
-    alignItems: 'stretch',
   },
   brandBlock: {
     alignItems: 'center',
@@ -642,7 +684,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   cardStack: {
-    flex: 1,
     justifyContent: 'flex-start',
   },
   sectionLabel: {
@@ -689,14 +730,11 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   // Warm peach→burnt gradient placeholder when no photoUrl is set.
-  // Uses a simple solid colour (expo-linear-gradient not available) —
-  // still on-brand and better than a blank grey box.
   featuredCardPlaceholder: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: palette.peach,
   },
-  // Dark overlay at the bottom ~45% of the card — enough coverage for
-  // legible white text without obscuring most of the photo.
+  // Dark overlay at the bottom ~45% of the card.
   featuredCardOverlay: {
     position: 'absolute',
     bottom: 0,
@@ -754,9 +792,6 @@ const styles = StyleSheet.create({
   },
 
   // ── Venue list cards ───────────────────────────────────────────────
-  scrollContent: {
-    paddingBottom: spacing.md,
-  },
   regionBlock: {
     marginBottom: spacing.md,
   },
@@ -767,8 +802,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
     letterSpacing: -0.2,
   },
-  // Compact card — sized so 6 regions × 3 cards fit on a 6.7" screen
-  // without scrolling on most phones, with scroll for smaller screens.
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -834,8 +867,15 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: palette.white,
   },
+
+  // ── CTA footer — pinned over the scroll area ───────────────────────
   buttonWrap: {
-    marginTop: spacing.lg,
+    // Absolute so it overlays the scroll without collapsing the scroll
+    // viewport — the scrollContent paddingBottom accounts for its height.
+    position: 'absolute',
+    left: spacing.lg,
+    right: spacing.lg,
+    // `bottom` is set dynamically in JSX (insets.bottom + spacing.md)
   },
   button: {
     backgroundColor: palette.ink,
@@ -855,9 +895,6 @@ const styles = StyleSheet.create({
   // ── World Cup 2026 ─────────────────────────────────────────────────
 
   // Slim high-contrast matchday banner above the spotlight card.
-  // Ink background makes it pop against the sand page; burnt border
-  // links it visually to the brand. Small top margin separates it
-  // from the brand block above.
   wcBanner: {
     backgroundColor: palette.ink,
     borderRadius: radii.md,
@@ -877,10 +914,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  // Warm terracotta/burnt spotlight card — prominent but tonally
-  // consistent with the existing brand (burnt is already used for
-  // featured pills and score rings). Sits below the banner (if any)
-  // and above the featured carousel.
+  // Warm terracotta/burnt spotlight card.
   wcCard: {
     backgroundColor: palette.burnt,
     borderRadius: radii.lg,
@@ -907,7 +941,7 @@ const styles = StyleSheet.create({
   wcCardBody: {
     fontFamily: fonts.body,
     fontSize: fontSizes.sm,
-    color: 'rgba(255,229,194,0.85)', // cream at 85% — readable on burnt
+    color: 'rgba(255,229,194,0.85)',
     marginBottom: spacing.sm,
   },
   wcCardCta: {
