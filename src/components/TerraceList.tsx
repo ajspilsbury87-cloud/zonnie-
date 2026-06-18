@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 
 import { useShortlistStore } from '@/src/store/shortlistStore';
-import { usePurchaseStore } from '@/src/store/purchaseStore';
+import { usePurchaseStore, FEATURES_UNLOCKED } from '@/src/store/purchaseStore';
 import { useProPaywallStore } from '@/src/components/ProPaywall';
 
 import { DatePicker } from '@/src/components/DatePicker';
@@ -157,9 +157,8 @@ export function TerraceList({ onSelect }: TerraceListProps) {
   // Onboarding hints — show sequentially so they don't pile up.
   // pin-tap fires first (on the map). Once dismissed, the filters
   // hint appears on the More-filters toggle to nudge discovery of
-  // the refine controls. The previous "time-scrubber" hint has been
-  // dropped now that the slider lives behind the toggle — the intro
-  // carousel already covers "plan ahead" via the QuickPicker presets.
+  // the neighborhood filter. Time-scrubber hint was dropped when the
+  // scrubber moved to always-visible (#6c) — it's self-evident now.
   const [showFilterHint, dismissFilterHint] = useHint('filters', { after: 'pin-tap' });
 
   // Context-aware empty-state messaging — the user has hit "no results"
@@ -305,21 +304,22 @@ export function TerraceList({ onSelect }: TerraceListProps) {
         ]}
         ListHeaderComponent={
           <View style={styles.header}>
-            {/* Pro entry pill — always visible so Apple reviewers (and users)
-                can find the IAP without having to trigger a locked feature.
-                A pro user sees the ✓ label and a "subscribed" info view
-                instead of the purchase flow when they tap. */}
-            <TouchableOpacity
-              onPress={() => { haptics.light(); showPaywall(); }}
-              activeOpacity={0.7}
-              style={styles.proEntryPill}
-              accessibilityRole="button"
-              accessibilityLabel={isPro ? t.proEntryActive : t.proEntryButton}
-            >
-              <Text style={styles.proEntryText}>
-                {isPro ? t.proEntryActive : t.proEntryButton}
-              </Text>
-            </TouchableOpacity>
+            {/* Pro entry pill — hidden while FEATURES_UNLOCKED=true (all users
+                have Pro; no buy flow to show). Re-enable by setting
+                FEATURES_UNLOCKED=false in purchaseStore.ts. */}
+            {!FEATURES_UNLOCKED ? (
+              <TouchableOpacity
+                onPress={() => { haptics.light(); showPaywall(); }}
+                activeOpacity={0.7}
+                style={styles.proEntryPill}
+                accessibilityRole="button"
+                accessibilityLabel={isPro ? t.proEntryActive : t.proEntryButton}
+              >
+                <Text style={styles.proEntryText}>
+                  {isPro ? t.proEntryActive : t.proEntryButton}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
 
             {/* Search — pinned at the top of the header so it's easy to find
                 and, crucially, sits above the keyboard when focused. It used
@@ -328,19 +328,24 @@ export function TerraceList({ onSelect }: TerraceListProps) {
             <SearchBox />
 
             {/*
-              Two-tier header layout (v1.1 polish):
-                Tier 1 — ALWAYS VISIBLE. Decision tools the average user
-                         needs every time: which day, which time window,
-                         what's the weather, which venue type.
-                Tier 2 — COLLAPSED BEHIND TOGGLE. Refine tools used less
-                         often: time fine-tune sliders, free-text search,
-                         neighborhood multi-select.
-              User feedback was the all-expanded layout crowded the list
-              out — Tier 2 hidden by default reclaims ~190px for terraces.
+              Two-tier header layout (v1.2 — #6c unlock):
+                Tier 1 — ALWAYS VISIBLE. Date, weather strip, time presets,
+                         time fine-tune sliders (now free for all), venue type.
+                Tier 2 — COLLAPSED BEHIND TOGGLE. Neighborhood multi-select
+                         (less frequently used; kept behind toggle to save space).
+              Scrubber moved to Tier 1 (#6c) because it was previously Pro-only;
+              with the lock gone it's a primary control, not a power-user extra.
             */}
             <DatePicker />
             <WeatherStrip />
+            {/* TimeRangeQuickPicker shows the preset chips (Morning/Afternoon/Evening).
+                TimeRangeFineTune is now always-visible (#6c, #10 unlock) — it was
+                previously behind "More filters" because it was Pro-only. Now that the
+                scrubber is free, it surfaces here as a primary control so users can
+                fine-tune without hunting through the collapse panel. Presets above it
+                remain as fast shortcuts. */}
             <TimeRangeQuickPicker />
+            <TimeRangeFineTune />
             <VenueTypeFilter />
             <MoreFiltersToggle
               expanded={filtersExpanded}
@@ -353,7 +358,6 @@ export function TerraceList({ onSelect }: TerraceListProps) {
             ) : null}
             {filtersExpanded ? (
               <View style={styles.refinePanel}>
-                <TimeRangeFineTune />
                 <NeighborhoodFilter />
               </View>
             ) : null}

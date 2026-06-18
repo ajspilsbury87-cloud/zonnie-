@@ -73,6 +73,14 @@ import Purchases, {
 } from 'react-native-purchases';
 import { Platform } from 'react-native';
 
+// ─── Feature unlock lever ─────────────────────────────────────────────────────
+// Set to `true` to grant Pro to ALL users — no purchase required.
+// RevenueCat machinery, the ProPaywall component, and IAP products all remain
+// intact. This is the only line you need to change to re-gate later.
+//
+// TO RE-GATE: change `true` → `false` here. Done.
+export const FEATURES_UNLOCKED = true;
+
 // ─── Public entitlement ID ────────────────────────────────────────────────────
 // Must match the entitlement ID in your RevenueCat dashboard exactly.
 const ENTITLEMENT_ID = 'Zonnie Pro';
@@ -199,7 +207,9 @@ function normalisePurchaseError(err: unknown): PurchaseError {
 let _configured = false;
 
 export const usePurchaseStore = create<PurchaseState>((set, get) => ({
-  isPro: false,
+  // When FEATURES_UNLOCKED is true, isPro starts true and cannot be reverted
+  // to false by any hydrate/restore call — all gates open immediately.
+  isPro: FEATURES_UNLOCKED,
   hydrated: false,
   isLoading: false,
   offerings: null,
@@ -285,12 +295,12 @@ export const usePurchaseStore = create<PurchaseState>((set, get) => ({
     try {
       const info = await Purchases.getCustomerInfo();
       set({
-        isPro: isProFromCustomerInfo(info),
+        // FEATURES_UNLOCKED: always stay true regardless of entitlement result.
+        isPro: FEATURES_UNLOCKED || isProFromCustomerInfo(info),
         hydrated: true,
       });
     } catch (err) {
-      // SDK not configured yet, no network — either way, mark hydrated
-      // with isPro: false so the app doesn't block on loading state.
+      // SDK not configured yet, no network — either way, mark hydrated.
       if (__DEV__) {
         console.warn('[PurchaseStore] hydrate() failed:', err);
       }
@@ -309,7 +319,7 @@ export const usePurchaseStore = create<PurchaseState>((set, get) => ({
       const newIsPro = isProFromCustomerInfo(customerInfo);
 
       set({
-        isPro: newIsPro,
+        isPro: FEATURES_UNLOCKED || newIsPro,
         isLoading: false,
       });
 
@@ -340,7 +350,7 @@ export const usePurchaseStore = create<PurchaseState>((set, get) => ({
       const newIsPro = isProFromCustomerInfo(info);
 
       set({
-        isPro: newIsPro,
+        isPro: FEATURES_UNLOCKED || newIsPro,
         isLoading: false,
       });
 

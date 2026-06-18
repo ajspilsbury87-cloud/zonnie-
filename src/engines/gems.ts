@@ -221,9 +221,16 @@ export function computeGemScore(sunScore: number, terrace: Terrace): number {
  * excluded when gem mode is active — they are too tourist-heavy to qualify as
  * hidden gems regardless of sun score.
  *
- * At 0.85, a terrace must have: reviewCountPercentile ≈ top 10 % AND be
- * very close to Centrum AND have a high area weight (e.g. Centrum / Rembrandtplein).
- * Regular Centrum terraces with moderate review counts score ~0.65–0.80 and
- * are still included. The floor targets only the most tourist-saturated spots.
+ * Calibration (2026-06-18, 974 terraces):
+ *   Distribution analysis showed:
+ *     0.85 → 59 excluded  (6.1%)  — old value, far too permissive
+ *     0.60 → 286 excluded (29.4%) — chosen: top ~30% most touristy cut
+ *     0.65 → 228 excluded (23.4%) — runner-up
+ *
+ * At 0.60 the excluded venues are clearly tourist-saturated
+ * (O'Reilly's, Pancakes Amsterdam, Bulldog, Café de Jaren, NEMO Rooftop…).
+ * ~688 terraces remain — still a rich and useful hidden-gem list.
+ *
+ * TO REVERT: change 0.60 back to 0.85.
  */
-export const TOURIST_TRAP_FLOOR = 0.85;
+export const TOURIST_TRAP_FLOOR = 0.60;
