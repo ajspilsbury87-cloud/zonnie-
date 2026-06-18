@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
+import { FilterChips } from '@/src/components/FilterChips';
 import { LandingPage } from '@/src/components/LandingPage';
 import { MainSheet } from '@/src/components/MainSheet';
 import { ProPaywall } from '@/src/components/ProPaywall';
@@ -45,13 +46,14 @@ export default function Index() {
   // blank screen / iOS would eventually kill the process.
   //
   // LAYER ORDER (back → front, last sibling paints on top):
-  //   1. ZonnieMap        — base map layer
-  //   2. MainSheet        — bottom sheet over the map
-  //   3. LandingPage      — Home overlay — when visible (no zIndex; order is the stack)
-  //   4. TerraceDetailSheet — opens ABOVE Home so detail works over Home
-  //   5. ProPaywall       — modal, always above
-  //   6. ShortlistBar     — floating bar, always above
-  //   7. home button      — top-left overlay, shown when Home is hidden
+  //   1. ZonnieMap          — base map layer
+  //   2. MainSheet          — bottom sheet over the map
+  //   3. FilterChips        — floating chip row above the map, below detail sheet
+  //   4. LandingPage        — Home overlay — when visible (no zIndex; order is the stack)
+  //   5. TerraceDetailSheet — opens ABOVE Home so detail works over Home
+  //   6. ProPaywall         — modal, always above
+  //   7. ShortlistBar       — floating bar, always above
+  //   8. home button        — top-left overlay, shown when Home is hidden
   return (
     <View style={styles.container}>
       <ErrorBoundary surface="ZonnieMap">
@@ -60,6 +62,14 @@ export default function Index() {
       <ErrorBoundary surface="MainSheet">
         <MainSheet onSelect={handleSelect} />
       </ErrorBoundary>
+      {/* FilterChips — floating chip row above the map.
+          Hidden when the Home overlay is visible (the map itself is hidden)
+          and when a detail sheet is open (detail backdrop covers chips). */}
+      {!landingVisible && selectedId == null ? (
+        <ErrorBoundary surface="FilterChips">
+          <FilterChips />
+        </ErrorBoundary>
+      ) : null}
       {landingVisible ? (
         <ErrorBoundary surface="LandingPage">
           <LandingPage />
