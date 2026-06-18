@@ -1442,7 +1442,8 @@
     "placeId": "ChIJMVoEUXQJxkcRaEBZ7Kl4pyM",
     "googleRating": 4.4,
     "googleReviewCount": 2300,
-    "openness": 0.955
+    "openness": 0.955,
+    "outdoorScreens": 1
   },
   {
     "id": 90,
@@ -2499,7 +2500,8 @@
     "placeId": "ChIJgcR47OIJxkcR6JS-5U83nMA",
     "googleRating": 4.1,
     "googleReviewCount": 2624,
-    "openness": 0.971
+    "openness": 0.971,
+    "outdoorScreens": 1
   },
   {
     "id": 153,
@@ -4608,7 +4610,8 @@
     "placeId": "ChIJtYtcFOQJxkcRBtgJz6rYTLg",
     "googleRating": 4.4,
     "googleReviewCount": 146,
-    "openness": 0.96
+    "openness": 0.96,
+    "outdoorScreens": 1
   },
   {
     "id": 543,
@@ -6582,7 +6585,8 @@
     "placeId": "ChIJyRJLdqrjxUcRvg3uDMsx3hA",
     "googleRating": 4.5,
     "googleReviewCount": 192,
-    "openness": 0.836
+    "openness": 0.836,
+    "outdoorScreens": 1
   },
   {
     "id": 653,
@@ -6762,7 +6766,8 @@
     "placeId": "ChIJhaw1Vv3jxUcRH5zdXh_CaJ4",
     "googleRating": 4.4,
     "googleReviewCount": 283,
-    "openness": 0.959
+    "openness": 0.959,
+    "outdoorScreens": 1
   },
   {
     "id": 663,
@@ -7257,7 +7262,8 @@
     "placeId": "ChIJk15gdxwJxkcR76XVbrFUw8g",
     "googleRating": 4.6,
     "googleReviewCount": 106,
-    "openness": 0.864
+    "openness": 0.864,
+    "outdoorScreens": 1
   },
   {
     "id": 777,
@@ -17457,7 +17463,8 @@
     "placeId": "ChIJ29HIP20JxkcR5fR0alvUGz0",
     "googleRating": 4.3,
     "googleReviewCount": 1164,
-    "openness": 0.557
+    "openness": 0.557,
+    "outdoorScreens": 1
   },
   {
     "id": 1438,

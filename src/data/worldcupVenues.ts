@@ -44,11 +44,14 @@ export interface WCVenue {
 export const WC_VENUES: Record<number, WCVenue> = {
   // ── Oost ──────────────────────────────────────────────────────────────
   70:  { status: 'confirmed', coverage: 'oranje', note: 'WK arrangement: pitcher + burger €30', source: 'https://oost-online.nl/oranje-kijken-in-oost-deze-cafes-zenden-de-groepswedstrijden-van-nederland-uit/' },
+  89:  { status: 'confirmed', coverage: 'oranje', source: 'https://oost-online.nl/oranje-kijken-in-oost-deze-cafes-zenden-de-groepswedstrijden-van-nederland-uit/' },
   92:  { status: 'confirmed', coverage: 'oranje', note: 'Two big screens · group bookings up to 20', source: 'https://oost-online.nl/oranje-kijken-in-oost-deze-cafes-zenden-de-groepswedstrijden-van-nederland-uit/' },
   508: { status: 'confirmed', coverage: [0, 1], note: 'Rooftop beach terrace · €10 advance ticket', source: 'https://amsterdamlokaal.nl/wk-kijken-amsterdam/' },
   535: { status: 'confirmed', coverage: 'oranje', note: 'Terrace big screen at The Hoxton · orange wine special', source: 'https://www.yourlittleblackbook.me/en/ek-voetbal-kijken-amsterdam/' },
+  662: { status: 'confirmed', coverage: 'oranje', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
   797: { status: 'confirmed', coverage: 'oranje', note: 'DJs after the 20 & 26 Jun matches', source: 'https://oost-online.nl/oranje-kijken-in-oost-deze-cafes-zenden-de-groepswedstrijden-van-nederland-uit/' },
   1383: { status: 'confirmed', coverage: 'all', note: 'Open-air terrace screen · all matches', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
+  1437: { status: 'likely', coverage: 'oranje', source: 'https://oost-online.nl/oranje-kijken-in-oost-deze-cafes-zenden-de-groepswedstrijden-van-nederland-uit/' },
   1386: { status: 'confirmed', coverage: 'all', note: 'Broadcasts every World Cup match', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
 
   // ── Noord ─────────────────────────────────────────────────────────────
@@ -70,14 +73,20 @@ export const WC_VENUES: Record<number, WCVenue> = {
 
   // ── Zuid / Stadionbuurt / Zuidas / Oud-Zuid ───────────────────────────
   151: { status: 'confirmed', coverage: 'oranje', note: 'Festival-like Vondelpark terrace · big screens', source: 'https://www.bartsboekje.com/wk-ek-voetbal-kijken-amsterdam/' },
+  152: { status: 'confirmed', coverage: 'oranje', source: 'https://www.man-man.nl/nederlands-elftal-wk-2026-kijken-amsterdam/' },
   501: { status: 'confirmed', coverage: 'oranje', note: 'Five big screens · beer & bitterballen · arrive early', source: 'https://www.bartsboekje.com/wk-ek-voetbal-kijken-amsterdam/' },
   502: { status: 'confirmed', coverage: 'oranje', note: 'All three Oranje group games on the big screen', source: 'https://www.bartsboekje.com/wk-ek-voetbal-kijken-amsterdam/' },
+  542: { status: 'confirmed', coverage: 'oranje', source: 'https://www.bartsboekje.com/en/wk-ek-voetbal-kijken-amsterdam/' },
   940: { status: 'confirmed', coverage: [0, 1], note: '"Strandoranje" beach event · €15 · big screens by the water', source: 'https://www.iamsterdam.com/en/whats-on/festivals-and-events/watching-the-2026-world-cup-in-amsterdam-here-you-can-follow-the-netherlands' },
   1122: { status: 'confirmed', coverage: 'all', note: 'Every match, indoors or on the terrace', source: 'https://cafeschinkelhaven.nl/' },
   1415: { status: 'confirmed', coverage: 'all', extra: 'whole foodcourt becomes "Stadium 33"', note: 'Big screen + food stands · reserve a table for Oranje games', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
 
-  // ── De Baarsjes ───────────────────────────────────────────────────────
+  // ── Oud-West ──────────────────────────────────────────────────────────
+  776: { status: 'confirmed', coverage: 'oranje', source: 'https://www.man-man.nl/nederlands-elftal-wk-2026-kijken-amsterdam/' },
+
+  // ── De Baarsjes / West ────────────────────────────────────────────────
   211: { status: 'confirmed', coverage: 'oranje', note: 'Big outdoor screen · no reservations during the WC', source: 'https://www.bartsboekje.com/wk-ek-voetbal-kijken-amsterdam/' },
+  652: { status: 'likely', coverage: 'oranje', source: 'https://barricade.amsterdam/' },
 
   // ── Likely (in a credible guide, but no first-party confirmation) ─────
   121:  { status: 'likely', coverage: 'oranje', note: 'Listed in a WK-kijken guide · ~€7.50 incl. drink', source: 'https://www.bartsboekje.com/wk-ek-voetbal-kijken-amsterdam/' },
