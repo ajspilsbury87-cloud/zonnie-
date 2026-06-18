@@ -10,6 +10,10 @@ import { useProPaywallStore } from '@/src/components/ProPaywall';
 import { DatePicker } from '@/src/components/DatePicker';
 import { SearchBox } from '@/src/components/SearchBox';
 import { WeatherStrip } from '@/src/components/WeatherStrip';
+import {
+  TimeRangeFineTune,
+  TimeRangeQuickPicker,
+} from '@/src/components/TimeRangeScrubber';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { scoreLabel } from '@/src/engines/scoring';
@@ -304,12 +308,16 @@ export function TerraceList({ onSelect }: TerraceListProps) {
                 and, crucially, sits above the keyboard when focused. */}
             <SearchBox />
 
-            {/* Date and weather context — tells the user WHICH day they're
-                scoring terraces for and what the weather looks like.
-                All venue / time / area filters have moved to FilterChips
-                (the floating chip row above the map). */}
+            {/* Date + weather + time. Venue / area filters live in FilterChips
+                (the floating chip row over the map); the WHEN controls stay
+                here with the day + weather, which they belong with. */}
             <DatePicker />
             <WeatherStrip />
+            {/* Morning / Afternoon / Evening preset buttons + the fine-tune
+                hour scrubber — kept in the sheet so the quick time presets are
+                one tap away next to the date (not buried in a chip popover). */}
+            <TimeRangeQuickPicker />
+            <TimeRangeFineTune />
           </View>
         }
         ListEmptyComponent={

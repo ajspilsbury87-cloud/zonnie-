@@ -9,15 +9,16 @@
  *   Bar / Food / Coffee   — toggle selectedCategories in useAreaStore
  *   Big screen            — toggle matchModeOnly
  *   Gem                   — toggle hiddenGemOnly
- *   Time  (with chevron)  — opens a Modal containing TimeRangeQuickPicker +
- *                           TimeRangeFineTune
  *   Areas (with chevron)  — opens a Modal containing NeighborhoodFilter
+ *
+ * (Time presets + the fine-tune scrubber live in the bottom-sheet header,
+ *  next to the date + weather — not here.)
  *
  * Active style: burnt background + cream text.
  * Inactive style: white background + ink text + 0.5 px border.
  *
- * Both "Time" and "Areas" modals follow the same transparent-backdrop +
- * tap-to-dismiss pattern as the language chooser in LandingPage.
+ * The "Areas" modal follows the same transparent-backdrop + tap-to-dismiss
+ * pattern as the language chooser in LandingPage.
  *
  * Z-layering: rendered in app/index.tsx AFTER ZonnieMap and MainSheet but
  * BEFORE TerraceDetailSheet / ProPaywall / Home overlay so it sits above the
@@ -41,10 +42,6 @@ import { useStrings } from '@/src/i18n/useStrings';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
-import {
-  TimeRangeFineTune,
-  TimeRangeQuickPicker,
-} from '@/src/components/TimeRangeScrubber';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -62,12 +59,6 @@ const GEM_ACTIVE_BG = '#7B5EA7';
 
 // Chip height — explicit so we can vertically centre against the home button.
 const CHIP_HEIGHT = 32;
-
-// ── Helpers ───────────────────────────────────────────────────────────────
-
-function formatHour(h: number): string {
-  return `${Math.round(h).toString().padStart(2, '0')}`;
-}
 
 // ── Chip sub-component ────────────────────────────────────────────────────
 
@@ -107,27 +98,7 @@ function Chip({
   );
 }
 
-// ── Modal wrappers ────────────────────────────────────────────────────────
-
-function TimeModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      {/* Tap the dim backdrop to dismiss */}
-      <Pressable style={styles.modalBackdrop} onPress={onClose}>
-        {/* Stop propagation: tapping the sheet itself must not dismiss */}
-        <Pressable style={styles.modalSheet} onPress={() => {}}>
-          <TimeRangeQuickPicker />
-          <TimeRangeFineTune />
-        </Pressable>
-      </Pressable>
-    </Modal>
-  );
-}
+// ── Modal wrapper ─────────────────────────────────────────────────────────
 
 function AreasModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   return (
@@ -161,12 +132,7 @@ export function FilterChips() {
   const toggleHiddenGemOnly = useAreaStore((s) => s.toggleHiddenGemOnly);
   const selectedRegions = useAreaStore((s) => s.selectedRegions);
 
-  // Time state — for the label on the Time chip
-  const fromHour = useTimeStore((s) => s.fromHour);
-  const toHour = useTimeStore((s) => s.toHour);
-
   // Modal visibility
-  const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [areasModalVisible, setAreasModalVisible] = useState(false);
 
   // Category chip labels from i18n
@@ -200,9 +166,6 @@ export function FilterChips() {
   // homeButton top = insets.top + spacing.sm; homeButton height = 44.
   const chipRowTop =
     insets.top + spacing.sm + Math.round((HOME_BUTTON_SIZE - CHIP_HEIGHT) / 2);
-
-  // Time chip label: compact window display, e.g. "16–18"
-  const timeLabel = `${formatHour(fromHour)}–${formatHour(toHour)}`;
 
   // Areas chip label: show count of active regions
   const regionCount = selectedRegions.size;
@@ -249,15 +212,6 @@ export function FilterChips() {
             accessibilityLabel={t.filterHiddenGemA11y}
           />
 
-          {/* Time chip — opens TimeModal */}
-          <Chip
-            label={timeLabel}
-            active={false}
-            onPress={() => { haptics.light(); setTimeModalVisible(true); }}
-            hasChevron
-            accessibilityLabel={t.filterTimeA11y}
-          />
-
           {/* Areas chip — opens AreasModal */}
           <Chip
             label={areasLabel}
@@ -268,12 +222,6 @@ export function FilterChips() {
           />
         </ScrollView>
       </View>
-
-      {/* Time popover modal */}
-      <TimeModal
-        visible={timeModalVisible}
-        onClose={() => setTimeModalVisible(false)}
-      />
 
       {/* Areas popover modal */}
       <AreasModal
