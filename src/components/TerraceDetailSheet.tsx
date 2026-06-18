@@ -21,10 +21,11 @@
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetView,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 
 import { TERRACES } from '@/src/data/terraces';
@@ -426,6 +427,10 @@ export function TerraceDetailSheet() {
   //   index =  0 → open at first snap point (70%)
   const sheetIndex = selectedId != null ? 0 : -1;
 
+  // Bottom inset so the last detail section clears the home indicator when
+  // the content scrolls (the sheet content was previously not scrollable).
+  const insets = useSafeAreaInsets();
+
   return (
     <BottomSheet
       ref={ref}
@@ -438,7 +443,13 @@ export function TerraceDetailSheet() {
       handleIndicatorStyle={styles.handle}
       backgroundStyle={styles.background}
     >
-      <BottomSheetView style={styles.content}>
+      <BottomSheetScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: insets.bottom + spacing.xxl },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         {terrace ? (
           <>
             <View style={styles.header}>
@@ -684,7 +695,7 @@ export function TerraceDetailSheet() {
             </Pressable>
           </>
         ) : null}
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheet>
   );
 }
