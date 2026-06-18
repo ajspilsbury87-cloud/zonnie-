@@ -100,27 +100,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: spacing.md,
     // `top` is set dynamically in JSX (insets.top + spacing.sm)
-    width: 40,
-    height: 40,
-    borderRadius: radii.lg,
-    backgroundColor: palette.white,
-    borderWidth: 1,
-    borderColor: 'rgba(42, 31, 21, 0.10)', // palette.ink at 10% — subtle border
+    width: 44,
+    height: 44,
+    // Circular, brand-burnt fill so it reads as a modern floating action
+    // button and clearly stands out against the map (was a plain white square).
+    borderRadius: radii.pill,
+    backgroundColor: palette.burnt,
     alignItems: 'center',
     justifyContent: 'center',
     // Elevation lifts the button above map tiles and the MainSheet handle.
     // No zIndex — document order (last rendered sibling) handles layering.
-    elevation: 8,
+    elevation: 6,
     shadowColor: palette.ink,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
   },
   homeButtonGlyph: {
-    fontSize: 20,
-    color: palette.ink,
+    fontSize: 22,
+    color: palette.white,
     // The ⌂ glyph sits slightly low in most system fonts; nudge it up.
-    lineHeight: 24,
+    lineHeight: 26,
     textAlign: 'center',
   },
 });

@@ -8,8 +8,8 @@
  *      so the user can see what's applied without expanding. Each chip
  *      is independently tappable to clear that filter.
  *
- * Also hosts the 🌐 language toggle (left side of the row) so users
- * can switch between EN and NL at any time after the initial onboarding.
+ * Language switching has moved to the Home screen (LandingPage) — tap
+ * the ⚙ cog in the top-right corner of the Home overlay.
  */
 
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -17,7 +17,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { haptics } from '@/src/lib/haptics';
 import { useStrings } from '@/src/i18n/useStrings';
-import { useLanguageStore } from '@/src/store/languageStore';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import {
@@ -35,8 +34,6 @@ interface MoreFiltersToggleProps {
 
 export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps) {
   const t = useStrings();
-  const lang = useLanguageStore((s) => s.lang);
-  const setLang = useLanguageStore((s) => s.setLang);
 
   const query = useSearchStore((s) => s.query);
   const clearQuery = useSearchStore((s) => s.clear);
@@ -53,24 +50,6 @@ export function MoreFiltersToggle({ expanded, onToggle }: MoreFiltersToggleProps
     <View style={styles.root}>
       <View style={styles.divider} />
       <View style={styles.row}>
-        {/* 🌐 Language toggle — left side, always visible */}
-        <TouchableOpacity
-          onPress={() => {
-            haptics.selection();
-            setLang(lang === 'nl' ? 'en' : 'nl');
-          }}
-          activeOpacity={0.6}
-          style={styles.langToggle}
-          accessibilityLabel={
-            lang === 'nl' ? t.switchToEnglish : t.switchToDutch
-          }
-          hitSlop={8}
-        >
-          <Text style={styles.langToggleText}>
-            {lang === 'nl' ? '🇳🇱' : '🇬🇧'}
-          </Text>
-        </TouchableOpacity>
-
         {/* Active-filter summary chips */}
         {anyActive ? (
           <ScrollView
@@ -150,13 +129,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     gap: spacing.sm,
-  },
-  langToggle: {
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.xs,
-  },
-  langToggleText: {
-    fontSize: 18,
   },
   summaryRow: {
     flexDirection: 'row',

@@ -33,8 +33,8 @@
  * regardless of any in-app time-window the user has selected.
  */
 
-import { useEffect, useMemo } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -47,6 +47,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { useStrings } from '@/src/i18n/useStrings';
+import { useLanguageStore } from '@/src/store/languageStore';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
@@ -194,6 +195,9 @@ const SCREEN_TERRACE_COUNT = TERRACES.filter((t) => (t.outdoorScreens ?? 0) > 0)
 export function LandingPage() {
   const t = useStrings();
   const insets = useSafeAreaInsets();
+  const lang = useLanguageStore((s) => s.lang);
+  const setLang = useLanguageStore((s) => s.setLang);
+  const [langModalVisible, setLangModalVisible] = useState(false);
   const weatherByDate = useWeatherStore((s) => s.byDate);
   const select = useSelectionStore((s) => s.select);
   const setMatchModeOnly = useAreaStore((s) => s.setMatchModeOnly);
@@ -490,6 +494,76 @@ export function LandingPage() {
           <Text style={styles.buttonText}>{t.seeAllTerraces}</Text>
         </Pressable>
       </Animated.View>
+
+      {/* Settings cog — top-right, inset-aware so it clears the status bar.
+          Language is the only setting for now; opens the language modal. */}
+      <Pressable
+        onPress={() => {
+          haptics.selection();
+          setLangModalVisible(true);
+        }}
+        style={[styles.cogButton, { top: insets.top + spacing.sm }]}
+        accessibilityLabel={lang === 'nl' ? t.switchToEnglish : t.switchToDutch}
+        hitSlop={12}
+      >
+        <Text style={styles.cogGlyph}>⚙</Text>
+      </Pressable>
+
+      {/* Language chooser modal — minimal flag-card picker, same style as
+          onboarding so the interaction feels consistent. */}
+      <Modal
+        visible={langModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setLangModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setLangModalVisible(false)}
+        >
+          {/* Stop propagation so tapping the sheet doesn't dismiss it */}
+          <Pressable style={styles.modalSheet} onPress={() => {}}>
+            <Text style={styles.modalTitle}>
+              {lang === 'nl' ? 'Taal / Language' : 'Language / Taal'}
+            </Text>
+            <View style={styles.langPickerRow}>
+              <Pressable
+                onPress={() => {
+                  haptics.light();
+                  setLang('en');
+                  setLangModalVisible(false);
+                }}
+                style={({ pressed }) => [
+                  styles.langCard,
+                  lang === 'en' && styles.langCardSelected,
+                  pressed && styles.langCardPressed,
+                ]}
+                accessibilityLabel="English"
+              >
+                <Text style={styles.langFlag}>🇬🇧</Text>
+                <Text style={styles.langLabel}>English</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => {
+                  haptics.light();
+                  setLang('nl');
+                  setLangModalVisible(false);
+                }}
+                style={({ pressed }) => [
+                  styles.langCard,
+                  lang === 'nl' && styles.langCardSelected,
+                  pressed && styles.langCardPressed,
+                ]}
+                accessibilityLabel="Nederlands"
+              >
+                <Text style={styles.langFlag}>🇳🇱</Text>
+                <Text style={styles.langLabel}>Nederlands</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </Animated.View>
   );
 }
@@ -955,5 +1029,77 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemibold,
     fontSize: fontSizes.sm,
     color: palette.burnt,
+  },
+
+  // ── Settings cog button (top-right, absolute) ──────────────────────
+  cogButton: {
+    // `top` is set dynamically in JSX (insets.top + spacing.sm)
+    position: 'absolute',
+    right: spacing.lg,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cogGlyph: {
+    // Monochrome text glyph — consistent with the app's glyph style.
+    // inkSoft keeps it unobtrusive against the sand background.
+    fontFamily: fonts.body,
+    fontSize: 22,
+    color: palette.inkSoft,
+  },
+
+  // ── Language chooser modal ─────────────────────────────────────────
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(42, 31, 21, 0.45)',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    width: '100%',
+    backgroundColor: palette.sand,
+    borderTopLeftRadius: radii.lg,
+    borderTopRightRadius: radii.lg,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxl,
+  },
+  modalTitle: {
+    fontFamily: fonts.displayBold,
+    fontSize: fontSizes.xl,
+    color: palette.ink,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+    letterSpacing: -0.3,
+  },
+  langPickerRow: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+  },
+  langCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+    borderRadius: radii.lg,
+    backgroundColor: palette.sandDeep,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  langCardSelected: {
+    borderColor: palette.burnt,
+    backgroundColor: palette.cream,
+  },
+  langCardPressed: {
+    opacity: 0.8,
+  },
+  langFlag: {
+    fontSize: 40,
+    marginBottom: spacing.sm,
+  },
+  langLabel: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.md,
+    color: palette.ink,
   },
 });

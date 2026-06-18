@@ -2,7 +2,7 @@
  * Language preference store — persisted so the user's choice survives
  * app restarts. Defaults to Dutch ('nl'), the primary Amsterdam market.
  *
- * Switch language at any time via the 🌐 button in MoreFiltersToggle,
+ * Switch language at any time via the ⚙ cog on the Home screen (LandingPage),
  * or on first run via the language-picker slide in OnboardingIntro.
  */
 
