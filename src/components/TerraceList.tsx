@@ -10,10 +10,7 @@ import { useProPaywallStore } from '@/src/components/ProPaywall';
 import { DatePicker } from '@/src/components/DatePicker';
 import { SearchBox } from '@/src/components/SearchBox';
 import { WeatherStrip } from '@/src/components/WeatherStrip';
-import {
-  TimeRangeFineTune,
-  TimeRangeQuickPicker,
-} from '@/src/components/TimeRangeScrubber';
+import { TimeRangeQuickPicker } from '@/src/components/TimeRangeScrubber';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { scoreLabel } from '@/src/engines/scoring';
@@ -313,11 +310,10 @@ export function TerraceList({ onSelect }: TerraceListProps) {
                 here with the day + weather, which they belong with. */}
             <DatePicker />
             <WeatherStrip />
-            {/* Morning / Afternoon / Evening preset buttons + the fine-tune
-                hour scrubber — kept in the sheet so the quick time presets are
-                one tap away next to the date (not buried in a chip popover). */}
+            {/* Morning / Afternoon / Evening preset buttons, next to the date
+                so the quick time presets are one tap away. (The fine-tune hour
+                scrubber was removed per feedback — presets only.) */}
             <TimeRangeQuickPicker />
-            <TimeRangeFineTune />
           </View>
         }
         ListEmptyComponent={
