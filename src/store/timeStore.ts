@@ -44,14 +44,20 @@ function nowAmsterdamHour(): number {
 /**
  * Sensible from/to defaults for a given date.
  *
- * - Today: "Now" window — current hour to current hour + 2, uncapped
- *   at sunset so the weather strip always shows 2 hours.
+ * - Today: "Now" window — current hour to current hour + 2, CAPPED at
+ *   sunset. (It used to cap at 23, which dragged the displayed score down
+ *   in the evening: at 20:00 the window was [20,21,22] and the post-sunset
+ *   hour 22 scores 0, roughly halving the 3-hour average. The Morning/
+ *   Afternoon/Evening presets already clamp to sunset, so the default now
+ *   matches them. The WeatherStrip keeps its own max(toHour, fromHour+1)
+ *   floor, so it still shows ≥2 hours.)
  * - Future dates: afternoon window (13:00–17:00) since "now" is
  *   meaningless for tomorrow. Matches the Afternoon preset.
  */
 function defaultRangeForDate(dateOffset: number): { fromHour: number; toHour: number } {
   if (dateOffset === 0) {
-    // Today — use current Amsterdam hour, uncapped at sunset.
+    // Today — current Amsterdam hour to +2, capped at sunset (not 23) so the
+    // average never includes dead post-sunset hours.
     const dateStr = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'yyyy-MM-dd');
     const sunrise = sunriseHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
     const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
@@ -59,7 +65,7 @@ function defaultRangeForDate(dateOffset: number): { fromHour: number; toHour: nu
     const clampedNow = Math.max(sunrise, Math.min(now, sunset));
     return {
       fromHour: clampedNow,
-      toHour: Math.min(clampedNow + 2, 23),
+      toHour: Math.min(clampedNow + 2, sunset),
     };
   }
   // Future date — default to afternoon.
