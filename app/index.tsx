@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
 import { FilterChips } from '@/src/components/FilterChips';
 import { LandingPage } from '@/src/components/LandingPage';
+import { SunLegend } from '@/src/components/SunLegend';
 import { MainSheet } from '@/src/components/MainSheet';
 import { ProPaywall } from '@/src/components/ProPaywall';
 import { ShortlistBar } from '@/src/components/ShortlistBar';
@@ -49,11 +50,12 @@ export default function Index() {
   //   1. ZonnieMap          — base map layer
   //   2. MainSheet          — bottom sheet over the map
   //   3. FilterChips        — floating chip row above the map, below detail sheet
-  //   4. LandingPage        — Home overlay — when visible (no zIndex; order is the stack)
-  //   5. TerraceDetailSheet — opens ABOVE Home so detail works over Home
-  //   6. ProPaywall         — modal, always above
-  //   7. ShortlistBar       — floating bar, always above
-  //   8. home button        — top-left overlay, shown when Home is hidden
+  //   4. SunLegend          — left-edge colour key, same gate as FilterChips
+  //   5. LandingPage        — Home overlay — when visible (no zIndex; order is the stack)
+  //   6. TerraceDetailSheet — opens ABOVE Home so detail works over Home
+  //   7. ProPaywall         — modal, always above
+  //   8. ShortlistBar       — floating bar, always above
+  //   9. home button        — top-left overlay, shown when Home is hidden
   return (
     <View style={styles.container}>
       <ErrorBoundary surface="ZonnieMap">
@@ -68,6 +70,15 @@ export default function Index() {
       {!landingVisible && selectedId == null ? (
         <ErrorBoundary surface="FilterChips">
           <FilterChips />
+        </ErrorBoundary>
+      ) : null}
+      {/* SunLegend — collapsible colour key on the left edge of the map.
+          Same visibility gate as FilterChips: only shown on the live map
+          (no home overlay, no detail sheet open). Placed before
+          TerraceDetailSheet so the detail sheet renders above it. */}
+      {!landingVisible && selectedId == null ? (
+        <ErrorBoundary surface="SunLegend">
+          <SunLegend />
         </ErrorBoundary>
       ) : null}
       {landingVisible ? (

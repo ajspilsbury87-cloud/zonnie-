@@ -280,6 +280,19 @@ export const strings = {
     proEntryActive: '⭐ Zonnie Pro ✓',
     proActiveTitle: 'Je hebt Zonnie Pro',
     proActiveManageHint: 'Beheer je abonnement via iOS Instellingen',
+
+    // Sun score legend (left-edge map overlay)
+    legendTitle: 'Zon score',
+    legendScorchio: 'Snikheet',
+    legendScorchioSub: 'factor 50 weer',
+    legendSunSoaked: 'Zonovergoten',
+    legendSunSoakedSub: 'ideaal terrasweer',
+    legendDappled: 'Wisselend',
+    legendDappledSub: 'zon komt en gaat',
+    legendShady: 'Schaduwrijk',
+    legendShadySub: 'vooral schaduw',
+    legendShadeCity: 'In de schaduw',
+    legendShadeCitySub: 'neem een trui mee',
   },
 
   // ─────────────────────────────────────────────────────────────────────
@@ -542,6 +555,19 @@ export const strings = {
     proEntryActive: '⭐ Zonnie Pro ✓',
     proActiveTitle: 'You have Zonnie Pro',
     proActiveManageHint: 'Manage your subscription in iOS Settings',
+
+    // Sun score legend (left-edge map overlay)
+    legendTitle: 'Sun score',
+    legendScorchio: 'Scorchio',
+    legendScorchioSub: 'factor-50 weather',
+    legendSunSoaked: 'Sun-soaked',
+    legendSunSoakedSub: 'prime terrace time',
+    legendDappled: 'Dappled',
+    legendDappledSub: 'sun comes & goes',
+    legendShady: 'Shady',
+    legendShadySub: 'mostly in shadow',
+    legendShadeCity: 'Shade city',
+    legendShadeCitySub: 'bring a jumper',
   },
 } as const;
 
