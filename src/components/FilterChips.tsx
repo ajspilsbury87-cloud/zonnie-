@@ -6,13 +6,14 @@
  * (left: HOME_BUTTON_LEFT + HOME_BUTTON_SIZE + gap) so the two never collide.
  *
  * Chips:
+ *   Time  (with chevron)  — current window; opens the fine-tune hour scrubber
  *   Bar / Food / Coffee   — toggle selectedCategories in useAreaStore
  *   Big screen            — toggle matchModeOnly
  *   Gem                   — toggle hiddenGemOnly
  *   Areas (with chevron)  — opens a Modal containing NeighborhoodFilter
  *
- * (Time presets + the fine-tune scrubber live in the bottom-sheet header,
- *  next to the date + weather — not here.)
+ * (The Morning/Afternoon/Evening PRESET buttons live in the bottom-sheet
+ *  header next to the date; the Time chip here is the precise hour scrubber.)
  *
  * Active style: burnt background + cream text.
  * Inactive style: white background + ink text + 0.5 px border.
@@ -42,6 +43,7 @@ import { useStrings } from '@/src/i18n/useStrings';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { haptics } from '@/src/lib/haptics';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
+import { TimeRangeFineTune } from '@/src/components/TimeRangeScrubber';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -59,6 +61,11 @@ const GEM_ACTIVE_BG = '#7B5EA7';
 
 // Chip height — explicit so we can vertically centre against the home button.
 const CHIP_HEIGHT = 32;
+
+// Compact hour label for the Time chip, e.g. 16 → "16".
+function formatHour(h: number): string {
+  return Math.round(h).toString().padStart(2, '0');
+}
 
 // ── Chip sub-component ────────────────────────────────────────────────────
 
@@ -98,7 +105,20 @@ function Chip({
   );
 }
 
-// ── Modal wrapper ─────────────────────────────────────────────────────────
+// ── Modal wrappers ────────────────────────────────────────────────────────
+
+function TimeModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.modalBackdrop} onPress={onClose}>
+        {/* Stop propagation so tapping the sheet itself doesn't dismiss it. */}
+        <Pressable style={styles.modalSheet} onPress={() => {}}>
+          <TimeRangeFineTune />
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
 
 function AreasModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   return (
@@ -132,7 +152,12 @@ export function FilterChips() {
   const toggleHiddenGemOnly = useAreaStore((s) => s.toggleHiddenGemOnly);
   const selectedRegions = useAreaStore((s) => s.selectedRegions);
 
+  // Time window — drives the Time chip's label.
+  const fromHour = useTimeStore((s) => s.fromHour);
+  const toHour = useTimeStore((s) => s.toHour);
+
   // Modal visibility
+  const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [areasModalVisible, setAreasModalVisible] = useState(false);
 
   // Category chip labels from i18n
@@ -167,6 +192,9 @@ export function FilterChips() {
   const chipRowTop =
     insets.top + spacing.sm + Math.round((HOME_BUTTON_SIZE - CHIP_HEIGHT) / 2);
 
+  // Time chip label: compact window display, e.g. "16–18".
+  const timeLabel = `${formatHour(fromHour)}–${formatHour(toHour)}`;
+
   // Areas chip label: show count of active regions
   const regionCount = selectedRegions.size;
   const areasLabel = regionCount > 0 ? `${t.filterAreas} (${regionCount})` : t.filterAreas;
@@ -185,6 +213,15 @@ export function FilterChips() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          {/* Time chip — current window; opens the fine-tune hour scrubber */}
+          <Chip
+            label={timeLabel}
+            active={false}
+            onPress={() => { haptics.light(); setTimeModalVisible(true); }}
+            hasChevron
+            accessibilityLabel={t.filterTimeA11y}
+          />
+
           {/* Category chips: Bar / Restaurant / Coffee */}
           {CATEGORIES_ORDERED.map((cat) => (
             <Chip
@@ -222,6 +259,12 @@ export function FilterChips() {
           />
         </ScrollView>
       </View>
+
+      {/* Time popover modal — the fine-tune hour scrubber */}
+      <TimeModal
+        visible={timeModalVisible}
+        onClose={() => setTimeModalVisible(false)}
+      />
 
       {/* Areas popover modal */}
       <AreasModal
