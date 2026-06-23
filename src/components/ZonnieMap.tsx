@@ -38,11 +38,28 @@ const AMSTERDAM_REGION: MapRegion = {
  *  from popping in/out as the user pans by a few pixels. */
 const VIEWPORT_MARGIN = 0.003;
 
-/** Hard cap on rendered markers per frame. react-native-maps 1.27.2
- *  handles 300 child-component markers comfortably on modern iOS/Android;
- *  city-zoom Amsterdam fits ≈ 280 terraces in the viewport already, so
- *  this cap only fires when zoomed further out than city level. */
-const MAX_VIEWPORT_PINS = 300;
+/**
+ * Zoom-aware marker cap: maps latitudeDelta → maximum number of pins to
+ * render. Smaller delta = more zoomed in = more pins allowed.
+ *
+ * Amsterdam reference frame (latitudeDelta):
+ *   ≥ 0.08  — whole city or wider (both canals + full metro)  → 30 pins
+ *   0.03–0.08 — multi-neighbourhood (e.g. full Centrum+West)  → 60 pins
+ *   0.01–0.03 — single neighbourhood (e.g. Jordaan)           → 100 pins
+ *   0.004–0.01 — a few streets                                → 150 pins
+ *   < 0.004  — very zoomed-in (street level)                  → 250 (all)
+ *
+ * Scored terraces are already sorted best-first, so slicing keeps the
+ * sunniest pins visible even as cheaper ones get culled at city-zoom.
+ * The selected pin is always kept regardless (see `markers` useMemo).
+ */
+function maxPinsFromZoom(latitudeDelta: number): number {
+  if (latitudeDelta >= 0.08) return 30;
+  if (latitudeDelta >= 0.03) return 60;
+  if (latitudeDelta >= 0.01) return 100;
+  if (latitudeDelta >= 0.004) return 150;
+  return 250;
+}
 
 /**
  * Band → palette colours. The fill is the dominant pin colour;
@@ -517,9 +534,10 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     const minLng = mapRegion.longitude - mapRegion.longitudeDelta / 2 - VIEWPORT_MARGIN;
     const maxLng = mapRegion.longitude + mapRegion.longitudeDelta / 2 + VIEWPORT_MARGIN;
 
-    // Filter to viewport, then slice to the performance cap.
+    // Filter to viewport, then slice to the zoom-aware pin cap.
     // `scored` is already sorted best-first, so slicing keeps the highest
-    // scorers when the viewport contains more than MAX_VIEWPORT_PINS.
+    // scorers — at city-zoom only the sunniest ~30 survive; as the user
+    // zooms in the cap rises so more (and eventually all) local pins show.
     const visible = scored.filter(
       (s) =>
         s.terrace.lat >= minLat &&
@@ -527,7 +545,8 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         s.terrace.lng >= minLng &&
         s.terrace.lng <= maxLng,
     );
-    const capped = visible.slice(0, MAX_VIEWPORT_PINS);
+    const cap = maxPinsFromZoom(mapRegion.latitudeDelta);
+    const capped = visible.slice(0, cap);
 
     // Always include the selected terrace even if it's been panned off-screen
     // (user tapped "Show on map" → pan animates but re-render fires before
