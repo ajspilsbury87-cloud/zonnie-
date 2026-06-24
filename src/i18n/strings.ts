@@ -71,6 +71,7 @@ export const strings = {
 
     // Terrace detail sheet
     sunToday: 'Zon vandaag',
+    chanceOfRain: (pct: number) => `🌧 ${pct}% kans op regen`,
     bestVisitTime: 'Beste bezoektijd',
     sundownerLeaves: (min: number) => `☀️ Zon verlaat dit terras over ${min} min`,
     sunBuilding: '↑ Zon in opkomst',
@@ -351,6 +352,7 @@ export const strings = {
 
     // Terrace detail sheet
     sunToday: 'Sun today',
+    chanceOfRain: (pct: number) => `🌧 ${pct}% chance of rain`,
     bestVisitTime: 'Best time to visit',
     sundownerLeaves: (min: number) => `☀️ Sun leaves this terrace in ${min} min`,
     sunBuilding: '↑ Sun building',

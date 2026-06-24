@@ -40,8 +40,11 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
       // direct_radiation is the actual horizontal direct irradiance (W/m²)
       // — the scoring engine uses it as a better "is the sun shining?" signal
       // than cloud_cover fraction (which inflates when thin cirrus is present).
-      // Adds ~2KB per response, same request, no extra API cost.
-      hourly: 'cloud_cover,temperature_2m,wind_speed_10m,wind_direction_10m,direct_radiation',
+      // precipitation_probability (0–100 integer) is the hourly chance of rain,
+      // shown in the detail sheet as a free user-facing feature. Not used in
+      // scoring so it adds no risk to the scoring path, just display richness.
+      // All fields add ~2–4 KB per response; same request, no extra API cost.
+      hourly: 'cloud_cover,temperature_2m,wind_speed_10m,wind_direction_10m,direct_radiation,precipitation_probability',
       start_date: dateStr,
       end_date: dateStr,
       timezone: 'Europe/Amsterdam',
@@ -87,6 +90,7 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
       wind_speed_10m?: number[];
       wind_direction_10m?: number[];
       direct_radiation?: number[];
+      precipitation_probability?: number[];
     };
   };
 
@@ -95,6 +99,7 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
   const wind = data.hourly?.wind_speed_10m;
   const windDir = data.hourly?.wind_direction_10m;
   const directRad = data.hourly?.direct_radiation;
+  const precipProb = data.hourly?.precipitation_probability;
   const time = data.hourly?.time;
   if (!cloud || !temp || !time || cloud.length !== 24) {
     throw new Error(`Unexpected Open-Meteo payload (got ${cloud?.length ?? 0} hours)`);
@@ -106,5 +111,9 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
     windSpeed: wind?.[h] != null ? Math.round(wind[h]!) : undefined,
     windDirection: windDir?.[h] != null ? Math.round(windDir[h]!) : undefined,
     directRadiation: directRad?.[h] != null ? Math.round(directRad[h]!) : undefined,
+    // precipProbability: undefined when the API doesn't return this field (older
+    // model responses or fallback cache). Callers must distinguish undefined
+    // (no data) from 0 (genuine zero-probability) — never coerce with ?? 0.
+    precipProbability: precipProb?.[h] != null ? Math.round(precipProb[h]!) : undefined,
   }));
 }

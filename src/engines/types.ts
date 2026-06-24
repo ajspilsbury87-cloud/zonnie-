@@ -186,6 +186,15 @@ export interface Weather {
    * The engine falls back to the cloudCover formula in that case.
    */
   directRadiation?: number;
+  /**
+   * Probability of precipitation in this hour, as an integer 0–100.
+   * Sourced from Open-Meteo's `precipitation_probability` hourly field.
+   *
+   * Optional so that cached entries fetched before this field was added
+   * remain valid — treat undefined as "data unavailable" rather than 0%.
+   * Used only for display in the detail sheet; not used in scoring.
+   */
+  precipProbability?: number;
 }
 
 export interface ScoreResult {
