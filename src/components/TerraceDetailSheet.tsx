@@ -240,6 +240,36 @@ export function TerraceDetailSheet() {
   }, [terrace, dateOffset, fromHour, toHour, weatherByDate]);
 
   /**
+   * Daytime maximum precipitation probability for the selected date.
+   *
+   * We scan hours 9–21 (inclusive) — the realistic window when someone
+   * would be sitting outside. Taking the MAX rather than an average is
+   * deliberate: if one hour in the afternoon has 70% rain probability,
+   * telling the user "average 30%" would be misleading. The worst-case
+   * hour is the honest signal for "might it rain on me?"
+   *
+   * Returns undefined when data is missing (older cache without the
+   * field), so the chip is completely hidden rather than showing "0%"
+   * when we simply don't know.
+   */
+  const precipChance = useMemo((): number | undefined => {
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    if (entry?.status !== 'ready') return undefined;
+    const data = entry.data;
+    if (!data) return undefined;
+    // Check hours 9–21 for daytime coverage.
+    let max: number | undefined;
+    for (let h = 9; h <= 21; h++) {
+      const p = data[h]?.precipProbability;
+      if (p != null) {
+        max = max == null ? p : Math.max(max, p);
+      }
+    }
+    return max;
+  }, [dateOffset, weatherByDate]);
+
+  /**
    * Curation trust signal. Surfaces our quality moat over Sun Seekr /
    * Coffee in the Sun (stale POI scrapes) and Seats in the Sun (often-
    * closed crowdsourced listings).
@@ -602,6 +632,16 @@ export function TerraceDetailSheet() {
                         ? '💨 '
                         : ''}
                     {windSummary.avgKmh} km/h {windSummary.direction}
+                  </Text>
+                </View>
+              ) : null}
+              {/* Rain chip — hidden when precipProbability data is absent (older
+                  cache). Shows 0% when genuinely zero so users know we have the
+                  data; hidden only when undefined (field didn't exist in cache). */}
+              {precipChance != null ? (
+                <View style={styles.infoChip}>
+                  <Text style={styles.infoChipText}>
+                    {t.chanceOfRain(precipChance)}
                   </Text>
                 </View>
               ) : null}
