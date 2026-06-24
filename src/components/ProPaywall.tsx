@@ -101,6 +101,7 @@ export type FeatureTrigger =
   | 'widget'
   | 'notifications'
   | 'best_window'
+  | 'reservations'
   | 'share';
 
 interface ProPaywallState {
@@ -148,6 +149,8 @@ function triggerCopy(trigger: FeatureTrigger | undefined, t: Strings): TriggerCo
       return { emoji: '🔔', headline: t.paywallNotificationsHeadline, sub: t.paywallNotificationsSub };
     case 'best_window':
       return { emoji: '✨', headline: t.paywallBestWindowHeadline, sub: t.paywallBestWindowSub };
+    case 'reservations':
+      return { emoji: '🍽', headline: t.paywallReservationsHeadline, sub: t.paywallReservationsSub };
     case 'share':
       return { emoji: '↗️', headline: t.paywallShareHeadline, sub: t.paywallShareSub };
     default:
