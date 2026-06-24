@@ -447,6 +447,27 @@ export function TerraceDetailSheet() {
     clear();
   }, [terrace, setPanTo, clear]);
 
+  /**
+   * Open the venue's table-reservation page. Premium feature: free users
+   * hit the paywall instead (same gate as favourites). While Pro is
+   * unlocked (FEATURES_UNLOCKED) isPro is always true, so this opens the
+   * link for everyone today and re-gates with the one-line lever later.
+   * Only ever called when `terrace.reservationUrl` is set (the button
+   * that calls it is conditionally rendered on the same field).
+   */
+  const handleReserve = useCallback(() => {
+    if (!terrace?.reservationUrl) return;
+    if (!isPro) {
+      showPaywall('reservations');
+      return;
+    }
+    haptics.medium();
+    Linking.openURL(terrace.reservationUrl).catch(() => {
+      // Swallow — an unopenable URL shouldn't crash the sheet. Same
+      // posture as the WC source link and ProPaywall legal links.
+    });
+  }, [terrace, isPro, showPaywall]);
+
   // Drive open/close via the controlled `index` prop, not by mounting/
   // unmounting the BottomSheet. Conditionally mounting (return null when
   // no selection) didn't trigger Gorhom v5's initial layout pass on
@@ -723,6 +744,23 @@ export function TerraceDetailSheet() {
             >
               <Text style={styles.actionShareText}>{t.share}</Text>
             </Pressable>
+
+            {/* Reserve-a-table CTA — only when this terrace has a verified
+                reservationUrl. Burnt fill so it reads as a strong booking
+                intent, distinct from the amber Get Directions primary below it. */}
+            {terrace.reservationUrl ? (
+              <Pressable
+                onPress={handleReserve}
+                style={({ pressed }) => [
+                  styles.actionReserve,
+                  pressed && styles.actionPressed,
+                ]}
+                accessibilityRole="link"
+                accessibilityLabel={t.reserveTable}
+              >
+                <Text style={styles.actionReserveText}>🍽  {t.reserveTable}</Text>
+              </Pressable>
+            ) : null}
 
             <Pressable
               onPress={handleNavigate}
@@ -1455,6 +1493,22 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemibold,
     fontSize: fontSizes.md,
     color: palette.burnt,
+  },
+  // Reserve-a-table CTA — burnt (deep brand red) fill so it reads as the
+  // strongest booking intent when present. Only rendered for terraces that
+  // have a verified reservationUrl, so it doesn't always compete with the
+  // amber Get Directions primary below it.
+  actionReserve: {
+    backgroundColor: palette.burnt,
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  actionReserveText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.md,
+    color: palette.cream,
   },
   // Photo strip — bleeds edge-to-edge by negating the sheet's horizontal
   // padding. paddingHorizontal on the content container adds a small

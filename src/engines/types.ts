@@ -118,6 +118,23 @@ export interface Terrace {
    * absent.
    */
   photoUrl?: string;
+  /**
+   * Direct URL to the venue's table-reservation page (its own booking
+   * widget, or a platform like TheFork / Formitable / Bookassist).
+   * When present, the detail sheet shows a "Reserve a table" CTA.
+   *
+   * Curated/verified manually — only set when the link is confirmed to
+   * be the venue's CURRENT booking page, because a wrong URL would send
+   * a user to reserve the wrong place. Absent for the vast majority of
+   * terraces (plumbing shipped ahead of data, mirroring `featured` and
+   * `photoUrl`); the CTA simply doesn't render when unset.
+   *
+   * Treated as a Pro feature at the display level — see the premium gate
+   * in TerraceDetailSheet's `handleReserve`. Currently visible to all
+   * users while Pro is unlocked (FEATURES_UNLOCKED); re-gates with the
+   * same one-line lever as every other Pro surface.
+   */
+  reservationUrl?: string;
 }
 
 export interface Building {

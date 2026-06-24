@@ -95,6 +95,7 @@ export const strings = {
     viewInMaps: 'Open in Maps',
     share: 'Delen ☀️',
     getDirections: 'Routebeschrijving',
+    reserveTable: 'Reserveer een tafel',
 
     // Group vote shortlist
     askTheGroup: (n: number) => `Vraag de groep (${n})`,
@@ -226,6 +227,9 @@ export const strings = {
     paywallBestWindowHeadline: 'Beste bezoekmoment',
     paywallBestWindowSub:
       'We berekenen het perfecte 2–3 uurs-venster per terras, zodat jij dat niet hoeft.',
+    paywallReservationsHeadline: 'Reserveer direct een tafel',
+    paywallReservationsSub:
+      'Boek je plekje in de zon met één tik — direct via de reserveringspagina van het terras.',
     paywallShareHeadline: 'Deel een terraskaartje',
     paywallShareSub:
       'Een mooi kaartje met zonscore, beste bezoekmoment en Zonnie-branding. Gemaakt voor Stories.',
@@ -376,6 +380,7 @@ export const strings = {
     viewInMaps: 'View in Maps',
     share: 'Share ☀️',
     getDirections: 'Get Directions',
+    reserveTable: 'Reserve a table',
 
     // Group vote shortlist
     askTheGroup: (n: number) => `Ask the group (${n})`,
@@ -504,6 +509,9 @@ export const strings = {
     paywallBestWindowHeadline: 'See the best visit window',
     paywallBestWindowSub:
       "We calculate the perfect 2–3 hour window for each terrace, so you don't have to.",
+    paywallReservationsHeadline: 'Reserve a table instantly',
+    paywallReservationsSub:
+      "Book your spot in the sun in one tap — straight to the terrace's own reservation page.",
     paywallShareHeadline: 'Share a terrace card',
     paywallShareSub:
       'A beautiful card with sun score, best visit time, and Zonnie branding. Made for Stories.',
