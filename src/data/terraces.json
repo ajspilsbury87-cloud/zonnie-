@@ -1757,6 +1757,7 @@
   },
   {
     "id": 109,
+    "reservationUrl": "https://pllek.nl/restaurant/reserveren/",
     "name": "Pllek",
     "lat": 52.39916,
     "lng": 4.89288,
@@ -1917,6 +1918,7 @@
   },
   {
     "id": 119,
+    "reservationUrl": "https://resy.com/cities/amsterdam-netherlands/venues/ijver",
     "name": "IJver",
     "lat": 52.40133,
     "lng": 4.89505,
@@ -2283,6 +2285,7 @@
   },
   {
     "id": 141,
+    "reservationUrl": "https://www.pacificamsterdam.nl/en/reservation-form",
     "name": "Pacific Park",
     "lat": 52.38593,
     "lng": 4.87147,
@@ -3866,6 +3869,7 @@
   },
   {
     "id": 501,
+    "reservationUrl": "https://cafekiebert.nl/en/to-reserve/",
     "name": "Café Kiebêrt",
     "lat": 52.3483706,
     "lng": 4.8605911,
@@ -6571,6 +6575,7 @@
   },
   {
     "id": 652,
+    "reservationUrl": "https://live.tebi.co/ecom/reservations/705565_5762096e10f472d0a1019ac7281eb4ffb5052fb8b6411ffcf976816fb199e7b6",
     "name": "Barricade",
     "lat": 52.3662296,
     "lng": 4.8620477,
@@ -8528,6 +8533,7 @@
   },
   {
     "id": 940,
+    "reservationUrl": "https://bookings.zenchef.com/results?rid=375151",
     "name": "Strandzuid",
     "lat": 52.341653,
     "lng": 4.8865262,
