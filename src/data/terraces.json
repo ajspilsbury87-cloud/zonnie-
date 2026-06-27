@@ -186,23 +186,6 @@
     "openness": 0.674
   },
   {
-    "id": 13,
-    "name": "SkyLounge",
-    "lat": 52.37657,
-    "lng": 4.90545,
-    "area": "Centrum",
-    "facing": "All",
-    "capacity": "M",
-    "vibe": "Rooftop panoramic",
-    "address": "Oosterdoksstraat 4",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-02T11:36:28.54Z",
-    "googleRating": 4.4,
-    "googleReviewCount": 2860,
-    "openness": 0.365
-  },
-  {
     "id": 14,
     "name": "Café de Dokter",
     "lat": 52.36925,
@@ -1324,19 +1307,6 @@
     "openness": 0.49
   },
   {
-    "id": 80,
-    "name": "Meneer Nilsson",
-    "lat": 52.35499,
-    "lng": 4.88795,
-    "area": "De Pijp",
-    "facing": "SW",
-    "capacity": "S",
-    "vibe": "Swedish café",
-    "address": "Eerste van der Helststraat 24",
-    "verified": true,
-    "openness": 0.358
-  },
-  {
     "id": 81,
     "name": "Café Bloemers",
     "lat": 52.35559,
@@ -2135,19 +2105,6 @@
     "googleRating": 4.3,
     "googleReviewCount": 736,
     "openness": 0.666
-  },
-  {
-    "id": 132,
-    "name": "Zurich",
-    "lat": 52.36897,
-    "lng": 4.85045,
-    "area": "De Baarsjes",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Square terrace",
-    "address": "Mercatorplein 35",
-    "verified": true,
-    "openness": 0.97
   },
   {
     "id": 133,
@@ -5483,24 +5440,6 @@
     "openness": 0.933
   },
   {
-    "id": 591,
-    "name": "Barracuda Bar",
-    "lat": 52.383562999999995,
-    "lng": 4.9296484,
-    "area": "Noord",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Restaurant",
-    "address": "Aambeeldstraat 28, 1021 KB Amsterdam, Netherlands",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:08:52.697Z",
-    "placeId": "ChIJh1Z6eigJxkcRqDb7y74Q5ug",
-    "googleRating": 4.4,
-    "googleReviewCount": 47,
-    "openness": 0.982
-  },
-  {
     "id": 592,
     "name": "Café Kramer",
     "lat": 52.365429999999996,
@@ -6461,24 +6400,6 @@
     "googleRating": 4.9,
     "googleReviewCount": 232,
     "openness": 1
-  },
-  {
-    "id": 646,
-    "name": "Waterlooplein",
-    "lat": 52.3677503,
-    "lng": 4.9027389,
-    "area": "Centrum",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Restaurant",
-    "address": "Waterlooplein, 1011 Amsterdam, Netherlands",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:09:20.747Z",
-    "placeId": "ChIJFzDe6b0JxkcRe2pFCGSon60",
-    "googleRating": 4.4,
-    "googleReviewCount": 490,
-    "openness": 0.538
   },
   {
     "id": 647,
@@ -7883,22 +7804,6 @@
     "googleRating": 4.2,
     "googleReviewCount": 293,
     "openness": 0.93
-  },
-  {
-    "id": 815,
-    "name": "Leidseplein",
-    "lat": 52.363765,
-    "lng": 4.8822544,
-    "area": "Leidseplein",
-    "facing": "NE",
-    "capacity": "M",
-    "vibe": "Imported",
-    "address": "Leidseplein, 1017 Amsterdam, Netherlands",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-05-05T06:10:50.957Z",
-    "placeId": "ChIJW7lP7egJxkcR1XyllSjcOpw",
-    "openness": 0.494
   },
   {
     "id": 816,
@@ -16949,6 +16854,8 @@
   },
   {
     "id": 1409,
+    "googleRating": 4.4,
+    "googleReviewCount": 2860,
     "name": "LuminAir",
     "lat": 52.3765715,
     "lng": 4.905451600000001,
@@ -17212,7 +17119,7 @@
   },
   {
     "id": 1424,
-    "name": "Bonjour Càphê",
+    "name": "Lên Đên",
     "lat": 52.3977612,
     "lng": 4.8732372999999995,
     "area": "Houthavens",
