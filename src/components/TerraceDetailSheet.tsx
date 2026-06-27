@@ -48,6 +48,7 @@ import {
   findBestWindow,
 } from '@/src/engines/scoring';
 import { sundownerMinutes } from '@/src/engines/golden';
+import { findNextSunnySpot, ORIGIN_HORIZON_MIN } from '@/src/engines/handoff';
 import { bandForScore } from '@/src/engines/bands';
 import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
 import { useSelectionStore } from '@/src/store/selectionStore';
@@ -109,6 +110,7 @@ export function TerraceDetailSheet() {
   const ref = useRef<BottomSheet>(null);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const clear = useSelectionStore((s) => s.clear);
+  const selectTerrace = useSelectionStore((s) => s.select);
   const isPro = usePurchaseStore((s) => s.isPro);
   const showPaywall = useProPaywallStore((s) => s.show);
   const setPanTo = useSelectionStore((s) => s.setPanTo);
@@ -372,6 +374,55 @@ export function TerraceDetailSheet() {
     return sundownerMinutes(hourlyScores, nowHour);
   }, [hourlyScores, dateOffset]);
 
+  /**
+   * "Next sunny spot" hand-off suggestion.
+   *
+   * Conditions to show:
+   *   1. Today only (dateOffset === 0) — "in N min" is only meaningful now.
+   *   2. Origin terrace is currently sunny (score at current hour ≥ 0.5).
+   *   3. Sun leaves within ORIGIN_HORIZON_MIN (2 hours) — enough urgency.
+   *   4. findNextSunnySpot finds a qualifying candidate within 500 m.
+   *
+   * Keyed on terrace/date/weather exactly like the other score memos.
+   * Note: this runs on today only, so it reads the real wall-clock hour
+   * from inside the memo to gate condition 2 and 3 — same pattern as
+   * sundownerMin above.
+   */
+  const handoffResult = useMemo(() => {
+    // Only show for today's date — hand-off is a "right now" feature.
+    if (!terrace || !hourlyScores || dateOffset !== 0) return null;
+
+    const now = new Date();
+    const nowHour =
+      parseInt(formatInTimeZone(now, AMSTERDAM_TZ, 'HH'), 10) +
+      parseInt(formatInTimeZone(now, AMSTERDAM_TZ, 'mm'), 10) / 60;
+
+    // Gate 1: origin must currently have sun (score ≥ 0.5 at current hour).
+    const currentScore = hourlyScores[Math.floor(nowHour)] ?? 0;
+    if (currentScore < 0.5) return null;
+
+    // Gate 2: sun must be leaving within ORIGIN_HORIZON_MIN.
+    // We find the last hour the origin is sunny and compute minutes until
+    // it goes dark.
+    let lastSunnyHour = -1;
+    for (let h = Math.floor(nowHour); h <= 23; h++) {
+      if ((hourlyScores[h] ?? 0) >= 0.5) lastSunnyHour = h;
+      else break;
+    }
+    if (lastSunnyHour < 0) return null;
+    // handoffHour is the first "dark" hour: lastSunnyHour+1.
+    // Minutes until it goes dark = ((lastSunnyHour + 1) - nowHour) * 60.
+    const minutesUntilDark = ((lastSunnyHour + 1) - nowHour) * 60;
+    if (minutesUntilDark > ORIGIN_HORIZON_MIN) return null;
+
+    // Gate 3: ask the engine for the best nearby still-sunny terrace.
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+
+    return findNextSunnySpot(terrace, dateStr, weatherProfile, hourlyWeather);
+  }, [terrace, hourlyScores, dateOffset, weatherProfile, weatherByDate]);
+
   const setRange = useTimeStore((s) => s.setRange);
 
   /** Tapping the best-window banner focuses the timeline on those hours. */
@@ -411,6 +462,17 @@ export function TerraceDetailSheet() {
       // destination on some Android versions — swallow silently.
     });
   }, [terrace, bestWindow, fromHour, toHour, score]);
+
+  /**
+   * Tapping the hand-off suggestion opens that terrace in the detail sheet.
+   * We use `selectTerrace` (from useSelectionStore) which replaces the
+   * current selectedId — Gorhom will snap to the new terrace's sheet.
+   */
+  const handleHandoffPress = useCallback(() => {
+    if (!handoffResult) return;
+    haptics.selection();
+    selectTerrace(handoffResult.terrace.id);
+  }, [handoffResult, selectTerrace]);
 
   const renderBackdrop = useCallback(
     (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
@@ -659,6 +721,34 @@ export function TerraceDetailSheet() {
                   {t.sundownerLeaves(sundownerMin)}
                 </Text>
               </View>
+            ) : null}
+
+            {/* Next sunny spot hand-off — shown directly below the sundowner
+                pill when: we're on today's date, the origin has sun now, sun
+                leaves within 2 hours, and there's a nearby still-sunny
+                terrace. Tapping selects that terrace. Hidden otherwise. */}
+            {handoffResult != null ? (
+              <Pressable
+                onPress={handleHandoffPress}
+                style={({ pressed }) => [
+                  styles.handoffRow,
+                  pressed && styles.handoffRowPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t.nextSunnySpot(
+                  handoffResult.terrace.name,
+                  `${handoffResult.sunnyUntilHour.toString().padStart(2, '0')}:00`,
+                  handoffResult.walkMinutes,
+                )}
+              >
+                <Text style={styles.handoffText}>
+                  {t.nextSunnySpot(
+                    handoffResult.terrace.name,
+                    `${handoffResult.sunnyUntilHour.toString().padStart(2, '0')}:00`,
+                    handoffResult.walkMinutes,
+                  )}
+                </Text>
+              </Pressable>
             ) : null}
 
             <View style={styles.infoChipRow}>
@@ -1639,5 +1729,29 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.xs,
     color: palette.burnt,
     letterSpacing: 0.4,
+  },
+  // "Next sunny spot" hand-off row — tappable, appears just below the
+  // sundowner pill. Warm mustard-adjacent treatment so it reads as a
+  // natural continuation of the urgency signal above it ("sun leaving
+  // soon AND here's where to go"). The chevron "→" is baked into the
+  // i18n string (nextSunnySpot) so no separate icon element is needed.
+  handoffRow: {
+    marginTop: spacing.xs,
+    marginHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: palette.cream,
+    borderWidth: 1,
+    borderColor: palette.peach,
+  },
+  handoffRowPressed: {
+    opacity: 0.75,
+  },
+  handoffText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.ink,
+    lineHeight: Math.round(fontSizes.sm * 1.4),
   },
 });
