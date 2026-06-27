@@ -69,6 +69,7 @@ import {
 } from '@/src/theme/tokens';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useLanguageStore } from '@/src/store/languageStore';
+import { useSunLogStore } from '@/src/store/sunLogStore';
 
 // ─── WCSection ────────────────────────────────────────────────────────────────
 
@@ -144,6 +145,15 @@ export function TerraceDetailSheet() {
   useEffect(() => {
     if (selectedId != null) {
       ref.current?.snapToIndex(0);
+      // Sun Log: record that the user opened this terrace's detail sheet.
+      // `score` is 0 here on first render (computed below), so we read it
+      // via getState() to avoid a stale-closure; it will be 0 until the
+      // score memo resolves, which is fine — the terraceId is the key datum.
+      useSunLogStore.getState().log({
+        ts: Date.now(),
+        terraceId: selectedId,
+        action: 'open',
+      });
     } else {
       ref.current?.close();
     }
@@ -382,6 +392,14 @@ export function TerraceDetailSheet() {
     const shareFrom = bestWindow?.fromHour ?? fromHour;
     const shareTo   = bestWindow?.toHour   ?? toHour;
     const shareScore = bestWindow?.avgScore ?? score;
+    // Sun Log: record the share before the async sheet opens so we don't
+    // lose it if the user dismisses without picking a destination.
+    useSunLogStore.getState().log({
+      ts: Date.now(),
+      terraceId: terrace.id,
+      action: 'share',
+      score: shareScore,
+    });
     shareTerraceCard({
       name:     terrace.name,
       area:     terrace.area,
@@ -410,6 +428,13 @@ export function TerraceDetailSheet() {
   const handleNavigate = useCallback(() => {
     if (!terrace) return;
     haptics.medium();
+    // Sun Log: directions is a strong intent signal — user is actually going.
+    useSunLogStore.getState().log({
+      ts: Date.now(),
+      terraceId: terrace.id,
+      action: 'directions',
+      score,
+    });
     const url = buildGoogleMapsNavigationUrl({
       lat: terrace.lat,
       lng: terrace.lng,
@@ -421,7 +446,7 @@ export function TerraceDetailSheet() {
       // native app on iOS/Android when installed.
       Linking.openURL(`https://maps.google.com/?q=${terrace.lat},${terrace.lng}`);
     });
-  }, [terrace]);
+  }, [terrace, score]);
 
   /** Open the place's Google Maps page (no navigation — for browsing reviews/photos). */
   const handleViewInGoogleMaps = useCallback(() => {
@@ -526,7 +551,17 @@ export function TerraceDetailSheet() {
                   }
                   // Success haptic when adding; lighter tick when removing.
                   if (result === 'removed') haptics.selection();
-                  else haptics.success();
+                  else {
+                    haptics.success();
+                    // Sun Log: record the add (not the remove — we only want
+                    // positive signals for future "favourite" insights).
+                    useSunLogStore.getState().log({
+                      ts: Date.now(),
+                      terraceId: terrace.id,
+                      action: 'favorite',
+                      score,
+                    });
+                  }
                 }}
                 style={({ pressed }) => [
                   styles.favoriteButton,
