@@ -300,6 +300,42 @@ export const strings = {
     legendShadySub: 'vooral schaduw',
     legendShadeCity: 'In de schaduw',
     legendShadeCitySub: 'neem een trui mee',
+
+    // Chase the Sun crawl sheet
+    chaseTheSun: 'Chase the sun',
+    crawlSubtitle: (neighbourhood: string, stops: number, untilHour: number) =>
+      `${neighbourhood} · ${stops} stops · zon tot ${untilHour}:00`,
+    crawlLeaveBy: (untilHour: number) =>
+      `Verlaat stop 1 voor ${untilHour}:00 om in de zon te blijven`,
+    crawlSunChip: (fromHour: number, untilHour: number) =>
+      `${fromHour}:00 – ${untilHour}:00 · in de zon`,
+    crawlWalkConnector: (minutes: number, metres: number) =>
+      `${minutes} min lopen · ${metres} m`,
+    crawlGoldenFinish: 'Gouden-uur finisher',
+    crawlShareRoute: 'Deel deze zonnige route',
+    crawlStart: 'Start',
+    crawlShuffle: 'Schudden',
+    crawlNoRoute: 'Geen zonnige route beschikbaar vanuit dit terras op dit moment.',
+    crawlShareText: (
+      area: string,
+      stop1name: string,
+      stop1until: number,
+      stop2name: string,
+      stop2walk: number,
+      stop3name: string,
+      appUrl: string,
+    ) =>
+      `☀️ Mijn Chase the Sun route door ${area}:\n1. ${stop1name} — zon tot ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min lopen\n3. ${stop3name} — gouden uur 🌅\n\nBlijf de hele middag in de zon → ${appUrl}`,
+    crawlShareTextShort: (
+      area: string,
+      stop1name: string,
+      stop1until: number,
+      stop2name: string,
+      stop2walk: number,
+      appUrl: string,
+    ) =>
+      `☀️ Mijn Chase the Sun route door ${area}:\n1. ${stop1name} — zon tot ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min lopen 🌅\n\nBlijf de hele middag in de zon → ${appUrl}`,
+    crawlChaseButton: '☀️ Chase the sun vanaf hier',
   },
 
   // ─────────────────────────────────────────────────────────────────────
@@ -582,6 +618,42 @@ export const strings = {
     legendShadySub: 'mostly in shadow',
     legendShadeCity: 'Shade city',
     legendShadeCitySub: 'bring a jumper',
+
+    // Chase the Sun crawl sheet
+    chaseTheSun: 'Chase the sun',
+    crawlSubtitle: (neighbourhood: string, stops: number, untilHour: number) =>
+      `${neighbourhood} · ${stops} stops · sun till ${untilHour}:00`,
+    crawlLeaveBy: (untilHour: number) =>
+      `Leave stop 1 by ${untilHour}:00 to stay in the sun`,
+    crawlSunChip: (fromHour: number, untilHour: number) =>
+      `${fromHour}:00 – ${untilHour}:00 · in the sun`,
+    crawlWalkConnector: (minutes: number, metres: number) =>
+      `${minutes} min walk · ${metres} m`,
+    crawlGoldenFinish: 'Golden-hour finish',
+    crawlShareRoute: 'Share this sun route',
+    crawlStart: 'Start',
+    crawlShuffle: 'Shuffle',
+    crawlNoRoute: 'No sunny route available from this terrace right now.',
+    crawlShareText: (
+      area: string,
+      stop1name: string,
+      stop1until: number,
+      stop2name: string,
+      stop2walk: number,
+      stop3name: string,
+      appUrl: string,
+    ) =>
+      `☀️ My Chase the Sun route through ${area}:\n1. ${stop1name} — sun till ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min walk\n3. ${stop3name} — golden hour 🌅\n\nStay in the sun all afternoon → ${appUrl}`,
+    crawlShareTextShort: (
+      area: string,
+      stop1name: string,
+      stop1until: number,
+      stop2name: string,
+      stop2walk: number,
+      appUrl: string,
+    ) =>
+      `☀️ My Chase the Sun route through ${area}:\n1. ${stop1name} — sun till ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min walk 🌅\n\nStay in the sun all afternoon → ${appUrl}`,
+    crawlChaseButton: '☀️ Chase the sun from here',
   },
 } as const;
 

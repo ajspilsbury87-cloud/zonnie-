@@ -34,13 +34,13 @@ import { computeSunScore } from '@/src/engines/scoring';
 import type { Terrace, Weather, WeatherProfile } from '@/src/engines/types';
 
 /** Score at or above this means "sunny enough to sit outside". */
-const SUN_THRESHOLD = 0.5;
+export const SUN_THRESHOLD = 0.5;
 
 /** Walking speed in metres per minute — same as the probe script. */
-const WALK_MPM = 80;
+export const WALK_MPM = 80;
 
 /** Maximum walking distance to a hand-off candidate (metres). */
-const WALK_CUTOFF_M = 500;
+export const WALK_CUTOFF_M = 500;
 
 /**
  * Only show the hand-off suggestion when the origin's sun leaves within
@@ -73,7 +73,7 @@ export interface HandoffResult {
 }
 
 /** Haversine distance in metres between two WGS84 coordinates. */
-function haversineM(aLat: number, aLng: number, bLat: number, bLng: number): number {
+export function haversineM(aLat: number, aLng: number, bLat: number, bLng: number): number {
   const R = 6_371_000;
   const toRad = (d: number) => (d * Math.PI) / 180;
   const dLat = toRad(bLat - aLat);
@@ -92,7 +92,7 @@ function haversineM(aLat: number, aLng: number, bLat: number, bLng: number): num
  * that case means there's nothing for the user to "lose" so no hand-off
  * is needed.
  */
-function sunLeavesHour(hourlyScores: readonly number[]): number {
+export function sunLeavesHour(hourlyScores: readonly number[]): number {
   let last = -1;
   // We only scan the afternoon/evening window (13–23) because morning sun
   // leaving isn't a "chase the sun" situation — the sun is still rising.
@@ -258,4 +258,4 @@ export function findNextSunnySpot(
 }
 
 /** Export the horizon constant so TerraceDetailSheet can apply the time gate. */
-export { ORIGIN_HORIZON_MIN, SUN_THRESHOLD };
+export { ORIGIN_HORIZON_MIN };
