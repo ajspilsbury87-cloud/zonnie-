@@ -301,6 +301,20 @@ export const strings = {
     legendShadeCity: 'In de schaduw',
     legendShadeCitySub: 'neem een trui mee',
 
+    // Today's Verdict card
+    verdictSectionLabel: 'VANDAAG',
+    verdictHigh: '☀️ Perfecte terrasdag',
+    verdictMid: '⛅ Hier en daar zonnig',
+    verdictLow: '☁️ Eigenlijk geen terrasdag',
+    verdictLoading: 'Dagelijkse samenvatting laden…',
+    verdictStatLine: (count: number, fromHour: number, toHour: number) =>
+      `${count} terrassen boven 65% tussen ${fromHour}:00–${toHour}:00`,
+    verdictStatLineNoWindow: (count: number) =>
+      `${count} ${count === 1 ? 'terras' : 'terrassen'} boven 65% vandaag`,
+    verdictTopPicks: 'TOP PICKS VANDAAG',
+    verdictFavouriteLine: (name: string, untilHour: number) =>
+      `Jouw favoriet: ${name} heeft zon tot ${untilHour}:00`,
+
     // Chase the Sun crawl sheet
     chaseTheSun: 'Chase the sun',
     crawlSubtitle: (neighbourhood: string, stops: number, untilHour: number) =>
@@ -618,6 +632,20 @@ export const strings = {
     legendShadySub: 'mostly in shadow',
     legendShadeCity: 'Shade city',
     legendShadeCitySub: 'bring a jumper',
+
+    // Today's Verdict card
+    verdictSectionLabel: 'TODAY',
+    verdictHigh: '☀️ Cracking terrace day',
+    verdictMid: '⛅ A few sunny spots',
+    verdictLow: '☁️ Not really a terrace day',
+    verdictLoading: 'Loading today\'s summary…',
+    verdictStatLine: (count: number, fromHour: number, toHour: number) =>
+      `${count} terraces above 65% between ${fromHour}:00–${toHour}:00`,
+    verdictStatLineNoWindow: (count: number) =>
+      `${count} ${count === 1 ? 'terrace' : 'terraces'} above 65% today`,
+    verdictTopPicks: 'TOP PICKS TODAY',
+    verdictFavouriteLine: (name: string, untilHour: number) =>
+      `Your favourite: ${name} has sun till ${untilHour}:00`,
 
     // Chase the Sun crawl sheet
     chaseTheSun: 'Chase the sun',
