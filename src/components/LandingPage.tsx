@@ -48,6 +48,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { useStrings } from '@/src/i18n/useStrings';
 import { useLanguageStore } from '@/src/store/languageStore';
+import { PerfectForGuides } from './PerfectForGuides';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
@@ -391,6 +392,9 @@ export function LandingPage() {
         <Animated.View style={[styles.cardStack, cardsStyle]}>
           {/* ── Today's Verdict — daily-habit anchor, always first ────────── */}
           <TodaysVerdict />
+
+          {/* ── Perfect For guides — horizontal shortcut row ─────────────── */}
+          <PerfectForGuides />
 
           {/* ── World Cup 2026 — date-gated; both blocks vanish after 2026-07-19 ── */}
 
