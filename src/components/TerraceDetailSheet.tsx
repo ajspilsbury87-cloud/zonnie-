@@ -20,7 +20,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import BottomSheet, {
@@ -60,6 +60,7 @@ import { usePurchaseStore } from '@/src/store/purchaseStore';
 import { useProPaywallStore } from '@/src/components/ProPaywall';
 import { haptics } from '@/src/lib/haptics';
 import { shareTerraceCard } from '@/src/lib/shareCard';
+import { useCrawlStore } from '@/src/store/crawlStore';
 import {
   fonts,
   fontSizes,
@@ -423,6 +424,45 @@ export function TerraceDetailSheet() {
     return findNextSunnySpot(terrace, dateStr, weatherProfile, hourlyWeather);
   }, [terrace, hourlyScores, dateOffset, weatherProfile, weatherByDate]);
 
+  /**
+   * Whether to show the "Chase the sun from here" button.
+   *
+   * Conditions:
+   *   1. Today only (dateOffset === 0) — crawl is a "right now" feature.
+   *   2. Origin terrace is currently sunny (score at current hour ≥ 0.5).
+   *      We reuse hourlyScores from the existing memo; same gate as handoffResult.
+   *
+   * We do NOT run isCrawlViable() here — that would trigger a full engine
+   * computation on every render of the detail sheet (≥3k scoring calls).
+   * Instead we show the button whenever conditions 1+2 hold, and react to
+   * the plan being null (store.start returned false) with an Alert.
+   */
+  const showCrawlButton = useMemo(() => {
+    if (!terrace || !hourlyScores || dateOffset !== 0) return false;
+    const now = new Date();
+    const nowHourInt = parseInt(formatInTimeZone(now, AMSTERDAM_TZ, 'HH'), 10);
+    const currentScore = hourlyScores[nowHourInt] ?? 0;
+    return currentScore >= 0.5;
+  }, [terrace, hourlyScores, dateOffset]);
+
+  const startCrawl = useCrawlStore((s) => s.start);
+  const crawlIsOpen = useCrawlStore((s) => s.isOpen);
+
+  const handleChaseSun = useCallback(() => {
+    if (!terrace) return;
+    haptics.medium();
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    startCrawl(terrace.id, dateStr, weatherProfile, hourlyWeather);
+    // After start() runs, check if the store opened — if not, the plan was null.
+    // We read via getState() to avoid a stale closure on crawlIsOpen.
+    const didOpen = useCrawlStore.getState().isOpen;
+    if (!didOpen) {
+      Alert.alert('', t.crawlNoRoute);
+    }
+  }, [terrace, dateOffset, weatherByDate, weatherProfile, startCrawl, t]);
+
   const setRange = useTimeStore((s) => s.setRange);
 
   /** Tapping the best-window banner focuses the timeline on those hours. */
@@ -748,6 +788,26 @@ export function TerraceDetailSheet() {
                     handoffResult.walkMinutes,
                   )}
                 </Text>
+              </Pressable>
+            ) : null}
+
+            {/* "Chase the sun from here" — shown when: today + currently sunny.
+                Opens the full multi-stop crawl sheet. Complements the single-hop
+                handoff row above; the two are independent (one shows, both show,
+                or neither shows depending on conditions).
+                We only show it when the crawl sheet is NOT already open for
+                this session — avoids a confusing double-tap pattern. */}
+            {showCrawlButton && !crawlIsOpen ? (
+              <Pressable
+                onPress={handleChaseSun}
+                style={({ pressed }) => [
+                  styles.crawlButton,
+                  pressed && styles.actionPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t.crawlChaseButton}
+              >
+                <Text style={styles.crawlButtonText}>{t.crawlChaseButton}</Text>
               </Pressable>
             ) : null}
 
@@ -1753,5 +1813,22 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: palette.ink,
     lineHeight: Math.round(fontSizes.sm * 1.4),
+  },
+
+  // "Chase the sun from here" button — appears below the handoff row when
+  // the user is on today and the origin is currently sunny. Burnt fill so
+  // it reads as a strong call-to-action distinct from the cream handoff row.
+  crawlButton: {
+    marginTop: spacing.sm,
+    marginHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: palette.burnt,
+    alignItems: 'center',
+  },
+  crawlButtonText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.md,
+    color: palette.cream,
   },
 });

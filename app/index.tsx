@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
+import { ChaseTheSunSheet } from '@/src/components/ChaseTheSunSheet';
 import { FilterChips } from '@/src/components/FilterChips';
 import { LandingPage } from '@/src/components/LandingPage';
 import { SunLegend } from '@/src/components/SunLegend';
@@ -53,9 +54,10 @@ export default function Index() {
   //   4. SunLegend          — left-edge colour key, same gate as FilterChips
   //   5. LandingPage        — Home overlay — when visible (no zIndex; order is the stack)
   //   6. TerraceDetailSheet — opens ABOVE Home so detail works over Home
-  //   7. ProPaywall         — modal, always above
-  //   8. ShortlistBar       — floating bar, always above
-  //   9. home button        — top-left overlay, shown when Home is hidden
+  //   7. ChaseTheSunSheet   — opens ABOVE TerraceDetailSheet (rendered after)
+  //   8. ProPaywall         — modal, always above
+  //   9. ShortlistBar       — floating bar, always above
+  //  10. home button        — top-left overlay, shown when Home is hidden
   return (
     <View style={styles.container}>
       <ErrorBoundary surface="ZonnieMap">
@@ -88,6 +90,9 @@ export default function Index() {
       ) : null}
       <ErrorBoundary surface="TerraceDetailSheet">
         <TerraceDetailSheet />
+      </ErrorBoundary>
+      <ErrorBoundary surface="ChaseTheSunSheet">
+        <ChaseTheSunSheet />
       </ErrorBoundary>
       <ErrorBoundary surface="ProPaywall">
         <ProPaywall />

@@ -20,6 +20,7 @@
 
 import { Share } from 'react-native';
 import { scoreLabel } from '@/src/engines/scoring';
+import type { CrawlPlan } from '@/src/engines/crawl';
 
 export const APP_STORE_URL =
   'https://apps.apple.com/app/zonnie/id6767790487';
@@ -74,6 +75,73 @@ export async function shareTerraceCard(params: ShareCardParams): Promise<void> {
     {
       // Disable the "Add to Reading List" and similar iOS system actions
       // that don't make sense for a terrace recommendation.
+      excludedActivityTypes: [
+        'com.apple.UIKit.activity.AddToReadingList',
+        'com.apple.UIKit.activity.OpenInIBooks',
+        'com.apple.UIKit.activity.Print',
+        'com.apple.UIKit.activity.AssignToContact',
+      ],
+    },
+  );
+}
+
+/**
+ * Build the text share message for a Chase the Sun crawl plan.
+ *
+ * Format (3-stop example):
+ *   ☀️ My Chase the Sun route through Jordaan:
+ *   1. Café Kobalt — sun till 17:00
+ *   2. Bar Baarsch — 4 min walk
+ *   3. Westerdok — golden hour 🌅
+ *
+ *   Stay in the sun all afternoon → https://apps.apple.com/...
+ *
+ * For 2-stop plans the third line is omitted. The function is kept
+ * pure so it's easy to unit-test without mocking the Share API.
+ */
+export function buildCrawlShareMessage(plan: CrawlPlan): string {
+  const stops = plan.stops;
+  // Use the area of the first stop as the "through X" label.
+  const area = stops[0]?.terrace.area ?? 'Amsterdam';
+
+  const lines: string[] = [`☀️ My Chase the Sun route through ${area}:`];
+
+  stops.forEach((stop, i) => {
+    const stopNum = i + 1;
+    if (i === 0) {
+      // First stop: show until-hour.
+      lines.push(`${stopNum}. ${stop.terrace.name} — sun till ${stop.sunUntilHour + 1}:00`);
+    } else if (i === stops.length - 1 && stop.isGoldenFinish) {
+      // Last stop with golden finish: show walk + golden label.
+      lines.push(`${stopNum}. ${stop.terrace.name} — ${stop.walkMinutesFromPrev} min walk — golden hour 🌅`);
+    } else {
+      // Middle stops: show walk time.
+      lines.push(`${stopNum}. ${stop.terrace.name} — ${stop.walkMinutesFromPrev} min walk`);
+    }
+  });
+
+  lines.push('');
+  lines.push(`Stay in the sun all afternoon → ${APP_STORE_URL}`);
+
+  return lines.join('\n');
+}
+
+/**
+ * Fire the native share sheet with a pre-composed Chase the Sun crawl message.
+ *
+ * Same pattern as shareTerraceCard: caller can `await` and observe the result,
+ * but the `.catch()` in the call site handles the common case where the user
+ * dismisses without choosing a destination.
+ */
+export async function shareCrawl(plan: CrawlPlan): Promise<void> {
+  const message = buildCrawlShareMessage(plan);
+
+  await Share.share(
+    {
+      message,
+      url: APP_STORE_URL,
+    },
+    {
       excludedActivityTypes: [
         'com.apple.UIKit.activity.AddToReadingList',
         'com.apple.UIKit.activity.OpenInIBooks',
