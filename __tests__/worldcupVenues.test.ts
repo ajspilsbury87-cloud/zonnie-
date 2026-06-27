@@ -189,8 +189,11 @@ describe('Data fixes', () => {
     expect(t?.name).toBe('WestWeelde');
   });
 
-  test('terrace count is 993', () => {
-    expect(TERRACES.length).toBe(993);
+  test('terrace count is 987', () => {
+    // Updated 2026-06-27: removed 5 stale entries (2 map-square artifacts,
+    // 3 permanently-closed venues), then deduped the LuminAir double-listing
+    // (id 13 merged into id 1409). Previous counts: 993 → 988 → 987.
+    expect(TERRACES.length).toBe(987);
   });
 
   test('#70 Bar Botanique is in area Oost', () => {
