@@ -350,6 +350,21 @@ export const strings = {
     ) =>
       `☀️ Mijn Chase the Sun route door ${area}:\n1. ${stop1name} — zon tot ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min lopen 🌅\n\nBlijf de hele middag in de zon → ${appUrl}`,
     crawlChaseButton: '☀️ Chase the sun vanaf hier',
+
+    // Perfect For guides (landing-page entry-point cards)
+    perfectForHeader: 'PERFECT VOOR',
+    perfectForGoldenHour: '🌅 Gouden uur vanavond',
+    perfectForBigScreen: '📺 Buiten op groot scherm',
+    perfectForGems: '💎 Hidden gems',
+    perfectForCoffee: '☕ Koffie in de zon',
+    perfectForMorning: '🌤 Ochtendzon',
+    perfectForNow: '☀️ Nu zonnig',
+    perfectForGoldenHourA11y: 'Zet tijdvenster op gouden uur vanavond',
+    perfectForBigScreenA11y: 'Filter op terrassen met groot scherm',
+    perfectForGemsA11y: 'Toon hidden gems — goede zon, minder toeristen',
+    perfectForCoffeeA11y: 'Filter op koffietentjes in de ochtendzon',
+    perfectForMorningA11y: 'Zet tijdvenster op ochtend',
+    perfectForNowA11y: 'Reset naar zonnig nu',
   },
 
   // ─────────────────────────────────────────────────────────────────────
@@ -682,6 +697,21 @@ export const strings = {
     ) =>
       `☀️ My Chase the Sun route through ${area}:\n1. ${stop1name} — sun till ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min walk 🌅\n\nStay in the sun all afternoon → ${appUrl}`,
     crawlChaseButton: '☀️ Chase the sun from here',
+
+    // Perfect For guides (landing-page entry-point cards)
+    perfectForHeader: 'PERFECT FOR',
+    perfectForGoldenHour: '🌅 Golden hour tonight',
+    perfectForBigScreen: '📺 Big screen outside',
+    perfectForGems: '💎 Hidden gems',
+    perfectForCoffee: '☕ Coffee in the sun',
+    perfectForMorning: '🌤 Morning sun',
+    perfectForNow: '☀️ Sunny right now',
+    perfectForGoldenHourA11y: 'Set time window to golden hour this evening',
+    perfectForBigScreenA11y: 'Filter to terraces with an outdoor screen',
+    perfectForGemsA11y: 'Show hidden gems — best sun, fewer tourists',
+    perfectForCoffeeA11y: 'Filter to coffee spots in the morning sun',
+    perfectForMorningA11y: 'Set time window to morning',
+    perfectForNowA11y: 'Reset to sunniest right now',
   },
 } as const;
 
