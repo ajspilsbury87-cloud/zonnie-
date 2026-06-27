@@ -74,6 +74,8 @@ export const strings = {
     chanceOfRain: (pct: number) => `🌧 ${pct}% kans op regen`,
     bestVisitTime: 'Beste bezoektijd',
     sundownerLeaves: (min: number) => `☀️ Zon verlaat dit terras over ${min} min`,
+    nextSunnySpot: (name: string, untilHHmm: string, walkMin: number) =>
+      `Zon blijft tot ${untilHHmm} bij ${name} · ${walkMin} min lopen →`,
     sunBuilding: '↑ Zon in opkomst',
     sunFading: '↓ Zon neemt af',
     sunHolding: '→ Zon stabiel',
@@ -359,6 +361,8 @@ export const strings = {
     chanceOfRain: (pct: number) => `🌧 ${pct}% chance of rain`,
     bestVisitTime: 'Best time to visit',
     sundownerLeaves: (min: number) => `☀️ Sun leaves this terrace in ${min} min`,
+    nextSunnySpot: (name: string, untilHHmm: string, walkMin: number) =>
+      `Sun stays till ${untilHHmm} at ${name} · ${walkMin} min walk →`,
     sunBuilding: '↑ Sun building',
     sunFading: '↓ Sun fading',
     sunHolding: '→ Sun holding',
