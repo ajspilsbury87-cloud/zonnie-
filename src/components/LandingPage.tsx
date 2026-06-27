@@ -48,6 +48,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { useStrings } from '@/src/i18n/useStrings';
 import { useLanguageStore } from '@/src/store/languageStore';
+import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
@@ -385,9 +386,12 @@ export function LandingPage() {
           </Animated.Text>
         </Animated.View>
 
-        {/* Card stack: WC blocks + featured carousel + region sections.
+        {/* Card stack: today's verdict + WC blocks + featured carousel + region sections.
             All fade/slide together as one group. */}
         <Animated.View style={[styles.cardStack, cardsStyle]}>
+          {/* ── Today's Verdict — daily-habit anchor, always first ────────── */}
+          <TodaysVerdict />
+
           {/* ── World Cup 2026 — date-gated; both blocks vanish after 2026-07-19 ── */}
 
           {/* Match-day banner: slim high-contrast strip shown only when a NL
