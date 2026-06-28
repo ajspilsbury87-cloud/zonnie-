@@ -30,6 +30,8 @@ import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import {
   findGoodWeatherBlock,
   formatNotificationBody,
+  formatTopTierBody,
+  isTopTierBlock,
   type GoodWeatherBlock,
 } from './forecast';
 import type { Weather } from '@/src/engines/types';
@@ -94,11 +96,14 @@ export async function syncTomorrowForecastNotification(
       return { status: 'cancelled' };
     }
 
+    // Top-tier days get a more exciting, share-y "cracking day" nudge; normal
+    // good days keep the understated line. Keeps the celebratory copy rare.
+    const topTier = isTopTierBlock(block);
     await Notifications.scheduleNotificationAsync({
       identifier: NOTIFICATION_ID,
       content: {
-        title: 'Morgen zonnig ☀️',
-        body: formatNotificationBody(block),
+        title: topTier ? 'Morgen: top terrasdag ☀️' : 'Morgen zonnig ☀️',
+        body: topTier ? formatTopTierBody(block) : formatNotificationBody(block),
         badge: 1,
         sound: 'default',
       },

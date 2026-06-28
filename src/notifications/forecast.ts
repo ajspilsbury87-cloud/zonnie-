@@ -94,9 +94,40 @@ export function findGoodWeatherBlock(
   };
 }
 
-/** Format the block into the notification body string. */
+/** Format the block into the standard notification body string. */
 export function formatNotificationBody(block: GoodWeatherBlock): string {
   const f = block.fromHour.toString().padStart(2, '0');
   const t = block.toHour.toString().padStart(2, '0');
   return `Lekker terrasweer van ${f}:00 tot ${t}:00 — vind een zonnig terras →`;
+}
+
+// ── Top-tier ("cracking day") detection ─────────────────────────────────────
+// A genuinely exceptional terrace day deserves more exciting copy than the
+// everyday "lekker terrasweer" line — this is the re-activation nudge. We gate
+// it on a LONG, CLEAR, WARM block so it stays rare and credible (a few times a
+// season, not every mildly-nice day). Thresholds are deliberately stricter
+// than isGoodHour's.
+const TOP_TIER_MIN_HOURS = 5; // sustained, not a brief sunny gap
+const TOP_TIER_MAX_CLOUD = 25; // %, genuinely clear (vs 40 for "good")
+const TOP_TIER_MIN_TEMP = 18; // °C, properly warm (vs 14 for "good")
+
+/**
+ * True when a good-weather block is exceptional enough to celebrate: a long,
+ * clear, warm stretch — a "cracking terrace day". Used by the scheduler to
+ * pick the celebratory notification variant.
+ */
+export function isTopTierBlock(block: GoodWeatherBlock): boolean {
+  const lengthHours = block.toHour - block.fromHour + 1;
+  return (
+    lengthHours >= TOP_TIER_MIN_HOURS &&
+    block.avgCloudCover <= TOP_TIER_MAX_CLOUD &&
+    block.avgTemp >= TOP_TIER_MIN_TEMP
+  );
+}
+
+/** Celebratory body for a top-tier day (re-activation nudge). */
+export function formatTopTierBody(block: GoodWeatherBlock): string {
+  const f = block.fromHour.toString().padStart(2, '0');
+  const t = block.toHour.toString().padStart(2, '0');
+  return `Top terrasdag op komst! Zon van ${f}:00 tot ${t}:00 — waar drink jij? →`;
 }

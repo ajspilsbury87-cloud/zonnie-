@@ -157,6 +157,13 @@ export const strings = {
     notifAllow: 'Stuur mij berichten',
     notifLater: 'Nog niet',
 
+    // Sun's out moment — once-per-day celebratory banner on a top terrace day
+    sunsOutHeadline: '☀️ De zon is er — topterrasdag! Waar drink jij?',
+    sunsOutShare: 'Deel met de groep',
+    sunsOutDismissA11y: 'Sluiten',
+    sunsOutShareMessage:
+      '☀️ De zon is er in Amsterdam — waar drinken we? Vind het zonnigste terras met Zonnie:',
+
     // TerraceList empty states
     noMatchModeTerraces: 'Geen buiten-TV terrassen gevonden',
     noMatchModeHint: 'Tik 📺 Match om te wissen, of verbreed je andere filters.',
@@ -504,6 +511,13 @@ export const strings = {
       "Get a morning heads-up when your favourite terraces are forecast to be sunny — plus a daily alert on any day with a great stretch of terrace weather across Amsterdam.",
     notifAllow: 'Notify me',
     notifLater: 'Not now',
+
+    // Sun's out moment — once-per-day celebratory banner on a top terrace day
+    sunsOutHeadline: "☀️ The sun's out — top terrace day! Where are you drinking?",
+    sunsOutShare: 'Share with the group',
+    sunsOutDismissA11y: 'Dismiss',
+    sunsOutShareMessage:
+      "☀️ The sun's out in Amsterdam — where are we drinking? Find the sunniest terrace with Zonnie:",
 
     // TerraceList empty states
     noMatchModeTerraces: 'No outdoor-TV terraces match',
