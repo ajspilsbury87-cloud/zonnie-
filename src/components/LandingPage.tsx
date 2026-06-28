@@ -66,13 +66,10 @@ import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 import type { Terrace } from '@/src/engines/types';
 
-// Sun + ray geometry. Smaller than v1 to leave room for the featured
-// carousel + 6 region sections below — was 88×20×6, compressed so the
-// brand block takes ~30% of screen height instead of ~40%.
-const RAY_COUNT = 8;
-const SUN_DIAMETER = 64;
-const RAY_LENGTH = 14;
-const RAY_THICKNESS = 5;
+// Brand mark on the landing — the real Zonnie app-icon artwork (the sunset),
+// so the header matches the icon users see on the home screen / App Store
+// instead of the old flat sun-and-rays motif.
+const BRAND_ICON_SIZE = 96;
 
 /** Width/height of each featured photo card in the carousel. */
 const FEATURED_CARD_W = 180;
@@ -254,7 +251,6 @@ export function LandingPage() {
   // on return — no re-animation. On first launch they start at 0/hidden.
   const containerOpacity = useSharedValue(1);
   const sunScale = useSharedValue(introPlayed ? 1 : 0);
-  const rayProgress = useSharedValue(introPlayed ? 1 : 0);
   const titleOpacity = useSharedValue(introPlayed ? 1 : 0);
   const titleTranslateY = useSharedValue(introPlayed ? 0 : 8);
   const taglineOpacity = useSharedValue(introPlayed ? 1 : 0);
@@ -279,10 +275,6 @@ export function LandingPage() {
         withTiming(1.08, { duration: 280, easing: Easing.out(Easing.back(1.6)) }),
         withTiming(1.0, { duration: 140, easing: Easing.inOut(Easing.quad) }),
       ),
-    );
-    rayProgress.value = withDelay(
-      120,
-      withTiming(1, { duration: 420, easing: Easing.out(Easing.cubic) }),
     );
     titleOpacity.value = withDelay(
       350,
@@ -346,15 +338,6 @@ export function LandingPage() {
     transform: [{ translateY: cardsTranslateY.value }],
   }));
 
-  const rays = useMemo(
-    () =>
-      Array.from({ length: RAY_COUNT }, (_, i) => ({
-        i,
-        angle: (i / RAY_COUNT) * 360,
-      })),
-    [],
-  );
-
   // Bottom safe-area padding so the last content row clears the home
   // indicator + the pinned CTA footer that sits above it.
   const scrollBottomPad = insets.bottom + CTA_FOOTER_HEIGHT + spacing.lg;
@@ -375,12 +358,14 @@ export function LandingPage() {
       >
         {/* Brand block: sun + title + tagline — scrolls with content */}
         <Animated.View style={styles.brandBlock}>
-          <View style={styles.sunGroup}>
-            {rays.map(({ i, angle }) => (
-              <Ray key={i} angle={angle} progress={rayProgress} />
-            ))}
-            <Animated.View style={[styles.sunCore, sunCoreStyle]} />
-          </View>
+          <Animated.View style={[styles.brandIconWrap, sunCoreStyle]}>
+            <Image
+              source={require('../../assets/images/splash-icon.png')}
+              style={styles.brandIcon}
+              resizeMode="contain"
+              accessibilityIgnoresInvertColors
+            />
+          </Animated.View>
           <Animated.Text style={[styles.title, titleStyle]}>Zonnie</Animated.Text>
           <Animated.Text style={[styles.tagline, taglineStyle]}>
             {t.tagline}
@@ -579,27 +564,6 @@ export function LandingPage() {
   );
 }
 
-// ─── Ray ─────────────────────────────────────────────────────────────────────
-
-interface RayProps {
-  angle: number;
-  progress: ReturnType<typeof useSharedValue<number>>;
-}
-
-function Ray({ angle, progress }: RayProps) {
-  const animatedStyle = useAnimatedStyle(() => {
-    const distance =
-      SUN_DIAMETER / 2 -
-      RAY_LENGTH * 0.6 +
-      progress.value * (RAY_LENGTH * 0.6 + 6);
-    return {
-      transform: [{ rotate: `${angle}deg` }, { translateY: -distance }],
-      opacity: progress.value,
-    };
-  });
-  return <Animated.View style={[styles.ray, animatedStyle]} />;
-}
-
 // ─── FeaturedCard ─────────────────────────────────────────────────────────────
 
 interface FeaturedCardProps {
@@ -730,29 +694,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.md,
   },
-  sunGroup: {
-    width: SUN_DIAMETER + RAY_LENGTH * 2,
-    height: SUN_DIAMETER + RAY_LENGTH * 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sunCore: {
-    width: SUN_DIAMETER,
-    height: SUN_DIAMETER,
-    borderRadius: SUN_DIAMETER / 2,
-    backgroundColor: palette.peach,
-    shadowColor: palette.burnt,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
+  brandIconWrap: {
+    borderRadius: BRAND_ICON_SIZE * 0.2,
+    // Soft shadow lifts the mark off the sand background.
+    shadowColor: palette.cocoa,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 14,
     elevation: 6,
   },
-  ray: {
-    position: 'absolute',
-    width: RAY_THICKNESS,
-    height: RAY_LENGTH,
-    borderRadius: RAY_THICKNESS / 2,
-    backgroundColor: palette.peach,
+  brandIcon: {
+    width: BRAND_ICON_SIZE,
+    height: BRAND_ICON_SIZE,
+    borderRadius: BRAND_ICON_SIZE * 0.2,
   },
   title: {
     marginTop: 16,
