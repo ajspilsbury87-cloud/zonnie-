@@ -261,7 +261,12 @@ export function LandingPage() {
   const taglineTranslateY = useSharedValue(introPlayed ? 0 : 6);
   const cardsOpacity = useSharedValue(introPlayed ? 1 : 0);
   const cardsTranslateY = useSharedValue(introPlayed ? 0 : 14);
-  const buttonOpacity = useSharedValue(introPlayed ? 1 : 0);
+  // The "See all terraces" CTA is a pinned footer that MUST be tappable the
+  // instant the screen appears. We deliberately do NOT animate its opacity:
+  // on iOS — especially under the New Architecture — a view at opacity 0 is
+  // skipped in touch hit-testing, so fading it in from 0 left the button dead
+  // until a later re-render committed a non-zero opacity. Rendering it at full
+  // opacity from the first frame keeps it interactive immediately.
 
   useEffect(() => {
     // If the intro has already played this session, all shared values were
@@ -304,13 +309,10 @@ export function LandingPage() {
       1100,
       withTiming(0, { duration: 480, easing: Easing.out(Easing.cubic) }),
     );
-    buttonOpacity.value = withDelay(
-      1700,
-      withTiming(1, { duration: 320, easing: Easing.out(Easing.quad) }),
-    );
-    // Mark intro as played after the last animation fires (~1700ms + 320ms =
-    // ~2020ms total). setTimeout fires on the JS thread — just needs to be
-    // after the animation completes so re-opens never trigger the sequence.
+    // Mark intro as played after the last entrance animation fires (cards at
+    // 1100ms + 480ms ≈ 1580ms). setTimeout fires on the JS thread — just needs
+    // to be after the animations complete so re-opens never replay the
+    // sequence. (The CTA footer is intentionally not animated — see note above.)
     const timer = setTimeout(markIntroPlayed, 2100);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -342,9 +344,6 @@ export function LandingPage() {
   const cardsStyle = useAnimatedStyle(() => ({
     opacity: cardsOpacity.value,
     transform: [{ translateY: cardsTranslateY.value }],
-  }));
-  const buttonStyle = useAnimatedStyle(() => ({
-    opacity: buttonOpacity.value,
   }));
 
   const rays = useMemo(
@@ -493,7 +492,6 @@ export function LandingPage() {
         style={[
           styles.buttonWrap,
           { bottom: insets.bottom + spacing.md },
-          buttonStyle,
         ]}
       >
         <Pressable
