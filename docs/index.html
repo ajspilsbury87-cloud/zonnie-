@@ -3,10 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zonnie — Find the sunny terrace</title>
-<meta name="description" content="Stop guessing. Zonnie tells you which Amsterdam terraces are in the sun right now — and at any time today.">
+<title>Zonnie — Find a Sunny Terrace in Amsterdam | Sun Terrace Finder</title>
+<meta name="description" content="Zonnie shows which Amsterdam terraces are in the sun right now — and at any hour today. Sun scores for 900+ hand-verified bars, cafés and restaurant terraces. Free on iOS.">
+<link rel="canonical" href="https://zonnie.app/">
+<link rel="alternate" hreflang="en" href="https://zonnie.app/">
+<link rel="alternate" hreflang="nl" href="https://zonnie.app/nl/">
+<link rel="alternate" hreflang="x-default" href="https://zonnie.app/">
+<meta property="og:title" content="Zonnie — Find a Sunny Terrace in Amsterdam">
+<meta property="og:description" content="Which Amsterdam terrace is in the sun right now? Zonnie scores 900+ terraces by sun, live. Free on iOS.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zonnie.app/">
+<meta property="og:locale" content="en">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta name="theme-color" content="#D9633E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebSite","@id":"https://zonnie.app/#website","url":"https://zonnie.app/","name":"Zonnie","description":"Find a sunny terrace in Amsterdam.","inLanguage":"en"},
+{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scores 900+ Amsterdam terraces by how sunny they are, live and for any hour today, using the sun's position and live cloud cover.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"}
+]}
+</script>
 <style>
   /*
    * Palette refreshed in v1.1 to match the in-app design tokens
@@ -338,6 +356,14 @@
   .foot-links a { color: var(--ink-soft); font-size: 0.85rem; text-decoration: none; font-weight: 500; }
   .foot-links a:hover { color: var(--burnt); }
   .foot-copy { color: var(--ink-soft); font-size: 0.8rem; }
+
+  /* language toggle + neighbourhood chips */
+  nav a.lang { font-size:0.8rem; color:var(--ink-soft); border:1px solid var(--border); border-radius:100px; padding:8px 14px; text-decoration:none; }
+  nav a.lang:hover { border-color:var(--burnt); color:var(--burnt); }
+  .hoods { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; max-width:760px; margin:0 auto; }
+  .hood-chip { display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.65); border:1px solid var(--border); border-radius:14px; padding:16px 18px; font-weight:600; color:var(--ink); text-decoration:none; transition:.18s; }
+  .hood-chip:hover { border-color:var(--burnt); color:var(--burnt); transform:translateY(-2px); }
+  .hood-chip span { color:var(--burnt); }
 </style>
 </head>
 <body>
@@ -347,6 +373,7 @@
 <nav>
   <div class="nav-logo"><span>☀️</span> Zonnie</div>
   <div class="nav-cta">
+    <a class="lang" href="/nl/" hreflang="nl">NL</a>
     <a class="dl" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">iOS</a>
     <a class="dl android">Android — coming soon</a>
   </div>
@@ -355,7 +382,7 @@
 <!-- HERO -->
 <section class="hero">
   <div class="badge">Amsterdam · iOS · Free to download</div>
-  <h1>Find the <em>sunny</em><br>terrace. Every time.</h1>
+  <h1>Find a <em>sunny</em><br>terrace in Amsterdam.</h1>
   <p>Stop wandering. Zonnie calculates exactly which Amsterdam terraces are in the sun — right now, or at any hour today.</p>
   <div class="hero-btns">
     <a class="btn-primary" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">
@@ -407,9 +434,9 @@
       <p>A precise algorithm places the sun in Amsterdam's sky for any date and hour. No approximations.</p>
     </div>
     <div class="feat">
-      <div class="feat-icon">🏗</div>
-      <h3>Shadow casting</h3>
-      <p>LIDAR-derived building heights are projected to determine which terraces are blocked — and which are glowing.</p>
+      <div class="feat-icon">🏙️</div>
+      <h3>Built on real building data</h3>
+      <p>Amsterdam's 3D LIDAR building heights power the map, so you can see how the city's geometry shapes the light.</p>
     </div>
     <div class="feat">
       <div class="feat-icon">🌤</div>
@@ -447,7 +474,7 @@
       <div class="step">
         <div class="step-num">02</div>
         <h3>Scores update</h3>
-        <p>Each terrace gets a 0–100 sun score based on solar angle, building shadows, and cloud cover.</p>
+        <p>Each terrace gets a 0–100 sun score from the sun's angle over Amsterdam and live cloud cover.</p>
       </div>
       <div class="step">
         <div class="step-num">03</div>
@@ -458,12 +485,28 @@
   </div>
 </section>
 
+<!-- NEIGHBOURHOODS -->
+<section class="section">
+  <p class="section-label">Sunny terraces by neighbourhood</p>
+  <div class="hoods">
+    <a class="hood-chip" href="/nl/terrassen-de-pijp.html">De Pijp <span>→</span></a>
+    <a class="hood-chip" href="/nl/terrassen-jordaan.html">Jordaan <span>→</span></a>
+    <a class="hood-chip" href="/nl/terrassen-centrum.html">Centrum <span>→</span></a>
+    <a class="hood-chip" href="/nl/terrassen-oost.html">Oost <span>→</span></a>
+    <a class="hood-chip" href="/nl/terrassen-west.html">West <span>→</span></a>
+    <a class="hood-chip" href="/nl/terrassen-noord.html">Noord <span>→</span></a>
+    <a class="hood-chip" href="/nl/terrassen-westerpark.html">Westerpark <span>→</span></a>
+    <a class="hood-chip" href="/nl/terrassen-zuid.html">Zuid <span>→</span></a>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="foot-logo">☀️ Zonnie</div>
   <div class="foot-links">
+    <a href="/nl/">Nederlands</a>
     <a href="support.html">Support</a>
-    <a href="PRIVACY-POLICY.md">Privacy</a>
+    <a href="PRIVACY-POLICY.html">Privacy</a>
     <a href="mailto:a.j.spilsbury87@gmail.com">Contact</a>
   </div>
   <div class="foot-copy">© 2026 Andy Spilsbury · Amsterdam</div>

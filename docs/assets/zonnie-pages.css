@@ -1,0 +1,99 @@
+/* Zonnie — shared styles for NL homepage + neighbourhood pages.
+   Palette matches docs/index.html v1.1 in-app design tokens. */
+:root{
+  --sand:#FFF8F0; --sand-deep:#F4ECE0; --cream:#FFE5C2; --mustard:#F4D58D;
+  --peach:#FBA85A; --orange:#E89C5A; --burnt:#D9633E; --terracotta:#B14222;
+  --cocoa:#7A2E14; --ink:#2A1F15; --ink-soft:#5A4A38; --mist:#E8DCC8;
+  --border:rgba(217,99,62,0.18); --card:rgba(217,99,62,0.05);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--sand);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:400;overflow-x:hidden;line-height:1.6;}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+.atmos{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(ellipse 90% 50% at 80% -10%, rgba(232,156,90,0.22) 0%, transparent 55%),
+  radial-gradient(ellipse 60% 40% at 10% 25%, rgba(255,229,194,0.45) 0%, transparent 60%),
+  radial-gradient(ellipse 50% 50% at 50% 110%, rgba(244,236,224,0.7) 0%, transparent 60%);}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px;}
+
+/* nav */
+nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--mist);}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',Georgia,serif;font-size:1.25rem;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
+.nav-logo span{font-size:1.4rem;}
+.nav-cta{display:flex;gap:10px;align-items:center;}
+.nav-cta a.lang{font-size:.8rem;color:var(--ink-soft);border:1px solid var(--border);border-radius:100px;padding:7px 13px;}
+.nav-cta a.lang:hover{border-color:var(--burnt);color:var(--burnt);}
+.dl{background:var(--ink);color:var(--cream);font-weight:500;font-size:.83rem;padding:9px 18px;border-radius:100px;display:inline-flex;align-items:center;gap:6px;transition:background .18s,transform .14s;}
+.dl:hover{background:var(--cocoa);transform:translateY(-1px);}
+@media(max-width:640px){.nav-cta a.muted{display:none;}}
+
+/* buttons */
+.btn-primary{background:var(--ink);color:var(--cream);font-weight:600;font-size:.95rem;padding:14px 28px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;transition:background .18s,transform .14s;}
+.btn-primary:hover{background:var(--cocoa);transform:translateY(-1px);}
+.btn-ghost{border:1px solid var(--border);color:var(--ink);font-weight:500;font-size:.92rem;padding:13px 22px;border-radius:100px;background:rgba(255,255,255,.5);}
+.btn-ghost:hover{border-color:var(--burnt);color:var(--burnt);}
+
+/* hero (homepage) */
+.hero{position:relative;z-index:1;text-align:center;padding:96px 24px 60px;max-width:820px;margin:0 auto;}
+.badge{display:inline-block;border:1px solid var(--border);background:rgba(255,255,255,.5);border-radius:100px;padding:6px 16px;font-size:.75rem;letter-spacing:.08em;font-weight:500;text-transform:uppercase;color:var(--burnt);margin-bottom:28px;}
+.hero h1{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(2.6rem,7vw,4.6rem);letter-spacing:-.03em;line-height:1.05;margin-bottom:22px;}
+.hero h1 em{font-style:italic;color:var(--burnt);font-weight:500;}
+.hero p{color:var(--ink-soft);font-size:1.08rem;max-width:560px;margin:0 auto 36px;}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
+
+/* section + features */
+.section{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 24px 80px;}
+.section-label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--burnt);font-weight:600;text-align:center;margin-bottom:40px;}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.feat{background:rgba(255,255,255,.65);border:1px solid var(--border);border-radius:18px;padding:28px 24px;transition:border-color .2s,transform .2s;}
+.feat:hover{border-color:var(--burnt);transform:translateY(-2px);}
+.feat-icon{font-size:1.7rem;margin-bottom:14px;}
+.feat h3{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.15rem;margin-bottom:8px;}
+.feat p{color:var(--ink-soft);font-size:.88rem;}
+
+/* neighbourhood chips */
+.hoods{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.hood-chip{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.65);border:1px solid var(--border);border-radius:14px;padding:16px 18px;font-weight:600;transition:.18s;}
+.hood-chip:hover{border-color:var(--burnt);color:var(--burnt);transform:translateY(-2px);}
+.hood-chip span{color:var(--burnt);}
+
+/* article (neighbourhood pages) */
+.article{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:56px 24px 24px;}
+.crumbs{font-size:.82rem;color:var(--ink-soft);margin-bottom:14px;}
+.crumbs a:hover{color:var(--burnt);}
+.article h1{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(2.2rem,5vw,3.3rem);letter-spacing:-.02em;line-height:1.06;margin-bottom:18px;}
+.article .lede{font-size:1.15rem;color:var(--ink-soft);margin-bottom:28px;}
+.article h2{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.55rem;margin:40px 0 14px;}
+.article p{margin-bottom:16px;color:var(--ink-soft);}
+.article p strong{color:var(--ink);}
+
+/* terrace ranking list */
+.terr-list{background:rgba(255,255,255,.65);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin:8px 0 8px;}
+.terr{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:13px 18px;border-bottom:1px solid rgba(42,31,21,.06);}
+.terr:last-child{border-bottom:none;}
+.terr .rank{font-family:'Fraunces',serif;font-weight:700;color:var(--peach);font-size:1.1rem;}
+.terr .tn{font-weight:600;color:var(--ink);font-size:.97rem;}
+.terr .meta{font-size:.78rem;color:var(--ink-soft);margin-top:2px;}
+.terr .right{display:flex;align-items:center;gap:10px;}
+.terr .rating{font-size:.8rem;color:var(--ink-soft);white-space:nowrap;}
+.sun{font-weight:700;font-size:.82rem;padding:3px 10px;border-radius:100px;color:#fff;background:var(--peach);white-space:nowrap;}
+.sun.hi{background:var(--burnt);}
+.sun.md{background:var(--peach);}
+.sun.lo{background:var(--ink-soft);}
+.note{font-size:.82rem;color:var(--ink-soft);font-style:italic;margin-top:6px;}
+
+/* CTA band */
+.band{position:relative;z-index:1;max-width:780px;margin:40px auto 0;background:linear-gradient(150deg,var(--burnt),var(--terracotta));color:var(--cream);border-radius:22px;padding:44px 32px;text-align:center;}
+.band h2{font-family:'Fraunces',serif;font-weight:700;font-size:1.8rem;margin-bottom:10px;color:#fff;}
+.band p{color:rgba(255,248,240,.9);margin-bottom:22px;}
+.band .btn-primary{background:#fff;color:var(--terracotta);}
+.band .btn-primary:hover{background:var(--cream);}
+
+/* footer */
+footer{position:relative;z-index:1;border-top:1px solid var(--mist);padding:36px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;max-width:960px;margin:40px auto 0;}
+.foot-logo{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px;}
+.foot-links{display:flex;gap:24px;flex-wrap:wrap;}
+.foot-links a{color:var(--ink-soft);font-size:.85rem;font-weight:500;}
+.foot-links a:hover{color:var(--burnt);}
+.foot-copy{color:var(--ink-soft);font-size:.8rem;}

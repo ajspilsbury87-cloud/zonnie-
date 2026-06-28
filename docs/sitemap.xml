@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://zonnie.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zonnie.app/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://zonnie.app/nl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://zonnie.app/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://zonnie.app/nl/</loc>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://zonnie.app/nl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zonnie.app/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url><loc>https://zonnie.app/nl/terrassen-de-pijp.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/nl/terrassen-jordaan.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/nl/terrassen-centrum.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/nl/terrassen-oost.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/nl/terrassen-west.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/nl/terrassen-noord.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/nl/terrassen-westerpark.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/nl/terrassen-zuid.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://zonnie.app/support.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+</urlset>

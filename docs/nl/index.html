@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zonnie — Vind een zonnig terras in Amsterdam | Terras in de zon</title>
+<meta name="description" content="Zonnie laat zien welke terrassen in Amsterdam nú in de zon liggen — en op elk uur vandaag. Zonscores voor 900+ met de hand geverifieerde terrassen. Gratis op iOS.">
+<link rel="canonical" href="https://zonnie.app/nl/">
+<link rel="alternate" hreflang="nl" href="https://zonnie.app/nl/">
+<link rel="alternate" hreflang="en" href="https://zonnie.app/">
+<link rel="alternate" hreflang="x-default" href="https://zonnie.app/">
+<meta property="og:title" content="Zonnie — Vind een zonnig terras in Amsterdam">
+<meta property="og:description" content="Welk terras in Amsterdam ligt nú in de zon? Zonnie scoort 900+ terrassen op zon, live. Gratis op iOS.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zonnie.app/nl/">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:locale:alternate" content="en">
+<meta name="theme-color" content="#D9633E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/zonnie-pages.css">
+<style>
+  /* phone mockup (matches EN homepage) */
+  .mockup-wrap{position:relative;z-index:1;display:flex;justify-content:center;padding:0 24px 72px;}
+  .phone{width:280px;height:560px;background:linear-gradient(160deg,var(--sand) 0%,var(--sand-deep) 100%);border:1px solid var(--mist);border-radius:40px;box-shadow:0 0 0 8px var(--ink),0 40px 80px rgba(42,31,21,.25),0 0 60px rgba(232,156,90,.15);overflow:hidden;position:relative;}
+  .phone-map{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(42,31,21,.04) 0px,rgba(42,31,21,.04) 1px,transparent 1px,transparent 44px),repeating-linear-gradient(90deg,rgba(42,31,21,.04) 0px,rgba(42,31,21,.04) 1px,transparent 1px,transparent 44px);}
+  .phone-map::after{content:'';position:absolute;top:22%;left:38%;width:140px;height:140px;background:radial-gradient(circle,rgba(232,156,90,.35) 0%,transparent 70%);border-radius:50%;}
+  .phone-status{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 20px 6px;font-size:.7rem;font-weight:500;color:var(--ink);}
+  .region-pill{position:absolute;z-index:4;top:56px;left:50%;transform:translateX(-50%);background:#fff;color:var(--ink);font-size:.7rem;font-weight:600;padding:6px 14px;border-radius:100px;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;gap:4px;}
+  .pin{position:absolute;z-index:2;background:#fff;border:1px solid var(--mist);border-radius:100px;padding:4px 9px;font-size:.62rem;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:4px;box-shadow:0 2px 6px rgba(42,31,21,.18);}
+  .pin .dot{width:6px;height:6px;border-radius:50%;}
+  .pin.high .dot{background:var(--burnt);} .pin.mid .dot{background:var(--peach);} .pin.low .dot{background:var(--mist);}
+  .phone-card{position:absolute;bottom:0;left:0;right:0;z-index:3;background:#fff;border-top:1px solid var(--mist);padding:14px 16px 18px;border-radius:24px 24px 32px 32px;box-shadow:0 -4px 16px rgba(42,31,21,.08);}
+  .card-label{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:10px;}
+  .card-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(42,31,21,.06);font-size:.74rem;}
+  .card-row:last-child{border-bottom:none;}
+  .card-name{color:var(--ink);font-weight:500;}
+  .score{font-weight:600;font-size:.76rem;padding:2px 8px;border-radius:100px;color:#fff;}
+  .score.hi{background:var(--burnt);} .score.md{background:var(--peach);} .score.lo{background:var(--ink-soft);}
+  .chip-row{position:absolute;z-index:3;bottom:168px;left:0;right:0;padding:0 14px;display:flex;gap:5px;overflow:hidden;}
+  .chip{background:var(--sand-deep);color:var(--ink-soft);font-size:.6rem;font-weight:500;padding:4px 10px;border-radius:100px;white-space:nowrap;}
+  .chip.active{background:var(--peach);color:var(--cream);}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebSite","@id":"https://zonnie.app/nl/#website","url":"https://zonnie.app/nl/","name":"Zonnie","description":"Vind een zonnig terras in Amsterdam.","inLanguage":"nl"},
+{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scoort 900+ terrassen in Amsterdam op hoeveel zon ze hebben, live en voor elk uur vandaag, op basis van de zonnestand en actuele bewolking.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Hoe weet ik welk terras in Amsterdam nu in de zon ligt?","acceptedAnswer":{"@type":"Answer","text":"Open Zonnie: de app berekent de zonnestand boven Amsterdam en combineert die met de actuele bewolking om elk terras een zonscore van 0–100 te geven, live bijgewerkt."}},
+{"@type":"Question","name":"Is Zonnie gratis?","acceptedAnswer":{"@type":"Answer","text":"Ja. Zonnie is gratis te downloaden op iOS met alle zonscores. Pro voegt onder andere een tijdschuif naar elk exact uur toe."}}]}
+]}
+</script>
+</head>
+<body>
+<div class="atmos"></div>
+
+<nav>
+  <a class="nav-logo" href="/nl/"><span>☀️</span> Zonnie</a>
+  <div class="nav-cta">
+    <a class="muted lang" href="#buurten">Buurten</a>
+    <a class="lang" href="/">EN</a>
+    <a class="dl" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">Download</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">Amsterdam · iOS · Gratis te downloaden</div>
+  <h1>Vind het <em>zonnige</em><br>terras. Elke keer.</h1>
+  <p>Stop met zoeken naar een terrasje in de zon. Zonnie laat zien welke Amsterdamse terrassen in de zon liggen — nu, of op elk uur van vandaag.</p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">📱 Download voor iOS</a>
+    <a class="btn-ghost" href="#buurten">Bekijk buurten</a>
+  </div>
+</section>
+
+<div class="mockup-wrap">
+  <div class="phone">
+    <div class="phone-map"></div>
+    <div class="phone-status"><span>9:41</span><span>◼◼◼</span></div>
+    <div class="region-pill">📍 Centrum</div>
+    <div class="pin high" style="top:34%;left:18%"><span class="dot"></span>Westerpark</div>
+    <div class="pin mid"  style="top:46%;left:52%"><span class="dot"></span>Centrum</div>
+    <div class="pin mid"  style="top:30%;left:60%"><span class="dot"></span>Jordaan</div>
+    <div class="pin low"  style="top:54%;left:22%"><span class="dot"></span>De Pijp</div>
+    <div class="chip-row">
+      <div class="chip">🍸 Bar</div>
+      <div class="chip">🍽 Restaurant</div>
+      <div class="chip active">☕ Koffie</div>
+    </div>
+    <div class="phone-card">
+      <div class="card-label">Nu in de zon · 14:30</div>
+      <div class="card-row"><span class="card-name">Café Kobalt</span><span class="score hi">92</span></div>
+      <div class="card-row"><span class="card-name">Hannekes Boom</span><span class="score hi">87</span></div>
+      <div class="card-row"><span class="card-name">Lot Sixty One</span><span class="score md">68</span></div>
+      <div class="card-row"><span class="card-name">Brouwerij 't IJ</span><span class="score md">61</span></div>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <p class="section-label">Wat Zonnie doet</p>
+  <div class="features">
+    <div class="feat"><div class="feat-icon">🌞</div><h3>Echte zonnestand</h3><p>Een nauwkeurig algoritme plaatst de zon aan de Amsterdamse hemel voor elke datum en elk uur. Geen schattingen.</p></div>
+    <div class="feat"><div class="feat-icon">🌤</div><h3>Actuele bewolking</h3><p>Open-Meteo voedt live Amsterdams weer in elke score, zodat die de échte lucht weergeeft — niet de voorspelling van gisteren.</p></div>
+    <div class="feat"><div class="feat-icon">🏙️</div><h3>Gebouwd op echte data</h3><p>De 3D-hoogtes van Amsterdamse gebouwen voeden de kaart, zodat je ziet hoe de stad het licht vormt.</p></div>
+    <div class="feat"><div class="feat-icon">📍</div><h3>900+ geverifieerde terrassen</h3><p>Bars, restaurants en koffiebars — met de hand gecontroleerd in elke buurt. Meer dan Coffee in the Sun of Seats in the Sun.</p></div>
+    <div class="feat"><div class="feat-icon">☕</div><h3>Ochtend tot avond</h3><p>Koffiefilter voor zonnige ochtenden, bar- en restaurantfilters voor de middag. De juiste plek op het juiste uur.</p></div>
+    <div class="feat"><div class="feat-icon">🔒</div><h3>Geen tracking</h3><p>Geen account, geen analytics, geen advertentie-SDK's. Je gegevens blijven op je toestel. Altijd.</p></div>
+  </div>
+</section>
+
+<section class="section" id="buurten">
+  <p class="section-label">Zonnige terrassen per buurt</p>
+  <div class="hoods">
+    <a class="hood-chip" href="terrassen-de-pijp.html">De Pijp <span>→</span></a>
+    <a class="hood-chip" href="terrassen-jordaan.html">Jordaan <span>→</span></a>
+    <a class="hood-chip" href="terrassen-centrum.html">Centrum <span>→</span></a>
+    <a class="hood-chip" href="terrassen-oost.html">Oost <span>→</span></a>
+    <a class="hood-chip" href="terrassen-west.html">West <span>→</span></a>
+    <a class="hood-chip" href="terrassen-noord.html">Noord <span>→</span></a>
+    <a class="hood-chip" href="terrassen-westerpark.html">Westerpark <span>→</span></a>
+    <a class="hood-chip" href="terrassen-zuid.html">Zuid <span>→</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">☀️ Zonnie</div>
+  <div class="foot-links">
+    <a href="/">English</a>
+    <a href="../support.html">Support</a>
+    <a href="../PRIVACY-POLICY.html">Privacy</a>
+    <a href="mailto:a.j.spilsbury87@gmail.com">Contact</a>
+  </div>
+  <div class="foot-copy">© 2026 Andy Spilsbury · Amsterdam</div>
+</footer>
+</body>
+</html>
