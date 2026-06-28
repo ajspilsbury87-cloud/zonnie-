@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -28,6 +28,19 @@ export default function Index() {
   // Landing store — drives both the LandingPage overlay and the home button.
   const landingVisible = useLandingStore((s) => s.visible);
   const showLanding = useLandingStore((s) => s.show);
+
+  // Defer mounting the heavy surfaces (the map + the bottom-sheet list) until
+  // Home is first dismissed. On a cold launch the full-screen Home overlay
+  // covers them, so mounting MapView + pins AND scoring the whole list
+  // underneath is invisible work that saturates the JS thread for several
+  // seconds — long enough that the "See all terraces" tap doesn't register. We
+  // mount them the moment Home is hidden and keep them mounted thereafter (no
+  // re-init when the user returns Home).
+  const [homeExited, setHomeExited] = useState(false);
+  useEffect(() => {
+    if (!landingVisible) setHomeExited(true);
+  }, [landingVisible]);
+  const showHeavySurfaces = homeExited || !landingVisible;
 
   // Read selectedId so the home button hides when a detail sheet is open.
   // We don't want the button floating over the detail sheet backdrop.
@@ -60,12 +73,16 @@ export default function Index() {
   //  10. home button        — top-left overlay, shown when Home is hidden
   return (
     <View style={styles.container}>
-      <ErrorBoundary surface="ZonnieMap">
-        <ZonnieMap onSelect={handleSelect} />
-      </ErrorBoundary>
-      <ErrorBoundary surface="MainSheet">
-        <MainSheet onSelect={handleSelect} />
-      </ErrorBoundary>
+      {showHeavySurfaces ? (
+        <ErrorBoundary surface="ZonnieMap">
+          <ZonnieMap onSelect={handleSelect} />
+        </ErrorBoundary>
+      ) : null}
+      {showHeavySurfaces ? (
+        <ErrorBoundary surface="MainSheet">
+          <MainSheet onSelect={handleSelect} />
+        </ErrorBoundary>
+      ) : null}
       {/* FilterChips — floating chip row above the map.
           Hidden when the Home overlay is visible (the map itself is hidden)
           and when a detail sheet is open (detail backdrop covers chips). */}

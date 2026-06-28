@@ -33,8 +33,8 @@
  * regardless of any in-app time-window the user has selected.
  */
 
-import { useEffect, useMemo, useState } from 'react';
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, InteractionManager, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -53,10 +53,9 @@ import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
-import { getBuildingsForTerrace } from '@/src/data/buildings';
-import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
-import { AMSTERDAM_TZ, computeRangeScore } from '@/src/engines/scoring';
+import { AMSTERDAM_TZ } from '@/src/engines/scoring';
+import { rangeScoreForTerrace } from '@/src/hooks/scoreCache';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useLandingStore } from '@/src/store/landingStore';
@@ -127,9 +126,9 @@ function pickTopByRegion(
   for (const t of TERRACES) {
     const region = regionForArea(t.area);
     if (region == null) continue;
-    const buildings = getBuildingsForTerrace(t.id);
-    const trees = getTreesForTerrace(t.id);
-    const score = computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly, buildings, trees);
+    // Cached range score — shares the per-hour cache with the map + list so
+    // first-launch scoring is computed once across surfaces, not three times.
+    const score = rangeScoreForTerrace(t, fromHour, toHour, dateStr, hourly);
     const list = scoredByRegion.get(region) ?? [];
     list.push({ terrace: t, score, featured: false });
     scoredByRegion.set(region, list);
@@ -176,14 +175,10 @@ function pickFeaturedTerraces(
 
   return TERRACES
     .filter((t) => t.featured === true)
-    .map((t) => {
-      const buildings = getBuildingsForTerrace(t.id);
-      const trees = getTreesForTerrace(t.id);
-      return {
-        terrace: t,
-        score: computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly, buildings, trees),
-      };
-    });
+    .map((t) => ({
+      terrace: t,
+      score: rangeScoreForTerrace(t, fromHour, toHour, dateStr, hourly),
+    }));
 }
 
 /**
@@ -211,16 +206,21 @@ export function LandingPage() {
   const wcLive = isWorldCupLive(today);
   const wcMatch = wcLive ? matchForBanner(today) : null;
 
-  // Both recompute when weather data loads — keeps the landing fresh
-  // even if the fetch lands while the user is still reading.
-  const sections = useMemo(
-    () => pickTopByRegion(weatherByDate),
-    [weatherByDate],
-  );
-  const featuredTerraces = useMemo(
-    () => pickFeaturedTerraces(weatherByDate),
-    [weatherByDate],
-  );
+  // Scoring all ~1,028 terraces is the heaviest work on this screen. Running it
+  // inside render (useMemo) blocked the first paint and the JS thread, so the
+  // "See all terraces" tap didn't register for several seconds on a cold launch.
+  // Instead we paint immediately with no cards, then compute the rankings AFTER
+  // interactions/animations settle (so taps are handled first). Recomputes when
+  // the live forecast lands (weatherByDate changes).
+  const [sections, setSections] = useState<RegionSection[]>([]);
+  const [featuredTerraces, setFeaturedTerraces] = useState<FeaturedVenue[]>([]);
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setSections(pickTopByRegion(weatherByDate));
+      setFeaturedTerraces(pickFeaturedTerraces(weatherByDate));
+    });
+    return () => task.cancel();
+  }, [weatherByDate]);
 
   /**
    * Tapping the WC spotlight card or matchday banner activates the
