@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zonnie — Find a Sunny Terrace in Amsterdam | Sun Terrace Finder</title>
-<meta name="description" content="Zonnie shows which Amsterdam terraces are in the sun right now — and at any hour today. Sun scores for 900+ hand-verified bars, cafés and restaurant terraces. Free on iOS.">
+<meta name="description" content="Zonnie shows which Amsterdam terraces are in the sun right now — and at any hour today — then routes you terrace to terrace to chase the sun all afternoon. Sun scores for 900+ hand-verified bars, cafés and restaurant terraces. Free on iOS.">
 <link rel="canonical" href="https://zonnie.app/">
 <link rel="alternate" hreflang="en" href="https://zonnie.app/">
 <link rel="alternate" hreflang="nl" href="https://zonnie.app/nl/">
 <link rel="alternate" hreflang="x-default" href="https://zonnie.app/">
 <meta property="og:title" content="Zonnie — Find a Sunny Terrace in Amsterdam">
-<meta property="og:description" content="Which Amsterdam terrace is in the sun right now? Zonnie scores 900+ terraces by sun, live. Free on iOS.">
+<meta property="og:description" content="Which Amsterdam terrace is in the sun right now? Zonnie scores 900+ terraces live — and routes you terrace to terrace to chase the sun all afternoon. Free on iOS.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zonnie.app/">
 <meta property="og:locale" content="en">
@@ -22,7 +22,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebSite","@id":"https://zonnie.app/#website","url":"https://zonnie.app/","name":"Zonnie","description":"Find a sunny terrace in Amsterdam.","inLanguage":"en"},
-{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scores 900+ Amsterdam terraces by how sunny they are, live and for any hour today, using the sun's position and live cloud cover.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"}
+{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scores 900+ Amsterdam terraces by how sunny they are, live and for any hour today, using the sun's position and live cloud cover — and builds a Chase the Sun walking route that keeps you in the light all afternoon.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"}
 ]}
 </script>
 <style>
@@ -273,6 +273,33 @@
   }
   .chip.active { background: var(--peach); color: var(--cream); }
 
+  .hero p em { font-style: italic; color: var(--burnt); font-weight: 500; }
+
+  /* ─── SPOTLIGHT (flagship: Chase the Sun) ─── */
+  .spotlight { text-align: center; max-width: 760px; padding-bottom: 88px; }
+  .spotlight-h {
+    font-family: 'Fraunces', Georgia, serif; font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.02em;
+    color: var(--ink); margin-bottom: 18px;
+  }
+  .spotlight-h em { font-style: italic; color: var(--burnt); font-weight: 500; }
+  .spotlight-p {
+    color: var(--ink-soft); font-size: 1.05rem; line-height: 1.75;
+    max-width: 600px; margin: 0 auto 32px;
+  }
+  .sun-route {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; flex-wrap: wrap;
+  }
+  .route-stop {
+    background: rgba(255,255,255,0.7); border: 1px solid var(--border);
+    border-radius: 100px; padding: 9px 16px; font-weight: 600;
+    color: var(--ink); display: inline-flex; align-items: baseline; gap: 7px;
+    font-size: 0.9rem;
+  }
+  .route-stop .t { color: var(--burnt); font-weight: 500; font-size: 0.78rem; }
+  .route-arrow { color: var(--peach); font-weight: 700; font-size: 1.1rem; }
+
   /* ─── FEATURES ─── */
   .section {
     position: relative; z-index: 1;
@@ -383,7 +410,7 @@
 <section class="hero">
   <div class="badge">Amsterdam · iOS · Free to download</div>
   <h1>Find a <em>sunny</em><br>terrace in Amsterdam.</h1>
-  <p>Stop wandering. Zonnie calculates exactly which Amsterdam terraces are in the sun — right now, or at any hour today.</p>
+  <p>Stop wandering. Zonnie calculates exactly which Amsterdam terraces are in the sun — right now, or any hour today — and even routes you terrace to terrace to <em>chase the sun</em> all afternoon.</p>
   <div class="hero-btns">
     <a class="btn-primary" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">
       <span class="platform-icon">📱</span> Download on iOS
@@ -424,6 +451,20 @@
   </div>
 </div>
 
+<!-- CHASE THE SUN (flagship) -->
+<section class="section spotlight">
+  <p class="section-label">New in Zonnie</p>
+  <h2 class="spotlight-h">Chase the <em>sun</em>, all afternoon.</h2>
+  <p class="spotlight-p">The sun moves — so should you. Zonnie builds a short walking route timed to keep you in the light: start at a sunny terrace, hop to the next as the shade arrives, and finish at a west-facing golden-hour spot. One tap shares the route to the group chat.</p>
+  <div class="sun-route">
+    <span class="route-stop">Café Thijssen <span class="t">15:00</span></span>
+    <span class="route-arrow">→</span>
+    <span class="route-stop">'t Smalle <span class="t">17:10</span></span>
+    <span class="route-arrow">→</span>
+    <span class="route-stop">Café de Prins <span class="t">19:15 🌅</span></span>
+  </div>
+</section>
+
 <!-- FEATURES -->
 <section class="section">
   <p class="section-label">What Zonnie does</p>
@@ -445,13 +486,13 @@
     </div>
     <div class="feat">
       <div class="feat-icon">📍</div>
-      <h3>1,000+ terraces</h3>
+      <h3>900+ terraces</h3>
       <p>Bars, restaurants, and specialty coffee shops — curated by hand across every Amsterdam neighbourhood.</p>
     </div>
     <div class="feat">
-      <div class="feat-icon">☕</div>
-      <h3>Morning to evening</h3>
-      <p>Coffee filter for sunny mornings. Bar/restaurant filter for afternoons. The right venues at the right hour.</p>
+      <div class="feat-icon">⭐</div>
+      <h3>Today's verdict</h3>
+      <p>Open the app to a one-glance read on the day — is it a terrace day, when's the sun best, and your top sunny spots right now.</p>
     </div>
     <div class="feat">
       <div class="feat-icon">🔒</div>
@@ -469,7 +510,7 @@
       <div class="step">
         <div class="step-num">01</div>
         <h3>Pick a time</h3>
-        <p>Use the preset chips (Now, Afternoon, Evening) or upgrade to Pro to drag to any exact hour.</p>
+        <p>Use the preset chips (Now, Afternoon, Evening) or drag the scrubber to any exact hour.</p>
       </div>
       <div class="step">
         <div class="step-num">02</div>

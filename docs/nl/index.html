@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zonnie — Vind een zonnig terras in Amsterdam | Terras in de zon</title>
-<meta name="description" content="Zonnie laat zien welke terrassen in Amsterdam nú in de zon liggen — en op elk uur vandaag. Zonscores voor 900+ met de hand geverifieerde terrassen. Gratis op iOS.">
+<meta name="description" content="Zonnie laat zien welke terrassen in Amsterdam nú in de zon liggen — en op elk uur vandaag — en stippelt een route uit die je de hele middag in de zon houdt. Zonscores voor 900+ met de hand geverifieerde terrassen. Gratis op iOS.">
 <link rel="canonical" href="https://zonnie.app/nl/">
 <link rel="alternate" hreflang="nl" href="https://zonnie.app/nl/">
 <link rel="alternate" hreflang="en" href="https://zonnie.app/">
 <link rel="alternate" hreflang="x-default" href="https://zonnie.app/">
 <meta property="og:title" content="Zonnie — Vind een zonnig terras in Amsterdam">
-<meta property="og:description" content="Welk terras in Amsterdam ligt nú in de zon? Zonnie scoort 900+ terrassen op zon, live. Gratis op iOS.">
+<meta property="og:description" content="Welk terras in Amsterdam ligt nú in de zon? Zonnie scoort 900+ terrassen live — en stippelt een route uit van terras naar terras om de zon te volgen. Gratis op iOS.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zonnie.app/nl/">
 <meta property="og:locale" content="nl_NL">
@@ -41,14 +41,23 @@
   .chip-row{position:absolute;z-index:3;bottom:168px;left:0;right:0;padding:0 14px;display:flex;gap:5px;overflow:hidden;}
   .chip{background:var(--sand-deep);color:var(--ink-soft);font-size:.6rem;font-weight:500;padding:4px 10px;border-radius:100px;white-space:nowrap;}
   .chip.active{background:var(--peach);color:var(--cream);}
+  .hero p em{font-style:italic;color:var(--burnt);font-weight:500;}
+  .spotlight{text-align:center;max-width:760px;padding-bottom:88px;}
+  .spotlight-h{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(2rem,5vw,3rem);letter-spacing:-.02em;color:var(--ink);margin-bottom:18px;}
+  .spotlight-h em{font-style:italic;color:var(--burnt);font-weight:500;}
+  .spotlight-p{color:var(--ink-soft);font-size:1.05rem;line-height:1.75;max-width:600px;margin:0 auto 32px;}
+  .sun-route{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+  .route-stop{background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:100px;padding:9px 16px;font-weight:600;color:var(--ink);display:inline-flex;align-items:baseline;gap:7px;font-size:.9rem;}
+  .route-stop .t{color:var(--burnt);font-weight:500;font-size:.78rem;}
+  .route-arrow{color:var(--peach);font-weight:700;font-size:1.1rem;}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebSite","@id":"https://zonnie.app/nl/#website","url":"https://zonnie.app/nl/","name":"Zonnie","description":"Vind een zonnig terras in Amsterdam.","inLanguage":"nl"},
-{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scoort 900+ terrassen in Amsterdam op hoeveel zon ze hebben, live en voor elk uur vandaag, op basis van de zonnestand en actuele bewolking.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"},
+{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scoort 900+ terrassen in Amsterdam op hoeveel zon ze hebben, live en voor elk uur vandaag, op basis van de zonnestand en actuele bewolking — en stippelt een route uit van terras naar terras die je de hele middag in de zon houdt.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"},
 {"@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Hoe weet ik welk terras in Amsterdam nu in de zon ligt?","acceptedAnswer":{"@type":"Answer","text":"Open Zonnie: de app berekent de zonnestand boven Amsterdam en combineert die met de actuele bewolking om elk terras een zonscore van 0–100 te geven, live bijgewerkt."}},
-{"@type":"Question","name":"Is Zonnie gratis?","acceptedAnswer":{"@type":"Answer","text":"Ja. Zonnie is gratis te downloaden op iOS met alle zonscores. Pro voegt onder andere een tijdschuif naar elk exact uur toe."}}]}
+{"@type":"Question","name":"Is Zonnie gratis?","acceptedAnswer":{"@type":"Answer","text":"Ja. Zonnie is volledig gratis op iOS — alle zonscores, de tijdschuif naar elk exact uur én de Volg-de-zon route zitten er gewoon in."}}]}
 ]}
 </script>
 </head>
@@ -67,7 +76,7 @@
 <section class="hero">
   <div class="badge">Amsterdam · iOS · Gratis te downloaden</div>
   <h1>Vind het <em>zonnige</em><br>terras. Elke keer.</h1>
-  <p>Stop met zoeken naar een terrasje in de zon. Zonnie laat zien welke Amsterdamse terrassen in de zon liggen — nu, of op elk uur van vandaag.</p>
+  <p>Stop met zoeken naar een terrasje in de zon. Zonnie laat zien welke Amsterdamse terrassen in de zon liggen — nu, of op elk uur van vandaag — en wijst je van terras naar terras om de hele middag de <em>zon te volgen</em>.</p>
   <div class="hero-btns">
     <a class="btn-primary" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">📱 Download voor iOS</a>
     <a class="btn-ghost" href="#buurten">Bekijk buurten</a>
@@ -98,6 +107,20 @@
   </div>
 </div>
 
+<!-- VOLG DE ZON (vlaggenschip) -->
+<section class="section spotlight">
+  <p class="section-label">Nieuw in Zonnie</p>
+  <h2 class="spotlight-h">Volg de <em>zon</em>, de hele middag.</h2>
+  <p class="spotlight-p">De zon verschuift — jij dus ook. Zonnie stippelt een korte wandelroute uit die je in het licht houdt: begin op een zonnig terras, hop naar het volgende zodra de schaduw komt, en eindig op een west-terras in het gouden uur. Eén tik deelt de route in de groepsapp.</p>
+  <div class="sun-route">
+    <span class="route-stop">Café Thijssen <span class="t">15:00</span></span>
+    <span class="route-arrow">→</span>
+    <span class="route-stop">'t Smalle <span class="t">17:10</span></span>
+    <span class="route-arrow">→</span>
+    <span class="route-stop">Café de Prins <span class="t">19:15 🌅</span></span>
+  </div>
+</section>
+
 <section class="section">
   <p class="section-label">Wat Zonnie doet</p>
   <div class="features">
@@ -105,7 +128,7 @@
     <div class="feat"><div class="feat-icon">🌤</div><h3>Actuele bewolking</h3><p>Open-Meteo voedt live Amsterdams weer in elke score, zodat die de échte lucht weergeeft — niet de voorspelling van gisteren.</p></div>
     <div class="feat"><div class="feat-icon">🏙️</div><h3>Gebouwd op echte data</h3><p>De 3D-hoogtes van Amsterdamse gebouwen voeden de kaart, zodat je ziet hoe de stad het licht vormt.</p></div>
     <div class="feat"><div class="feat-icon">📍</div><h3>900+ geverifieerde terrassen</h3><p>Bars, restaurants en koffiebars — met de hand gecontroleerd in elke buurt. Meer dan Coffee in the Sun of Seats in the Sun.</p></div>
-    <div class="feat"><div class="feat-icon">☕</div><h3>Ochtend tot avond</h3><p>Koffiefilter voor zonnige ochtenden, bar- en restaurantfilters voor de middag. De juiste plek op het juiste uur.</p></div>
+    <div class="feat"><div class="feat-icon">⭐</div><h3>Verdict van vandaag</h3><p>Open de app voor één blik op de dag — is het een terrasdag, wanneer is de zon op z'n best, en je beste zonnige plekken nú.</p></div>
     <div class="feat"><div class="feat-icon">🔒</div><h3>Geen tracking</h3><p>Geen account, geen analytics, geen advertentie-SDK's. Je gegevens blijven op je toestel. Altijd.</p></div>
   </div>
 </section>
