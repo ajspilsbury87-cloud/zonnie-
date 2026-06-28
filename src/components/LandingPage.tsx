@@ -49,6 +49,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { useStrings } from '@/src/i18n/useStrings';
 import { useLanguageStore } from '@/src/store/languageStore';
 import { PerfectForGuides } from './PerfectForGuides';
+import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
@@ -390,6 +391,10 @@ export function LandingPage() {
         {/* Card stack: today's verdict + WC blocks + featured carousel + region sections.
             All fade/slide together as one group. */}
         <Animated.View style={[styles.cardStack, cardsStyle]}>
+          {/* ── Sun's out moment — celebratory banner on a top terrace day,
+                once per day; renders nothing otherwise. Sits above everything. ── */}
+          <SunsOutBanner />
+
           {/* ── Today's Verdict — daily-habit anchor, always first ────────── */}
           <TodaysVerdict />
 

@@ -151,3 +151,27 @@ export async function shareCrawl(plan: CrawlPlan): Promise<void> {
     },
   );
 }
+
+/**
+ * Fire the native share sheet for the "Sun's out" moment — a generic
+ * "the sun's out, where are we drinking?" nudge to drop into the group chat.
+ * The message text is passed in (localised by the caller via i18n) so this
+ * function stays language-agnostic; it just appends the App Store link.
+ */
+export async function shareSunsOut(message: string): Promise<void> {
+  const fullMessage = `${message}\n\n${APP_STORE_URL}`;
+  await Share.share(
+    {
+      message: fullMessage,
+      url: APP_STORE_URL,
+    },
+    {
+      excludedActivityTypes: [
+        'com.apple.UIKit.activity.AddToReadingList',
+        'com.apple.UIKit.activity.OpenInIBooks',
+        'com.apple.UIKit.activity.Print',
+        'com.apple.UIKit.activity.AssignToContact',
+      ],
+    },
+  );
+}
