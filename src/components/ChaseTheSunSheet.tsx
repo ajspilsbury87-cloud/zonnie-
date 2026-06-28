@@ -35,7 +35,10 @@ import { buildGoogleMapsNavigationUrl } from '@/src/data/places';
 import { useCrawlStore } from '@/src/store/crawlStore';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
-import { shareCrawl } from '@/src/lib/shareCard';
+import { captureRef } from 'react-native-view-shot';
+
+import { shareCrawl, shareImageFile } from '@/src/lib/shareCard';
+import { SunRouteCard } from '@/src/components/SunRouteCard';
 import { haptics } from '@/src/lib/haptics';
 import {
   fonts,
@@ -378,6 +381,8 @@ const connectorStyles = StyleSheet.create({
 export function ChaseTheSunSheet() {
   const t = useStrings();
   const ref = useRef<BottomSheet>(null);
+  // Off-screen Sun Route card, captured to a PNG for image sharing.
+  const cardRef = useRef<View>(null);
   const insets = useSafeAreaInsets();
 
   const plan = useCrawlStore((s) => s.plan);
@@ -415,12 +420,20 @@ export function ChaseTheSunSheet() {
     close();
   }, [close]);
 
-  const handleShare = useCallback(() => {
+  const handleShare = useCallback(async () => {
     if (!plan) return;
     haptics.light();
-    shareCrawl(plan).catch(() => {
-      // User dismissed the share sheet without choosing — swallow silently.
-    });
+    try {
+      // Capture the off-screen branded Sun Route card to a PNG and share the
+      // image (Instagram Stories / group chat). Needs the native capture
+      // module — present from build #16 on.
+      const uri = await captureRef(cardRef, { format: 'png', quality: 0.95 });
+      await shareImageFile(uri);
+    } catch {
+      // Capture unavailable or failed (or the user dismissed the sheet) →
+      // fall back to the text share so sharing always works.
+      shareCrawl(plan).catch(() => {});
+    }
   }, [plan]);
 
   const handleStart = useCallback(() => {
@@ -462,9 +475,18 @@ export function ChaseTheSunSheet() {
   const leaveByHour = firstStop ? firstStop.sunUntilHour + 1 : 0;
 
   return (
-    <BottomSheet
-      ref={ref}
-      index={sheetIndex}
+    <>
+      {/* Off-screen branded Sun Route card — mounted only when a plan exists,
+          positioned far off-screen so it lays out for captureRef but is never
+          seen or touchable. */}
+      {plan != null ? (
+        <View style={styles.offscreen} pointerEvents="none">
+          <SunRouteCard ref={cardRef} plan={plan} />
+        </View>
+      ) : null}
+      <BottomSheet
+        ref={ref}
+        index={sheetIndex}
       snapPoints={['92%']}
       enableDynamicSizing={false}
       enablePanDownToClose
@@ -579,13 +601,21 @@ export function ChaseTheSunSheet() {
           </>
         ) : null}
       </BottomSheetScrollView>
-    </BottomSheet>
+      </BottomSheet>
+    </>
   );
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  // Parks the capture card far off-screen: laid out (so captureRef works) but
+  // never visible or interactive.
+  offscreen: {
+    position: 'absolute',
+    left: -10000,
+    top: 0,
+  },
   background: {
     backgroundColor: palette.sand,
     borderTopLeftRadius: radii.lg,
