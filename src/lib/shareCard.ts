@@ -153,6 +153,30 @@ export async function shareCrawl(plan: CrawlPlan): Promise<void> {
 }
 
 /**
+ * Share an already-captured image file (e.g. the Sun Route card PNG) via the
+ * native share sheet. iOS shows the image as the primary attachment; the App
+ * Store link rides along in the message so chat / Android recipients still get
+ * a tappable link. Used by the crawl's image share (with a text-share fallback
+ * at the call site if capture fails).
+ */
+export async function shareImageFile(uri: string): Promise<void> {
+  await Share.share(
+    {
+      url: uri,
+      message: `Chase the Sun with Zonnie ☀️ ${APP_STORE_URL}`,
+    },
+    {
+      excludedActivityTypes: [
+        'com.apple.UIKit.activity.AddToReadingList',
+        'com.apple.UIKit.activity.OpenInIBooks',
+        'com.apple.UIKit.activity.Print',
+        'com.apple.UIKit.activity.AssignToContact',
+      ],
+    },
+  );
+}
+
+/**
  * Fire the native share sheet for the "Sun's out" moment — a generic
  * "the sun's out, where are we drinking?" nudge to drop into the group chat.
  * The message text is passed in (localised by the caller via i18n) so this
