@@ -193,7 +193,9 @@ function histo(values: number[]): Record<string, number> {
   for (let i = 0; i < 30; i++) buckets[(i * 0.05).toFixed(2)] = 0;
   for (const v of values) {
     const idx = Math.min(29, Math.max(0, Math.floor(v / 0.05)));
-    buckets[(idx * 0.05).toFixed(2)]++;
+    const key = (idx * 0.05).toFixed(2);
+    // Bucket is pre-seeded above, but noUncheckedIndexedAccess can't prove it.
+    buckets[key] = (buckets[key] ?? 0) + 1;
   }
   return buckets;
 }

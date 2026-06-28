@@ -33,8 +33,8 @@
  * regardless of any in-app time-window the user has selected.
  */
 
-import { useEffect, useMemo, useState } from 'react';
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, InteractionManager, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -53,10 +53,9 @@ import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
-import { getBuildingsForTerrace } from '@/src/data/buildings';
-import { getTreesForTerrace } from '@/src/data/trees';
 import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
-import { AMSTERDAM_TZ, computeRangeScore } from '@/src/engines/scoring';
+import { AMSTERDAM_TZ } from '@/src/engines/scoring';
+import { rangeScoreForTerrace } from '@/src/hooks/scoreCache';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useLandingStore } from '@/src/store/landingStore';
@@ -66,13 +65,10 @@ import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 import type { Terrace } from '@/src/engines/types';
 
-// Sun + ray geometry. Smaller than v1 to leave room for the featured
-// carousel + 6 region sections below — was 88×20×6, compressed so the
-// brand block takes ~30% of screen height instead of ~40%.
-const RAY_COUNT = 8;
-const SUN_DIAMETER = 64;
-const RAY_LENGTH = 14;
-const RAY_THICKNESS = 5;
+// Brand mark on the landing — the real Zonnie app-icon artwork (the sunset),
+// so the header matches the icon users see on the home screen / App Store
+// instead of the old flat sun-and-rays motif.
+const BRAND_ICON_SIZE = 96;
 
 /** Width/height of each featured photo card in the carousel. */
 const FEATURED_CARD_W = 180;
@@ -130,9 +126,9 @@ function pickTopByRegion(
   for (const t of TERRACES) {
     const region = regionForArea(t.area);
     if (region == null) continue;
-    const buildings = getBuildingsForTerrace(t.id);
-    const trees = getTreesForTerrace(t.id);
-    const score = computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly, buildings, trees);
+    // Cached range score — shares the per-hour cache with the map + list so
+    // first-launch scoring is computed once across surfaces, not three times.
+    const score = rangeScoreForTerrace(t, fromHour, toHour, dateStr, hourly);
     const list = scoredByRegion.get(region) ?? [];
     list.push({ terrace: t, score, featured: false });
     scoredByRegion.set(region, list);
@@ -179,14 +175,10 @@ function pickFeaturedTerraces(
 
   return TERRACES
     .filter((t) => t.featured === true)
-    .map((t) => {
-      const buildings = getBuildingsForTerrace(t.id);
-      const trees = getTreesForTerrace(t.id);
-      return {
-        terrace: t,
-        score: computeRangeScore(t, fromHour, toHour, dateStr, 'sunny', hourly, buildings, trees),
-      };
-    });
+    .map((t) => ({
+      terrace: t,
+      score: rangeScoreForTerrace(t, fromHour, toHour, dateStr, hourly),
+    }));
 }
 
 /**
@@ -214,16 +206,21 @@ export function LandingPage() {
   const wcLive = isWorldCupLive(today);
   const wcMatch = wcLive ? matchForBanner(today) : null;
 
-  // Both recompute when weather data loads — keeps the landing fresh
-  // even if the fetch lands while the user is still reading.
-  const sections = useMemo(
-    () => pickTopByRegion(weatherByDate),
-    [weatherByDate],
-  );
-  const featuredTerraces = useMemo(
-    () => pickFeaturedTerraces(weatherByDate),
-    [weatherByDate],
-  );
+  // Scoring all ~1,028 terraces is the heaviest work on this screen. Running it
+  // inside render (useMemo) blocked the first paint and the JS thread, so the
+  // "See all terraces" tap didn't register for several seconds on a cold launch.
+  // Instead we paint immediately with no cards, then compute the rankings AFTER
+  // interactions/animations settle (so taps are handled first). Recomputes when
+  // the live forecast lands (weatherByDate changes).
+  const [sections, setSections] = useState<RegionSection[]>([]);
+  const [featuredTerraces, setFeaturedTerraces] = useState<FeaturedVenue[]>([]);
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setSections(pickTopByRegion(weatherByDate));
+      setFeaturedTerraces(pickFeaturedTerraces(weatherByDate));
+    });
+    return () => task.cancel();
+  }, [weatherByDate]);
 
   /**
    * Tapping the WC spotlight card or matchday banner activates the
@@ -254,14 +251,18 @@ export function LandingPage() {
   // on return — no re-animation. On first launch they start at 0/hidden.
   const containerOpacity = useSharedValue(1);
   const sunScale = useSharedValue(introPlayed ? 1 : 0);
-  const rayProgress = useSharedValue(introPlayed ? 1 : 0);
   const titleOpacity = useSharedValue(introPlayed ? 1 : 0);
   const titleTranslateY = useSharedValue(introPlayed ? 0 : 8);
   const taglineOpacity = useSharedValue(introPlayed ? 1 : 0);
   const taglineTranslateY = useSharedValue(introPlayed ? 0 : 6);
   const cardsOpacity = useSharedValue(introPlayed ? 1 : 0);
   const cardsTranslateY = useSharedValue(introPlayed ? 0 : 14);
-  const buttonOpacity = useSharedValue(introPlayed ? 1 : 0);
+  // The "See all terraces" CTA is a pinned footer that MUST be tappable the
+  // instant the screen appears. We deliberately do NOT animate its opacity:
+  // on iOS — especially under the New Architecture — a view at opacity 0 is
+  // skipped in touch hit-testing, so fading it in from 0 left the button dead
+  // until a later re-render committed a non-zero opacity. Rendering it at full
+  // opacity from the first frame keeps it interactive immediately.
 
   useEffect(() => {
     // If the intro has already played this session, all shared values were
@@ -274,10 +275,6 @@ export function LandingPage() {
         withTiming(1.08, { duration: 280, easing: Easing.out(Easing.back(1.6)) }),
         withTiming(1.0, { duration: 140, easing: Easing.inOut(Easing.quad) }),
       ),
-    );
-    rayProgress.value = withDelay(
-      120,
-      withTiming(1, { duration: 420, easing: Easing.out(Easing.cubic) }),
     );
     titleOpacity.value = withDelay(
       350,
@@ -304,13 +301,10 @@ export function LandingPage() {
       1100,
       withTiming(0, { duration: 480, easing: Easing.out(Easing.cubic) }),
     );
-    buttonOpacity.value = withDelay(
-      1700,
-      withTiming(1, { duration: 320, easing: Easing.out(Easing.quad) }),
-    );
-    // Mark intro as played after the last animation fires (~1700ms + 320ms =
-    // ~2020ms total). setTimeout fires on the JS thread — just needs to be
-    // after the animation completes so re-opens never trigger the sequence.
+    // Mark intro as played after the last entrance animation fires (cards at
+    // 1100ms + 480ms ≈ 1580ms). setTimeout fires on the JS thread — just needs
+    // to be after the animations complete so re-opens never replay the
+    // sequence. (The CTA footer is intentionally not animated — see note above.)
     const timer = setTimeout(markIntroPlayed, 2100);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -343,18 +337,6 @@ export function LandingPage() {
     opacity: cardsOpacity.value,
     transform: [{ translateY: cardsTranslateY.value }],
   }));
-  const buttonStyle = useAnimatedStyle(() => ({
-    opacity: buttonOpacity.value,
-  }));
-
-  const rays = useMemo(
-    () =>
-      Array.from({ length: RAY_COUNT }, (_, i) => ({
-        i,
-        angle: (i / RAY_COUNT) * 360,
-      })),
-    [],
-  );
 
   // Bottom safe-area padding so the last content row clears the home
   // indicator + the pinned CTA footer that sits above it.
@@ -376,12 +358,14 @@ export function LandingPage() {
       >
         {/* Brand block: sun + title + tagline — scrolls with content */}
         <Animated.View style={styles.brandBlock}>
-          <View style={styles.sunGroup}>
-            {rays.map(({ i, angle }) => (
-              <Ray key={i} angle={angle} progress={rayProgress} />
-            ))}
-            <Animated.View style={[styles.sunCore, sunCoreStyle]} />
-          </View>
+          <Animated.View style={[styles.brandIconWrap, sunCoreStyle]}>
+            <Image
+              source={require('../../assets/images/splash-icon.png')}
+              style={styles.brandIcon}
+              resizeMode="contain"
+              accessibilityIgnoresInvertColors
+            />
+          </Animated.View>
           <Animated.Text style={[styles.title, titleStyle]}>Zonnie</Animated.Text>
           <Animated.Text style={[styles.tagline, taglineStyle]}>
             {t.tagline}
@@ -493,7 +477,6 @@ export function LandingPage() {
         style={[
           styles.buttonWrap,
           { bottom: insets.bottom + spacing.md },
-          buttonStyle,
         ]}
       >
         <Pressable
@@ -579,27 +562,6 @@ export function LandingPage() {
       </Modal>
     </Animated.View>
   );
-}
-
-// ─── Ray ─────────────────────────────────────────────────────────────────────
-
-interface RayProps {
-  angle: number;
-  progress: ReturnType<typeof useSharedValue<number>>;
-}
-
-function Ray({ angle, progress }: RayProps) {
-  const animatedStyle = useAnimatedStyle(() => {
-    const distance =
-      SUN_DIAMETER / 2 -
-      RAY_LENGTH * 0.6 +
-      progress.value * (RAY_LENGTH * 0.6 + 6);
-    return {
-      transform: [{ rotate: `${angle}deg` }, { translateY: -distance }],
-      opacity: progress.value,
-    };
-  });
-  return <Animated.View style={[styles.ray, animatedStyle]} />;
 }
 
 // ─── FeaturedCard ─────────────────────────────────────────────────────────────
@@ -732,29 +694,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.md,
   },
-  sunGroup: {
-    width: SUN_DIAMETER + RAY_LENGTH * 2,
-    height: SUN_DIAMETER + RAY_LENGTH * 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sunCore: {
-    width: SUN_DIAMETER,
-    height: SUN_DIAMETER,
-    borderRadius: SUN_DIAMETER / 2,
-    backgroundColor: palette.peach,
-    shadowColor: palette.burnt,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
+  brandIconWrap: {
+    borderRadius: BRAND_ICON_SIZE * 0.2,
+    // Soft shadow lifts the mark off the sand background.
+    shadowColor: palette.cocoa,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 14,
     elevation: 6,
   },
-  ray: {
-    position: 'absolute',
-    width: RAY_THICKNESS,
-    height: RAY_LENGTH,
-    borderRadius: RAY_THICKNESS / 2,
-    backgroundColor: palette.peach,
+  brandIcon: {
+    width: BRAND_ICON_SIZE,
+    height: BRAND_ICON_SIZE,
+    borderRadius: BRAND_ICON_SIZE * 0.2,
   },
   title: {
     marginTop: 16,
