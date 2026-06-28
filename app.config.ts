@@ -55,7 +55,14 @@ const config: ExpoConfig = {
   // Same runtime-bump reasoning as the 1.1.0 → 1.2.0 note above: build #11
   // (v1.2.1) listens for "1.2.1" OTAs and is compiled from current source,
   // so it already bakes in every fix shipped as a 1.2.0 OTA.
-  version: '1.2.1',
+  // Bumped 1.2.1 → 1.3.0 (2026-06): new app icon + a big feature drop, now
+  // baked into the binary (each shipped as a 1.2.1 OTA first): silent sun-log,
+  // the Chase-the-Sun crawl, terrace dataset cleanup, Today's Verdict card,
+  // Perfect For guides, and the Sun's-out moment + celebratory notification —
+  // PLUS the new native image share card (react-native-view-shot, which can
+  // only ship in a build, not an OTA). Runtime → "1.3.0"; the old build #15
+  // (v1.2.1) keeps its own separate 1.2.1 OTA lineage and is unaffected.
+  version: '1.3.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
