@@ -321,6 +321,16 @@ export const strings = {
     verdictTopPicks: 'TOP PICKS VANDAAG',
     verdictFavouriteLine: (name: string, untilHour: number) =>
       `Jouw favoriet: ${name} heeft zon tot ${untilHour}:00`,
+    // Na-zonsondergang "morgen"-varianten.
+    verdictSectionLabelTomorrow: 'MORGEN',
+    verdictHighTomorrow: '☀️ Morgen wordt een topterrasdag',
+    verdictMidTomorrow: '⛅ Morgen hier en daar zon',
+    verdictLowTomorrow: '☁️ Morgen geen terrasdag',
+    verdictTopPicksTomorrow: 'TOP PICKS MORGEN',
+    verdictStatLineNoWindowTomorrow: (count: number) =>
+      `${count} ${count === 1 ? 'terras' : 'terrassen'} boven 65% morgen`,
+    verdictEveningNote: '🌙 De zon is onder voor vandaag — dit is morgen',
+    sunniestTomorrow: 'MORGEN ZONNIGST',
 
     // Chase the Sun crawl sheet
     chaseTheSun: 'Chase the sun',
@@ -675,6 +685,17 @@ export const strings = {
     verdictTopPicks: 'TOP PICKS TODAY',
     verdictFavouriteLine: (name: string, untilHour: number) =>
       `Your favourite: ${name} has sun till ${untilHour}:00`,
+    // After-sunset "tomorrow" variants — the verdict card + sunniest list pivot
+    // to tomorrow once today's sun is gone.
+    verdictSectionLabelTomorrow: 'TOMORROW',
+    verdictHighTomorrow: "☀️ Tomorrow's a cracking terrace day",
+    verdictMidTomorrow: '⛅ Tomorrow: a few sunny spots',
+    verdictLowTomorrow: "☁️ Tomorrow's not really a terrace day",
+    verdictTopPicksTomorrow: "TOMORROW'S TOP PICKS",
+    verdictStatLineNoWindowTomorrow: (count: number) =>
+      `${count} ${count === 1 ? 'terrace' : 'terraces'} above 65% tomorrow`,
+    verdictEveningNote: "🌙 The sun has set for today — here's tomorrow",
+    sunniestTomorrow: "TOMORROW'S SUNNIEST",
 
     // Chase the Sun crawl sheet
     chaseTheSun: 'Chase the sun',

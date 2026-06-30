@@ -42,6 +42,19 @@ function nowAmsterdamHour(): number {
 }
 
 /**
+ * True when the current Amsterdam time is past today's sunset. After sunset
+ * there's no sun to chase tonight, so the app pivots its default day to
+ * TOMORROW — the verdict card, the sunniest list, and the map all open on
+ * tomorrow (clearly labelled). Evaluated at launch; a session left open across
+ * sunset keeps its window until relaunch, same as the window default already does.
+ */
+export function isPastSunsetAmsterdam(): boolean {
+  const dateStr = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'yyyy-MM-dd');
+  const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+  return nowAmsterdamHour() > sunset;
+}
+
+/**
  * Sensible from/to defaults for a given date.
  *
  * - Today: "Now" window — current hour to current hour + 2, CAPPED at
