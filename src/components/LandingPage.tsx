@@ -60,7 +60,7 @@ import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useLandingStore } from '@/src/store/landingStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
-import { todayAmsterdamDateStr } from '@/src/store/timeStore';
+import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 import type { Terrace } from '@/src/engines/types';
@@ -102,7 +102,21 @@ function nowAmsterdamHour(): number {
 }
 
 /**
- * Score every terrace at the current hour, group by macro-region, and
+ * The day + window the landing should show. After sunset there's no sun to
+ * chase tonight, so we pivot to TOMORROW's afternoon (and relabel the section);
+ * otherwise it's today's current 2-hour window.
+ */
+function effectiveDayWindow(): { dateStr: string; fromHour: number; toHour: number } {
+  if (isPastSunsetAmsterdam()) {
+    // Tomorrow — "now" is meaningless, so use a representative afternoon window.
+    return { dateStr: selectedDateStr(1), fromHour: 13, toHour: 15 };
+  }
+  const hour = nowAmsterdamHour();
+  return { dateStr: todayAmsterdamDateStr(), fromHour: hour, toHour: Math.min(hour + 2, 23) };
+}
+
+/**
+ * Score every terrace over the effective window, group by macro-region, and
  * return the top N per region in the canonical region order
  * (Jordaan, Zuid, Oost, West, Centrum, Noord). Featured venues lead
  * their own region's section if their score is non-zero.
@@ -110,16 +124,9 @@ function nowAmsterdamHour(): number {
 function pickTopByRegion(
   weatherByDate: ReturnType<typeof useWeatherStore.getState>['byDate'],
 ): RegionSection[] {
-  const dateStr = todayAmsterdamDateStr();
-  const hour = nowAmsterdamHour();
+  const { dateStr, fromHour, toHour } = effectiveDayWindow();
   const entry = weatherByDate[dateStr];
   const hourly = entry?.status === 'ready' ? entry.data : undefined;
-
-  // Use a 2-hour window centred on now — the landing page always shows
-  // "sunny right now". The list view has separate Morning/Afternoon/Evening
-  // chips for browsing fixed windows.
-  const fromHour = hour;
-  const toHour = Math.min(hour + 2, 23);
 
   // One scoring pass for all terraces, then group by region.
   const scoredByRegion = new Map<Region, TopVenue[]>();
@@ -166,12 +173,9 @@ function pickTopByRegion(
 function pickFeaturedTerraces(
   weatherByDate: ReturnType<typeof useWeatherStore.getState>['byDate'],
 ): FeaturedVenue[] {
-  const dateStr = todayAmsterdamDateStr();
-  const hour = nowAmsterdamHour();
+  const { dateStr, fromHour, toHour } = effectiveDayWindow();
   const entry = weatherByDate[dateStr];
   const hourly = entry?.status === 'ready' ? entry.data : undefined;
-  const fromHour = hour;
-  const toHour = Math.min(hour + 2, 23);
 
   return TERRACES
     .filter((t) => t.featured === true)
@@ -194,7 +198,11 @@ export function LandingPage() {
   const setLang = useLanguageStore((s) => s.setLang);
   const [langModalVisible, setLangModalVisible] = useState(false);
   const weatherByDate = useWeatherStore((s) => s.byDate);
+  const ensure = useWeatherStore((s) => s.ensure);
   const select = useSelectionStore((s) => s.select);
+  // After sunset the landing pivots to tomorrow (see effectiveDayWindow); used
+  // to relabel the sunniest section and to fetch tomorrow's forecast on Home.
+  const pastSunset = isPastSunsetAmsterdam();
   const setMatchModeOnly = useAreaStore((s) => s.setMatchModeOnly);
   // Store-driven dismiss — no prop needed.
   const hideLanding = useLandingStore((s) => s.hide);
@@ -221,6 +229,13 @@ export function LandingPage() {
     });
     return () => task.cancel();
   }, [weatherByDate]);
+
+  // Ensure the day we're showing is fetched. Today is ensured app-wide, but
+  // after sunset we show tomorrow — only prefetched once the map opens — so
+  // trigger it here too, or the sunniest list would have no scores on Home.
+  useEffect(() => {
+    ensure(pastSunset ? selectedDateStr(1) : todayAmsterdamDateStr());
+  }, [ensure, pastSunset]);
 
   /**
    * Tapping the WC spotlight card or matchday banner activates the
@@ -451,7 +466,7 @@ export function LandingPage() {
           )}
 
           {/* ── Sunniest-now regional sections ──────────────────────────── */}
-          <Text style={styles.sectionLabel}>{t.sunniestNow}</Text>
+          <Text style={styles.sectionLabel}>{pastSunset ? t.sunniestTomorrow : t.sunniestNow}</Text>
           {/* Sections rendered directly in the outer ScrollView — no nested
               vertical ScrollView needed since everything scrolls together. */}
           {sections.map((section) => (

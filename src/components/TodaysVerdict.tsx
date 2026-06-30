@@ -31,7 +31,7 @@
  * No new native dependencies — uses only imports already in the bundle.
  */
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useStrings } from '@/src/i18n/useStrings';
@@ -41,7 +41,7 @@ import { computeTodaysVerdict, VERDICT_STRONG_THRESHOLD } from '@/src/engines/to
 import { haptics } from '@/src/lib/haptics';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
-import { todayAmsterdamDateStr } from '@/src/store/timeStore';
+import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 import type { Terrace } from '@/src/engines/types';
@@ -103,10 +103,20 @@ export function TodaysVerdict() {
   const select = useSelectionStore((s) => s.select);
   const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
   const weatherByDate = useWeatherStore((s) => s.byDate);
+  const ensure = useWeatherStore((s) => s.ensure);
 
-  // Always score for today — this card is always about today regardless of
-  // whatever date the user might have selected in the main time picker.
-  const dateStr = todayAmsterdamDateStr();
+  // After sunset there's no sun to chase today, so the card flips to TOMORROW
+  // (clearly relabelled below). Otherwise it's always about today, regardless
+  // of whatever date the user picked in the main time picker.
+  const pastSunset = isPastSunsetAmsterdam();
+  const dateStr = pastSunset ? selectedDateStr(1) : todayAmsterdamDateStr();
+
+  // Make sure the day we're showing is actually fetched. Today is ensured
+  // app-wide already, but tomorrow is only prefetched once the map opens — so
+  // on a post-sunset Home we trigger it here, or the card would sit on "loading".
+  useEffect(() => {
+    ensure(dateStr);
+  }, [ensure, dateStr]);
   const weatherEntry = weatherByDate[dateStr];
   const isLoading =
     weatherEntry == null ||
@@ -166,10 +176,10 @@ export function TodaysVerdict() {
   const headlineText = isLoading
     ? t.verdictLoading
     : verdictData.tier === 'high'
-      ? t.verdictHigh
+      ? (pastSunset ? t.verdictHighTomorrow : t.verdictHigh)
       : verdictData.tier === 'mid'
-        ? t.verdictMid
-        : t.verdictLow;
+        ? (pastSunset ? t.verdictMidTomorrow : t.verdictMid)
+        : (pastSunset ? t.verdictLowTomorrow : t.verdictLow);
 
   const statText = !isLoading && verdictData.strongCount > 0
     ? verdictData.bestWindow != null
@@ -178,20 +188,29 @@ export function TodaysVerdict() {
           verdictData.bestWindow.fromHour,
           verdictData.bestWindow.toHour,
         )
-      : t.verdictStatLineNoWindow(verdictData.strongCount)
+      : (pastSunset
+          ? t.verdictStatLineNoWindowTomorrow(verdictData.strongCount)
+          : t.verdictStatLineNoWindow(verdictData.strongCount))
     : null;
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <View style={styles.card}>
-      {/* Section label above the card */}
-      <Text style={styles.sectionLabel}>{t.verdictSectionLabel}</Text>
+      {/* Section label above the card — flips to TOMORROW after sunset */}
+      <Text style={styles.sectionLabel}>
+        {pastSunset ? t.verdictSectionLabelTomorrow : t.verdictSectionLabel}
+      </Text>
 
       {/* Headline verdict */}
       <Text style={styles.headline} accessibilityRole="header">
         {headlineText}
       </Text>
+
+      {/* Evening note — makes it unmistakable the card has moved to tomorrow */}
+      {pastSunset && !isLoading ? (
+        <Text style={styles.eveningNote}>{t.verdictEveningNote}</Text>
+      ) : null}
 
       {/* Stat line — only when weather is loaded and there are strong terraces */}
       {statText != null ? (
@@ -224,7 +243,7 @@ export function TodaysVerdict() {
       {!isLoading && topPicks.length > 0 ? (
         <>
           <View style={styles.divider} />
-          <Text style={styles.picksLabel}>{t.verdictTopPicks}</Text>
+          <Text style={styles.picksLabel}>{pastSunset ? t.verdictTopPicksTomorrow : t.verdictTopPicks}</Text>
           {topPicks.map((s) => (
             <VerdictPickRow
               key={s.terrace.id}
@@ -314,6 +333,14 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     fontSize: fontSizes.sm,
     color: palette.inkSoft,
+    marginBottom: spacing.xs,
+  },
+  // Small burnt note shown only after sunset, so it's obvious the card has
+  // pivoted from today to tomorrow.
+  eveningNote: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.xs,
+    color: palette.burnt,
     marginBottom: spacing.xs,
   },
   // Favourite highlight — warm tinted background to stand out slightly.
