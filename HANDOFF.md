@@ -3,13 +3,16 @@
 > **For**: any Claude (or human collaborator) picking this up from a different device / chat session.
 > **Owner**: Andy Spilsbury (`andy.spilsbury@hotmail.co.uk`, Apple Team `A986G5KJT4`)
 > **Repo**: `C:\Users\andys\OneDrive\Documents\SunBae_Claude\SunBae` on Andy's Windows machine
-> **Last updated**: 2026-05-04
+> **Last updated**: 2026-05-04 — ⚠️ **STALE.** For current state (993 terraces, i18n,
+> World Cup, group-vote, sun-log, and the still-open Tier-0 crash) see the
+> **"⚡ STATUS REFRESH — 2026-07-01"** block at the top of `CONTEXT-RESET.md`, which
+> supersedes this doc wherever they conflict.
 
 ---
 
 ## What is Zonnie?
 
-iOS app showing which Amsterdam terraces are sunny right now (or in your visit window). Native Expo build, ~378 hand-curated terraces, real Amsterdam sun + shadow math, hourly weather forecast from Open-Meteo, Google Places info on detail card.
+iOS app showing which Amsterdam terraces are sunny right now (or in your visit window). Native Expo build, **~990 hand-curated terraces** (see status refresh in `CONTEXT-RESET.md`), real Amsterdam sun + shadow math, hourly weather forecast from Open-Meteo, Google Places info on detail card.
 
 **Differentiation vs competitors:**
 - **Curated** Amsterdam terraces (vs Sun Seekr's stale OpenStreetMap, vs Coffee in the Sun's Apple Maps POIs, vs Seats in the Sun's crowdsourced 1,095 with closed-venue noise).
@@ -67,7 +70,7 @@ Apple credentials are cached — should re-use existing certs without re-prompti
 
 3. **Google Places API key not in build**. The detail-card Places info won't populate until `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` is set in the env at build/OTA time. Andy has a `GOOGLE_MAPS_API_KEY` for the validation script — same key, just needs the `EXPO_PUBLIC_` prefix and to be in the build env. Without it, the card hides gracefully.
 
-4. **94 of 378 terraces missing `placeId`**. They never matched in the Places validation runs. Map / scoring works; only the Google Places card on the detail sheet falls back to "no info" for these. Re-running `npm run validate-coords -- --apply --only-unsourced` with the API key set would fix.
+4. **28 of ~990 terraces missing `placeId`** (was 94 of 378 at this doc's original writing). They never matched in the Places validation runs. Map / scoring works; only the Google Places card on the detail sheet falls back to "no info" for these. Re-running `npm run validate-coords -- --apply --only-unsourced` with the API key set would fix.
 
 5. **94 unverified terraces** (overlapping with #4 mostly). Same fix.
 

@@ -1,6 +1,14 @@
 # Zonnie — Feature Backlog
 
-Synthesized from competitor analysis (Sun Seekr, Coffee in the Sun, Seats in the Sun) plus the venue-coverage diff against our 378-curated set. Each item has a tier, an effort estimate, and the competitor evidence that motivates it.
+Synthesized from competitor analysis (Sun Seekr, Coffee in the Sun, Seats in the Sun) plus the venue-coverage diff against our (then) 378-curated set. Each item has a tier, an effort estimate, and the competitor evidence that motivates it.
+
+> **⚡ Status as of 2026-07-01** — this backlog was authored 2026-05-04 and many items have shipped. Snapshot of what's DONE vs OPEN:
+>
+> **Shipped:** 1.1 Time scrubber (chip + presets) · 1.2 Sun chart (SunTimeline) · 1.3 Favorites · 1.4 Geolocate-on-launch · 1.5 Filter chips · 2.1 Curation badge · 2.4 Wind-shelter score · 5.1 Coverage push (**378 → 993 terraces**, 974 verified, 28 missing placeId). Plus off-backlog: full EN/NL i18n, World Cup 2026 theme, group-vote "Terras?", hidden-gem filter, shadow-into-scoring, push notifications, sundowner pill, reservation links, chance-of-rain, sun-log foundation, "next sunny spot" hand-off.
+>
+> **Still open:** **0.1 the native time-range crash** (still `newArchEnabled: true`, root-caused, not fixed) · 3.x engagement (widgets, saved-spot push targeting, suggest-a-terrace, share card, digest) · 4.x pricing/paywall gating (Pro currently unlocked, not gating) · 2.3 cloudy-day mode · 2.5 public-utility overlay.
+>
+> **New in-flight threads:** multi-hop Chase-the-Sun crawl (single-hop hand-off shipped) · sun-log payoffs (daily verdict → Sun Wrapped → streaks).
 
 ---
 
@@ -86,7 +94,7 @@ Files saved at `scripts/competitor-research/`:
 
 | # | Item | Effort | Evidence |
 |---|---|---|---|
-| 5.1 | **Triple our terrace count** — import top 200–300 from `venues-not-in-zonnie.json`, validate each via Places API, manually spot-check coordinates, assign `area`, infer `facing` | 2–3 days | Seats in the Sun has 1,095 vs our 378 — matters for App Store positioning |
+| 5.1 | ✅ **DONE — Triple our terrace count** — 378 → **993** terraces imported, validated via Places API, coords spot-checked, `area`/`facing` assigned. Now near parity with Seats in the Sun's 1,095. | 2–3 days | Seats in the Sun has 1,095 vs our (then) 378 — matters for App Store positioning |
 | 5.2 | **Re-validate the 94 currently-unsourced terraces** (already had a script, just needs env var + run) | 1 hour | Already noted in earlier sessions |
 | 5.3 | **Postcode → neighborhood mapping** so any imported venue auto-categorizes (101x = Centrum, 105x = West, 107x = Oost, 109x = Watergraafsmeer, 110x = Zuidoost) | 0.5 day | Seats in the Sun has no neighborhood field — postcode is the only proxy |
 | 5.4 | **Manual `facing` inference** — for imported venues, use the per-terrace adjacent-building shadow approach we already ship; needs human assignment of facing per venue | scales with batch size | Without `facing`, scoring degrades |

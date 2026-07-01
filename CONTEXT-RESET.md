@@ -3,21 +3,59 @@
 > **Purpose:** Drop this whole file into a fresh Claude conversation when the
 > 1M context window of the previous session is exhausted. Self-contained —
 > caller doesn't need to read other repo files first to be useful.
-> **Last updated:** 2026-05-05 by Andy + Claude during overnight work.
+> **Last updated:** 2026-07-01 status refresh (body below dates from 2026-05-05).
 > **Owner:** Andy Spilsbury (`andy.spilsbury@hotmail.co.uk`, Apple Team `A986G5KJT4`)
 > **Repo:** `C:\Users\andys\OneDrive\Documents\SunBae_Claude\SunBae` on Andy's Windows machine.
 
 ---
 
+## ⚡ STATUS REFRESH — 2026-07-01
+
+> The body of this doc below was last touched **2026-05-05** and much of it is now
+> stale. This block supersedes it for anything that conflicts. Everything here is
+> derived from the repo state on the `master` branch (git + `src/data/terraces.json`);
+> **EAS build / OTA / TestFlight / device state is NOT in the repo** — confirm those
+> with Andy, don't trust the old numbers.
+>
+> **Dataset:** **993 terraces** (not 378) — the Tier-5 coverage push shipped. 974 carry
+> the `verified` flag; only **28 lack a `placeId`** (was 94). Spread across 33 areas
+> (Centrum 151, Oost 127, Noord 72, De Pijp 65, Oud-West 60…).
+>
+> **Shipped since the May snapshot below** (all merged to `master`):
+> - Full **EN/NL i18n** across every UI component + language picker on Home
+> - **World Cup 2026** theme — outdoor-screen venues, spotlight card, match-day banner, TV pin badges, per-terrace matches
+> - **Group-vote "Terras?"** shortlist flow (window-aware scores, per-card voting, share link)
+> - **Time scrubber** chip on the floating bar + Morning/Afternoon/Evening presets; default window capped at sunset
+> - **Floating filter chips** over the map, zoom-aware pin declutter, clickable sun-score legend
+> - **Hidden-gem** filter + featured carousel; **shadow wired into scoring** (overlay UI itself removed)
+> - **All Pro features unlocked** (paywall present but not gating) + always-visible Pro entry pill
+> - **Sundowner countdown pill** + `goldenUntil`; **4 contextual push-notification** types
+> - **Reservation-link CTA** + **chance-of-rain** in terrace detail
+> - **Silent sun-log foundation (F0)** + **"next sunny spot" hand-off** (single-hop Chase-the-Sun teaser)
+> - Security: removed hardcoded Google Maps API key fallback
+>
+> **Test suite:** 204/204 passing as of commit `abb75e5` (per commit log; deps not installed in every checkout).
+>
+> **Still open — Tier 0 crash (unchanged):** `app.config.ts` still sets `newArchEnabled: true`.
+> The time-range NSRangeException in `react-native-maps` (legacy view-manager interop on
+> Fabric) is root-caused and documented in-file but **not fixed in config**. Fix paths:
+> (a) upgrade `react-native-maps`, (b) migrate to `expo-maps`, (c) disable new arch (past
+> pod-install failures on EAS Build).
+>
+> **In-flight threads wanting a decision:** multi-hop **Chase-the-Sun crawl** (builds on the
+> single-hop hand-off) and the first **sun-log payoff** (daily verdict → Sun Wrapped → streaks).
+
+---
+
 ## What is Zonnie?
 
-iOS app showing which Amsterdam terraces are sunny right now (or in your visit window). Native Expo build. **378 hand-curated terraces**, real Amsterdam sun + per-terrace shadow math, hourly Open-Meteo weather (cloud + wind), Google Places info on detail card. Built primarily on Andy's Windows laptop in OneDrive.
+iOS app showing which Amsterdam terraces are sunny right now (or in your visit window). Native Expo build. **~990 hand-curated terraces** (see status refresh above), real Amsterdam sun + per-terrace shadow math, hourly Open-Meteo weather (cloud + wind), Google Places info on detail card. Built primarily on Andy's Windows laptop in OneDrive.
 
 **Differentiation vs the three direct competitors:**
 
 | | Zonnie | Sun Seekr | Coffee in the Sun | Seats in the Sun |
 |---|---|---|---|---|
-| Coverage | 378 curated | Global thin | Global Apple Maps POIs | NL crowdsourced (~1,095 Amsterdam) |
+| Coverage | ~990 curated | Global thin | Global Apple Maps POIs | NL crowdsourced (~1,095 Amsterdam) |
 | Visit-window scoring | ✓ | ✗ "now" only | partial | ✗ |
 | Time scrubber | ✓ (dual slider) | ✗ | ✓ (their hero feature) | ✗ |
 | Wind-shelter score | **✓ unique to Zonnie** | ✗ | ✗ | ✗ |
