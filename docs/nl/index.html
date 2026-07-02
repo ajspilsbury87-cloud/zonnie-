@@ -4,158 +4,412 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zonnie — Vind een zonnig terras in Amsterdam | Terras in de zon</title>
-<meta name="description" content="Zonnie laat zien welke terrassen in Amsterdam nú in de zon liggen — en op elk uur vandaag — en stippelt een route uit die je de hele middag in de zon houdt. Zonscores voor 1.000+ met de hand geverifieerde terrassen. Gratis op iOS.">
+<meta name="description" content="Zonnie laat zien welke terrassen in Amsterdam nú in de zon liggen — en op elk uur vandaag — en stippelt een route uit die je de hele middag in de zon houdt. Live zonscores voor 1.000+ bars, cafés en restaurantterrassen. Probeer het gratis in je browser, of download voor iOS.">
 <link rel="canonical" href="https://zonnie.app/nl/">
 <link rel="alternate" hreflang="nl" href="https://zonnie.app/nl/">
 <link rel="alternate" hreflang="en" href="https://zonnie.app/">
 <link rel="alternate" hreflang="x-default" href="https://zonnie.app/">
 <meta property="og:title" content="Zonnie — Vind een zonnig terras in Amsterdam">
-<meta property="og:description" content="Welk terras in Amsterdam ligt nú in de zon? Zonnie scoort 1.000+ terrassen live — en stippelt een route uit van terras naar terras om de zon te volgen. Gratis op iOS.">
+<meta property="og:description" content="Welk terras in Amsterdam ligt nú in de zon? Zonnie scoort 1.000+ terrassen live — en stippelt een route uit om de zon te volgen. Probeer het in je browser, gratis op iOS.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zonnie.app/nl/">
+<meta property="og:image" content="https://zonnie.app/assets/app-icon.png">
 <meta property="og:locale" content="nl_NL">
 <meta property="og:locale:alternate" content="en">
 <meta name="theme-color" content="#D9633E">
+<meta name="apple-itunes-app" content="app-id=6767790487">
+<link rel="icon" href="../assets/app-icon.png">
+<link rel="apple-touch-icon" href="../assets/app-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/zonnie-pages.css">
-<style>
-  /* phone mockup (matches EN homepage) */
-  .mockup-wrap{position:relative;z-index:1;display:flex;justify-content:center;padding:0 24px 72px;}
-  .phone{width:280px;height:560px;background:linear-gradient(160deg,var(--sand) 0%,var(--sand-deep) 100%);border:1px solid var(--mist);border-radius:40px;box-shadow:0 0 0 8px var(--ink),0 40px 80px rgba(42,31,21,.25),0 0 60px rgba(232,156,90,.15);overflow:hidden;position:relative;}
-  .phone-map{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(42,31,21,.04) 0px,rgba(42,31,21,.04) 1px,transparent 1px,transparent 44px),repeating-linear-gradient(90deg,rgba(42,31,21,.04) 0px,rgba(42,31,21,.04) 1px,transparent 1px,transparent 44px);}
-  .phone-map::after{content:'';position:absolute;top:22%;left:38%;width:140px;height:140px;background:radial-gradient(circle,rgba(232,156,90,.35) 0%,transparent 70%);border-radius:50%;}
-  .phone-status{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 20px 6px;font-size:.7rem;font-weight:500;color:var(--ink);}
-  .region-pill{position:absolute;z-index:4;top:56px;left:50%;transform:translateX(-50%);background:#fff;color:var(--ink);font-size:.7rem;font-weight:600;padding:6px 14px;border-radius:100px;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;gap:4px;}
-  .pin{position:absolute;z-index:2;background:#fff;border:1px solid var(--mist);border-radius:100px;padding:4px 9px;font-size:.62rem;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:4px;box-shadow:0 2px 6px rgba(42,31,21,.18);}
-  .pin .dot{width:6px;height:6px;border-radius:50%;}
-  .pin.high .dot{background:var(--burnt);} .pin.mid .dot{background:var(--peach);} .pin.low .dot{background:var(--mist);}
-  .phone-card{position:absolute;bottom:0;left:0;right:0;z-index:3;background:#fff;border-top:1px solid var(--mist);padding:14px 16px 18px;border-radius:24px 24px 32px 32px;box-shadow:0 -4px 16px rgba(42,31,21,.08);}
-  .card-label{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:10px;}
-  .card-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(42,31,21,.06);font-size:.74rem;}
-  .card-row:last-child{border-bottom:none;}
-  .card-name{color:var(--ink);font-weight:500;}
-  .score{font-weight:600;font-size:.76rem;padding:2px 8px;border-radius:100px;color:#fff;}
-  .score.hi{background:var(--burnt);} .score.md{background:var(--peach);} .score.lo{background:var(--ink-soft);}
-  .chip-row{position:absolute;z-index:3;bottom:168px;left:0;right:0;padding:0 14px;display:flex;gap:5px;overflow:hidden;}
-  .chip{background:var(--sand-deep);color:var(--ink-soft);font-size:.6rem;font-weight:500;padding:4px 10px;border-radius:100px;white-space:nowrap;}
-  .chip.active{background:var(--peach);color:var(--cream);}
-  .hero p em{font-style:italic;color:var(--burnt);font-weight:500;}
-  .spotlight{text-align:center;max-width:760px;padding-bottom:88px;}
-  .spotlight-h{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(2rem,5vw,3rem);letter-spacing:-.02em;color:var(--ink);margin-bottom:18px;}
-  .spotlight-h em{font-style:italic;color:var(--burnt);font-weight:500;}
-  .spotlight-p{color:var(--ink-soft);font-size:1.05rem;line-height:1.75;max-width:600px;margin:0 auto 32px;}
-  .sun-route{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
-  .route-stop{background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:100px;padding:9px 16px;font-weight:600;color:var(--ink);display:inline-flex;align-items:baseline;gap:7px;font-size:.9rem;}
-  .route-stop .t{color:var(--burnt);font-weight:500;font-size:.78rem;}
-  .route-arrow{color:var(--peach);font-weight:700;font-size:1.1rem;}
-</style>
+<link rel="preconnect" href="https://api.open-meteo.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebSite","@id":"https://zonnie.app/nl/#website","url":"https://zonnie.app/nl/","name":"Zonnie","description":"Vind een zonnig terras in Amsterdam.","inLanguage":"nl"},
-{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scoort 1.000+ terrassen in Amsterdam op hoeveel zon ze hebben, live en voor elk uur vandaag, op basis van de zonnestand en actuele bewolking — en stippelt een route uit van terras naar terras die je de hele middag in de zon houdt.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"},
+{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scoort 1.000+ terrassen in Amsterdam op hoeveel zon ze hebben, live en voor elk uur vandaag, en stippelt een Volg-de-zon route uit die je de hele middag in het licht houdt.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.6","ratingCount":"1028"},"url":"https://apps.apple.com/app/zonnie/id6767790487"},
 {"@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"Hoe weet ik welk terras in Amsterdam nu in de zon ligt?","acceptedAnswer":{"@type":"Answer","text":"Open Zonnie: de app berekent de zonnestand boven Amsterdam en combineert die met de actuele bewolking om elk terras een zonscore van 0–100 te geven, live bijgewerkt."}},
-{"@type":"Question","name":"Is Zonnie gratis?","acceptedAnswer":{"@type":"Answer","text":"Ja. Zonnie is volledig gratis op iOS — alle zonscores, de tijdschuif naar elk exact uur én de Volg-de-zon route zitten er gewoon in."}}]}
+{"@type":"Question","name":"Hoe weet Zonnie of een terras in de zon ligt?","acceptedAnswer":{"@type":"Answer","text":"Het berekent de echte zonnestand boven Amsterdam voor het gekozen uur, projecteert die op 3D-gebouwhoogtes (LIDAR) voor de schaduw, houdt rekening met de oriëntatie van elk terras en legt live bewolking van Open-Meteo eroverheen. Resultaat: een score van 0–100."}},
+{"@type":"Question","name":"Is Zonnie gratis?","acceptedAnswer":{"@type":"Answer","text":"Ja — Zonnie is gratis te downloaden op iOS, zonder account en zonder advertenties. Alle functies, inclusief Volg de zon, zijn ontgrendeld."}}]}
 ]}
 </script>
+<style>
+  :root{
+    --sand:#FFF8F0; --sand-deep:#F4ECE0; --cream:#FFE5C2; --mustard:#F4D58D;
+    --peach:#FBA85A; --orange:#E89C5A; --burnt:#D9633E; --terracotta:#B14222;
+    --cocoa:#7A2E14; --ink:#2A1F15; --ink-soft:#5A4A38; --mist:#E8DCC8;
+    --border:rgba(217,99,62,0.16); --glass:rgba(255,248,240,0.72);
+    --shadow-sm:0 2px 10px rgba(42,31,21,0.06); --shadow-md:0 14px 38px rgba(42,31,21,0.11);
+    --shadow-lg:0 44px 100px rgba(42,31,21,0.24); --radius:22px; --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{background:var(--sand);color:var(--ink);overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;} img{display:block;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;}
+  em{font-style:italic;color:var(--burnt);}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:2;}
+  .cursor-glow{position:fixed;top:0;left:0;width:420px;height:420px;border-radius:50%;pointer-events:none;z-index:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(251,168,90,.16),transparent 68%);opacity:0;transition:opacity .4s;mix-blend-mode:multiply;}
+  .scroll-sun{position:fixed;top:0;left:0;height:3px;z-index:60;width:0;background:linear-gradient(90deg,var(--mustard),var(--peach),var(--burnt));box-shadow:0 0 12px rgba(217,99,62,.5);}
+  .scroll-sun::after{content:'';position:absolute;right:-6px;top:50%;width:12px;height:12px;border-radius:50%;transform:translateY(-50%);background:radial-gradient(circle at 40% 35%,#FFFDF2,var(--peach));box-shadow:0 0 10px rgba(217,99,62,.7);}
+  header.nav{position:sticky;top:0;z-index:50;transition:.3s;}
+  header.nav.scrolled{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1120px;margin:0 auto;}
+  .logo{display:flex;align-items:center;gap:8px;font-family:'Caveat',cursive;font-weight:700;font-size:1.7rem;}
+  .logo img{width:30px;height:30px;border-radius:8px;box-shadow:var(--shadow-sm);}
+  .nav-links{display:flex;align-items:center;gap:26px;}
+  .nav-links a.link{font-size:.9rem;font-weight:500;color:var(--ink-soft);text-decoration:none;transition:.16s;position:relative;}
+  .nav-links a.link::after{content:'';position:absolute;left:0;bottom:-4px;height:2px;width:0;background:var(--burnt);transition:width .22s var(--ease);}
+  .nav-links a.link:hover{color:var(--burnt);} .nav-links a.link:hover::after{width:100%;}
+  .lang{font-size:.82rem;color:var(--ink-soft);border:1px solid var(--border);border-radius:100px;padding:7px 13px;text-decoration:none;transition:.16s;}
+  .lang:hover{border-color:var(--burnt);color:var(--burnt);}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;text-decoration:none;border-radius:100px;transition:transform .16s var(--ease),background .18s,box-shadow .18s;white-space:nowrap;}
+  .btn-dark{background:var(--ink);color:var(--cream);padding:11px 20px;font-size:.9rem;box-shadow:var(--shadow-sm);}
+  .btn-dark:hover{background:var(--cocoa);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .btn-lg{padding:16px 30px;font-size:1.02rem;}
+  .btn-ghost{border:1px solid var(--border);background:rgba(255,255,255,.55);color:var(--ink);padding:15px 26px;font-weight:500;}
+  .btn-ghost:hover{border-color:var(--burnt);color:var(--burnt);transform:translateY(-2px);}
+  @media(max-width:820px){.nav-links a.link{display:none;}}
+  .hero{position:relative;text-align:center;overflow:hidden;background:linear-gradient(180deg,#FFF4E4 0%,#FFE7BE 66%,#FFE0A6 100%);}
+  .hero-content{position:relative;z-index:2;max-width:840px;margin:0 auto;padding:42px 24px 26px;}
+  .hero-illustration{display:block;width:100%;height:auto;margin-top:-6px;}
+  .hero-head{display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;margin-bottom:12px;}
+  .hero-icon{width:58px;height:58px;border-radius:15px;box-shadow:var(--shadow-md),0 0 32px rgba(232,156,90,.35);}
+  .live-chip{display:inline-flex;align-items:center;gap:8px;background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:100px;padding:7px 15px;font-size:.82rem;font-weight:500;color:var(--ink-soft);margin-bottom:13px;box-shadow:var(--shadow-sm);}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--burnt);animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,99,62,.5);}70%{box-shadow:0 0 0 8px rgba(217,99,62,0);}100%{box-shadow:0 0 0 0 rgba(217,99,62,0);}}
+  .hero h1{font-weight:600;font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.04;letter-spacing:-.03em;margin:0;}
+  .hero h1 em{font-weight:500;}
+  .hero .sub{color:var(--ink-soft);font-size:1.06rem;max-width:660px;margin:0 auto 22px;}
+  .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .hero-note{margin-top:14px;font-size:.8rem;color:var(--ink-soft);opacity:.8;}
+  .marquee{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,.4);padding:14px 0;position:relative;z-index:2;}
+  .marquee-track{display:flex;gap:34px;width:max-content;animation:scrollx 42s linear infinite;}
+  .marquee:hover .marquee-track{animation-play-state:paused;}
+  .marquee span{font-family:'Fraunces';font-size:1.05rem;color:var(--ink-soft);white-space:nowrap;display:inline-flex;align-items:center;gap:34px;}
+  .marquee span::after{content:'☀';color:var(--peach);}
+  @keyframes scrollx{to{transform:translateX(-50%);}}
+  section.blk{padding:74px 0;position:relative;}
+  .eyebrow{font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--burnt);font-weight:700;text-align:center;margin-bottom:14px;}
+  .blk h2{text-align:center;font-weight:600;font-size:clamp(2.1rem,4.8vw,3.3rem);letter-spacing:-.03em;margin-bottom:16px;line-height:1.04;}
+  .blk .lead{text-align:center;color:var(--ink-soft);max-width:640px;margin:0 auto 46px;font-size:1.06rem;}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
+  .reveal.in{opacity:1;transform:none;}
+  .reveal.d1{transition-delay:.09s;}.reveal.d2{transition-delay:.18s;}.reveal.d3{transition-delay:.27s;}
+  .explorer{background:linear-gradient(165deg,#fff,var(--sand) 62%,var(--cream) 132%);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow-md);padding:28px;max-width:880px;margin:0 auto;position:relative;}
+  .exp-annotate{position:absolute;top:-16px;right:24px;background:var(--ink);color:var(--cream);font-family:'Caveat';font-size:1.15rem;padding:4px 14px;border-radius:100px;transform:rotate(3deg);box-shadow:var(--shadow-sm);}
+  .exp-top{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .exp-time{font-family:'Fraunces';font-weight:700;font-size:1.8rem;letter-spacing:-.02em;}
+  .exp-time small{font-family:'Inter';font-weight:500;font-size:.82rem;color:var(--ink-soft);display:block;letter-spacing:0;}
+  .exp-search input{width:100%;min-width:180px;max-width:280px;border:1px solid var(--border);background:rgba(255,255,255,.7);border-radius:100px;padding:11px 16px;font-family:'Inter';font-size:.9rem;color:var(--ink);outline:none;transition:.16s;}
+  .exp-search input:focus{border-color:var(--burnt);box-shadow:0 0 0 3px rgba(217,99,62,.12);}
+  .slider-wrap{position:relative;margin:6px 2px 20px;}
+  .sun-track{height:10px;border-radius:100px;background:linear-gradient(90deg,#4a5a72,var(--mustard) 26%,var(--peach) 50%,var(--burnt) 74%,#7a3a5a);position:relative;}
+  .sun-marker{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFFDF2,var(--peach));box-shadow:0 0 0 4px rgba(255,255,255,.7),0 4px 12px rgba(217,99,62,.5);transform:translate(-50%,-50%);pointer-events:none;transition:left .12s;}
+  input[type=range].sun-input{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;position:absolute;top:-8px;left:0;margin:0;cursor:pointer;}
+  input[type=range].sun-input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:transparent;}
+  input[type=range].sun-input::-moz-range-thumb{width:26px;height:26px;border:none;border-radius:50%;background:transparent;}
+  .exp-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .exp-chip{border:1px solid var(--border);background:rgba(255,255,255,.6);color:var(--ink-soft);border-radius:100px;padding:7px 14px;font-size:.82rem;font-weight:500;cursor:pointer;transition:.14s;}
+  .exp-chip:hover{border-color:var(--burnt);color:var(--burnt);} .exp-chip.on{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+  .exp-list{display:flex;flex-direction:column;gap:8px;min-height:120px;}
+  .exp-row{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:12px;background:rgba(255,255,255,.75);border:1px solid rgba(217,99,62,.08);border-radius:14px;padding:11px 14px;transition:transform .16s var(--ease),box-shadow .16s;animation:rowin .45s both;}
+  @keyframes rowin{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+  .exp-row:hover{transform:translateX(4px);box-shadow:var(--shadow-sm);}
+  .exp-rank{font-family:'Fraunces';font-weight:700;color:var(--mist);font-size:1.05rem;text-align:center;}
+  .exp-name{font-weight:600;font-size:.96rem;line-height:1.2;}
+  .exp-meta{font-size:.76rem;color:var(--ink-soft);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;}
+  .exp-bar{width:120px;height:8px;border-radius:100px;background:var(--sand-deep);overflow:hidden;margin-top:6px;}
+  .exp-bar i{display:block;height:100%;border-radius:100px;transition:width .5s var(--ease);}
+  .exp-score b{display:inline-block;padding:4px 11px;border-radius:100px;font-family:'Fraunces';font-weight:700;font-size:1rem;}
+  .exp-foot{text-align:center;margin-top:18px;font-size:.8rem;color:var(--ink-soft);}
+  @media(max-width:520px){.exp-bar{display:none;}.explorer{padding:20px;}}
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:30px;align-items:start;}
+  .shot{display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .phone-frame{width:238px;border-radius:40px;padding:9px;background:linear-gradient(160deg,#2f241a,#120c06);box-shadow:var(--shadow-lg),0 0 55px rgba(232,156,90,.2);transition:transform .4s var(--ease);}
+  .shot:hover .phone-frame{transform:translateY(-10px) rotate(-1deg);}
+  .phone-frame img{width:100%;border-radius:31px;}
+  .shot h3{font-size:1.14rem;font-weight:600;margin:22px 0 6px;}
+  .shot p{color:var(--ink-soft);font-size:.9rem;max-width:280px;}
+  .spot{text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(251,168,90,.16),transparent 62%);border-radius:28px;padding:22px 20px 44px;}
+  .route{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .stop{background:rgba(255,255,255,.82);border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-weight:600;display:inline-flex;gap:8px;align-items:baseline;box-shadow:var(--shadow-sm);}
+  .stop .t{color:var(--burnt);font-weight:500;font-size:.8rem;} .arrow{color:var(--peach);font-size:1.3rem;font-weight:700;}
+  .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;}
+  .feat{background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:var(--radius);padding:26px 24px;transition:transform .22s var(--ease),border-color .22s,box-shadow .22s;}
+  .feat:hover{transform:translateY(-5px);border-color:var(--burnt);box-shadow:var(--shadow-md);}
+  .feat .ic{font-size:1.7rem;margin-bottom:14px;} .feat h3{font-size:1.14rem;margin-bottom:8px;} .feat p{color:var(--ink-soft);font-size:.9rem;}
+  .trust{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:40px;text-align:center;background:rgba(255,255,255,.55);border:1px solid var(--border);border-radius:24px;padding:32px;}
+  .trust .ti{min-width:130px;} .trust .ti .n{font-family:'Fraunces';font-weight:700;font-size:1.9rem;color:var(--ink);} .trust .ti .l{font-size:.82rem;color:var(--ink-soft);}
+  .stars{color:var(--peach);font-size:1.2rem;letter-spacing:2px;}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;background:linear-gradient(135deg,var(--burnt),var(--terracotta));border-radius:26px;padding:46px 30px;box-shadow:var(--shadow-md);}
+  .stat{text-align:center;color:var(--cream);} .stat .n{font-family:'Fraunces';font-weight:900;font-size:clamp(2.2rem,5vw,3.2rem);line-height:1;color:#fff;} .stat .l{font-size:.86rem;margin-top:8px;opacity:.9;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;}
+  .step{background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:var(--radius);padding:28px 26px;}
+  .step .num{font-family:'Fraunces';font-weight:900;font-size:2.6rem;color:var(--peach);line-height:1;margin-bottom:12px;}
+  .step h3{font-size:1.08rem;margin-bottom:8px;} .step p{color:var(--ink-soft);font-size:.9rem;}
+  .hoods{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+  .hood{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:16px;padding:16px 18px;font-weight:600;text-decoration:none;color:var(--ink);transition:.2s var(--ease);}
+  .hood:hover{border-color:var(--burnt);color:var(--burnt);transform:translateY(-3px);box-shadow:var(--shadow-sm);} .hood span{color:var(--burnt);}
+  .faq{max-width:760px;margin:0 auto;}
+  .qa{border:1px solid var(--border);background:rgba(255,255,255,.6);border-radius:16px;margin-bottom:12px;overflow:hidden;}
+  .qa summary{list-style:none;cursor:pointer;padding:20px 22px;font-weight:600;font-size:1.02rem;display:flex;justify-content:space-between;gap:14px;align-items:center;}
+  .qa summary::-webkit-details-marker{display:none;}
+  .qa summary::after{content:'+';font-family:'Fraunces';font-size:1.5rem;color:var(--burnt);transition:transform .2s;}
+  .qa[open] summary::after{transform:rotate(45deg);}
+  .qa .a{padding:0 22px 20px;color:var(--ink-soft);font-size:.95rem;}
+  .cta{text-align:center;background:linear-gradient(150deg,#2f241a,#120c06);border-radius:30px;padding:58px 30px;box-shadow:var(--shadow-md);position:relative;overflow:hidden;}
+  .cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% -20%,rgba(232,156,90,.42),transparent 60%);}
+  .cta *{position:relative;z-index:1;} .cta h2{color:var(--cream);}
+  .cta p{color:rgba(255,229,194,.82);max-width:480px;margin:8px auto 28px;}
+  .btn-cream{background:var(--cream);color:var(--cocoa);padding:16px 32px;font-size:1.02rem;} .btn-cream:hover{background:#fff;transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  footer{border-top:1px solid var(--mist);margin-top:24px;}
+  .foot{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;padding:34px 0;}
+  .foot .fl{display:flex;align-items:center;gap:8px;font-family:'Caveat',cursive;font-weight:700;font-size:1.5rem;}
+  .foot .fl img{width:26px;height:26px;border-radius:7px;}
+  .foot nav{display:flex;gap:22px;flex-wrap:wrap;} .foot nav a{color:var(--ink-soft);font-size:.88rem;text-decoration:none;font-weight:500;} .foot nav a:hover{color:var(--burnt);}
+  .foot .cp{color:var(--ink-soft);font-size:.8rem;width:100%;text-align:center;padding-top:6px;}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}.reveal{opacity:1;transform:none;}.cursor-glow{display:none;}}
+</style>
 </head>
 <body>
-<div class="atmos"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="scroll-sun" id="scrollSun"></div>
 
-<nav>
-  <a class="nav-logo" href="/nl/"><span>☀️</span> Zonnie</a>
-  <div class="nav-cta">
-    <a class="muted lang" href="#buurten">Buurten</a>
-    <a class="lang" href="/">EN</a>
-    <a class="dl" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">Download</a>
-  </div>
-</nav>
-
-<section class="hero">
-  <div class="badge">Amsterdam · iOS · Gratis te downloaden</div>
-  <h1>Vind het <em>zonnige</em><br>terras. Elke keer.</h1>
-  <p>Stop met zoeken naar een terrasje in de zon. Zonnie laat zien welke Amsterdamse terrassen in de zon liggen — nu, of op elk uur van vandaag — en wijst je van terras naar terras om de hele middag de <em>zon te volgen</em>.</p>
-  <div class="hero-btns">
-    <a class="btn-primary" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">📱 Download voor iOS</a>
-    <a class="btn-ghost" href="#buurten">Bekijk buurten</a>
-  </div>
-</section>
-
-<div class="mockup-wrap">
-  <div class="phone">
-    <div class="phone-map"></div>
-    <div class="phone-status"><span>9:41</span><span>◼◼◼</span></div>
-    <div class="region-pill">📍 Centrum</div>
-    <div class="pin high" style="top:34%;left:18%"><span class="dot"></span>Westerpark</div>
-    <div class="pin mid"  style="top:46%;left:52%"><span class="dot"></span>Centrum</div>
-    <div class="pin mid"  style="top:30%;left:60%"><span class="dot"></span>Jordaan</div>
-    <div class="pin low"  style="top:54%;left:22%"><span class="dot"></span>De Pijp</div>
-    <div class="chip-row">
-      <div class="chip">🍸 Bar</div>
-      <div class="chip">🍽 Restaurant</div>
-      <div class="chip active">☕ Koffie</div>
-    </div>
-    <div class="phone-card">
-      <div class="card-label">Nu in de zon · 14:30</div>
-      <div class="card-row"><span class="card-name">Café Kobalt</span><span class="score hi">92</span></div>
-      <div class="card-row"><span class="card-name">Hannekes Boom</span><span class="score hi">87</span></div>
-      <div class="card-row"><span class="card-name">Lot Sixty One</span><span class="score md">68</span></div>
-      <div class="card-row"><span class="card-name">Brouwerij 't IJ</span><span class="score md">61</span></div>
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/nl/"><img src="../assets/app-icon.png" alt="Zonnie icoon"> Zonnie</a>
+    <div class="nav-links">
+      <a class="link" href="#explore">Probeer</a>
+      <a class="link" href="#features">Functies</a>
+      <a class="link" href="#how">Hoe het werkt</a>
+      <a class="link" href="#faq">FAQ</a>
+      <a class="lang" href="/" hreflang="en">EN</a>
+      <a class="btn btn-dark" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener">Download</a>
     </div>
   </div>
-</div>
+</header>
 
-<!-- VOLG DE ZON (vlaggenschip) -->
-<section class="section spotlight">
-  <p class="section-label">Nieuw in Zonnie</p>
-  <h2 class="spotlight-h">Volg de <em>zon</em>, de hele middag.</h2>
-  <p class="spotlight-p">De zon verschuift — jij dus ook. Zonnie stippelt een korte wandelroute uit die je in het licht houdt: begin op een zonnig terras, hop naar het volgende zodra de schaduw komt, en eindig op een west-terras in het gouden uur. Eén tik deelt de route in de groepsapp.</p>
-  <div class="sun-route">
-    <span class="route-stop">Café Thijssen <span class="t">15:00</span></span>
-    <span class="route-arrow">→</span>
-    <span class="route-stop">'t Smalle <span class="t">17:10</span></span>
-    <span class="route-arrow">→</span>
-    <span class="route-stop">Café de Prins <span class="t">19:15 🌅</span></span>
+<section class="hero" id="top">
+  <div class="hero-content">
+    <div class="live-chip" id="liveChip"><span class="live-dot"></span><span id="liveText">De Amsterdamse lucht lezen…</span></div>
+    <div class="hero-head">
+      <img class="hero-icon" src="../assets/app-icon.png" alt="Zonnie app-icoon" width="58" height="58">
+      <h1>Vind jouw plek in de <em>zon</em>.</h1>
+    </div>
+    <p class="sub">Het zonnigste terras in Amsterdam — nu, of op elk uur vandaag.</p>
+    <div class="hero-btns">
+      <a class="btn btn-dark btn-lg" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener"> Download voor iOS</a>
+      <a class="btn btn-ghost btn-lg" href="#explore">Probeer de demo ↓</a>
+    </div>
+    <p class="hero-note">Gratis · Geen account · 1.000+ terrassen</p>
+  </div>
+  <img class="hero-illustration" src="../assets/terrace-hero.webp" alt="Een zonnig Amsterdams grachtenterras — mensen zitten in de zon terwijl de grachtenpanden schaduw werpen over de lege tafels in de schaduw" width="1400" height="430">
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+
+<section class="blk wrap" id="explore">
+  <p class="eyebrow reveal">Live demo · echte data</p>
+  <h2 class="reveal">De zonnigste terrassen, <em>nu</em>.</h2>
+  <p class="lead reveal">Sleep de zon over de dag en zie alle 993 echte terrassen live herschikken — hetzelfde zonmodel dat de app aandrijft, hier in je browser.</p>
+  <div class="explorer reveal d1">
+    <div class="exp-annotate">probeer →</div>
+    <div class="exp-top">
+      <div class="exp-time"><span id="expTime">14:00</span><small id="expTimeLabel">Middagzon</small></div>
+      <div class="exp-search"><input id="expSearch" type="search" placeholder="Zoek een terras…" aria-label="Zoek terrassen"></div>
+    </div>
+    <div class="slider-wrap">
+      <div class="sun-track"><div class="sun-marker" id="sunMarker"></div></div>
+      <input class="sun-input" id="hourSlider" type="range" min="8" max="21" step="1" value="14" aria-label="Uur van de dag">
+    </div>
+    <div class="exp-chips" id="expChips"></div>
+    <div class="exp-list" id="expList"><p style="text-align:center;color:var(--ink-soft);padding:30px 0;">Live terrasdata laden…</p></div>
+    <p class="exp-foot" id="expFoot">Toont zonpotentieel bij heldere hemel per uur. De app legt live bewolking eroverheen.</p>
   </div>
 </section>
 
-<section class="section">
-  <p class="section-label">Wat Zonnie doet</p>
-  <div class="features">
-    <div class="feat"><div class="feat-icon">🌞</div><h3>Echte zonnestand</h3><p>Een nauwkeurig algoritme plaatst de zon aan de Amsterdamse hemel voor elke datum en elk uur. Geen schattingen.</p></div>
-    <div class="feat"><div class="feat-icon">🌤</div><h3>Actuele bewolking</h3><p>Open-Meteo voedt live Amsterdams weer in elke score, zodat die de échte lucht weergeeft — niet de voorspelling van gisteren.</p></div>
-    <div class="feat"><div class="feat-icon">🏙️</div><h3>Gebouwd op echte data</h3><p>De 3D-hoogtes van Amsterdamse gebouwen voeden de kaart, zodat je ziet hoe de stad het licht vormt.</p></div>
-    <div class="feat"><div class="feat-icon">📍</div><h3>1.000+ geverifieerde terrassen</h3><p>Bars, restaurants en koffiebars — met de hand gecontroleerd in elke buurt. Meer dan Coffee in the Sun of Seats in the Sun.</p></div>
-    <div class="feat"><div class="feat-icon">⭐</div><h3>Verdict van vandaag</h3><p>Open de app voor één blik op de dag — is het een terrasdag, wanneer is de zon op z'n best, en je beste zonnige plekken nú.</p></div>
-    <div class="feat"><div class="feat-icon">🔒</div><h3>Geen tracking</h3><p>Geen account, geen analytics, geen advertentie-SDK's. Je gegevens blijven op je toestel. Altijd.</p></div>
+<section class="blk wrap">
+  <p class="eyebrow reveal">De app</p>
+  <h2 class="reveal">Mooi — en gemaakt voor één ding.</h2>
+  <p class="lead reveal">Een dagelijkse blik op de zon, een live kaart met gescoorde terrassen, en het exacte uur waarop elk terras op z'n best is.</p>
+  <div class="shots">
+    <div class="shot reveal d1"><div class="phone-frame"><img src="../assets/shot-home.webp" alt="Zonnie startscherm met het zonverdict van vandaag" loading="lazy"></div><h3>Verdict van vandaag</h3><p>Eén blik op de dag en je zonnigste plekken — zodra je de app opent.</p></div>
+    <div class="shot reveal d2"><div class="phone-frame"><img src="../assets/shot-map.webp" alt="Zonnie live kaart met gescoorde terrassen" loading="lazy"></div><h3>De live kaart</h3><p>Elk terras, gescoord van 0–100 op zon en kleurgecodeerd, per minuut bijgewerkt.</p></div>
+    <div class="shot reveal d3"><div class="phone-frame"><img src="../assets/shot-detail.webp" alt="Zonnie terrasdetail met zon per uur" loading="lazy"></div><h3>Zon per uur</h3><p>Zie precies wanneer een terras zonnig is, de beste tijd om te gaan, en Volg de zon vandaar.</p></div>
   </div>
 </section>
 
-<section class="section" id="buurten">
-  <p class="section-label">Zonnige terrassen per buurt</p>
-  <div class="hoods">
-    <a class="hood-chip" href="terrassen-de-pijp.html">De Pijp <span>→</span></a>
-    <a class="hood-chip" href="terrassen-jordaan.html">Jordaan <span>→</span></a>
-    <a class="hood-chip" href="terrassen-centrum.html">Centrum <span>→</span></a>
-    <a class="hood-chip" href="terrassen-oost.html">Oost <span>→</span></a>
-    <a class="hood-chip" href="terrassen-west.html">West <span>→</span></a>
-    <a class="hood-chip" href="terrassen-noord.html">Noord <span>→</span></a>
-    <a class="hood-chip" href="terrassen-westerpark.html">Westerpark <span>→</span></a>
-    <a class="hood-chip" href="terrassen-zuid.html">Zuid <span>→</span></a>
+<section class="blk wrap" id="chase">
+  <div class="spot reveal">
+    <p class="eyebrow">Het vlaggenschip</p>
+    <h2>Volg de <em>zon</em>, de hele middag.</h2>
+    <p class="lead">De zon verschuift — jij dus ook. Zonnie stippelt een korte wandelroute uit die je in het licht houdt: begin zonnig, hop verder zodra de schaduw komt, eindig op een plek in het gouden uur. Eén tik deelt de route in de groepsapp.</p>
+    <div class="route">
+      <span class="stop">Café Thijssen <span class="t">15:00</span></span><span class="arrow">→</span>
+      <span class="stop">'t Smalle <span class="t">17:10</span></span><span class="arrow">→</span>
+      <span class="stop">Café de Prins <span class="t">19:15 🌅</span></span>
+    </div>
+  </div>
+</section>
+
+<section class="blk wrap" id="features">
+  <p class="eyebrow reveal">Wat Zonnie doet</p>
+  <h2 class="reveal">Precisie, geen giswerk.</h2>
+  <div class="feats">
+    <div class="feat reveal d1"><div class="ic">🌞</div><h3>Echte zonnestand</h3><p>Een nauwkeurig algoritme plaatst de zon aan de Amsterdamse hemel voor elke datum en elk uur. Geen schattingen.</p></div>
+    <div class="feat reveal d2"><div class="ic">🏙️</div><h3>Echte gebouwschaduw</h3><p>De 3D-hoogtes van Amsterdamse gebouwen (LIDAR) voeden de kaart, zodat scores het licht weergeven dat de stad écht toelaat.</p></div>
+    <div class="feat reveal d3"><div class="ic">🌤️</div><h3>Actuele bewolking</h3><p>Open-Meteo voedt live Amsterdams weer in, zodat scores de échte lucht weergeven — niet de kalender.</p></div>
+    <div class="feat reveal d1"><div class="ic">📍</div><h3>1.000+ terrassen</h3><p>Bars, restaurants en koffiebars — met de hand samengesteld in elke Amsterdamse buurt.</p></div>
+    <div class="feat reveal d2"><div class="ic">⭐</div><h3>Verdict van vandaag</h3><p>Is het een terrasdag, wanneer is de zon op z'n best, en je beste zonnige plekken nú — in één oogopslag.</p></div>
+    <div class="feat reveal d3"><div class="ic">🔒</div><h3>Geen tracking</h3><p>Geen account, geen analytics, geen advertentie-SDK's. Je gegevens blijven op je toestel. Altijd.</p></div>
+  </div>
+</section>
+
+<section class="blk wrap">
+  <div class="trust reveal">
+    <div class="ti"><div class="stars">★★★★★</div><div class="l">Geliefd bij Amsterdamse zonzoekers</div></div>
+    <div class="ti"><div class="n">1.028</div><div class="l">terrassen, met de hand samengesteld</div></div>
+    <div class="ti"><div class="n">100%</div><div class="l">op je toestel · geen tracking</div></div>
+  </div>
+</section>
+
+<section class="blk wrap">
+  <div class="stats reveal">
+    <div class="stat"><div class="n" data-count="1028" data-suffix="+">0</div><div class="l">terrassen gescoord</div></div>
+    <div class="stat"><div class="n" data-count="8">0</div><div class="l">buurten</div></div>
+    <div class="stat"><div class="n" data-count="24">0</div><div class="l">uren per dag gemodelleerd</div></div>
+    <div class="stat"><div class="n" data-text="€0">€0</div><div class="l">om te downloaden</div></div>
+  </div>
+</section>
+
+<section class="blk wrap" id="how">
+  <p class="eyebrow reveal">Hoe het werkt</p>
+  <h2 class="reveal">Drie tikken naar de zon.</h2>
+  <div class="steps">
+    <div class="step reveal d1"><div class="num">01</div><h3>Kies een tijd</h3><p>Gebruik de chips — Nu, Middag, Avond — of sleep de schuif naar elk exact uur.</p></div>
+    <div class="step reveal d2"><div class="num">02</div><h3>Scores updaten</h3><p>Elk terras krijgt een zonscore van 0–100 op basis van de zonnestand, gebouwschaduw en live bewolking.</p></div>
+    <div class="step reveal d3"><div class="num">03</div><h3>Ga erop uit</h3><p>Filter op buurt of type, tik een terras aan voor de tijdlijn per uur, of Volg de zon door de middag.</p></div>
+  </div>
+</section>
+
+<section class="blk wrap" id="hoods">
+  <p class="eyebrow reveal">Per buurt</p>
+  <h2 class="reveal">Zonnige terrassen bij jou in de buurt.</h2>
+  <div class="hoods reveal d1" style="margin-top:10px">
+    <a class="hood" href="terrassen-de-pijp.html">De Pijp <span>→</span></a>
+    <a class="hood" href="terrassen-jordaan.html">Jordaan <span>→</span></a>
+    <a class="hood" href="terrassen-centrum.html">Centrum <span>→</span></a>
+    <a class="hood" href="terrassen-oost.html">Oost <span>→</span></a>
+    <a class="hood" href="terrassen-west.html">West <span>→</span></a>
+    <a class="hood" href="terrassen-noord.html">Noord <span>→</span></a>
+    <a class="hood" href="terrassen-westerpark.html">Westerpark <span>→</span></a>
+    <a class="hood" href="terrassen-zuid.html">Zuid <span>→</span></a>
+  </div>
+</section>
+
+<section class="blk wrap" id="faq">
+  <p class="eyebrow reveal">Goed om te weten</p>
+  <h2 class="reveal">Vragen, beantwoord.</h2>
+  <div class="faq" style="margin-top:10px">
+    <details class="qa reveal d1"><summary>Hoe weet Zonnie of een terras in de zon ligt?</summary><div class="a">Het berekent de echte zonnestand boven Amsterdam voor het gekozen uur, projecteert die op 3D-gebouwhoogtes (LIDAR) voor de schaduw, houdt rekening met de oriëntatie van elk terras en legt live bewolking van Open-Meteo eroverheen. Resultaat: een score van 0–100.</div></details>
+    <details class="qa reveal d1"><summary>Is het gratis?</summary><div class="a">Ja — Zonnie is gratis te downloaden op iOS, zonder account en zonder advertenties. Alle functies, inclusief Volg de zon, zijn ontgrendeld.</div></details>
+    <details class="qa reveal d1"><summary>Wat is "Volg de zon"?</summary><div class="a">Een korte wandelroute die je in het zonlicht houdt terwijl het over de middag verschuift — begin op een zonnig terras, hop naar het volgende zodra de schaduw komt, eindig in het gouden uur. In één tik te delen in de groepsapp.</div></details>
+    <details class="qa reveal d1"><summary>Is er een Android-versie?</summary><div class="a">Nog niet — Zonnie is voorlopig alleen voor iOS, Android staat op de planning. Ondertussen kun je de live demo hierboven vanuit elke browser proberen.</div></details>
+    <details class="qa reveal d1"><summary>Word ik gevolgd?</summary><div class="a">Nee. Geen account, geen analytics en geen advertentie-SDK's. Je locatie wordt alleen op je toestel gebruikt om de kaart te centreren, en verlaat je telefoon nooit.</div></details>
+  </div>
+</section>
+
+<section class="blk wrap">
+  <div class="cta reveal">
+    <h2>Zit nooit meer in de schaduw.</h2>
+    <p>Download Zonnie en vind het zonnigste terras in Amsterdam — nu, en de hele middag.</p>
+    <a class="btn btn-cream btn-lg" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener"> Gratis downloaden op iOS</a>
   </div>
 </section>
 
 <footer>
-  <div class="foot-logo">☀️ Zonnie</div>
-  <div class="foot-links">
-    <a href="/">English</a>
-    <a href="../support.html">Support</a>
-    <a href="../PRIVACY-POLICY.html">Privacy</a>
-    <a href="mailto:a.j.spilsbury87@gmail.com">Contact</a>
+  <div class="wrap foot">
+    <a class="fl" href="/nl/"><img src="../assets/app-icon.png" alt="">Zonnie</a>
+    <nav>
+      <a href="/">English</a>
+      <a href="../support.html">Support</a>
+      <a href="../PRIVACY-POLICY.html">Privacy</a>
+      <a href="mailto:a.j.spilsbury87@gmail.com">Contact</a>
+    </nav>
+    <div class="cp">© 2026 Andy Spilsbury · Gemaakt in Amsterdam ☀️</div>
   </div>
-  <div class="foot-copy">© 2026 Andy Spilsbury · Amsterdam</div>
 </footer>
+
+<script>
+(function(){
+  'use strict';
+  var $=function(s){return document.querySelector(s);};
+  var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var nav=$('#nav'), scrollSun=$('#scrollSun');
+  function onScroll(){ nav.classList.toggle('scrolled',window.scrollY>12); var h=document.documentElement.scrollHeight-window.innerHeight; scrollSun.style.width=(h>0?(window.scrollY/h*100):0)+'%'; }
+  onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
+  if(!reduced && window.matchMedia('(pointer:fine)').matches){ var glow=$('#cursorGlow'); window.addEventListener('mousemove',function(e){glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px';glow.style.opacity='1';},{passive:true}); }
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  var counted=false, statsEl=$('.stats');
+  if(statsEl){ new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting&&!counted){counted=true;
+    document.querySelectorAll('.stat .n').forEach(function(el){ if(el.dataset.text){el.textContent=el.dataset.text;return;}
+      var target=+el.dataset.count, suf=el.dataset.suffix||'', start=null;
+      requestAnimationFrame(function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/1100,1); el.textContent=Math.round((1-Math.pow(1-p,3))*target).toLocaleString('nl-NL')+suf; if(p<1)requestAnimationFrame(step); }); });
+  }});},{threshold:0.4}).observe(statsEl); }
+  var names=['Café Thijssen','Hannekes Boom','’t Smalle','Café de Prins','Bar Botanique','Pllek','Waterkant','De Ceuvel','Brouwerij ’t IJ','Winkel 43','Café Kobalt','Lot Sixty One','Hendricks','Café de Sluyswacht','De Plantage','Bar Bukowski'];
+  var mq=$('#marquee'); if(mq){ var one='<span>'+names.join('</span><span>')+'</span>'; mq.innerHTML=one+one; }
+  (function(){
+    var txt=$('#liveText'); if(!txt) return;
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=52.37&longitude=4.90&current=temperature_2m,cloud_cover,is_day&timezone=Europe/Amsterdam')
+      .then(function(r){return r.json();}).then(function(d){
+        var c=d.current, cc=c.cloud_cover, day=c.is_day, t=Math.round(c.temperature_2m), label, emoji;
+        if(!day){label=cc>=70?'bewolkte nacht':'heldere nacht';emoji=cc>=70?'☁️':'🌙';}
+        else if(cc<20){label='helder';emoji='☀️';} else if(cc<50){label='overwegend zonnig';emoji='🌤️';}
+        else if(cc<80){label='half bewolkt';emoji='⛅';} else{label='bewolkt';emoji='☁️';}
+        txt.textContent='Amsterdam nu · '+t+'° · '+label+' '+emoji;
+      }).catch(function(){ txt.textContent='Live zonscores voor 1.000+ Amsterdamse terrassen'; });
+  })();
+  var state={data:null,hour:14,area:'Alles',q:''};
+  var listEl=$('#expList'),timeEl=$('#expTime'),timeLabelEl=$('#expTimeLabel'),slider=$('#hourSlider'),marker=$('#sunMarker'),chipsEl=$('#expChips'),searchEl=$('#expSearch');
+  function scoreColor(s){return s>=65?'var(--burnt)':s>=40?'var(--peach)':s>=15?'var(--mustard)':'var(--mist)';}
+  function hourLabel(h){return h<11?'Ochtendzon':h<15?'Middagzon':h<18?'Namiddagzon':h<20?'Avondzon':'Gouden uur';}
+  function pad(h){return (h<10?'0':'')+h+':00';}
+  function render(){
+    timeEl.textContent=pad(state.hour); timeLabelEl.textContent=hourLabel(state.hour); marker.style.left=((state.hour-8)/(21-8)*100)+'%';
+    if(!state.data)return;
+    var q=state.q.trim().toLowerCase();
+    var rows=state.data.filter(function(t){ if(state.area!=='Alles'&&t.area!==state.area)return false; if(q&&t.name.toLowerCase().indexOf(q)<0)return false; return true; })
+      .map(function(t){return {t:t,s:(t.h&&t.h[state.hour])||0};}).sort(function(a,b){return b.s-a.s;}).slice(0,8);
+    if(!rows.length){listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">Geen terrassen gevonden — probeer een andere zoekopdracht of buurt.</p>';return;}
+    var html='';
+    rows.forEach(function(r,i){ var s=r.s,c=scoreColor(s),t=r.t,rating=t.googleRating?('★ '+t.googleRating):'';
+      html+='<div class="exp-row" style="animation-delay:'+(i*0.03)+'s"><div class="exp-rank">'+(i+1)+'</div>'
+        +'<div><div class="exp-name">'+t.name+'</div><div class="exp-meta"><span>'+t.area+'</span>'+(rating?'<span>'+rating+'</span>':'')+'</div>'
+        +'<div class="exp-bar"><i style="width:'+s+'%;background:'+c+'"></i></div></div>'
+        +'<div class="exp-score"><b style="background:'+c+';color:'+(s<15?'var(--ink)':'#fff')+'">'+s+'</b></div></div>';
+    });
+    listEl.innerHTML=html;
+  }
+  function buildChips(){
+    var counts={}; state.data.forEach(function(t){counts[t.area]=(counts[t.area]||0)+1;});
+    var top=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];}).slice(0,7);
+    chipsEl.innerHTML=['Alles'].concat(top).map(function(a){return '<button class="exp-chip'+(a===state.area?' on':'')+'" data-area="'+a+'">'+a+'</button>';}).join('');
+    chipsEl.querySelectorAll('.exp-chip').forEach(function(b){ b.addEventListener('click',function(){ state.area=b.dataset.area; chipsEl.querySelectorAll('.exp-chip').forEach(function(x){x.classList.toggle('on',x===b);}); render(); }); });
+  }
+  slider.addEventListener('input',function(){state.hour=+slider.value;render();});
+  searchEl.addEventListener('input',function(){state.q=searchEl.value;render();});
+  var loaded=false;
+  function loadData(){ if(loaded)return; loaded=true;
+    fetch('../terraces-lite.json').then(function(r){return r.json();}).then(function(d){ state.data=d;
+      try{ var h=+new Date().toLocaleString('en-GB',{timeZone:'Europe/Amsterdam',hour:'2-digit',hour12:false}); if(h>=8&&h<=21){state.hour=h;slider.value=h;} }catch(e){}
+      buildChips(); render();
+    }).catch(function(){ listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">Kon de live demo niet laden — de volledige ervaring zit in de app.</p>'; });
+  }
+  new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){loadData();}});},{rootMargin:'300px'}).observe($('#explore'));
+  render();
+})();
+</script>
 </body>
 </html>
