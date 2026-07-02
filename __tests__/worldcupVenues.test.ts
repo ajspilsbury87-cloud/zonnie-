@@ -189,11 +189,11 @@ describe('Data fixes', () => {
     expect(t?.name).toBe('WestWeelde');
   });
 
-  test('terrace count is 1028', () => {
+  test('terrace count is 1029', () => {
     // 993 → 988 (removed 5 stale) → 987 (deduped LuminAir) → 1028: added 41
-    // newly-sourced real terraces (ids 1479–1519, long-tail neighbourhoods,
-    // geocoded via OSM, coordSource:'estimated') so we genuinely pass 1,000.
-    expect(TERRACES.length).toBe(1028);
+    // newly-sourced real terraces (ids 1479–1519, geocoded via OSM) → 1029:
+    // added Juno (De Pijp, id 1520), a genuine gap a user flagged.
+    expect(TERRACES.length).toBe(1029);
   });
 
   test('#70 Bar Botanique is in area Oost', () => {
