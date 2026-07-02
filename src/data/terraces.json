@@ -18653,5 +18653,20 @@
     "address": "Danzigerbocht 45",
     "verified": false,
     "coordSource": "estimated"
+  },
+  {
+    "id": 1520,
+    "name": "Juno",
+    "lat": 52.3567873,
+    "lng": 4.888619,
+    "area": "De Pijp",
+    "facing": "S",
+    "capacity": "M",
+    "vibe": "Restaurant",
+    "address": "Juno, 42-H, Frans Halsstraat, Oude Pijp, De Pijp, Zuid, Amsterdam",
+    "verified": false,
+    "coordSource": "estimated",
+    "verifiedAt": null,
+    "openness": 0.6
   }
 ]
