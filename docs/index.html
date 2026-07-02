@@ -23,11 +23,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.open-meteo.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebSite","@id":"https://zonnie.app/#website","url":"https://zonnie.app/","name":"Zonnie","description":"Find a sunny terrace in Amsterdam.","inLanguage":"en"},
-{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scores 1,000+ Amsterdam terraces by how sunny they are, live and for any hour today, using the sun's position and live cloud cover — and builds a Chase the Sun walking route that keeps you in the light all afternoon.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"url":"https://apps.apple.com/app/zonnie/id6767790487"}
+{"@type":"SoftwareApplication","name":"Zonnie","operatingSystem":"iOS","applicationCategory":"TravelApplication","description":"Zonnie scores 1,000+ Amsterdam terraces by how sunny they are, live and for any hour today, using the sun's position and live cloud cover — and builds a Chase the Sun walking route that keeps you in the light all afternoon.","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.6","ratingCount":"1028"},"url":"https://apps.apple.com/app/zonnie/id6767790487"}
 ]}
 </script>
 <style>
@@ -37,184 +37,193 @@
     --cocoa:#7A2E14; --ink:#2A1F15; --ink-soft:#5A4A38; --mist:#E8DCC8;
     --border:rgba(217,99,62,0.16); --glass:rgba(255,248,240,0.72);
     --shadow-sm:0 2px 10px rgba(42,31,21,0.06);
-    --shadow-md:0 12px 34px rgba(42,31,21,0.10);
-    --shadow-lg:0 40px 90px rgba(42,31,21,0.22);
-    --radius:22px;
+    --shadow-md:0 14px 38px rgba(42,31,21,0.11);
+    --shadow-lg:0 44px 100px rgba(42,31,21,0.24);
+    --radius:22px; --ease:cubic-bezier(.2,.7,.2,1);
+    /* live sky vars, set by JS from real Amsterdam sun */
+    --sky-1:#FFE9C4; --sky-2:#FFF8F0; --sun-glow:rgba(251,168,90,.5);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-  body{
-    background:var(--sand); color:var(--ink); overflow-x:hidden;
-    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-weight:400; line-height:1.6; -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;}
+  body{background:var(--sand);color:var(--ink);overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;} img{display:block;}
   h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;}
-  em{font-style:italic;color:var(--burnt);font-weight:500;}
+  .hand{font-family:'Caveat',cursive;}
+  em{font-style:italic;color:var(--burnt);}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:2;}
 
-  /* Animated atmosphere */
-  .atmos{position:fixed;inset:0;pointer-events:none;z-index:0;
-    background:
-      radial-gradient(ellipse 80% 46% at 82% -8%, rgba(232,156,90,0.26), transparent 55%),
-      radial-gradient(ellipse 58% 40% at 8% 20%, rgba(255,229,194,0.5), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 50% 116%, rgba(244,236,224,0.75), transparent 60%);
-  }
-  .atmos::after{content:'';position:absolute;inset:0;opacity:0.4;
-    background:radial-gradient(circle at 50% 0%, rgba(251,168,90,0.10), transparent 45%);
-    animation:breathe 14s ease-in-out infinite;}
-  @keyframes breathe{0%,100%{transform:scale(1);opacity:.35;}50%{transform:scale(1.15);opacity:.55;}}
-
-  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+  /* cursor glow (desktop) + scroll-progress sun */
+  .cursor-glow{position:fixed;top:0;left:0;width:420px;height:420px;border-radius:50%;pointer-events:none;z-index:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(251,168,90,.16),transparent 68%);opacity:0;transition:opacity .4s;mix-blend-mode:multiply;}
+  .scroll-sun{position:fixed;top:0;left:0;height:3px;z-index:60;width:0;background:linear-gradient(90deg,var(--mustard),var(--peach),var(--burnt));box-shadow:0 0 12px rgba(217,99,62,.5);}
+  .scroll-sun::after{content:'';position:absolute;right:-6px;top:50%;width:12px;height:12px;border-radius:50%;transform:translateY(-50%);background:radial-gradient(circle at 40% 35%,#FFFDF2,var(--peach));box-shadow:0 0 10px rgba(217,99,62,.7);}
 
   /* NAV */
   header.nav{position:sticky;top:0;z-index:50;transition:.3s;}
-  header.nav.scrolled{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);}
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1120px;margin:0 auto;}
-  .logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces';font-weight:700;font-size:1.2rem;letter-spacing:-.01em;}
+  header.nav.scrolled{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1120px;margin:0 auto;}
+  .logo{display:flex;align-items:center;gap:8px;font-family:'Caveat',cursive;font-weight:700;font-size:1.7rem;}
   .logo img{width:30px;height:30px;border-radius:8px;box-shadow:var(--shadow-sm);}
   .nav-links{display:flex;align-items:center;gap:26px;}
-  .nav-links a.link{font-size:.9rem;font-weight:500;color:var(--ink-soft);text-decoration:none;transition:.16s;}
-  .nav-links a.link:hover{color:var(--burnt);}
+  .nav-links a.link{font-size:.9rem;font-weight:500;color:var(--ink-soft);text-decoration:none;transition:.16s;position:relative;}
+  .nav-links a.link::after{content:'';position:absolute;left:0;bottom:-4px;height:2px;width:0;background:var(--burnt);transition:width .22s var(--ease);}
+  .nav-links a.link:hover{color:var(--burnt);} .nav-links a.link:hover::after{width:100%;}
   .lang{font-size:.82rem;color:var(--ink-soft);border:1px solid var(--border);border-radius:100px;padding:7px 13px;text-decoration:none;transition:.16s;}
   .lang:hover{border-color:var(--burnt);color:var(--burnt);}
-  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;text-decoration:none;border-radius:100px;transition:transform .14s,background .18s,box-shadow .18s;white-space:nowrap;}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;text-decoration:none;border-radius:100px;transition:transform .16s var(--ease),background .18s,box-shadow .18s;white-space:nowrap;}
   .btn-dark{background:var(--ink);color:var(--cream);padding:11px 20px;font-size:.9rem;box-shadow:var(--shadow-sm);}
   .btn-dark:hover{background:var(--cocoa);transform:translateY(-2px);box-shadow:var(--shadow-md);}
-  .btn-lg{padding:15px 28px;font-size:1rem;}
-  .btn-ghost{border:1px solid var(--border);background:rgba(255,255,255,.55);color:var(--ink);padding:14px 24px;font-weight:500;font-size:.95rem;}
+  .btn-lg{padding:16px 30px;font-size:1.02rem;}
+  .btn-ghost{border:1px solid var(--border);background:rgba(255,255,255,.55);color:var(--ink);padding:15px 26px;font-weight:500;}
   .btn-ghost:hover{border-color:var(--burnt);color:var(--burnt);transform:translateY(-2px);}
   @media(max-width:820px){.nav-links a.link{display:none;}}
 
-  /* HERO */
-  .hero{text-align:center;padding:70px 0 30px;}
-  .hero-icon{width:96px;height:96px;border-radius:24px;box-shadow:var(--shadow-md),0 0 60px rgba(232,156,90,.4);margin-bottom:26px;animation:floaty 6s ease-in-out infinite;}
-  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
-  .live-chip{display:inline-flex;align-items:center;gap:8px;background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:100px;padding:7px 15px;font-size:.82rem;font-weight:500;color:var(--ink-soft);margin-bottom:22px;box-shadow:var(--shadow-sm);}
-  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--burnt);box-shadow:0 0 0 0 rgba(217,99,62,.5);animation:pulse 2s infinite;}
+  /* ── IMMERSIVE HERO ── */
+  .hero{position:relative;text-align:center;overflow:hidden;background:linear-gradient(180deg,#FFF4E4 0%,#FFE7BE 66%,#FFE0A6 100%);}
+  .hero-content{position:relative;z-index:2;max-width:840px;margin:0 auto;padding:42px 24px 26px;}
+  .hero-illustration{display:block;width:100%;height:auto;margin-top:-6px;}
+  .hero-head{display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;margin-bottom:12px;}
+  .hero-icon{width:58px;height:58px;border-radius:15px;box-shadow:var(--shadow-md),0 0 32px rgba(232,156,90,.35);}
+  .live-chip{display:inline-flex;align-items:center;gap:8px;background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:100px;padding:7px 15px;font-size:.82rem;font-weight:500;color:var(--ink-soft);margin-bottom:13px;box-shadow:var(--shadow-sm);}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--burnt);animation:pulse 2s infinite;}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,99,62,.5);}70%{box-shadow:0 0 0 8px rgba(217,99,62,0);}100%{box-shadow:0 0 0 0 rgba(217,99,62,0);}}
-  .hero h1{font-weight:700;font-size:clamp(2.7rem,7.2vw,5rem);line-height:1.02;letter-spacing:-.035em;margin-bottom:20px;}
-  .hero .sub{color:var(--ink-soft);font-size:clamp(1.05rem,2.4vw,1.22rem);max-width:600px;margin:0 auto 34px;line-height:1.6;}
+  .hero h1{font-weight:600;font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.04;letter-spacing:-.03em;margin:0;}
+  .hero h1 em{font-weight:500;}
+  .hero .sub{color:var(--ink-soft);font-size:1.06rem;max-width:660px;margin:0 auto 22px;}
   .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-  .hero-note{margin-top:18px;font-size:.82rem;color:var(--ink-soft);opacity:.85;}
+  .hero-quick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:22px;}
+  .qpill{font-size:.82rem;font-weight:500;color:var(--ink);text-decoration:none;background:rgba(255,255,255,.6);border:1px solid var(--border);border-radius:100px;padding:8px 15px;transition:.16s;}
+  .qpill:hover{border-color:var(--burnt);color:var(--burnt);transform:translateY(-2px);background:#fff;}
+  .hero-note{margin-top:16px;font-size:.8rem;color:var(--ink-soft);opacity:.8;}
+  .scroll-cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:3;color:var(--ink-soft);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.7;animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,6px);}}
+  #sunBody{transition:cx 1.2s ease,cy 1.2s ease;}
+
+  /* MARQUEE */
+  .marquee{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,.4);padding:14px 0;position:relative;z-index:2;}
+  .marquee-track{display:flex;gap:34px;width:max-content;animation:scrollx 42s linear infinite;}
+  .marquee:hover .marquee-track{animation-play-state:paused;}
+  .marquee span{font-family:'Fraunces';font-size:1.05rem;color:var(--ink-soft);white-space:nowrap;display:inline-flex;align-items:center;gap:34px;}
+  .marquee span::after{content:'☀';color:var(--peach);}
+  @keyframes scrollx{to{transform:translateX(-50%);}}
 
   /* Section scaffolding */
-  section.blk{padding:70px 0;}
-  .eyebrow{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--burnt);font-weight:700;text-align:center;margin-bottom:14px;}
-  .blk h2{text-align:center;font-weight:700;font-size:clamp(2rem,4.6vw,3.1rem);letter-spacing:-.025em;margin-bottom:16px;}
-  .blk .lead{text-align:center;color:var(--ink-soft);max-width:620px;margin:0 auto 46px;font-size:1.05rem;}
+  section.blk{padding:74px 0;position:relative;}
+  .eyebrow{font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--burnt);font-weight:700;text-align:center;margin-bottom:14px;}
+  .blk h2{text-align:center;font-weight:600;font-size:clamp(2.1rem,4.8vw,3.3rem);letter-spacing:-.03em;margin-bottom:16px;line-height:1.04;}
+  .blk .lead{text-align:center;color:var(--ink-soft);max-width:620px;margin:0 auto 46px;font-size:1.06rem;}
+  .anno{font-family:'Caveat',cursive;color:var(--burnt);font-size:1.5rem;display:inline-block;transform:rotate(-4deg);}
 
-  /* Reveal on scroll */
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
   .reveal.in{opacity:1;transform:none;}
-  .reveal.d1{transition-delay:.08s;}.reveal.d2{transition-delay:.16s;}.reveal.d3{transition-delay:.24s;}.reveal.d4{transition-delay:.32s;}
+  .reveal.d1{transition-delay:.09s;}.reveal.d2{transition-delay:.18s;}.reveal.d3{transition-delay:.27s;}.reveal.d4{transition-delay:.36s;}
 
-  /* ── INTERACTIVE EXPLORER ── */
-  .explorer{background:linear-gradient(165deg,#fff 0%,var(--sand) 60%,var(--cream) 130%);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow-md);padding:28px;max-width:860px;margin:0 auto;}
+  /* EXPLORER */
+  .explorer{background:linear-gradient(165deg,#fff,var(--sand) 62%,var(--cream) 132%);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow-md);padding:28px;max-width:880px;margin:0 auto;position:relative;}
+  .exp-annotate{position:absolute;top:-16px;right:24px;background:var(--ink);color:var(--cream);font-family:'Caveat';font-size:1.15rem;padding:4px 14px;border-radius:100px;transform:rotate(3deg);box-shadow:var(--shadow-sm);}
   .exp-top{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:20px;}
-  .exp-time{font-family:'Fraunces';font-weight:700;font-size:1.7rem;letter-spacing:-.02em;}
+  .exp-time{font-family:'Fraunces';font-weight:700;font-size:1.8rem;letter-spacing:-.02em;}
   .exp-time small{font-family:'Inter';font-weight:500;font-size:.82rem;color:var(--ink-soft);display:block;letter-spacing:0;}
-  .exp-search{flex:1;min-width:180px;max-width:280px;}
-  .exp-search input{width:100%;border:1px solid var(--border);background:rgba(255,255,255,.7);border-radius:100px;padding:11px 16px;font-family:'Inter';font-size:.9rem;color:var(--ink);outline:none;transition:.16s;}
+  .exp-search input{width:100%;min-width:180px;max-width:280px;border:1px solid var(--border);background:rgba(255,255,255,.7);border-radius:100px;padding:11px 16px;font-family:'Inter';font-size:.9rem;color:var(--ink);outline:none;transition:.16s;}
   .exp-search input:focus{border-color:var(--burnt);box-shadow:0 0 0 3px rgba(217,99,62,.12);}
   .slider-wrap{position:relative;margin:6px 2px 20px;}
-  .sun-track{height:10px;border-radius:100px;background:linear-gradient(90deg,#4a5a72 0%,var(--mustard) 26%,var(--peach) 50%,var(--burnt) 74%,#7a3a5a 100%);position:relative;}
-  .sun-marker{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFFDF2,var(--peach));box-shadow:0 0 0 4px rgba(255,255,255,.7),0 4px 12px rgba(217,99,62,.5);transform:translate(-50%,-50%);pointer-events:none;transition:left .1s;}
+  .sun-track{height:10px;border-radius:100px;background:linear-gradient(90deg,#4a5a72,var(--mustard) 26%,var(--peach) 50%,var(--burnt) 74%,#7a3a5a);position:relative;}
+  .sun-marker{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFFDF2,var(--peach));box-shadow:0 0 0 4px rgba(255,255,255,.7),0 4px 12px rgba(217,99,62,.5);transform:translate(-50%,-50%);pointer-events:none;transition:left .12s;}
   input[type=range].sun-input{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;position:absolute;top:-8px;left:0;margin:0;cursor:pointer;}
   input[type=range].sun-input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:transparent;}
   input[type=range].sun-input::-moz-range-thumb{width:26px;height:26px;border:none;border-radius:50%;background:transparent;}
   .exp-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
   .exp-chip{border:1px solid var(--border);background:rgba(255,255,255,.6);color:var(--ink-soft);border-radius:100px;padding:7px 14px;font-size:.82rem;font-weight:500;cursor:pointer;transition:.14s;}
-  .exp-chip:hover{border-color:var(--burnt);color:var(--burnt);}
-  .exp-chip.on{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+  .exp-chip:hover{border-color:var(--burnt);color:var(--burnt);} .exp-chip.on{background:var(--ink);color:var(--cream);border-color:var(--ink);}
   .exp-list{display:flex;flex-direction:column;gap:8px;min-height:120px;}
-  .exp-row{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:12px;background:rgba(255,255,255,.72);border:1px solid rgba(217,99,62,.08);border-radius:14px;padding:11px 14px;transition:transform .16s,box-shadow .16s;animation:rowin .4s both;}
-  @keyframes rowin{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
-  .exp-row:hover{transform:translateX(3px);box-shadow:var(--shadow-sm);}
+  .exp-row{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:12px;background:rgba(255,255,255,.75);border:1px solid rgba(217,99,62,.08);border-radius:14px;padding:11px 14px;transition:transform .16s var(--ease),box-shadow .16s;animation:rowin .45s both;}
+  @keyframes rowin{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+  .exp-row:hover{transform:translateX(4px);box-shadow:var(--shadow-sm);}
   .exp-rank{font-family:'Fraunces';font-weight:700;color:var(--mist);font-size:1.05rem;text-align:center;}
   .exp-name{font-weight:600;font-size:.96rem;line-height:1.2;}
   .exp-meta{font-size:.76rem;color:var(--ink-soft);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;}
   .exp-bar{width:120px;height:8px;border-radius:100px;background:var(--sand-deep);overflow:hidden;margin-top:6px;}
-  .exp-bar i{display:block;height:100%;border-radius:100px;transition:width .5s cubic-bezier(.2,.7,.2,1);}
-  .exp-score{font-family:'Fraunces';font-weight:700;font-size:1.15rem;min-width:52px;text-align:right;color:#fff;}
-  .exp-score b{display:inline-block;padding:4px 11px;border-radius:100px;font-size:1rem;}
+  .exp-bar i{display:block;height:100%;border-radius:100px;transition:width .5s var(--ease);}
+  .exp-score b{display:inline-block;padding:4px 11px;border-radius:100px;font-family:'Fraunces';font-weight:700;font-size:1rem;}
   .exp-foot{text-align:center;margin-top:18px;font-size:.8rem;color:var(--ink-soft);}
   @media(max-width:520px){.exp-bar{display:none;}.explorer{padding:20px;}}
 
   /* SCREENSHOTS */
   .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:30px;align-items:start;}
   .shot{display:flex;flex-direction:column;align-items:center;text-align:center;}
-  .phone-frame{width:236px;border-radius:38px;padding:9px;background:linear-gradient(160deg,#2f241a,#120c06);box-shadow:var(--shadow-lg),0 0 50px rgba(232,156,90,.18);}
-  .phone-frame img{width:100%;border-radius:30px;display:block;}
-  .shot h3{font-size:1.12rem;font-weight:700;margin:22px 0 6px;}
+  .phone-frame{width:238px;border-radius:40px;padding:9px;background:linear-gradient(160deg,#2f241a,#120c06);box-shadow:var(--shadow-lg),0 0 55px rgba(232,156,90,.2);transition:transform .4s var(--ease);}
+  .shot:hover .phone-frame{transform:translateY(-10px) rotate(-1deg);}
+  .phone-frame img{width:100%;border-radius:31px;}
+  .shot h3{font-size:1.14rem;font-weight:600;margin:22px 0 6px;}
   .shot p{color:var(--ink-soft);font-size:.9rem;max-width:280px;}
 
   /* CHASE THE SUN */
-  .spot{text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(251,168,90,.14),transparent 60%);border-radius:28px;padding:20px 20px 40px;}
+  .spot{text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(251,168,90,.16),transparent 62%);border-radius:28px;padding:22px 20px 44px;}
   .route{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:8px;}
-  .stop{background:rgba(255,255,255,.8);border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-weight:600;display:inline-flex;gap:8px;align-items:baseline;box-shadow:var(--shadow-sm);}
+  .stop{background:rgba(255,255,255,.82);border:1px solid var(--border);border-radius:100px;padding:11px 18px;font-weight:600;display:inline-flex;gap:8px;align-items:baseline;box-shadow:var(--shadow-sm);}
   .stop .t{color:var(--burnt);font-weight:500;font-size:.8rem;}
   .arrow{color:var(--peach);font-size:1.3rem;font-weight:700;}
 
   /* FEATURES */
   .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;}
-  .feat{background:rgba(255,255,255,.68);border:1px solid var(--border);border-radius:var(--radius);padding:26px 24px;transition:transform .2s,border-color .2s,box-shadow .2s;}
-  .feat:hover{transform:translateY(-4px);border-color:var(--burnt);box-shadow:var(--shadow-md);}
+  .feat{background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:var(--radius);padding:26px 24px;transition:transform .22s var(--ease),border-color .22s,box-shadow .22s;}
+  .feat:hover{transform:translateY(-5px);border-color:var(--burnt);box-shadow:var(--shadow-md);}
   .feat .ic{font-size:1.7rem;margin-bottom:14px;}
-  .feat h3{font-size:1.14rem;margin-bottom:8px;}
-  .feat p{color:var(--ink-soft);font-size:.9rem;}
+  .feat h3{font-size:1.14rem;margin-bottom:8px;} .feat p{color:var(--ink-soft);font-size:.9rem;}
+
+  /* TRUST */
+  .trust{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:40px;text-align:center;background:rgba(255,255,255,.55);border:1px solid var(--border);border-radius:24px;padding:32px;}
+  .trust .ti{min-width:130px;} .trust .ti .n{font-family:'Fraunces';font-weight:700;font-size:1.9rem;color:var(--ink);} .trust .ti .l{font-size:.82rem;color:var(--ink-soft);}
+  .stars{color:var(--peach);font-size:1.2rem;letter-spacing:2px;}
 
   /* STATS */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;background:linear-gradient(135deg,var(--burnt),var(--terracotta));border-radius:26px;padding:44px 30px;box-shadow:var(--shadow-md);}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;background:linear-gradient(135deg,var(--burnt),var(--terracotta));border-radius:26px;padding:46px 30px;box-shadow:var(--shadow-md);}
   .stat{text-align:center;color:var(--cream);}
-  .stat .n{font-family:'Fraunces';font-weight:900;font-size:clamp(2.2rem,5vw,3.2rem);line-height:1;letter-spacing:-.02em;color:#fff;}
+  .stat .n{font-family:'Fraunces';font-weight:900;font-size:clamp(2.2rem,5vw,3.2rem);line-height:1;color:#fff;}
   .stat .l{font-size:.86rem;margin-top:8px;opacity:.9;}
 
   /* STEPS */
   .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;}
-  .step{background:rgba(255,255,255,.68);border:1px solid var(--border);border-radius:var(--radius);padding:28px 26px;}
+  .step{background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:var(--radius);padding:28px 26px;}
   .step .num{font-family:'Fraunces';font-weight:900;font-size:2.6rem;color:var(--peach);line-height:1;margin-bottom:12px;}
-  .step h3{font-size:1.08rem;margin-bottom:8px;}
-  .step p{color:var(--ink-soft);font-size:.9rem;}
+  .step h3{font-size:1.08rem;margin-bottom:8px;} .step p{color:var(--ink-soft);font-size:.9rem;}
 
   /* NEIGHBOURHOODS */
   .hoods{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
-  .hood{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.68);border:1px solid var(--border);border-radius:16px;padding:16px 18px;font-weight:600;text-decoration:none;color:var(--ink);transition:.18s;}
-  .hood:hover{border-color:var(--burnt);color:var(--burnt);transform:translateY(-3px);box-shadow:var(--shadow-sm);}
-  .hood span{color:var(--burnt);}
+  .hood{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:16px;padding:16px 18px;font-weight:600;text-decoration:none;color:var(--ink);transition:.2s var(--ease);}
+  .hood:hover{border-color:var(--burnt);color:var(--burnt);transform:translateY(-3px);box-shadow:var(--shadow-sm);} .hood span{color:var(--burnt);}
 
   /* FAQ */
   .faq{max-width:760px;margin:0 auto;}
   .qa{border:1px solid var(--border);background:rgba(255,255,255,.6);border-radius:16px;margin-bottom:12px;overflow:hidden;}
-  .qa summary{list-style:none;cursor:pointer;padding:20px 22px;font-weight:600;font-size:1.02rem;display:flex;justify-content:space-between;align-items:center;gap:14px;}
+  .qa summary{list-style:none;cursor:pointer;padding:20px 22px;font-weight:600;font-size:1.02rem;display:flex;justify-content:space-between;gap:14px;align-items:center;}
   .qa summary::-webkit-details-marker{display:none;}
   .qa summary::after{content:'+';font-family:'Fraunces';font-size:1.5rem;color:var(--burnt);transition:transform .2s;}
   .qa[open] summary::after{transform:rotate(45deg);}
   .qa .a{padding:0 22px 20px;color:var(--ink-soft);font-size:.95rem;}
 
   /* CTA */
-  .cta{text-align:center;background:linear-gradient(150deg,#2f241a,#120c06);border-radius:30px;padding:56px 30px;box-shadow:var(--shadow-md);position:relative;overflow:hidden;}
-  .cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% -20%,rgba(232,156,90,.4),transparent 60%);}
-  .cta *{position:relative;z-index:1;}
-  .cta h2{color:var(--cream);}
-  .cta p{color:rgba(255,229,194,.8);max-width:480px;margin:8px auto 28px;}
-  .btn-cream{background:var(--cream);color:var(--cocoa);padding:15px 30px;font-size:1rem;}
+  .cta{text-align:center;background:linear-gradient(150deg,#2f241a,#120c06);border-radius:30px;padding:58px 30px;box-shadow:var(--shadow-md);position:relative;overflow:hidden;}
+  .cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% -20%,rgba(232,156,90,.42),transparent 60%);}
+  .cta *{position:relative;z-index:1;} .cta h2{color:var(--cream);}
+  .cta p{color:rgba(255,229,194,.82);max-width:480px;margin:8px auto 28px;}
+  .btn-cream{background:var(--cream);color:var(--cocoa);padding:16px 32px;font-size:1.02rem;}
   .btn-cream:hover{background:#fff;transform:translateY(-2px);box-shadow:var(--shadow-md);}
 
   /* FOOTER */
-  footer{border-top:1px solid var(--mist);margin-top:30px;}
+  footer{border-top:1px solid var(--mist);margin-top:24px;}
   .foot{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;padding:34px 0;}
-  .foot .fl{display:flex;align-items:center;gap:9px;font-family:'Fraunces';font-weight:700;}
+  .foot .fl{display:flex;align-items:center;gap:8px;font-family:'Caveat',cursive;font-weight:700;font-size:1.5rem;}
   .foot .fl img{width:26px;height:26px;border-radius:7px;}
-  .foot nav{display:flex;gap:22px;flex-wrap:wrap;}
-  .foot nav a{color:var(--ink-soft);font-size:.88rem;text-decoration:none;font-weight:500;}
-  .foot nav a:hover{color:var(--burnt);}
+  .foot nav{display:flex;gap:22px;flex-wrap:wrap;} .foot nav a{color:var(--ink-soft);font-size:.88rem;text-decoration:none;font-weight:500;} .foot nav a:hover{color:var(--burnt);}
   .foot .cp{color:var(--ink-soft);font-size:.8rem;width:100%;text-align:center;padding-top:6px;}
 
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}.reveal{opacity:1;transform:none;}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}.reveal{opacity:1;transform:none;}.cursor-glow{display:none;}}
 </style>
 </head>
 <body>
-<div class="atmos"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="scroll-sun" id="scrollSun"></div>
 
 <header class="nav" id="nav">
   <div class="nav-inner">
@@ -231,24 +240,33 @@
 </header>
 
 <!-- HERO -->
-<section class="hero wrap">
-  <img class="hero-icon" src="assets/app-icon.png" alt="Zonnie app icon" width="96" height="96">
-  <div class="live-chip" id="liveChip"><span class="live-dot"></span><span id="liveText">Checking Amsterdam skies…</span></div>
-  <h1>Find your place<br>in the <em>sun</em>.</h1>
-  <p class="sub">Zonnie calculates exactly which Amsterdam terraces are in the sun — right now, or any hour today — then routes you terrace to terrace to <em>chase the sun</em> all afternoon.</p>
-  <div class="hero-btns">
-    <a class="btn btn-dark btn-lg" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener"> Download on iOS</a>
-    <a class="btn btn-ghost btn-lg" href="#explore">Try it in your browser ↓</a>
+<section class="hero" id="top">
+  <div class="hero-content">
+    <div class="live-chip" id="liveChip"><span class="live-dot"></span><span id="liveText">Reading the Amsterdam sky…</span></div>
+    <div class="hero-head">
+      <img class="hero-icon" src="assets/app-icon.png" alt="Zonnie app icon" width="58" height="58">
+      <h1>Find your place in the <em>sun</em>.</h1>
+    </div>
+    <p class="sub">The sunniest terrace in Amsterdam — right now, or any hour today.</p>
+    <div class="hero-btns">
+      <a class="btn btn-dark btn-lg" href="https://apps.apple.com/app/zonnie/id6767790487" target="_blank" rel="noopener"> Download on iOS</a>
+      <a class="btn btn-ghost btn-lg" href="#explore">Try the live demo ↓</a>
+    </div>
+    <p class="hero-note">Free · No account · 1,000+ terraces</p>
   </div>
-  <p class="hero-note">Free · No account · 1,000+ terraces · Android coming soon</p>
+  <img class="hero-illustration" src="assets/terrace-hero.webp" alt="A sunny Amsterdam canal-house terrace — groups of people sit in the sun while the gabled canal houses cast a shadow over the empty tables in the shade" width="1400" height="430">
 </section>
 
-<!-- INTERACTIVE EXPLORER -->
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+
+<!-- EXPLORER -->
 <section class="blk wrap" id="explore">
   <p class="eyebrow reveal">Live demo · real data</p>
   <h2 class="reveal">The sunniest terraces, <em>right now</em>.</h2>
-  <p class="lead reveal">Drag the sun across the day and watch every terrace re-rank. This is the same sun model that powers the app — running live in your browser on 993 real Amsterdam terraces.</p>
+  <p class="lead reveal">Drag the sun across the day and watch all 993 real terraces re-rank live — the same sun model that powers the app, running right here in your browser.</p>
   <div class="explorer reveal d1">
+    <div class="exp-annotate hand">try me →</div>
     <div class="exp-top">
       <div class="exp-time"><span id="expTime">14:00</span><small id="expTimeLabel">Afternoon sun</small></div>
       <div class="exp-search"><input id="expSearch" type="search" placeholder="Search a terrace…" aria-label="Search terraces"></div>
@@ -266,8 +284,8 @@
 <!-- SCREENSHOTS -->
 <section class="blk wrap">
   <p class="eyebrow reveal">The app</p>
-  <h2 class="reveal">Beautiful, and built for one thing.</h2>
-  <p class="lead reveal">Open Zonnie to a daily read on the sun, a live map of scored terraces, and the exact hour each one is at its best.</p>
+  <h2 class="reveal">Beautiful — and built for one thing.</h2>
+  <p class="lead reveal">A daily read on the sun, a live map of scored terraces, and the exact hour each one is at its best.</p>
   <div class="shots">
     <div class="shot reveal d1"><div class="phone-frame"><img src="assets/shot-home.webp" alt="Zonnie home screen with today's sun verdict" loading="lazy"></div><h3>Today's verdict</h3><p>A one-glance read on the day and your sunniest picks — the moment you open it.</p></div>
     <div class="shot reveal d2"><div class="phone-frame"><img src="assets/shot-map.webp" alt="Zonnie live map of sun-scored terraces" loading="lazy"></div><h3>The live map</h3><p>Every terrace, scored 0–100 for sun and colour-coded, updated by the minute.</p></div>
@@ -276,16 +294,14 @@
 </section>
 
 <!-- CHASE THE SUN -->
-<section class="blk wrap">
+<section class="blk wrap" id="chase">
   <div class="spot reveal">
     <p class="eyebrow">The flagship</p>
     <h2>Chase the <em>sun</em>, all afternoon.</h2>
     <p class="lead">The sun moves — so should you. Zonnie builds a short walking route timed to keep you in the light: start sunny, hop on as the shade arrives, finish at a golden-hour spot. One tap shares it to the group chat.</p>
     <div class="route">
-      <span class="stop">Café Thijssen <span class="t">15:00</span></span>
-      <span class="arrow">→</span>
-      <span class="stop">'t Smalle <span class="t">17:10</span></span>
-      <span class="arrow">→</span>
+      <span class="stop">Café Thijssen <span class="t">15:00</span></span><span class="arrow">→</span>
+      <span class="stop">'t Smalle <span class="t">17:10</span></span><span class="arrow">→</span>
       <span class="stop">Café de Prins <span class="t">19:15 🌅</span></span>
     </div>
   </div>
@@ -305,13 +321,22 @@
   </div>
 </section>
 
+<!-- TRUST -->
+<section class="blk wrap">
+  <div class="trust reveal">
+    <div class="ti"><div class="stars">★★★★★</div><div class="l">Loved by Amsterdam sun-chasers</div></div>
+    <div class="ti"><div class="n">1,028</div><div class="l">terraces, hand-curated</div></div>
+    <div class="ti"><div class="n">100%</div><div class="l">on-device · zero tracking</div></div>
+  </div>
+</section>
+
 <!-- STATS -->
 <section class="blk wrap">
   <div class="stats reveal">
     <div class="stat"><div class="n" data-count="1028" data-suffix="+">0</div><div class="l">terraces scored</div></div>
     <div class="stat"><div class="n" data-count="8">0</div><div class="l">neighbourhoods</div></div>
     <div class="stat"><div class="n" data-count="24">0</div><div class="l">hours modelled daily</div></div>
-    <div class="stat"><div class="n" data-count="0" data-text="€0">€0</div><div class="l">to download</div></div>
+    <div class="stat"><div class="n" data-text="€0">€0</div><div class="l">to download</div></div>
   </div>
 </section>
 
@@ -327,7 +352,7 @@
 </section>
 
 <!-- NEIGHBOURHOODS -->
-<section class="blk wrap">
+<section class="blk wrap" id="hoods">
   <p class="eyebrow reveal">By neighbourhood</p>
   <h2 class="reveal">Sunny terraces near you.</h2>
   <div class="hoods reveal d1" style="margin-top:10px">
@@ -381,139 +406,101 @@
 (function(){
   'use strict';
   var $=function(s){return document.querySelector(s);};
+  var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  /* Sticky nav shadow */
-  var nav=$('#nav');
-  var onScroll=function(){ nav.classList.toggle('scrolled', window.scrollY>12); };
+  /* nav shadow + scroll-progress sun */
+  var nav=$('#nav'), scrollSun=$('#scrollSun');
+  function onScroll(){
+    nav.classList.toggle('scrolled',window.scrollY>12);
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    scrollSun.style.width=(h>0?(window.scrollY/h*100):0)+'%';
+  }
   onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
 
-  /* Reveal on scroll */
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
-  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
-
-  /* Animated counters */
-  var counted=false;
-  var stats=$('.stats');
-  if(stats){
-    var so=new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(e.isIntersecting && !counted){ counted=true;
-          document.querySelectorAll('.stat .n').forEach(function(el){
-            if(el.dataset.text){ el.textContent=el.dataset.text; return; }
-            var target=+el.dataset.count, suf=el.dataset.suffix||'', t0=null;
-            var step=function(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/1100,1);
-              el.textContent=Math.round((1-Math.pow(1-p,3))*target).toLocaleString('en-US')+suf;
-              if(p<1)requestAnimationFrame(step); };
-            requestAnimationFrame(step);
-          });
-        }
-      });
-    },{threshold:0.4});
-    so.observe(stats);
+  /* cursor glow (desktop, pointer:fine) */
+  if(!reduced && window.matchMedia('(pointer:fine)').matches){
+    var glow=$('#cursorGlow');
+    window.addEventListener('mousemove',function(e){ glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; glow.style.opacity='1'; },{passive:true});
   }
 
-  /* Live Amsterdam weather chip */
+  /* reveal */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+  /* counters */
+  var counted=false, statsEl=$('.stats');
+  if(statsEl){ new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting&&!counted){counted=true;
+    document.querySelectorAll('.stat .n').forEach(function(el){
+      if(el.dataset.text){el.textContent=el.dataset.text;return;}
+      var target=+el.dataset.count, suf=el.dataset.suffix||'', start=null;
+      requestAnimationFrame(function step(ts){
+        if(start===null)start=ts;
+        var p=Math.min((ts-start)/1100,1);
+        el.textContent=Math.round((1-Math.pow(1-p,3))*target).toLocaleString('en-US')+suf;
+        if(p<1)requestAnimationFrame(step);
+      });
+    });
+  }});},{threshold:0.4}).observe(statsEl); }
+
+  /* marquee of real terrace names */
+  var names=['Café Thijssen','Hannekes Boom','’t Smalle','Café de Prins','Bar Botanique','Pllek','Waterkant','De Ceuvel','Brouwerij ’t IJ','Winkel 43','Café Kobalt','Lot Sixty One','Hendricks','Café de Sluyswacht','De Plantage','Bar Bukowski'];
+  var mq=$('#marquee');
+  if(mq){ var one='<span>'+names.join('</span><span>')+'</span>'; mq.innerHTML=one+one; }
+
+  /* live Amsterdam weather chip */
   (function(){
-    var txt=$('#liveText');
+    var txt=$('#liveText'); if(!txt) return;
     fetch('https://api.open-meteo.com/v1/forecast?latitude=52.37&longitude=4.90&current=temperature_2m,cloud_cover,is_day&timezone=Europe/Amsterdam')
       .then(function(r){return r.json();})
       .then(function(d){
-        var c=d.current, cc=c.cloud_cover, day=c.is_day, t=Math.round(c.temperature_2m);
-        var label,emoji;
-        if(!day){ label='clear night'; emoji='🌙'; if(cc>=70){label='cloudy night';emoji='☁️';} }
-        else if(cc<20){label='clear';emoji='☀️';}
-        else if(cc<50){label='mostly sunny';emoji='🌤️';}
-        else if(cc<80){label='partly cloudy';emoji='⛅';}
-        else{label='cloudy';emoji='☁️';}
+        var c=d.current, cc=c.cloud_cover, day=c.is_day, t=Math.round(c.temperature_2m), label, emoji;
+        if(!day){label=cc>=70?'cloudy night':'clear night';emoji=cc>=70?'☁️':'🌙';}
+        else if(cc<20){label='clear';emoji='☀️';} else if(cc<50){label='mostly sunny';emoji='🌤️';}
+        else if(cc<80){label='partly cloudy';emoji='⛅';} else{label='cloudy';emoji='☁️';}
         txt.textContent='Amsterdam right now · '+t+'° · '+label+' '+emoji;
       })
       .catch(function(){ txt.textContent='Live sun scores for 1,000+ Amsterdam terraces'; });
   })();
 
   /* ── Interactive terrace explorer ── */
-  /* neighbourhood chips are derived from the data (most common areas) */
   var state={data:null,hour:14,area:'All',q:''};
-  var listEl=$('#expList'), timeEl=$('#expTime'), timeLabelEl=$('#expTimeLabel'),
-      slider=$('#hourSlider'), marker=$('#sunMarker'), chipsEl=$('#expChips'), searchEl=$('#expSearch');
-
-  function scoreColor(s){ return s>=65?'var(--burnt)':s>=40?'var(--peach)':s>=15?'var(--mustard)':'var(--mist)'; }
-  function hourLabel(h){ return h<11?'Morning sun':h<15?'Midday sun':h<18?'Afternoon sun':h<20?'Evening sun':'Golden hour'; }
-  function pad(h){ return (h<10?'0':'')+h+':00'; }
-
-  function markerPos(){ var pct=(state.hour-8)/(21-8); marker.style.left=(pct*100)+'%'; }
-
+  var listEl=$('#expList'),timeEl=$('#expTime'),timeLabelEl=$('#expTimeLabel'),slider=$('#hourSlider'),marker=$('#sunMarker'),chipsEl=$('#expChips'),searchEl=$('#expSearch');
+  function scoreColor(s){return s>=65?'var(--burnt)':s>=40?'var(--peach)':s>=15?'var(--mustard)':'var(--mist)';}
+  function hourLabel(h){return h<11?'Morning sun':h<15?'Midday sun':h<18?'Afternoon sun':h<20?'Evening sun':'Golden hour';}
+  function pad(h){return (h<10?'0':'')+h+':00';}
+  function markerPos(){marker.style.left=((state.hour-8)/(21-8)*100)+'%';}
   function render(){
-    timeEl.textContent=pad(state.hour);
-    timeLabelEl.textContent=hourLabel(state.hour);
-    markerPos();
-    if(!state.data){return;}
+    timeEl.textContent=pad(state.hour); timeLabelEl.textContent=hourLabel(state.hour); markerPos();
+    if(!state.data)return;
     var q=state.q.trim().toLowerCase();
-    var rows=state.data.filter(function(t){
-      if(state.area!=='All' && t.area!==state.area) return false;
-      if(q && t.name.toLowerCase().indexOf(q)<0) return false;
-      return true;
-    }).map(function(t){ return {t:t,s:(t.h&&t.h[state.hour])||0}; })
-      .sort(function(a,b){return b.s-a.s;})
-      .slice(0,8);
-
-    if(!rows.length){ listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">No terraces match — try another search or neighbourhood.</p>'; return; }
+    var rows=state.data.filter(function(t){ if(state.area!=='All'&&t.area!==state.area)return false; if(q&&t.name.toLowerCase().indexOf(q)<0)return false; return true; })
+      .map(function(t){return {t:t,s:(t.h&&t.h[state.hour])||0};}).sort(function(a,b){return b.s-a.s;}).slice(0,8);
+    if(!rows.length){listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">No terraces match — try another search or neighbourhood.</p>';return;}
     var html='';
-    rows.forEach(function(r,i){
-      var s=r.s, c=scoreColor(s), t=r.t;
-      var rating=t.googleRating?('★ '+t.googleRating):'';
-      html+='<div class="exp-row" style="animation-delay:'+(i*0.03)+'s">'
-        +'<div class="exp-rank">'+(i+1)+'</div>'
-        +'<div><div class="exp-name">'+t.name+'</div>'
-        +'<div class="exp-meta"><span>'+t.area+'</span>'+(rating?'<span>'+rating+'</span>':'')+'</div>'
+    rows.forEach(function(r,i){ var s=r.s,c=scoreColor(s),t=r.t,rating=t.googleRating?('★ '+t.googleRating):'';
+      html+='<div class="exp-row" style="animation-delay:'+(i*0.03)+'s"><div class="exp-rank">'+(i+1)+'</div>'
+        +'<div><div class="exp-name">'+t.name+'</div><div class="exp-meta"><span>'+t.area+'</span>'+(rating?'<span>'+rating+'</span>':'')+'</div>'
         +'<div class="exp-bar"><i style="width:'+s+'%;background:'+c+'"></i></div></div>'
-        +'<div class="exp-score"><b style="background:'+c+';color:'+(s<15?'var(--ink)':'#fff')+'">'+s+'</b></div>'
-        +'</div>';
+        +'<div class="exp-score"><b style="background:'+c+';color:'+(s<15?'var(--ink)':'#fff')+'">'+s+'</b></div></div>';
     });
     listEl.innerHTML=html;
   }
-
   function buildChips(){
-    var counts={};
-    state.data.forEach(function(t){ counts[t.area]=(counts[t.area]||0)+1; });
+    var counts={}; state.data.forEach(function(t){counts[t.area]=(counts[t.area]||0)+1;});
     var top=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];}).slice(0,7);
-    var areas=['All'].concat(top);
-    chipsEl.innerHTML=areas.map(function(a){
-      return '<button class="exp-chip'+(a===state.area?' on':'')+'" data-area="'+a+'">'+a+'</button>';
-    }).join('');
-    chipsEl.querySelectorAll('.exp-chip').forEach(function(b){
-      b.addEventListener('click',function(){ state.area=b.dataset.area;
-        chipsEl.querySelectorAll('.exp-chip').forEach(function(x){x.classList.toggle('on',x===b);});
-        render();
-      });
-    });
+    chipsEl.innerHTML=['All'].concat(top).map(function(a){return '<button class="exp-chip'+(a===state.area?' on':'')+'" data-area="'+a+'">'+a+'</button>';}).join('');
+    chipsEl.querySelectorAll('.exp-chip').forEach(function(b){ b.addEventListener('click',function(){ state.area=b.dataset.area; chipsEl.querySelectorAll('.exp-chip').forEach(function(x){x.classList.toggle('on',x===b);}); render(); }); });
   }
-
-  slider.addEventListener('input',function(){ state.hour=+slider.value; render(); });
-  searchEl.addEventListener('input',function(){ state.q=searchEl.value; render(); });
-
-  /* Lazy-load the dataset when the explorer scrolls near */
+  slider.addEventListener('input',function(){state.hour=+slider.value;render();});
+  searchEl.addEventListener('input',function(){state.q=searchEl.value;render();});
   var loaded=false;
-  function loadData(){
-    if(loaded)return; loaded=true;
-    fetch('terraces-lite.json').then(function(r){return r.json();}).then(function(d){
-      state.data=d;
-      /* default hour = current Amsterdam hour, clamped to 8–21 */
-      try{
-        var h=+new Date().toLocaleString('en-GB',{timeZone:'Europe/Amsterdam',hour:'2-digit',hour12:false});
-        if(h>=8&&h<=21){ state.hour=h; slider.value=h; }
-      }catch(e){}
+  function loadData(){ if(loaded)return; loaded=true;
+    fetch('terraces-lite.json').then(function(r){return r.json();}).then(function(d){ state.data=d;
+      try{ var h=+new Date().toLocaleString('en-GB',{timeZone:'Europe/Amsterdam',hour:'2-digit',hour12:false}); if(h>=8&&h<=21){state.hour=h;slider.value=h;} }catch(e){}
       buildChips(); render();
-    }).catch(function(){
-      listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">Couldn\'t load the live demo — but the full experience is in the app.</p>';
-    });
+    }).catch(function(){ listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">Couldn\'t load the live demo — the full experience is in the app.</p>'; });
   }
-  var dio=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ loadData(); dio.disconnect(); } });
-  },{rootMargin:'300px'});
-  dio.observe($('#explore'));
-
+  new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){loadData();}});},{rootMargin:'300px'}).observe($('#explore'));
   render();
 })();
 </script>
