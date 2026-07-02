@@ -135,6 +135,10 @@
   .exp-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
   .exp-chip{border:1px solid var(--border);background:rgba(255,255,255,.6);color:var(--ink-soft);border-radius:100px;padding:7px 14px;font-size:.82rem;font-weight:500;cursor:pointer;transition:.14s;}
   .exp-chip:hover{border-color:var(--burnt);color:var(--burnt);} .exp-chip.on{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+  .exp-main{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start;}
+  .exp-map{height:360px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--sand-deep);position:relative;z-index:1;}
+  .exp-map .leaflet-container{font-family:'Inter',sans-serif;}
+  @media(max-width:640px){.exp-main{grid-template-columns:1fr;}.exp-map{height:260px;}}
   .exp-list{display:flex;flex-direction:column;gap:8px;min-height:120px;}
   .exp-row{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:12px;background:rgba(255,255,255,.75);border:1px solid rgba(217,99,62,.08);border-radius:14px;padding:11px 14px;transition:transform .16s var(--ease),box-shadow .16s;animation:rowin .45s both;}
   @keyframes rowin{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
@@ -276,7 +280,10 @@
       <input class="sun-input" id="hourSlider" type="range" min="8" max="21" step="1" value="14" aria-label="Hour of day">
     </div>
     <div class="exp-chips" id="expChips"></div>
-    <div class="exp-list" id="expList"><p style="text-align:center;color:var(--ink-soft);padding:30px 0;">Loading live terrace data…</p></div>
+    <div class="exp-main">
+      <div id="expMap" class="exp-map" role="img" aria-label="Map of sun-scored terraces across Amsterdam"></div>
+      <div class="exp-list" id="expList"><p style="text-align:center;color:var(--ink-soft);padding:30px 0;">Loading live terrace data…</p></div>
+    </div>
     <p class="exp-foot" id="expFoot">Showing clear-sky sun potential by hour. The app layers live cloud cover on top.</p>
   </div>
 </section>
@@ -463,25 +470,47 @@
   })();
 
   /* ── Interactive terrace explorer ── */
-  var state={data:null,hour:14,area:'All',q:''};
+  var map=null, markers=[], state={data:null,hour:14,area:'All',q:''};
   var listEl=$('#expList'),timeEl=$('#expTime'),timeLabelEl=$('#expTimeLabel'),slider=$('#hourSlider'),marker=$('#sunMarker'),chipsEl=$('#expChips'),searchEl=$('#expSearch');
-  function scoreColor(s){return s>=65?'var(--burnt)':s>=40?'var(--peach)':s>=15?'var(--mustard)':'var(--mist)';}
+  function scoreHex(s){return s>=65?'#D9633E':s>=40?'#FBA85A':s>=15?'#F4D58D':'#C9B58C';}
   function hourLabel(h){return h<11?'Morning sun':h<15?'Midday sun':h<18?'Afternoon sun':h<20?'Evening sun':'Golden hour';}
   function pad(h){return (h<10?'0':'')+h+':00';}
   function markerPos(){marker.style.left=((state.hour-8)/(21-8)*100)+'%';}
+  function ensureLeaflet(cb){
+    if(window.L)return cb();
+    var css=document.createElement('link');css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(css);
+    var sc=document.createElement('script');sc.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';sc.onload=cb;sc.onerror=cb;document.head.appendChild(sc);
+  }
+  function initMap(){
+    map=L.map('expMap',{scrollWheelZoom:false}).setView([52.372,4.897],12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
+    markers=state.data.filter(function(t){return t.lat&&t.lng;}).map(function(t){
+      var m=L.circleMarker([t.lat,t.lng],{radius:5,weight:1.2,color:'#fff',fillColor:'#F4D58D',fillOpacity:.9}).addTo(map);
+      m.bindPopup('<b>'+t.name+'</b><br>'+t.area+(t.googleRating?' &middot; ★ '+t.googleRating:''));
+      return {m:m,t:t};
+    });
+    setTimeout(function(){try{map.invalidateSize();}catch(e){}},220);
+  }
+  function updateMap(){
+    if(!map)return; var q=state.q.trim().toLowerCase();
+    markers.forEach(function(o){ var t=o.t, ok=(state.area==='All'||t.area===state.area)&&(!q||t.name.toLowerCase().indexOf(q)>=0);
+      if(ok){ var s=(t.h&&t.h[state.hour])||0; o.m.setStyle({fillColor:scoreHex(s),opacity:1,fillOpacity:.92,radius:5}); }
+      else{ o.m.setStyle({opacity:0,fillOpacity:0,radius:0}); } });
+  }
   function render(){
     timeEl.textContent=pad(state.hour); timeLabelEl.textContent=hourLabel(state.hour); markerPos();
     if(!state.data)return;
     var q=state.q.trim().toLowerCase();
     var rows=state.data.filter(function(t){ if(state.area!=='All'&&t.area!==state.area)return false; if(q&&t.name.toLowerCase().indexOf(q)<0)return false; return true; })
       .map(function(t){return {t:t,s:(t.h&&t.h[state.hour])||0};}).sort(function(a,b){return b.s-a.s;}).slice(0,8);
+    updateMap();
     if(!rows.length){listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">No terraces match — try another search or neighbourhood.</p>';return;}
     var html='';
-    rows.forEach(function(r,i){ var s=r.s,c=scoreColor(s),t=r.t,rating=t.googleRating?('★ '+t.googleRating):'';
+    rows.forEach(function(r,i){ var s=r.s,c=scoreHex(s),t=r.t,rating=t.googleRating?('★ '+t.googleRating):'';
       html+='<div class="exp-row" style="animation-delay:'+(i*0.03)+'s"><div class="exp-rank">'+(i+1)+'</div>'
         +'<div><div class="exp-name">'+t.name+'</div><div class="exp-meta"><span>'+t.area+'</span>'+(rating?'<span>'+rating+'</span>':'')+'</div>'
         +'<div class="exp-bar"><i style="width:'+s+'%;background:'+c+'"></i></div></div>'
-        +'<div class="exp-score"><b style="background:'+c+';color:'+(s<15?'var(--ink)':'#fff')+'">'+s+'</b></div></div>';
+        +'<div class="exp-score"><b style="background:'+c+';color:'+(s<15?'#2A1F15':'#fff')+'">'+s+'</b></div></div>';
     });
     listEl.innerHTML=html;
   }
@@ -497,7 +526,7 @@
   function loadData(){ if(loaded)return; loaded=true;
     fetch('terraces-lite.json').then(function(r){return r.json();}).then(function(d){ state.data=d;
       try{ var h=+new Date().toLocaleString('en-GB',{timeZone:'Europe/Amsterdam',hour:'2-digit',hour12:false}); if(h>=8&&h<=21){state.hour=h;slider.value=h;} }catch(e){}
-      buildChips(); render();
+      ensureLeaflet(function(){ try{ if(window.L) initMap(); }catch(e){} buildChips(); render(); });
     }).catch(function(){ listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">Couldn\'t load the live demo — the full experience is in the app.</p>'; });
   }
   new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){loadData();}});},{rootMargin:'300px'}).observe($('#explore'));
