@@ -108,7 +108,7 @@ export const strings = {
     shortlistFull: 'Max. 3 terrassen — oudste vervangen',
 
     // Landing page
-    tagline: 'De zonnigste terrassen van Amsterdam',
+    tagline: 'Vind jouw plek in de zon.',
     sunniestNow: 'NU ZONNIGST',
     seeAllTerraces: 'Alle terrassen bekijken',
     featured: 'Uitgelicht',
@@ -477,7 +477,7 @@ export const strings = {
     shortlistFull: 'Max 3 terraces — oldest replaced',
 
     // Landing page
-    tagline: 'The sunniest terraces in Amsterdam',
+    tagline: 'Find your place in the sun.',
     sunniestNow: 'SUNNIEST RIGHT NOW',
     seeAllTerraces: 'See all terraces',
     featured: 'Featured',
