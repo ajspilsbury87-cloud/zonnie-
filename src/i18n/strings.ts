@@ -99,6 +99,12 @@ export const strings = {
     getDirections: 'Routebeschrijving',
     reserveTable: 'Reserveer een tafel',
 
+    // Peek card (pin tap → compact preview over the map)
+    peekSunUntil: (hhmm: string) => `☀️ Zon tot ${hhmm}`,
+    peekInShade: 'In de schaduw',
+    peekOpenA11y: 'Open terrasdetails',
+    peekDismissA11y: 'Sluit voorbeeld',
+
     // Group vote shortlist
     askTheGroup: (n: number) => `Vraag de groep (${n})`,
     askTheGroupA11y: 'Deel terrassenselectie met de groep',
@@ -467,6 +473,12 @@ export const strings = {
     share: 'Share ☀️',
     getDirections: 'Get Directions',
     reserveTable: 'Reserve a table',
+
+    // Peek card (pin tap → compact preview over the map)
+    peekSunUntil: (hhmm: string) => `☀️ Sun until ${hhmm}`,
+    peekInShade: 'In shade',
+    peekOpenA11y: 'Open terrace details',
+    peekDismissA11y: 'Dismiss preview',
 
     // Group vote shortlist
     askTheGroup: (n: number) => `Ask the group (${n})`,

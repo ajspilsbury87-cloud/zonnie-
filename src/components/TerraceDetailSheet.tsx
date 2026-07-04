@@ -110,6 +110,10 @@ export function TerraceDetailSheet() {
   };
   const ref = useRef<BottomSheet>(null);
   const selectedId = useSelectionStore((s) => s.selectedId);
+  // Peek-card pattern: a map-pin tap selects at stage 'peek' (compact card
+  // over the map, rendered by TerracePeekCard); this sheet only opens once
+  // the selection is promoted to stage 'full'.
+  const stage = useSelectionStore((s) => s.stage);
   const clear = useSelectionStore((s) => s.clear);
   const selectTerrace = useSelectionStore((s) => s.select);
   const isPro = usePurchaseStore((s) => s.isPro);
@@ -146,12 +150,14 @@ export function TerraceDetailSheet() {
   // stayed open. Drive the actual snap state imperatively here so
   // every selectedId change (open AND close) animates.
   useEffect(() => {
-    if (selectedId != null) {
+    if (selectedId != null && stage === 'full') {
       ref.current?.snapToIndex(0);
       // Sun Log: record that the user opened this terrace's detail sheet.
       // `score` is 0 here on first render (computed below), so we read it
       // via getState() to avoid a stale-closure; it will be 0 until the
       // score memo resolves, which is fine — the terraceId is the key datum.
+      // Peek-only views are deliberately NOT logged as 'open' — the user
+      // never saw the detail sheet.
       useSunLogStore.getState().log({
         ts: Date.now(),
         terraceId: selectedId,
@@ -160,7 +166,19 @@ export function TerraceDetailSheet() {
     } else {
       ref.current?.close();
     }
-  }, [selectedId]);
+  }, [selectedId, stage]);
+
+  /**
+   * Gorhom fires onClose for the programmatic close() above as well as for
+   * user drag-downs. Only a close while at stage 'full' should clear the
+   * selection — otherwise the close() we issue when a PEEK starts could
+   * immediately wipe the peek selection. Read the store fresh (getState)
+   * so the guard never acts on a stale stage.
+   */
+  const handleSheetClose = useCallback(() => {
+    const s = useSelectionStore.getState();
+    if (s.stage === 'full') s.clear();
+  }, []);
 
   const placeEntry = terrace?.placeId ? placesByPlaceId[terrace.placeId] : undefined;
   const placeDetails = placeEntry?.status === 'ready' ? placeEntry.data : undefined;
@@ -603,7 +621,7 @@ export function TerraceDetailSheet() {
   // MainSheet does (which works fine).
   //   index = -1 → closed (sheet off-screen below)
   //   index =  0 → open at first snap point (70%)
-  const sheetIndex = selectedId != null ? 0 : -1;
+  const sheetIndex = selectedId != null && stage === 'full' ? 0 : -1;
 
   // Bottom inset so the last detail section clears the home indicator when
   // the content scrolls (the sheet content was previously not scrollable).
@@ -616,7 +634,7 @@ export function TerraceDetailSheet() {
       snapPoints={['70%', '92%']}
       enableDynamicSizing={false}
       enablePanDownToClose
-      onClose={clear}
+      onClose={handleSheetClose}
       backdropComponent={renderBackdrop}
       handleIndicatorStyle={styles.handle}
       backgroundStyle={styles.background}

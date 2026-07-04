@@ -11,6 +11,7 @@ import { MainSheet } from '@/src/components/MainSheet';
 import { ProPaywall } from '@/src/components/ProPaywall';
 import { ShortlistBar } from '@/src/components/ShortlistBar';
 import { TerraceDetailSheet } from '@/src/components/TerraceDetailSheet';
+import { TerracePeekCard } from '@/src/components/TerracePeekCard';
 import { ZonnieMap } from '@/src/components/ZonnieMap';
 import type { ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { haptics } from '@/src/lib/haptics';
@@ -20,9 +21,17 @@ import { palette, radii, spacing } from '@/src/theme/tokens';
 
 export default function Index() {
   const select = useSelectionStore((s) => s.select);
-  const handleSelect = useCallback(
+  const peek = useSelectionStore((s) => s.peek);
+  // List rows commit to a terrace → open the full detail sheet directly.
+  const handleListSelect = useCallback(
     (item: ScoredTerrace) => select(item.terrace.id),
     [select],
+  );
+  // Map pins are exploratory → show the compact peek card first
+  // (AllTrails pattern); tapping the card expands to the full sheet.
+  const handlePinSelect = useCallback(
+    (item: ScoredTerrace) => peek(item.terrace.id),
+    [peek],
   );
 
   // Landing store — drives both the LandingPage overlay and the home button.
@@ -66,21 +75,22 @@ export default function Index() {
   //   3. FilterChips        — floating chip row above the map, below detail sheet
   //   4. SunLegend          — left-edge colour key, same gate as FilterChips
   //   5. LandingPage        — Home overlay — when visible (no zIndex; order is the stack)
-  //   6. TerraceDetailSheet — opens ABOVE Home so detail works over Home
-  //   7. ChaseTheSunSheet   — opens ABOVE TerraceDetailSheet (rendered after)
-  //   8. ProPaywall         — modal, always above
-  //   9. ShortlistBar       — floating bar, always above
-  //  10. home button        — top-left overlay, shown when Home is hidden
+  //   6. TerracePeekCard    — compact pin-tap preview, floats over map + MainSheet
+  //   7. TerraceDetailSheet — opens ABOVE Home so detail works over Home
+  //   8. ChaseTheSunSheet   — opens ABOVE TerraceDetailSheet (rendered after)
+  //   9. ProPaywall         — modal, always above
+  //  10. ShortlistBar       — floating bar, always above
+  //  11. home button        — top-left overlay, shown when Home is hidden
   return (
     <View style={styles.container}>
       {showHeavySurfaces ? (
         <ErrorBoundary surface="ZonnieMap">
-          <ZonnieMap onSelect={handleSelect} />
+          <ZonnieMap onSelect={handlePinSelect} />
         </ErrorBoundary>
       ) : null}
       {showHeavySurfaces ? (
         <ErrorBoundary surface="MainSheet">
-          <MainSheet onSelect={handleSelect} />
+          <MainSheet onSelect={handleListSelect} />
         </ErrorBoundary>
       ) : null}
       {/* FilterChips — floating chip row above the map.
@@ -105,6 +115,13 @@ export default function Index() {
           <LandingPage />
         </ErrorBoundary>
       ) : null}
+      {/* TerracePeekCard — compact preview after a pin tap. Renders null
+          unless a selection is at stage 'peek', so it costs nothing the
+          rest of the time. Above MainSheet (paints over its handle area),
+          below the detail/crawl sheets and modals. */}
+      <ErrorBoundary surface="TerracePeekCard">
+        <TerracePeekCard />
+      </ErrorBoundary>
       <ErrorBoundary surface="TerraceDetailSheet">
         <TerraceDetailSheet />
       </ErrorBoundary>
