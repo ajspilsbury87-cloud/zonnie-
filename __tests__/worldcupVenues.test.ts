@@ -189,11 +189,12 @@ describe('Data fixes', () => {
     expect(t?.name).toBe('WestWeelde');
   });
 
-  test('terrace count is 1029', () => {
-    // 993 → 988 (removed 5 stale) → 987 (deduped LuminAir) → 1028: added 41
-    // newly-sourced real terraces (ids 1479–1519, geocoded via OSM) → 1029:
-    // added Juno (De Pijp, id 1520), a genuine gap a user flagged.
-    expect(TERRACES.length).toBe(1029);
+  test('terrace count is 1330', () => {
+    // 993 → 988 (removed 5 stale) → 987 (deduped LuminAir) → 1028 (added 41
+    // OSM-geocoded) → 1029 (added Juno) → 1330: citywide Google Places sweep
+    // 2026-07-05 added 301 confirmed-outdoor venues (ids 1521–1821) and
+    // upgraded 41 estimated entries to verified places_api coords.
+    expect(TERRACES.length).toBe(1330);
   });
 
   test('#70 Bar Botanique is in area Oost', () => {
