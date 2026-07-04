@@ -51,9 +51,13 @@ export default function Index() {
   }, [landingVisible]);
   const showHeavySurfaces = homeExited || !landingVisible;
 
-  // Read selectedId so the home button hides when a detail sheet is open.
-  // We don't want the button floating over the detail sheet backdrop.
+  // The floating map UI (chips, legend, home button) hides only when the
+  // FULL detail sheet is open — its backdrop covers them. A 'peek'
+  // selection keeps the map live behind the compact card, so those
+  // controls stay visible and usable.
   const selectedId = useSelectionStore((s) => s.selectedId);
+  const stage = useSelectionStore((s) => s.stage);
+  const detailSheetOpen = selectedId != null && stage === 'full';
 
   // Safe-area insets for the home button so it clears the status bar / notch.
   const insets = useSafeAreaInsets();
@@ -95,17 +99,18 @@ export default function Index() {
       ) : null}
       {/* FilterChips — floating chip row above the map.
           Hidden when the Home overlay is visible (the map itself is hidden)
-          and when a detail sheet is open (detail backdrop covers chips). */}
-      {!landingVisible && selectedId == null ? (
+          and when the FULL detail sheet is open (its backdrop covers chips).
+          Still shown during a peek — the map remains the active surface. */}
+      {!landingVisible && !detailSheetOpen ? (
         <ErrorBoundary surface="FilterChips">
           <FilterChips />
         </ErrorBoundary>
       ) : null}
       {/* SunLegend — collapsible colour key on the left edge of the map.
           Same visibility gate as FilterChips: only shown on the live map
-          (no home overlay, no detail sheet open). Placed before
+          (no home overlay, no full detail sheet open). Placed before
           TerraceDetailSheet so the detail sheet renders above it. */}
-      {!landingVisible && selectedId == null ? (
+      {!landingVisible && !detailSheetOpen ? (
         <ErrorBoundary surface="SunLegend">
           <SunLegend />
         </ErrorBoundary>
@@ -135,10 +140,11 @@ export default function Index() {
         <ShortlistBar />
       </ErrorBoundary>
       {/* Home button — shown only when the map is the active surface:
-          Home overlay is hidden AND no detail sheet is open. Hiding it
+          Home overlay is hidden AND the full detail sheet is closed
+          (a peek card doesn't count — the map is still active). Hiding it
           when a detail is open prevents the button floating over the sheet
           backdrop. Document order (last sibling) is sufficient for z-layering. */}
-      {!landingVisible && selectedId == null ? (
+      {!landingVisible && !detailSheetOpen ? (
         <Pressable
           onPress={handleHomePress}
           style={[styles.homeButton, { top: insets.top + spacing.sm }]}

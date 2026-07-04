@@ -76,11 +76,14 @@ function PeekCardBody({ terrace }: { terrace: Terrace }) {
   const weatherProfile = useTimeStore((s) => s.weatherProfile);
   const weatherByDate = useWeatherStore((s) => s.byDate);
 
+  // Static per-terrace context — cheap table lookups, but resolved once
+  // and shared by both scoring memos below.
+  const buildings = useMemo(() => getBuildingsForTerrace(terrace.id), [terrace.id]);
+  const trees = useMemo(() => getTreesForTerrace(terrace.id), [terrace.id]);
+
   // Same scoring inputs as TerraceDetailSheet so the chip here always
   // matches the chip the user sees after expanding.
   const score = useMemo(() => {
-    const buildings = getBuildingsForTerrace(terrace.id);
-    const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -94,12 +97,10 @@ function PeekCardBody({ terrace }: { terrace: Terrace }) {
       buildings,
       trees,
     );
-  }, [terrace, dateOffset, fromHour, toHour, weatherProfile, weatherByDate]);
+  }, [terrace, buildings, trees, dateOffset, fromHour, toHour, weatherProfile, weatherByDate]);
 
   /** "Sun until HH:00" from the visit-window start, or null when shaded. */
   const sunUntil = useMemo(() => {
-    const buildings = getBuildingsForTerrace(terrace.id);
-    const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
@@ -115,7 +116,7 @@ function PeekCardBody({ terrace }: { terrace: Terrace }) {
       ).score,
     );
     return sunUntilHour(hourlyScores, fromHour);
-  }, [terrace, dateOffset, fromHour, weatherProfile, weatherByDate]);
+  }, [terrace, buildings, trees, dateOffset, fromHour, weatherProfile, weatherByDate]);
 
   const handleExpand = useCallback(() => {
     haptics.light();
