@@ -114,7 +114,7 @@ export function TerraceDetailSheet() {
   // over the map, rendered by TerracePeekCard); this sheet only opens once
   // the selection is promoted to stage 'full'.
   const stage = useSelectionStore((s) => s.stage);
-  const clear = useSelectionStore((s) => s.clear);
+  const collapse = useSelectionStore((s) => s.collapse);
   const selectTerrace = useSelectionStore((s) => s.select);
   const isPro = usePurchaseStore((s) => s.isPro);
   const showPaywall = useProPaywallStore((s) => s.show);
@@ -170,14 +170,20 @@ export function TerraceDetailSheet() {
 
   /**
    * Gorhom fires onClose for the programmatic close() above as well as for
-   * user drag-downs. Only a close while at stage 'full' should clear the
-   * selection — otherwise the close() we issue when a PEEK starts could
-   * immediately wipe the peek selection. Read the store fresh (getState)
-   * so the guard never acts on a stale stage.
+   * user drag-downs. Only a close that arrives while at stage 'full' is a
+   * real user dismissal — the close() we issue when a PEEK starts arrives
+   * with stage already 'peek' and must be ignored. Read the store fresh
+   * (getState) so the guard never acts on a stale stage.
+   *
+   * A real dismissal DEMOTES to the peek card rather than clearing
+   * (AllTrails behaviour): dragging the sheet away means "give me the map
+   * back", not "forget this terrace" — the card and pin halo stay so the
+   * user keeps their place. Explicitly closing the card (✕ / map tap) is
+   * what clears.
    */
   const handleSheetClose = useCallback(() => {
     const s = useSelectionStore.getState();
-    if (s.stage === 'full') s.clear();
+    if (s.stage === 'full' && s.selectedId != null) s.collapse();
   }, []);
 
   const placeEntry = terrace?.placeId ? placesByPlaceId[terrace.placeId] : undefined;
@@ -589,8 +595,12 @@ export function TerraceDetailSheet() {
     if (!terrace) return;
     haptics.light();
     setPanTo({ lat: terrace.lat, lng: terrace.lng });
-    clear();
-  }, [terrace, setPanTo, clear]);
+    // Demote to the peek card instead of clearing (pre-peek-card this
+    // dropped the selection entirely): the map pans to the pin AND the
+    // compact card stays anchored to it, so the user lands on the map
+    // with their terrace still in hand.
+    collapse();
+  }, [terrace, setPanTo, collapse]);
 
   /**
    * Open the venue's table-reservation page. Premium feature: free users

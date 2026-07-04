@@ -21,9 +21,11 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   Easing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -142,48 +144,92 @@ function PeekCardBody({ terrace }: { terrace: Terrace }) {
       easing: Easing.out(Easing.quad),
     });
   }, [translateY, opacity]);
+  /**
+   * Swipe affordance mirroring how the sheets are driven: swipe UP
+   * promotes to the full sheet, swipe DOWN dismisses. RNGH auto-
+   * workletizes the callbacks when reanimated is installed, so the
+   * card tracks the finger on the UI thread; only the terminal
+   * expand/dismiss hops back to JS (runOnJS), once per gesture.
+   * Taps still hit the Pressable — Pan only activates after ~10 dp
+   * of movement.
+   */
+  const dragY = useSharedValue(0);
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .onUpdate((e) => {
+          // Follow the finger: damped upward (the card resists, hinting
+          // "release to expand"), freer downward toward dismissal.
+          dragY.value =
+            e.translationY < 0
+              ? e.translationY / 3
+              : Math.min(e.translationY, 96);
+        })
+        .onEnd((e) => {
+          if (e.translationY < -28 || e.velocityY < -600) {
+            runOnJS(handleExpand)();
+          } else if (e.translationY > 56 || e.velocityY > 600) {
+            runOnJS(handleDismiss)();
+          } else {
+            // Not far/fast enough either way — spring the card home.
+            dragY.value = withTiming(0, {
+              duration: 180,
+              easing: Easing.out(Easing.quad),
+            });
+          }
+        }),
+    [dragY, handleExpand, handleDismiss],
+  );
+
   const cardStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ translateY: translateY.value }],
+    transform: [{ translateY: translateY.value + dragY.value }],
   }));
 
   const sunLine = sunUntil != null ? t.peekSunUntil(formatHour(sunUntil)) : t.peekInShade;
 
   return (
-    <Animated.View
-      style={[styles.wrap, { bottom: insets.bottom + spacing.lg }, cardStyle]}
-      pointerEvents="box-none"
-    >
-      <Pressable
-        onPress={handleExpand}
-        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-        accessibilityRole="button"
-        accessibilityLabel={terrace.name}
-        accessibilityHint={t.peekOpenA11y}
+    <GestureDetector gesture={panGesture}>
+      <Animated.View
+        style={[styles.wrap, { bottom: insets.bottom + spacing.lg }, cardStyle]}
+        pointerEvents="box-none"
       >
-        <View style={styles.textCol}>
-          <Text style={styles.name} numberOfLines={1}>
-            {terrace.name}
-          </Text>
-          <Text style={styles.subtitle} numberOfLines={1}>
-            {terrace.area}  ·  {sunLine}
-          </Text>
-        </View>
-        <View style={[styles.scoreChip, { backgroundColor: scoreToColor(score) }]}>
-          <Text style={styles.scorePct}>{Math.round(score * 100)}</Text>
-          <Text style={styles.scoreUnit}>%</Text>
-        </View>
         <Pressable
-          onPress={handleDismiss}
-          hitSlop={8}
-          style={({ pressed }) => [styles.closeBtn, pressed && styles.closeBtnPressed]}
+          onPress={handleExpand}
+          style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
           accessibilityRole="button"
-          accessibilityLabel={t.peekDismissA11y}
+          accessibilityLabel={terrace.name}
+          accessibilityHint={t.peekOpenA11y}
         >
-          <Text style={styles.closeGlyph}>✕</Text>
+          {/* Grabber — signals the card is draggable, same visual language
+              as the bottom sheets' handle. */}
+          <View style={styles.grabber} />
+          <View style={styles.row}>
+            <View style={styles.textCol}>
+              <Text style={styles.name} numberOfLines={1}>
+                {terrace.name}
+              </Text>
+              <Text style={styles.subtitle} numberOfLines={1}>
+                {terrace.area}  ·  {sunLine}
+              </Text>
+            </View>
+            <View style={[styles.scoreChip, { backgroundColor: scoreToColor(score) }]}>
+              <Text style={styles.scorePct}>{Math.round(score * 100)}</Text>
+              <Text style={styles.scoreUnit}>%</Text>
+            </View>
+            <Pressable
+              onPress={handleDismiss}
+              hitSlop={8}
+              style={({ pressed }) => [styles.closeBtn, pressed && styles.closeBtnPressed]}
+              accessibilityRole="button"
+              accessibilityLabel={t.peekDismissA11y}
+            >
+              <Text style={styles.closeGlyph}>✕</Text>
+            </Pressable>
+          </View>
         </Pressable>
-      </Pressable>
-    </Animated.View>
+      </Animated.View>
+    </GestureDetector>
   );
 }
 
@@ -197,12 +243,10 @@ const styles = StyleSheet.create({
     // `bottom` set inline — needs the safe-area inset.
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
     backgroundColor: palette.white,
     borderRadius: radii.lg,
-    paddingVertical: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
     paddingLeft: spacing.lg,
     paddingRight: spacing.md,
     // Same floating treatment as the home/locate buttons so the card
@@ -215,6 +259,21 @@ const styles = StyleSheet.create({
   },
   cardPressed: {
     opacity: 0.85,
+  },
+  // Mirrors the bottom sheets' handle indicator so "you can drag this"
+  // reads instantly. Centered above the content row.
+  grabber: {
+    alignSelf: 'center',
+    width: 36,
+    height: 4,
+    borderRadius: radii.pill,
+    backgroundColor: palette.mistDeep,
+    marginBottom: spacing.sm,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
   },
   textCol: {
     flex: 1,

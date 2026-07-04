@@ -73,6 +73,23 @@ describe('selectionStore stage machine', () => {
     expect(s.stage).toBe('peek');
   });
 
+  it('collapse() demotes the full sheet to a peek, keeping the selection', () => {
+    // Drag-down on the full sheet and "Show on Map" both use this: the
+    // user asked for the map back, not to forget the terrace.
+    useSelectionStore.getState().select(6);
+    useSelectionStore.getState().collapse();
+    const s = useSelectionStore.getState();
+    expect(s.selectedId).toBe(6);
+    expect(s.stage).toBe('peek');
+  });
+
+  it('collapse() with nothing selected is a harmless no-op state', () => {
+    useSelectionStore.getState().collapse();
+    const s = useSelectionStore.getState();
+    expect(s.selectedId).toBeNull();
+    expect(s.stage).toBe('peek');
+  });
+
   it('clear() resets selection AND returns stage to the resting peek value', () => {
     // The reset matters: TerraceDetailSheet's onClose guard only clears
     // when stage === 'full', so a stale 'full' after clear() would make

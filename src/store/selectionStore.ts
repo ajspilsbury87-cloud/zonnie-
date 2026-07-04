@@ -35,6 +35,13 @@ interface SelectionState {
   peek: (id: number) => void;
   /** Promote the current peek to the full detail sheet. */
   expand: () => void;
+  /**
+   * Demote the full detail sheet back to the peek card, keeping the
+   * selection (and the pin halo). Used when the user drags the full
+   * sheet closed and by "Show on Map" — both mean "give me the map
+   * back" rather than "I'm done with this terrace".
+   */
+  collapse: () => void;
   clear: () => void;
   setPanTo: (target: PanTarget) => void;
   clearPanTo: () => void;
@@ -50,6 +57,7 @@ export const useSelectionStore = create<SelectionState>((set) => ({
   select: (id) => set({ selectedId: id, stage: 'full' }),
   peek: (id) => set({ selectedId: id, stage: 'peek' }),
   expand: () => set({ stage: 'full' }),
+  collapse: () => set({ stage: 'peek' }),
   clear: () => set({ selectedId: null, stage: 'peek' }),
   setPanTo: (target) => set({ panTo: target }),
   clearPanTo: () => set({ panTo: null }),
