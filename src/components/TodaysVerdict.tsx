@@ -38,10 +38,11 @@ import { useStrings } from '@/src/i18n/useStrings';
 import { cachedHourScore } from '@/src/hooks/scoreCache';
 import { TERRACES } from '@/src/data/terraces';
 import { computeTodaysVerdict, VERDICT_STRONG_THRESHOLD } from '@/src/engines/todaysVerdict';
+import { SunArc } from '@/src/components/SunArc';
 import { haptics } from '@/src/lib/haptics';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
-import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
+import { isPastSunsetAmsterdam, nowAmsterdamHourFloat, selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
 import type { Terrace } from '@/src/engines/types';
@@ -215,6 +216,19 @@ export function TodaysVerdict() {
       {/* Stat line — only when weather is loaded and there are strong terraces */}
       {statText != null ? (
         <Text style={styles.statLine}>{statText}</Text>
+      ) : null}
+
+      {/* Sun arc — the day as a horizon. Warm dots mark the city's best
+          window; the sun marker sits at the current time (hidden on the
+          post-sunset tomorrow view — the sun is below the horizon). */}
+      {!isLoading ? (
+        <SunArc
+          fromHour={DAY_FROM}
+          toHour={DAY_TO}
+          bestFrom={verdictData.bestWindow?.fromHour ?? null}
+          bestTo={verdictData.bestWindow?.toHour ?? null}
+          nowHour={pastSunset ? null : nowAmsterdamHourFloat()}
+        />
       ) : null}
 
       {/* Favourite highlight — only when user has a qualifying favourite */}

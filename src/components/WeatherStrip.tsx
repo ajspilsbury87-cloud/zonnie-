@@ -58,11 +58,15 @@ interface CellProps {
 }
 
 function Cell({ hour, temp, cloudCover, windSpeed, windDirection }: CellProps) {
+  // Genuinely sunny hours (same <25% threshold as the ☀ glyph) get a warm
+  // cream cell so "sunny vs cloudy" reads at a glance before any text does —
+  // the strip literally warms up when the sun is out.
+  const sunny = cloudCover < 25;
   return (
-    <View style={styles.cell}>
+    <View style={[styles.cell, sunny && styles.cellSunny]}>
       <Text style={styles.hour}>{hour.toString().padStart(2, '0')}</Text>
       <Text style={styles.glyph}>{cloudGlyph(cloudCover)}</Text>
-      <Text style={styles.temp}>{temp}°</Text>
+      <Text style={[styles.temp, sunny && styles.tempSunny]}>{temp}°</Text>
       <Text
         style={styles.detail}
         numberOfLines={1}
@@ -172,6 +176,12 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     backgroundColor: palette.sandDeep,
     alignItems: 'center',
+  },
+  cellSunny: {
+    backgroundColor: palette.cream,
+  },
+  tempSunny: {
+    color: palette.cocoa,
   },
   hour: {
     fontFamily: fonts.bodySemibold,

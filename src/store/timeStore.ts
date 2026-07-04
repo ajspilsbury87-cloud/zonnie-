@@ -42,6 +42,18 @@ function nowAmsterdamHour(): number {
 }
 
 /**
+ * Current Amsterdam time as a fractional hour (14:30 → 14.5). Used by visual
+ * elements (TodaysVerdict's sun arc) that place "now" between hour marks;
+ * integer consumers keep using nowAmsterdamHour.
+ */
+export function nowAmsterdamHourFloat(): number {
+  const [hh, mm] = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'HH:mm')
+    .split(':')
+    .map(Number);
+  return (hh ?? 12) + (mm ?? 0) / 60;
+}
+
+/**
  * True when the current Amsterdam time is past today's sunset. After sunset
  * there's no sun to chase tonight, so the app pivots its default day to
  * TOMORROW — the verdict card, the sunniest list, and the map all open on
