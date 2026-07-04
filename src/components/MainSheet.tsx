@@ -53,6 +53,12 @@ export function MainSheet({ onSelect }: MainSheetProps) {
   // sees the map — otherwise the listing covers the destination.
   // Subscribe to panTo; on transition null → non-null, snap to index 0.
   const panTo = useSelectionStore((s) => s.panTo);
+  // Peek card active (map pin tapped): same minimise-to-peek move as panTo,
+  // for the same reason — the user just expressed "I'm looking at the MAP",
+  // so this sheet drops to its lowest snap and the peek card floats over it.
+  const peekActive = useSelectionStore(
+    (s) => s.selectedId != null && s.stage === 'peek',
+  );
 
   // Group-vote shortlist mode. The floating "Ask the group" bar is rendered
   // absolute-bottom inside the sheet content, which Gorhom lays out at the
@@ -74,6 +80,12 @@ export function MainSheet({ onSelect }: MainSheetProps) {
       ref.current?.snapToIndex(0);
     }
   }, [panTo]);
+
+  useEffect(() => {
+    if (peekActive) {
+      ref.current?.snapToIndex(0);
+    }
+  }, [peekActive]);
 
   useEffect(() => {
     if (isSelectingShortlist) {

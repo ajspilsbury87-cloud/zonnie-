@@ -11,6 +11,7 @@ import { MainSheet } from '@/src/components/MainSheet';
 import { ProPaywall } from '@/src/components/ProPaywall';
 import { ShortlistBar } from '@/src/components/ShortlistBar';
 import { TerraceDetailSheet } from '@/src/components/TerraceDetailSheet';
+import { TerracePeekCard } from '@/src/components/TerracePeekCard';
 import { ZonnieMap } from '@/src/components/ZonnieMap';
 import type { ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { haptics } from '@/src/lib/haptics';
@@ -20,9 +21,17 @@ import { palette, radii, spacing } from '@/src/theme/tokens';
 
 export default function Index() {
   const select = useSelectionStore((s) => s.select);
-  const handleSelect = useCallback(
+  const peek = useSelectionStore((s) => s.peek);
+  // List rows commit to a terrace → open the full detail sheet directly.
+  const handleListSelect = useCallback(
     (item: ScoredTerrace) => select(item.terrace.id),
     [select],
+  );
+  // Map pins are exploratory → show the compact peek card first
+  // (AllTrails pattern); tapping the card expands to the full sheet.
+  const handlePinSelect = useCallback(
+    (item: ScoredTerrace) => peek(item.terrace.id),
+    [peek],
   );
 
   // Landing store — drives both the LandingPage overlay and the home button.
@@ -42,9 +51,13 @@ export default function Index() {
   }, [landingVisible]);
   const showHeavySurfaces = homeExited || !landingVisible;
 
-  // Read selectedId so the home button hides when a detail sheet is open.
-  // We don't want the button floating over the detail sheet backdrop.
+  // The floating map UI (chips, legend, home button) hides only when the
+  // FULL detail sheet is open — its backdrop covers them. A 'peek'
+  // selection keeps the map live behind the compact card, so those
+  // controls stay visible and usable.
   const selectedId = useSelectionStore((s) => s.selectedId);
+  const stage = useSelectionStore((s) => s.stage);
+  const detailSheetOpen = selectedId != null && stage === 'full';
 
   // Safe-area insets for the home button so it clears the status bar / notch.
   const insets = useSafeAreaInsets();
@@ -66,36 +79,38 @@ export default function Index() {
   //   3. FilterChips        — floating chip row above the map, below detail sheet
   //   4. SunLegend          — left-edge colour key, same gate as FilterChips
   //   5. LandingPage        — Home overlay — when visible (no zIndex; order is the stack)
-  //   6. TerraceDetailSheet — opens ABOVE Home so detail works over Home
-  //   7. ChaseTheSunSheet   — opens ABOVE TerraceDetailSheet (rendered after)
-  //   8. ProPaywall         — modal, always above
-  //   9. ShortlistBar       — floating bar, always above
-  //  10. home button        — top-left overlay, shown when Home is hidden
+  //   6. TerracePeekCard    — compact pin-tap preview, floats over map + MainSheet
+  //   7. TerraceDetailSheet — opens ABOVE Home so detail works over Home
+  //   8. ChaseTheSunSheet   — opens ABOVE TerraceDetailSheet (rendered after)
+  //   9. ProPaywall         — modal, always above
+  //  10. ShortlistBar       — floating bar, always above
+  //  11. home button        — top-left overlay, shown when Home is hidden
   return (
     <View style={styles.container}>
       {showHeavySurfaces ? (
         <ErrorBoundary surface="ZonnieMap">
-          <ZonnieMap onSelect={handleSelect} />
+          <ZonnieMap onSelect={handlePinSelect} />
         </ErrorBoundary>
       ) : null}
       {showHeavySurfaces ? (
         <ErrorBoundary surface="MainSheet">
-          <MainSheet onSelect={handleSelect} />
+          <MainSheet onSelect={handleListSelect} />
         </ErrorBoundary>
       ) : null}
       {/* FilterChips — floating chip row above the map.
           Hidden when the Home overlay is visible (the map itself is hidden)
-          and when a detail sheet is open (detail backdrop covers chips). */}
-      {!landingVisible && selectedId == null ? (
+          and when the FULL detail sheet is open (its backdrop covers chips).
+          Still shown during a peek — the map remains the active surface. */}
+      {!landingVisible && !detailSheetOpen ? (
         <ErrorBoundary surface="FilterChips">
           <FilterChips />
         </ErrorBoundary>
       ) : null}
       {/* SunLegend — collapsible colour key on the left edge of the map.
           Same visibility gate as FilterChips: only shown on the live map
-          (no home overlay, no detail sheet open). Placed before
+          (no home overlay, no full detail sheet open). Placed before
           TerraceDetailSheet so the detail sheet renders above it. */}
-      {!landingVisible && selectedId == null ? (
+      {!landingVisible && !detailSheetOpen ? (
         <ErrorBoundary surface="SunLegend">
           <SunLegend />
         </ErrorBoundary>
@@ -105,6 +120,13 @@ export default function Index() {
           <LandingPage />
         </ErrorBoundary>
       ) : null}
+      {/* TerracePeekCard — compact preview after a pin tap. Renders null
+          unless a selection is at stage 'peek', so it costs nothing the
+          rest of the time. Above MainSheet (paints over its handle area),
+          below the detail/crawl sheets and modals. */}
+      <ErrorBoundary surface="TerracePeekCard">
+        <TerracePeekCard />
+      </ErrorBoundary>
       <ErrorBoundary surface="TerraceDetailSheet">
         <TerraceDetailSheet />
       </ErrorBoundary>
@@ -118,10 +140,11 @@ export default function Index() {
         <ShortlistBar />
       </ErrorBoundary>
       {/* Home button — shown only when the map is the active surface:
-          Home overlay is hidden AND no detail sheet is open. Hiding it
+          Home overlay is hidden AND the full detail sheet is closed
+          (a peek card doesn't count — the map is still active). Hiding it
           when a detail is open prevents the button floating over the sheet
           backdrop. Document order (last sibling) is sufficient for z-layering. */}
-      {!landingVisible && selectedId == null ? (
+      {!landingVisible && !detailSheetOpen ? (
         <Pressable
           onPress={handleHomePress}
           style={[styles.homeButton, { top: insets.top + spacing.sm }]}

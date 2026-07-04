@@ -1,6 +1,11 @@
 ﻿import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT, type Region as MapRegion } from 'react-native-maps';
+import MapView, {
+  Marker,
+  PROVIDER_DEFAULT,
+  type MapPressEvent,
+  type Region as MapRegion,
+} from 'react-native-maps';
 import * as Location from 'expo-location';
 
 import { MapRegionPill } from '@/src/components/MapRegionPill';
@@ -497,6 +502,23 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     }
   }, []);
 
+  /**
+   * Tapping the map background dismisses an open peek card (AllTrails
+   * pattern — the card is a lightweight preview, so tapping "away" should
+   * feel like deselecting). Reads the store via getState() so this
+   * callback stays referentially stable and MapView never re-renders
+   * because of it. A FULL detail sheet is never dismissed from here —
+   * it has its own backdrop + pan-down-to-close.
+   */
+  const handleMapPress = useCallback((e: MapPressEvent) => {
+    // On iOS a marker tap ALSO fires the map's onPress (with a
+    // 'marker-press' action) — ignore those so tapping a pin doesn't
+    // instantly dismiss the peek card it just opened.
+    if ((e.nativeEvent as { action?: string }).action === 'marker-press') return;
+    const s = useSelectionStore.getState();
+    if (s.selectedId != null && s.stage === 'peek') s.clear();
+  }, []);
+
   useEffect(() => {
     if (!panTo) return;
     mapRef.current?.animateToRegion(
@@ -602,6 +624,8 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         // Fires after the user releases a pan/pinch gesture (not during).
         // Drives the floating region pill so it doesn't churn during pan.
         onRegionChangeComplete={handleRegionChangeComplete}
+        // Background tap dismisses the peek card (no-op otherwise).
+        onPress={handleMapPress}
         // Show the standard blue dot only if we have permission and the
         // user is inside Amsterdam — otherwise the dot floats off-screen
         // and confuses people testing from elsewhere.
