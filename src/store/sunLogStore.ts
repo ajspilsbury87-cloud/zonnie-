@@ -33,8 +33,9 @@ export interface SunLogEvent {
   ts: number;
   /** Terrace ID (matches TERRACES[n].id). */
   terraceId: number;
-  /** What the user did. */
-  action: 'open' | 'favorite' | 'share' | 'directions';
+  /** What the user did. The sunrun_* pair are Phase-0 Sun Run signals
+   *  (SPEC-sun-run-phase0.md §1) — generation vs actual share-through. */
+  action: 'open' | 'favorite' | 'share' | 'directions' | 'sunrun_generate' | 'sunrun_share';
   /**
    * The computed sun score (0–1) at the time the action was taken, when
    * readily available at the call site. Omitted if not in scope — never

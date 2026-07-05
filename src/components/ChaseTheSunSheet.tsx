@@ -37,7 +37,7 @@ import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { captureRef } from 'react-native-view-shot';
 
-import { shareCrawl, shareImageFile } from '@/src/lib/shareCard';
+import { shareCrawl, shareCrawlInvite, shareImageFile } from '@/src/lib/shareCard';
 import { SunRouteCard } from '@/src/components/SunRouteCard';
 import { haptics } from '@/src/lib/haptics';
 import {
@@ -436,6 +436,15 @@ export function ChaseTheSunSheet() {
     }
   }, [plan]);
 
+  // Invite framing (Phase 0, SPEC-sun-run-phase0 §3B): same plan, shared as
+  // something to JOIN — meet time + start point up front. Text-only by
+  // design; the reader needs the where/when, not the poster image.
+  const handleInvite = useCallback(() => {
+    if (!plan) return;
+    haptics.light();
+    shareCrawlInvite(plan).catch(() => {});
+  }, [plan]);
+
   const handleStart = useCallback(() => {
     if (!plan || plan.stops.length === 0) return;
     haptics.medium();
@@ -572,6 +581,19 @@ export function ChaseTheSunSheet() {
                 accessibilityLabel={t.crawlShareRoute}
               >
                 <Text style={styles.shareButtonText}>{t.crawlShareRoute}</Text>
+              </Pressable>
+
+              {/* Invite — full-width outline, invite-framed text share */}
+              <Pressable
+                onPress={handleInvite}
+                style={({ pressed }) => [
+                  styles.inviteButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t.crawlInvite}
+              >
+                <Text style={styles.outlineButtonText}>{t.crawlInvite}</Text>
               </Pressable>
 
               {/* Start + Shuffle — equal-width row */}
@@ -716,6 +738,15 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: spacing.sm,
+  },
+  // Invite — full-width outline between Share and the Start/Shuffle row.
+  inviteButton: {
+    borderWidth: 1.5,
+    borderColor: palette.peach,
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    marginBottom: spacing.sm,
   },
   outlineButton: {
     flex: 1,

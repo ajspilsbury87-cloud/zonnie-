@@ -127,6 +127,54 @@ export function buildCrawlShareMessage(plan: CrawlPlan): string {
 }
 
 /**
+ * Build the INVITE variant of the crawl share — same plan, but framed as
+ * something to join rather than something to admire ("Join my Chase the
+ * Sun — 15:00 from Café Kobalt"). Phase 0 of the runs/events direction:
+ * "joinable" simply means the reader knows where and when to show up;
+ * actual RSVP tracking is deliberately out of scope (no backend).
+ *
+ * Kept pure for unit tests, like buildCrawlShareMessage above.
+ */
+export function buildCrawlInviteMessage(plan: CrawlPlan): string {
+  const first = plan.stops[0];
+  const startName = first?.terrace.name ?? 'Amsterdam';
+  const lines: string[] = [
+    `☀️ Join my Chase the Sun — meet ${fmtHour(plan.startHour)} at ${startName}`,
+    `${plan.stops.length} sunny stops · sun till ${fmtHour(plan.endHour + 1)}`,
+    '',
+  ];
+  plan.stops.forEach((stop, i) => {
+    lines.push(
+      i === 0
+        ? `1. ${stop.terrace.name} (${stop.terrace.area}) — meet ${fmtHour(plan.startHour)}`
+        : `${i + 1}. ${stop.terrace.name} — ${stop.walkMinutesFromPrev} min walk`,
+    );
+  });
+  lines.push('', `Plan your own → ${APP_STORE_URL}`);
+  return lines.join('\n');
+}
+
+/**
+ * Fire the native share sheet with the invite-framed crawl message.
+ */
+export async function shareCrawlInvite(plan: CrawlPlan): Promise<void> {
+  await Share.share(
+    {
+      message: buildCrawlInviteMessage(plan),
+      url: APP_STORE_URL,
+    },
+    {
+      excludedActivityTypes: [
+        'com.apple.UIKit.activity.AddToReadingList',
+        'com.apple.UIKit.activity.OpenInIBooks',
+        'com.apple.UIKit.activity.Print',
+        'com.apple.UIKit.activity.AssignToContact',
+      ],
+    },
+  );
+}
+
+/**
  * Fire the native share sheet with a pre-composed Chase the Sun crawl message.
  *
  * Same pattern as shareTerraceCard: caller can `await` and observe the result,
