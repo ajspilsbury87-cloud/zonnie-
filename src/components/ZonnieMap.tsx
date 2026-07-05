@@ -12,6 +12,7 @@ import { MapRegionPill } from '@/src/components/MapRegionPill';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
 import { isWorldCupLive } from '@/src/data/worldcup';
 import type { Region } from '@/src/data/regions';
+import { thinPins } from '@/src/engines/pinThinning';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { haptics } from '@/src/lib/haptics';
@@ -556,10 +557,11 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     const minLng = mapRegion.longitude - mapRegion.longitudeDelta / 2 - VIEWPORT_MARGIN;
     const maxLng = mapRegion.longitude + mapRegion.longitudeDelta / 2 + VIEWPORT_MARGIN;
 
-    // Filter to viewport, then slice to the zoom-aware pin cap.
-    // `scored` is already sorted best-first, so slicing keeps the highest
-    // scorers — at city-zoom only the sunniest ~30 survive; as the user
-    // zooms in the cap rises so more (and eventually all) local pins show.
+    // Filter to viewport, then thin to the zoom-aware pin cap.
+    // `scored` is already sorted best-first; thinPins keeps that priority
+    // but spreads the budget across a viewport grid — a plain top-N slice
+    // starved quiet neighbourhoods at wide zooms and users read the gaps
+    // as missing venues (see pinThinning.ts).
     const visible = scored.filter(
       (s) =>
         s.terrace.lat >= minLat &&
@@ -568,7 +570,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         s.terrace.lng <= maxLng,
     );
     const cap = maxPinsFromZoom(mapRegion.latitudeDelta);
-    const capped = visible.slice(0, cap);
+    const capped = thinPins(visible, cap, mapRegion);
 
     // Always include the selected terrace even if it's been panned off-screen
     // (user tapped "Show on map" → pan animates but re-render fires before

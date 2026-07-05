@@ -179,6 +179,11 @@ export const strings = {
     noResultsQuery: (query: string) => `Niets in de dataset komt overeen met "${query}".`,
     noTerraces: 'Geen terrassen gevonden',
     noTerracesHint: 'Probeer een andere zoekopdracht, minder buurten of een ruimere tijdperiode.',
+
+    // Grey-window banner — results exist, but nothing has real sun
+    greyWindowReturn: (h: number) => `Grijs in dit tijdvak — de zon is terug rond ${String(h).padStart(2, '0')}:00`,
+    greyWindowJump: (h: number) => `Spring naar ${String(h).padStart(2, '0')}:00 →`,
+    greyWindowNoMore: 'Geen echte zon meer vandaag — bekijk morgen via de datumkiezer.',
     filterHint: '⛛ Tik om te filteren op buurt of naam',
 
     // Map
@@ -551,6 +556,11 @@ export const strings = {
     noTerraces: 'No terraces match',
     noTerracesHint:
       'Try a different search, fewer neighbourhoods, or a wider time range.',
+
+    // Grey-window banner — results exist, but nothing has real sun
+    greyWindowReturn: (h: number) => `Grey in this window — the sun is back around ${String(h).padStart(2, '0')}:00`,
+    greyWindowJump: (h: number) => `Jump to ${String(h).padStart(2, '0')}:00 →`,
+    greyWindowNoMore: 'No real sun left today — check tomorrow on the date picker.',
     filterHint: '⛛ Tap to refine by area or name',
 
     // Map
