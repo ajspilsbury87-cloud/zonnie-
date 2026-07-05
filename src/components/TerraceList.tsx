@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { LayoutAnimation, Platform, StyleSheet, Text, UIManager, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { BottomSheetFlatList, type BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 
@@ -13,7 +13,11 @@ import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { TimeRangeQuickPicker } from '@/src/components/TimeRangeScrubber';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
-import { scoreLabel } from '@/src/engines/scoring';
+import { AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ, scoreLabel } from '@/src/engines/scoring';
+import { isGreyWindow, nextSunnyHour } from '@/src/engines/sadPath';
+import { sunsetHour } from '@/src/engines/solar';
+import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
+import { useWeatherStore } from '@/src/store/weatherStore';
 import { haptics } from '@/src/lib/haptics';
 import { useHint } from '@/src/onboarding/useHint';
 import { useStrings } from '@/src/i18n/useStrings';
@@ -21,6 +25,12 @@ import { useAreaStore } from '@/src/store/areaStore';
 import { useSearchStore } from '@/src/store/searchStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
+
+// LayoutAnimation needs an explicit opt-in on Android's old architecture;
+// harmless no-op elsewhere.
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 // Row pitch used by selectedId → scroll-to-top math. Keep in sync with
 // the row's natural height (paddingVertical * 2 + name lineHeight +
@@ -181,6 +191,57 @@ export function TerraceList({ onSelect }: TerraceListProps) {
     clearAreas();
   }, [clearSearch, clearAreas]);
 
+  // ── Grey-window banner ─────────────────────────────────────────────────
+  // When every result in the window is dismal (grey day / late window), a
+  // silent ranking of near-zero scores reads as broken. Say so honestly and
+  // offer the one useful action: jump the window to when the sun is back.
+  // Weather-only check (O(hours)) — never re-scores terraces on this path.
+  const dateOffset = useTimeStore((s) => s.dateOffset);
+  const toHour = useTimeStore((s) => s.toHour);
+  const setRange = useTimeStore((s) => s.setRange);
+  const weatherByDate = useWeatherStore((s) => s.byDate);
+  const greyBanner = useMemo(() => {
+    if (!isGreyWindow(ranked[0]?.score, ranked.length)) return null;
+    const dateStr = selectedDateStr(dateOffset);
+    const entry = weatherByDate[dateStr];
+    const hourly = entry?.status === 'ready' ? entry.data : undefined;
+    const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+    const backAt = nextSunnyHour(hourly, toHour, sunset);
+    return backAt != null
+      ? { text: t.greyWindowReturn(backAt), jumpHour: backAt, sunset }
+      : { text: t.greyWindowNoMore, jumpHour: null, sunset };
+  }, [ranked, dateOffset, toHour, weatherByDate, t]);
+
+  const handleJumpToSun = useCallback(
+    (h: number, sunset: number) => {
+      haptics.light();
+      setRange(h, Math.max(h + 1, Math.min(h + 2, Math.floor(sunset))));
+    },
+    [setRange],
+  );
+
+  // ── Re-rank animation ──────────────────────────────────────────────────
+  // The core magic trick is watching the ranking respond to time. When the
+  // order of the top rows changes (scrub, preset tap, filter), schedule a
+  // single layout animation for the commit that moves them — rows then
+  // glide to their new positions instead of teleporting. Render-body ref
+  // compare is the standard LayoutAnimation pattern: configureNext must run
+  // BEFORE the commit, so an effect would be too late. One native-driven
+  // animation per order change; nothing runs per-frame on the JS thread.
+  const orderSig = useMemo(
+    () => ranked.slice(0, 15).map((s) => s.terrace.id).join(','),
+    [ranked],
+  );
+  const prevOrderSigRef = useRef<string | null>(null);
+  if (prevOrderSigRef.current !== orderSig) {
+    if (prevOrderSigRef.current != null && ranked.length > 0) {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(220, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.opacity),
+      );
+    }
+    prevOrderSigRef.current = orderSig;
+  }
+
   /**
    * Long-press (or in-selection tap) handler for a terrace row.
    * First long-press enters selection mode AND selects that terrace.
@@ -314,6 +375,25 @@ export function TerraceList({ onSelect }: TerraceListProps) {
                 so the quick time presets are one tap away. (The fine-tune hour
                 scrubber was removed per feedback — presets only.) */}
             <TimeRangeQuickPicker />
+
+            {/* Grey-window banner — honest sad path with a one-tap fix. */}
+            {greyBanner != null ? (
+              <View style={styles.greyBanner}>
+                <Text style={styles.greyBannerText}>{greyBanner.text}</Text>
+                {greyBanner.jumpHour != null ? (
+                  <TouchableOpacity
+                    onPress={() => handleJumpToSun(greyBanner.jumpHour, greyBanner.sunset)}
+                    activeOpacity={0.7}
+                    accessibilityRole="button"
+                    accessibilityLabel={t.greyWindowJump(greyBanner.jumpHour)}
+                  >
+                    <Text style={styles.greyBannerBtnText}>
+                      {t.greyWindowJump(greyBanner.jumpHour)}
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            ) : null}
           </View>
         }
         ListEmptyComponent={
@@ -352,6 +432,28 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: palette.white,
+  },
+  // Grey-window banner — warm but muted; informational, not alarming.
+  greyBanner: {
+    backgroundColor: palette.sandDeep,
+    borderRadius: radii.md,
+    borderLeftWidth: 3,
+    borderLeftColor: palette.mistDeep,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+  },
+  greyBannerText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+  },
+  greyBannerBtnText: {
+    marginTop: spacing.xs,
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.burnt,
   },
   row: {
     flexDirection: 'row',
