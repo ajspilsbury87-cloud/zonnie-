@@ -1,33 +1,36 @@
 /**
  * SunRunSheet — "plan a run that finishes in the sun" (SPEC-sun-run-phase0).
  *
- * Phase 0: no accounts, no backend, no routes. The user picks distance,
- * pace and a start time; we estimate the arrival hour and pick a terrace
- * that is SUNNY at that hour (sunRun.ts engine), then hand the result to
- * the native share sheet so it lands in the group chats where run plans
- * already happen. Generation + share counts go to the silent sun log so
- * Phase 1 can be a data decision.
+ * Summoned from a terrace's detail card: THAT terrace is the start point.
+ * The user dials in distance (5–20k), a pace band (15-second steps of
+ * min/km) and a start time (15-minute slider up to sunset); the engine
+ * estimates arrival and picks a finish terrace that's sunny at that hour.
+ * Share hands the plan to the native share sheet. Generation + share
+ * counts go to the silent sun log so Phase 1 can be a data decision.
  *
- * Gorhom BottomSheet inline, controlled by useSunRunStore — same pattern
- * as ChaseTheSunSheet. After sunset the plan pivots to TOMORROW, matching
- * the verdict card's behaviour, with a visible note.
+ * After sunset the plan pivots to TOMORROW, matching the verdict card.
+ * Phase 0: no accounts, no backend, no drawn routes.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Slider from '@react-native-community/slider';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import { TERRACES } from '@/src/data/terraces';
+import { AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ } from '@/src/engines/scoring';
+import { sunsetHour } from '@/src/engines/solar';
 import {
   buildSunRunShareMessage,
+  DEFAULT_PACE_INDEX,
+  fmtClock,
+  PACE_BANDS,
   planSunRun,
   RUN_DISTANCES,
   type RunDistance,
-  type RunPace,
 } from '@/src/engines/sunRun';
 import { cachedHourScore } from '@/src/hooks/scoreCache';
-import { useUserLocation } from '@/src/hooks/useUserLocation';
 import { APP_STORE_URL } from '@/src/lib/shareCard';
 import { haptics } from '@/src/lib/haptics';
 import { useStrings } from '@/src/i18n/useStrings';
@@ -41,23 +44,23 @@ import {
 } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
-import { Share } from 'react-native';
 
-const PACES: RunPace[] = ['easy', 'steady', 'quick'];
-
-function fmtHour(h: number): string {
-  return `${String(h).padStart(2, '0')}:00`;
-}
+const SLIDER_STEP_MIN = 15;
 
 export function SunRunSheet() {
   const t = useStrings();
   const insets = useSafeAreaInsets();
   const isOpen = useSunRunStore((s) => s.isOpen);
+  const originId = useSunRunStore((s) => s.originId);
   const close = useSunRunStore((s) => s.close);
   const logEvent = useSunLogStore((s) => s.log);
-  const { coord } = useUserLocation();
   const weatherByDate = useWeatherStore((s) => s.byDate);
   const ensure = useWeatherStore((s) => s.ensure);
+
+  const origin = useMemo(
+    () => (originId != null ? TERRACES.find((x) => x.id === originId) ?? null : null),
+    [originId],
+  );
 
   // After sunset there's no run to finish in today's sun — plan tomorrow.
   const pastSunset = isPastSunsetAmsterdam();
@@ -66,47 +69,51 @@ export function SunRunSheet() {
     if (isOpen) ensure(dateStr);
   }, [isOpen, ensure, dateStr]);
 
-  // Start-time chips: today = now + the next two hours (capped at 21:00);
-  // tomorrow (post-sunset) = morning / midday / evening presets.
-  const startChips = useMemo(() => {
-    if (pastSunset) return [9, 12, 18];
-    const base = Math.min(21, Math.max(6, Math.ceil(nowAmsterdamHourFloat())));
-    return [...new Set([base, Math.min(21, base + 1), Math.min(21, base + 2)])];
-  }, [pastSunset]);
+  // Start-time slider bounds (minutes from midnight, 15-min steps):
+  // today = now (rounded up) → a bit before sunset; tomorrow = 07:00 → sunset.
+  const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
+  const sliderMax = Math.floor((sunset * 60) / SLIDER_STEP_MIN) * SLIDER_STEP_MIN;
+  const sliderMin = useMemo(() => {
+    const base = pastSunset
+      ? 7 * 60
+      : Math.ceil((nowAmsterdamHourFloat() * 60) / SLIDER_STEP_MIN) * SLIDER_STEP_MIN;
+    return Math.min(base, sliderMax - SLIDER_STEP_MIN);
+  }, [pastSunset, sliderMax]);
 
   const [distanceKm, setDistanceKm] = useState<RunDistance>(5);
-  const [pace, setPace] = useState<RunPace>('easy');
-  const [startHour, setStartHour] = useState<number | null>(null);
+  const [paceIndex, setPaceIndex] = useState(DEFAULT_PACE_INDEX);
+  const [startMinutes, setStartMinutes] = useState<number | null>(null);
+  // Live label while dragging — the plan only recomputes on release.
+  const [draftMinutes, setDraftMinutes] = useState<number | null>(null);
   const [excludeIds, setExcludeIds] = useState<ReadonlySet<number>>(new Set());
-  const effectiveStart = startHour ?? startChips[0] ?? 17;
+  const effectiveStart = Math.max(sliderMin, Math.min(startMinutes ?? sliderMin, sliderMax));
 
-  // Any input change invalidates the shuffle history.
-  const pick = useCallback(<T,>(setter: (v: T) => void) => (v: T) => {
-    haptics.selection();
-    setter(v);
-    setExcludeIds(new Set());
-  }, []);
+  const resetShuffle = useCallback(() => setExcludeIds(new Set()), []);
 
   const plan = useMemo(() => {
     if (!isOpen) return null;
     const entry = weatherByDate[dateStr];
     const hourly = entry?.status === 'ready' ? entry.data : undefined;
+    const pace = PACE_BANDS[paceIndex] ?? PACE_BANDS[DEFAULT_PACE_INDEX]!;
+    const exclude = new Set(excludeIds);
+    if (originId != null) exclude.add(originId); // never finish where you started
     return planSunRun({
       terraces: TERRACES,
       distanceKm,
       pace,
-      startHour: effectiveStart,
-      origin: coord,
+      startMinutes: effectiveStart,
+      origin: origin ? { lat: origin.lat, lng: origin.lng } : null,
+      originName: origin?.name,
       scoreAt: (terrace, hour) => cachedHourScore(terrace, hour, dateStr, hourly?.[hour]),
-      excludeIds,
+      excludeIds: exclude,
     });
-  }, [isOpen, weatherByDate, dateStr, distanceKm, pace, effectiveStart, coord, excludeIds]);
+  }, [isOpen, weatherByDate, dateStr, distanceKm, paceIndex, effectiveStart, origin, originId, excludeIds]);
 
-  // One log line per generated plan (deduped by finish id via excludeIds churn).
+  // One log line per generated plan.
   const lastLoggedRef = useRef<string | null>(null);
   useEffect(() => {
     if (plan == null) return;
-    const sig = `${plan.finish.id}:${plan.distanceKm}:${plan.pace}:${plan.startHour}`;
+    const sig = `${plan.finish.id}:${plan.distanceKm}:${plan.pace.secPerKm}:${plan.startMinutes}`;
     if (lastLoggedRef.current === sig) return;
     lastLoggedRef.current = sig;
     logEvent({ ts: Date.now(), terraceId: plan.finish.id, action: 'sunrun_generate', score: plan.score });
@@ -119,7 +126,7 @@ export function SunRunSheet() {
     try {
       await Share.share({ message: buildSunRunShareMessage(plan, APP_STORE_URL), url: APP_STORE_URL });
     } catch {
-      // User dismissed the sheet — nothing to do.
+      // User dismissed the share sheet — nothing to do.
     }
   }, [plan, logEvent]);
 
@@ -142,11 +149,13 @@ export function SunRunSheet() {
     [],
   );
 
+  const displayStart = draftMinutes ?? effectiveStart;
+
   return (
     <BottomSheet
       ref={ref}
       index={isOpen ? 0 : -1}
-      snapPoints={['80%']}
+      snapPoints={['82%']}
       enableDynamicSizing={false}
       enablePanDownToClose
       onClose={close}
@@ -165,32 +174,76 @@ export function SunRunSheet() {
           </Pressable>
           <View style={styles.headerCenter}>
             <Text style={styles.title}>{t.sunRunTitle}</Text>
-            <Text style={styles.subtitle}>{pastSunset ? t.sunRunTomorrowNote : t.sunRunSubtitle}</Text>
+            <Text style={styles.subtitle} numberOfLines={1}>
+              {origin ? t.sunRunFrom(origin.name) : t.sunRunSubtitle}
+              {pastSunset ? ` · ${t.sunRunTomorrowNote}` : ''}
+            </Text>
           </View>
           <View style={styles.headerRight}><Text style={styles.runGlyph}>🏃</Text></View>
         </View>
 
-        {/* INPUT CHIPS */}
-        <ChipRow label={t.sunRunDistance}>
-          {RUN_DISTANCES.map((d) => (
-            <Chip key={d} label={`${d}k`} active={d === distanceKm} onPress={() => pick(setDistanceKm)(d)} />
-          ))}
-        </ChipRow>
-        <ChipRow label={t.sunRunPace}>
-          {PACES.map((p) => (
-            <Chip key={p} label={t.sunRunPaceLabel(p)} active={p === pace} onPress={() => pick(setPace)(p)} />
-          ))}
-        </ChipRow>
-        <ChipRow label={t.sunRunStart}>
-          {startChips.map((h, i) => (
-            <Chip
-              key={h}
-              label={!pastSunset && i === 0 ? t.sunRunNow : fmtHour(h)}
-              active={h === effectiveStart}
-              onPress={() => pick(setStartHour)(h)}
-            />
-          ))}
-        </ChipRow>
+        {/* DISTANCE */}
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>{t.sunRunDistance}</Text>
+          <View style={styles.chipRow}>
+            {RUN_DISTANCES.map((d) => (
+              <Chip
+                key={d}
+                label={`${d}k`}
+                active={d === distanceKm}
+                grow
+                onPress={() => { haptics.selection(); setDistanceKm(d); resetShuffle(); }}
+              />
+            ))}
+          </View>
+        </View>
+
+        {/* PACE — horizontal band scroller, min/km in 15s steps */}
+        <View style={styles.section}>
+          <View style={styles.sectionLabelRow}>
+            <Text style={styles.sectionLabel}>{t.sunRunPace}</Text>
+            <Text style={styles.sectionValue}>{PACE_BANDS[paceIndex]?.label} /km</Text>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.paceScroll} contentContainerStyle={styles.paceScrollContent}>
+            {PACE_BANDS.map((band, i) => (
+              <Chip
+                key={band.secPerKm}
+                label={band.label}
+                active={i === paceIndex}
+                onPress={() => { haptics.selection(); setPaceIndex(i); resetShuffle(); }}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* START TIME — 15-min slider up to sunset */}
+        <View style={styles.section}>
+          <View style={styles.sectionLabelRow}>
+            <Text style={styles.sectionLabel}>{t.sunRunStart}</Text>
+            <Text style={styles.sectionValue}>{fmtClock(displayStart)}</Text>
+          </View>
+          <Slider
+            style={styles.slider}
+            minimumValue={sliderMin}
+            maximumValue={sliderMax}
+            step={SLIDER_STEP_MIN}
+            value={effectiveStart}
+            onValueChange={setDraftMinutes}
+            onSlidingComplete={(v) => {
+              haptics.light();
+              setDraftMinutes(null);
+              setStartMinutes(v);
+              resetShuffle();
+            }}
+            minimumTrackTintColor={palette.burnt}
+            maximumTrackTintColor={palette.mistDeep}
+            thumbTintColor={palette.peach}
+          />
+          <View style={styles.sliderBounds}>
+            <Text style={styles.sliderBound}>{fmtClock(sliderMin)}</Text>
+            <Text style={styles.sliderBound}>{fmtClock(sliderMax)}</Text>
+          </View>
+        </View>
 
         {/* RESULT */}
         {plan != null ? (
@@ -208,9 +261,9 @@ export function SunRunSheet() {
               </View>
             </View>
             <Text style={styles.resultMeta}>
-              {t.sunRunArriveLine(plan.runMinutes, fmtHour(plan.arriveHour))}
+              {t.sunRunArriveLine(plan.runMinutes, fmtClock(plan.arriveMinutes))}
               {plan.isSunny && plan.sunUntilHour != null
-                ? ` · ${t.sunRunSunnyTill(fmtHour(plan.sunUntilHour + 1))}`
+                ? ` · ${t.sunRunSunnyTill(`${String(plan.sunUntilHour + 1).padStart(2, '0')}:00`)}`
                 : ''}
             </Text>
           </View>
@@ -244,22 +297,13 @@ export function SunRunSheet() {
   );
 }
 
-// ── Small chip primitives ─────────────────────────────────────────────────────
+// ── Chip primitive ────────────────────────────────────────────────────────────
 
-function ChipRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.chipSection}>
-      <Text style={styles.chipLabel}>{label}</Text>
-      <View style={styles.chipRow}>{children}</View>
-    </View>
-  );
-}
-
-function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+function Chip({ label, active, onPress, grow }: { label: string; active: boolean; onPress: () => void; grow?: boolean }) {
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.chip, active && styles.chipActive]}
+      style={[styles.chip, grow && styles.chipGrow, active && styles.chipActive]}
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
     >
@@ -274,30 +318,40 @@ const styles = StyleSheet.create({
   handle: { backgroundColor: palette.mistDeep },
   background: { backgroundColor: palette.sand, borderRadius: 24 },
   content: { paddingHorizontal: spacing.lg, paddingTop: spacing.xs },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.lg },
   closeButton: {
     width: 32, height: 32, borderRadius: 16, backgroundColor: palette.sandDeep,
     alignItems: 'center', justifyContent: 'center',
   },
   closeGlyph: { fontSize: 15, color: palette.inkSoft },
-  headerCenter: { flex: 1, alignItems: 'center' },
+  headerCenter: { flex: 1, alignItems: 'center', minWidth: 0 },
   title: { fontFamily: fonts.displayBold, fontSize: fontSizes.xl, color: palette.ink, letterSpacing: -0.3 },
   subtitle: { fontFamily: fonts.body, fontSize: fontSizes.xs, color: palette.inkSoft, marginTop: 1 },
   headerRight: { width: 32, alignItems: 'center' },
   runGlyph: { fontSize: 20 },
-  chipSection: { marginBottom: spacing.md },
-  chipLabel: {
+  section: { marginBottom: spacing.lg },
+  sectionLabelRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: spacing.xs },
+  sectionLabel: {
     fontFamily: fonts.bodySemibold, fontSize: fontSizes.xs, color: palette.inkSoft,
     textTransform: 'uppercase', letterSpacing: 1, marginBottom: spacing.xs,
   },
-  chipRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
+  sectionValue: { fontFamily: fonts.displayBold, fontSize: fontSizes.md, color: palette.burnt },
+  chipRow: { flexDirection: 'row', gap: spacing.sm },
+  // Escape the sheet's horizontal padding so pace bands scroll edge-to-edge.
+  paceScroll: { marginHorizontal: -spacing.lg },
+  paceScrollContent: { paddingHorizontal: spacing.lg, gap: spacing.sm },
   chip: {
     paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: radii.pill,
     backgroundColor: palette.white, borderWidth: 1, borderColor: palette.mist,
+    alignItems: 'center',
   },
+  chipGrow: { flex: 1 },
   chipActive: { backgroundColor: palette.ink, borderColor: palette.ink },
   chipText: { fontFamily: fonts.bodySemibold, fontSize: fontSizes.sm, color: palette.ink },
   chipTextActive: { color: palette.cream },
+  slider: { width: '100%', height: 36 },
+  sliderBounds: { flexDirection: 'row', justifyContent: 'space-between', marginTop: -2 },
+  sliderBound: { fontFamily: fonts.body, fontSize: fontSizes.xs, color: palette.mistDeep },
   resultCard: {
     backgroundColor: palette.white, borderRadius: radii.lg, padding: spacing.md,
     marginTop: spacing.xs, marginBottom: spacing.lg,
