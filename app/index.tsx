@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
 import { ChaseTheSunSheet } from '@/src/components/ChaseTheSunSheet';
+import { SunRunSheet } from '@/src/components/SunRunSheet';
 import { FilterChips } from '@/src/components/FilterChips';
 import { LandingPage } from '@/src/components/LandingPage';
 import { SunLegend } from '@/src/components/SunLegend';
@@ -132,6 +133,9 @@ export default function Index() {
       </ErrorBoundary>
       <ErrorBoundary surface="ChaseTheSunSheet">
         <ChaseTheSunSheet />
+      </ErrorBoundary>
+      <ErrorBoundary surface="SunRunSheet">
+        <SunRunSheet />
       </ErrorBoundary>
       <ErrorBoundary surface="ProPaywall">
         <ProPaywall />

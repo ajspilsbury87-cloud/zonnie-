@@ -184,6 +184,29 @@ export const strings = {
     greyWindowReturn: (h: number) => `Grijs in dit tijdvak — de zon is terug rond ${String(h).padStart(2, '0')}:00`,
     greyWindowJump: (h: number) => `Spring naar ${String(h).padStart(2, '0')}:00 →`,
     greyWindowNoMore: 'Geen echte zon meer vandaag — bekijk morgen via de datumkiezer.',
+
+    // Sun Run (Phase 0)
+    sunRunTitle: 'Sun run',
+    sunRunSubtitle: 'Finish je rondje in de zon',
+    sunRunTomorrowNote: 'Voor morgen — de zon is al onder',
+    sunRunDistance: 'Afstand',
+    sunRunPace: 'Tempo',
+    sunRunStart: 'Start',
+    sunRunNow: 'Nu',
+    sunRunPaceLabel: (p: 'easy' | 'steady' | 'quick') =>
+      p === 'easy' ? 'Rustig' : p === 'steady' ? 'Gemiddeld' : 'Vlot',
+    sunRunFinishLabel: 'Zonnige finish',
+    sunRunNoSunny: 'Geen zonnige finish — dit is de zonnigste optie',
+    sunRunNoFinish: 'Geen finish gevonden — probeer een andere afstand.',
+    sunRunArriveLine: (mins: number, hhmm: string) => `~${mins} min hardlopen · aankomst rond ${hhmm}`,
+    sunRunSunnyTill: (hhmm: string) => `zon tot ${hhmm} ☀️`,
+    sunRunShare: 'Deel met je loopgroep ☀️',
+    sunRunAnother: 'Andere finish',
+    guideSunRun: '🏃 Sun run',
+    guideSunRunA11y: 'Plan een hardlooprondje dat eindigt op een zonnig terras',
+
+    // Chase-the-Sun invite (Phase 0)
+    crawlInvite: '📣 Nodig de groep uit',
     filterHint: '⛛ Tik om te filteren op buurt of naam',
 
     // Map
@@ -561,6 +584,29 @@ export const strings = {
     greyWindowReturn: (h: number) => `Grey in this window — the sun is back around ${String(h).padStart(2, '0')}:00`,
     greyWindowJump: (h: number) => `Jump to ${String(h).padStart(2, '0')}:00 →`,
     greyWindowNoMore: 'No real sun left today — check tomorrow on the date picker.',
+
+    // Sun Run (Phase 0)
+    sunRunTitle: 'Sun run',
+    sunRunSubtitle: 'Finish your run in the sun',
+    sunRunTomorrowNote: 'For tomorrow — the sun has set',
+    sunRunDistance: 'Distance',
+    sunRunPace: 'Pace',
+    sunRunStart: 'Start',
+    sunRunNow: 'Now',
+    sunRunPaceLabel: (p: 'easy' | 'steady' | 'quick') =>
+      p === 'easy' ? 'Easy' : p === 'steady' ? 'Steady' : 'Quick',
+    sunRunFinishLabel: 'Sunny finish',
+    sunRunNoSunny: 'No sunny finish — this is the sunniest option',
+    sunRunNoFinish: 'No finish found — try a different distance.',
+    sunRunArriveLine: (mins: number, hhmm: string) => `~${mins} min run · arrive around ${hhmm}`,
+    sunRunSunnyTill: (hhmm: string) => `sunny till ${hhmm} ☀️`,
+    sunRunShare: 'Share with your run group ☀️',
+    sunRunAnother: 'Another finish',
+    guideSunRun: '🏃 Sun run',
+    guideSunRunA11y: 'Plan a run that finishes at a sunny terrace',
+
+    // Chase-the-Sun invite (Phase 0)
+    crawlInvite: '📣 Invite the group',
     filterHint: '⛛ Tap to refine by area or name',
 
     // Map

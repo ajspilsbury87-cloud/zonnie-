@@ -6,7 +6,7 @@
  * is pure so it's straightforward to test.
  */
 
-import { buildCrawlShareMessage, APP_STORE_URL } from '@/src/lib/shareCard';
+import { buildCrawlInviteMessage, buildCrawlShareMessage, APP_STORE_URL } from '@/src/lib/shareCard';
 import type { CrawlPlan } from '@/src/engines/crawl';
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
@@ -99,5 +99,26 @@ describe('buildCrawlShareMessage', () => {
   test('starts with a sun emoji', () => {
     const msg = buildCrawlShareMessage(makePlan(3));
     expect(msg.startsWith('☀️')).toBe(true);
+  });
+});
+
+// ── Invite variant (Phase 0) ─────────────────────────────────────────────
+
+describe('buildCrawlInviteMessage', () => {
+  test('leads with the meet time and start terrace', () => {
+    const msg = buildCrawlInviteMessage(makePlan(3));
+    expect(msg).toContain('Join my Chase the Sun — meet 15:00 at Café Kobalt');
+  });
+
+  test('summarises stop count and sun-until, and lists every stop', () => {
+    const plan = makePlan(3);
+    const msg = buildCrawlInviteMessage(plan);
+    expect(msg).toContain('3 sunny stops');
+    expect(msg).toContain(`sun till ${plan.endHour + 1}`.slice(0, 12));
+    for (const stop of plan.stops) expect(msg).toContain(stop.terrace.name);
+  });
+
+  test('always carries the App Store link', () => {
+    expect(buildCrawlInviteMessage(makePlan(2))).toContain(APP_STORE_URL);
   });
 });

@@ -7,6 +7,7 @@ import MapView, {
   type Region as MapRegion,
 } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MapRegionPill } from '@/src/components/MapRegionPill';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
@@ -43,6 +44,15 @@ const AMSTERDAM_REGION: MapRegion = {
  *  Small fraction of a lat/lng degree — keeps pins at the visible edge
  *  from popping in/out as the user pans by a few pixels. */
 const VIEWPORT_MARGIN = 0.003;
+
+/** Zoom used when recentering on the user (≈2km radius). */
+const RECENTER_ZOOM_DELTA = 0.02;
+/** When recentering, aim slightly SOUTH of the user so the blue dot
+ *  surfaces in the visible map strip ABOVE the bottom sheet instead of
+ *  hiding behind it (the sheet covers roughly the lower half at
+ *  mid-detent). Fraction of latitudeDelta: 0.22 puts the dot about a
+ *  quarter of the way down from the top of the screen. */
+const RECENTER_SHEET_OFFSET = 0.22;
 
 /**
  * Zoom-aware marker cap: maps latitudeDelta → maximum number of pins to
@@ -438,6 +448,10 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     );
   }, []);
 
+  // Safe-area insets — the locate button hangs below the filter-chip
+  // ribbon, whose top is insets-derived (see FilterChips.tsx).
+  const insets = useSafeAreaInsets();
+
   // Auto-recenter map on user once their location lands AND they're inside
   // the Amsterdam metro bbox. Tighter zoom (latDelta 0.02 ≈ 2km radius) so
   // they immediately see nearby pins instead of the whole city.
@@ -449,10 +463,10 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     recenteredOnUserRef.current = true;
     mapRef.current?.animateToRegion(
       {
-        latitude: userLoc.coord.lat,
+        latitude: userLoc.coord.lat - RECENTER_ZOOM_DELTA * RECENTER_SHEET_OFFSET,
         longitude: userLoc.coord.lng,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
+        latitudeDelta: RECENTER_ZOOM_DELTA,
+        longitudeDelta: RECENTER_ZOOM_DELTA,
       },
       600,
     );
@@ -491,10 +505,10 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       });
       mapRef.current?.animateToRegion(
         {
-          latitude: fix.coords.latitude,
+          latitude: fix.coords.latitude - RECENTER_ZOOM_DELTA * RECENTER_SHEET_OFFSET,
           longitude: fix.coords.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
+          latitudeDelta: RECENTER_ZOOM_DELTA,
+          longitudeDelta: RECENTER_ZOOM_DELTA,
         },
         500,
       );
@@ -695,7 +709,14 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       */}
       <Pressable
         onPress={handleLocateMe}
-        style={({ pressed }) => [styles.locateButton, pressed && styles.locateButtonPressed]}
+        style={({ pressed }) => [
+          styles.locateButton,
+          // Sits BELOW the filter-chip ribbon (ribbon top = insets.top +
+          // spacing.sm, height 44) so the two never overlap — the old fixed
+          // top put the button underneath the scrolling chips.
+          { top: insets.top + spacing.sm + 44 + spacing.sm },
+          pressed && styles.locateButtonPressed,
+        ]}
         accessibilityLabel={t.centreMap}
         hitSlop={8}
       >
@@ -710,7 +731,7 @@ const styles = StyleSheet.create({
   map: { flex: 1 },
   locateButton: {
     position: 'absolute',
-    top: spacing.xxl + spacing.lg, // clears the iOS status-bar / notch
+    // `top` is set inline from safe-area insets (below the chip ribbon).
     right: spacing.lg,
     width: 44,
     height: 44,
@@ -718,19 +739,23 @@ const styles = StyleSheet.create({
     backgroundColor: palette.white,
     alignItems: 'center',
     justifyContent: 'center',
-    // Subtle shadow so the button reads as floating above the map.
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
+    // Hairline warm border + slightly deeper shadow — matches the chip /
+    // home-button surface language instead of a bare white disc.
+    borderWidth: 1,
+    borderColor: palette.mist,
+    shadowColor: palette.ink,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 6,
+    elevation: 4,
   },
   locateButtonPressed: {
     opacity: 0.7,
+    transform: [{ scale: 0.96 }],
   },
   locateGlyph: {
     fontSize: 22,
-    color: palette.ink,
+    color: palette.burnt,
     lineHeight: 24,
   },
   // Sits above the bottom-sheet peek line (the sheet peeks at ~260px
