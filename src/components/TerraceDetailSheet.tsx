@@ -52,6 +52,7 @@ import { findNextSunnySpot, ORIGIN_HORIZON_MIN } from '@/src/engines/handoff';
 import { bandForScore } from '@/src/engines/bands';
 import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { useSunRunStore } from '@/src/store/sunRunStore';
 import { selectedDateStr, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { usePlacesStore } from '@/src/store/placesStore';
@@ -591,6 +592,17 @@ export function TerraceDetailSheet() {
     });
   }, [terrace, placeDetails]);
 
+  // Sun Run entry (SPEC-sun-run-phase0): this terrace becomes the run's
+  // START point. Demote to peek (same as Show-on-map) so the Sun Run sheet
+  // has the stage while the terrace stays in hand underneath.
+  const openSunRun = useSunRunStore((s) => s.open);
+  const handleSunRun = useCallback(() => {
+    if (!terrace) return;
+    haptics.medium();
+    openSunRun(terrace.id);
+    collapse();
+  }, [terrace, openSunRun, collapse]);
+
   const handleShowOnMap = useCallback(() => {
     if (!terrace) return;
     haptics.light();
@@ -956,6 +968,19 @@ export function TerraceDetailSheet() {
               accessibilityLabel={t.share}
             >
               <Text style={styles.actionShareText}>{t.share}</Text>
+            </Pressable>
+
+            {/* Sun Run — plan a run starting from this terrace. */}
+            <Pressable
+              onPress={handleSunRun}
+              style={({ pressed }) => [
+                styles.actionShare,
+                pressed && styles.actionPressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={t.sunRunFromHere}
+            >
+              <Text style={styles.actionShareText}>{t.sunRunFromHere}</Text>
             </Pressable>
 
             {/* Reserve-a-table CTA — only when this terrace has a verified

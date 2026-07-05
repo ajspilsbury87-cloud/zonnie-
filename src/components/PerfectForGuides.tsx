@@ -22,7 +22,6 @@ import { useStrings } from '@/src/i18n/useStrings';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useLandingStore } from '@/src/store/landingStore';
-import { useSunRunStore } from '@/src/store/sunRunStore';
 import { useTimeStore } from '@/src/store/timeStore';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 import {
@@ -40,7 +39,6 @@ export { GUIDE_DEFINITIONS };
 export function PerfectForGuides() {
   const t = useStrings();
   const hideLanding = useLandingStore((s) => s.hide);
-  const openSunRun = useSunRunStore((s) => s.open);
 
   // Store references bundled once per render. These are the Zustand
   // store hooks themselves (not the state), so they're stable objects —
@@ -77,20 +75,6 @@ export function PerfectForGuides() {
             onPress={() => handlePress(def)}
           />
         ))}
-        {/* Sun Run (Phase 0) — hard-coded rather than a GUIDE_DEFINITION
-            because it opens a sheet instead of mutating filter state, and
-            GuideStores is deliberately limited to filter/time stores. */}
-        <GuideCard
-          key="sun-run"
-          label={t.guideSunRun}
-          a11yLabel={t.guideSunRunA11y}
-          bgColor={palette.cocoa}
-          onPress={() => {
-            haptics.medium();
-            openSunRun();
-            setTimeout(hideLanding, 60);
-          }}
-        />
       </ScrollView>
     </View>
   );
