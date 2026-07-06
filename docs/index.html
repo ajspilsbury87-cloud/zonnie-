@@ -229,9 +229,13 @@
   .foot .cp{color:var(--ink-soft);font-size:.8rem;width:100%;text-align:center;padding-top:6px;}
 
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}.reveal{opacity:1;transform:none;}.cursor-glow{display:none;}}
+  .pride-banner{background:linear-gradient(90deg,#B14222,#D9633E,#E89C5A,#D9633E,#B14222);color:#FFF8F0;text-align:center;padding:9px 18px;font-size:.88rem;line-height:1.45;}
+  .pride-banner a{color:#FFE5C2;font-weight:600;}
 </style>
 </head>
 <body>
+<!-- WorldPride Amsterdam banner - shows itself only 25 Jul-8 Aug 2026 (JS date check below). -->
+<div class="pride-banner" id="prideBanner" hidden>🏳️‍🌈 <b>WorldPride Amsterdam</b> · 25 Jul – 8 Aug — watch the Canal Parade from a sunny terrace. <a href="#explore">Find your spot →</a></div>
 <div class="cursor-glow" id="cursorGlow"></div>
 <div class="scroll-sun" id="scrollSun"></div>
 
@@ -539,6 +543,9 @@
   new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){loadData();}});},{rootMargin:'300px'}).observe($('#explore'));
   render();
 })();
+</script>
+<script>
+(function(){var d=new Date();var iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');if(iso>='2026-07-25'&&iso<='2026-08-08'){var b=document.getElementById('prideBanner');if(b)b.hidden=false;}})();
 </script>
 </body>
 </html>

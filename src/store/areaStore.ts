@@ -53,6 +53,13 @@ interface AreaState {
    * gemScore affects only ORDER and INCLUSION. ANDs with all other filters.
    */
   hiddenGemOnly: boolean;
+  /**
+   * When true, only terraces within parade-view distance of the WorldPride
+   * Canal Parade route are shown (see src/data/pride.ts). Date-gated at the
+   * UI layer — the chip/spotlight only render during the WorldPride window
+   * (2026-07-25 → 2026-08-08). ANDs with all other filters.
+   */
+  prideRouteOnly: boolean;
   toggle: (region: Region) => void;
   toggleCategory: (cat: VenueCategory) => void;
   setAll: (regions: Region[]) => void;
@@ -61,6 +68,8 @@ interface AreaState {
   toggleFavoritesOnly: () => void;
   setMatchModeOnly: (on: boolean) => void;
   toggleMatchModeOnly: () => void;
+  setPrideRouteOnly: (on: boolean) => void;
+  togglePrideRouteOnly: () => void;
   setSortByDistance: (on: boolean) => void;
   toggleSortByDistance: () => void;
   toggleHiddenGemOnly: () => void;
@@ -73,6 +82,7 @@ export const useAreaStore = create<AreaState>((set, get) => ({
   matchModeOnly: false,
   sortByDistance: false,
   hiddenGemOnly: false,
+  prideRouteOnly: false,
   toggle: (region) =>
     set((s) => {
       const next = new Set(s.selectedRegions);
@@ -96,11 +106,14 @@ export const useAreaStore = create<AreaState>((set, get) => ({
       matchModeOnly: false,
       sortByDistance: false,
       hiddenGemOnly: false,
+      prideRouteOnly: false,
     }),
   setFavoritesOnly: (on) => set({ favoritesOnly: on }),
   toggleFavoritesOnly: () => set({ favoritesOnly: !get().favoritesOnly }),
   setMatchModeOnly: (on) => set({ matchModeOnly: on }),
   toggleMatchModeOnly: () => set({ matchModeOnly: !get().matchModeOnly }),
+  setPrideRouteOnly: (on) => set({ prideRouteOnly: on }),
+  togglePrideRouteOnly: () => set({ prideRouteOnly: !get().prideRouteOnly }),
   setSortByDistance: (on) => set({ sortByDistance: on }),
   toggleSortByDistance: () => set({ sortByDistance: !get().sortByDistance }),
   toggleHiddenGemOnly: () => set({ hiddenGemOnly: !get().hiddenGemOnly }),

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { TERRACES } from '@/src/data/terraces';
 import { regionForArea } from '@/src/data/regions';
 import { categoriesForTerrace } from '@/src/data/categories';
+import { isParadeViewTerrace } from '@/src/data/pride';
 import { computeGemScore, computeTouristProxy, TOURIST_TRAP_FLOOR } from '@/src/engines/gems';
 import { cachedHourScore } from '@/src/hooks/scoreCache';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
@@ -86,6 +87,7 @@ export function useScoredTerraces(
   const selectedCategories = useAreaStore((s) => s.selectedCategories);
   const favoritesOnly = useAreaStore((s) => s.favoritesOnly);
   const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
+  const prideRouteOnly = useAreaStore((s) => s.prideRouteOnly);
   const sortByDistance = useAreaStore((s) => s.sortByDistance);
   const hiddenGemOnly = useAreaStore((s) => s.hiddenGemOnly);
   const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
@@ -110,6 +112,12 @@ export function useScoredTerraces(
     }
     if (matchModeOnly) {
       filtered = filtered.filter((t) => (t.outdoorScreens ?? 0) > 0);
+    }
+    // WorldPride: only terraces within sight of the Canal Parade route.
+    // Verdicts are cached per terrace inside pride.ts, so this is a Map
+    // lookup per item after the first pass.
+    if (prideRouteOnly) {
+      filtered = filtered.filter(isParadeViewTerrace);
     }
     // Hidden gem: when the 💎 chip is active we exclude tourist traps (those
     // whose touristProxy exceeds TOURIST_TRAP_FLOOR) at the filter stage so they
@@ -187,6 +195,7 @@ export function useScoredTerraces(
     favoritesOnly,
     favoriteIds,
     matchModeOnly,
+    prideRouteOnly,
     sortByDistance,
     hiddenGemOnly,
     query,
