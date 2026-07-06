@@ -45,7 +45,8 @@ import { haptics } from '@/src/lib/haptics';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
 import { TimeRangeFineTune } from '@/src/components/TimeRangeScrubber';
 import { useAreaStore } from '@/src/store/areaStore';
-import { useTimeStore } from '@/src/store/timeStore';
+import { todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
+import { isWorldPrideLive } from '@/src/data/pride';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 
 // ── Layout constants ──────────────────────────────────────────────────────
@@ -148,6 +149,8 @@ export function FilterChips() {
   const toggleCategory = useAreaStore((s) => s.toggleCategory);
   const matchModeOnly = useAreaStore((s) => s.matchModeOnly);
   const toggleMatchModeOnly = useAreaStore((s) => s.toggleMatchModeOnly);
+  const prideRouteOnly = useAreaStore((s) => s.prideRouteOnly);
+  const togglePrideRouteOnly = useAreaStore((s) => s.togglePrideRouteOnly);
   const hiddenGemOnly = useAreaStore((s) => s.hiddenGemOnly);
   const toggleHiddenGemOnly = useAreaStore((s) => s.toggleHiddenGemOnly);
   const selectedRegions = useAreaStore((s) => s.selectedRegions);
@@ -239,6 +242,16 @@ export function FilterChips() {
             onPress={() => { haptics.selection(); toggleMatchModeOnly(); }}
             accessibilityLabel={t.filterOutdoorA11y}
           />
+
+          {/* WorldPride parade-route toggle — 25 Jul–8 Aug 2026 only. */}
+          {isWorldPrideLive(todayAmsterdamDateStr()) ? (
+            <Chip
+              label={t.filterPride}
+              active={prideRouteOnly}
+              onPress={() => { haptics.selection(); togglePrideRouteOnly(); }}
+              accessibilityLabel={t.filterPrideA11y}
+            />
+          ) : null}
 
           {/* Hidden gem toggle */}
           <Chip

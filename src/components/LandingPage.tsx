@@ -53,6 +53,7 @@ import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
+import { countParadeViewTerraces, isWorldPrideLive } from '@/src/data/pride';
 import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { rangeScoreForTerrace } from '@/src/hooks/scoreCache';
@@ -190,6 +191,9 @@ function pickFeaturedTerraces(
  * Computed once at module load — TERRACES is a static import.
  */
 const SCREEN_TERRACE_COUNT = TERRACES.filter((t) => (t.outdoorScreens ?? 0) > 0).length;
+// Terraces within sight of the WorldPride Canal Parade route (~137). One
+// pass over the dataset at module load; verdicts cached inside pride.ts.
+const PARADE_TERRACE_COUNT = countParadeViewTerraces(TERRACES);
 
 export function LandingPage() {
   const t = useStrings();
@@ -213,6 +217,9 @@ export function LandingPage() {
   const today = todayAmsterdamDateStr();
   const wcLive = isWorldCupLive(today);
   const wcMatch = wcLive ? matchForBanner(today) : null;
+  // WorldPride window (25 Jul – 8 Aug 2026) — picks up right after the WC
+  // layer retires on 19 Jul; the two spotlights are never visible together.
+  const prideLive = isWorldPrideLive(today);
 
   // Scoring all ~1,028 terraces is the heaviest work on this screen. Running it
   // inside render (useMemo) blocked the first paint and the JS thread, so the
@@ -246,6 +253,14 @@ export function LandingPage() {
     setMatchModeOnly(true);
     // Small delay so the filter state lands before Home hides and the
     // map re-renders with the active filter applied.
+    setTimeout(hideLanding, 60);
+  };
+
+  /** WorldPride spotlight → parade-route filter + straight to the map. */
+  const setPrideRouteOnly = useAreaStore((s) => s.setPrideRouteOnly);
+  const handlePridePress = () => {
+    haptics.medium();
+    setPrideRouteOnly(true);
     setTimeout(hideLanding, 60);
   };
 
@@ -440,6 +455,26 @@ export function LandingPage() {
               <Text style={styles.wcCardBody}>{t.wcSpotlightBody(SCREEN_TERRACE_COUNT)}</Text>
               <View style={styles.wcCardCta}>
                 <Text style={styles.wcCardCtaText}>{t.wcSpotlightCta} →</Text>
+              </View>
+            </Pressable>
+          ) : null}
+
+          {/* WorldPride spotlight — 25 Jul–8 Aug 2026, auto-retires after.
+              Reuses the WC card's visual family (same styles) so seasonal
+              moments read as one recurring format. */}
+          {prideLive ? (
+            <Pressable
+              onPress={handlePridePress}
+              style={({ pressed }) => [
+                styles.wcCard,
+                pressed && styles.wcCardPressed,
+              ]}
+              accessibilityLabel={t.prideSpotlightCta}
+            >
+              <Text style={styles.wcCardTitle}>{t.prideSpotlightTitle}</Text>
+              <Text style={styles.wcCardBody}>{t.prideSpotlightBody(PARADE_TERRACE_COUNT)}</Text>
+              <View style={styles.wcCardCta}>
+                <Text style={styles.wcCardCtaText}>{t.prideSpotlightCta} →</Text>
               </View>
             </Pressable>
           ) : null}

@@ -204,6 +204,14 @@ export const strings = {
 
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Nodig de groep uit',
+
+    // WorldPride 2026 — date-gated 25 jul–8 aug, auto-retires daarna
+    prideSpotlightTitle: '🏳️‍🌈 WorldPride is hier',
+    prideSpotlightBody: (n: number) => `${n} terrassen langs de Canal Parade-route`,
+    prideSpotlightCta: 'Vind je plek langs de route',
+    filterPride: '🏳️‍🌈 Parade',
+    filterPrideA11y: 'Toon alleen terrassen langs de Canal Parade-route',
+    prideOnRoute: 'Langs de Canal Parade-route',
     filterHint: '⛛ Tik om te filteren op buurt of naam',
 
     // Map
@@ -601,6 +609,14 @@ export const strings = {
 
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Invite the group',
+
+    // WorldPride 2026 — date-gated 25 Jul–8 Aug, auto-retires after
+    prideSpotlightTitle: '🏳️‍🌈 WorldPride is here',
+    prideSpotlightBody: (n: number) => `${n} terraces along the Canal Parade route`,
+    prideSpotlightCta: 'Find your spot on the route',
+    filterPride: '🏳️‍🌈 Parade',
+    filterPrideA11y: 'Show only terraces along the Canal Parade route',
+    prideOnRoute: 'On the Canal Parade route',
     filterHint: '⛛ Tap to refine by area or name',
 
     // Map

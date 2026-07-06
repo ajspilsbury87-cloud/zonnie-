@@ -51,6 +51,7 @@ import { sundownerMinutes } from '@/src/engines/golden';
 import { findNextSunnySpot, ORIGIN_HORIZON_MIN } from '@/src/engines/handoff';
 import { bandForScore } from '@/src/engines/bands';
 import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
+import { isParadeViewTerrace, isWorldPrideLive } from '@/src/data/pride';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { useSunRunStore } from '@/src/store/sunRunStore';
 import { selectedDateStr, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
@@ -904,6 +905,15 @@ export function TerraceDetailSheet() {
                     📺 {terrace.outdoorScreens === 1
                       ? t.outdoorScreen
                       : t.outdoorScreens(terrace.outdoorScreens)}
+                  </Text>
+                </View>
+              ) : null}
+              {/* WorldPride: parade-view chip — window-gated, computed from
+                  route proximity (pride.ts), auto-retires 2026-08-08. */}
+              {isWorldPrideLive(todayAmsterdamDateStr()) && isParadeViewTerrace(terrace) ? (
+                <View style={[styles.infoChip, styles.infoChipBrand]}>
+                  <Text style={[styles.infoChipText, styles.infoChipTextBrand]}>
+                    🏳️‍🌈 {t.prideOnRoute}
                   </Text>
                 </View>
               ) : null}
