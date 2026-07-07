@@ -30,6 +30,8 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { fromZonedTime } from 'date-fns-tz';
 
+import { useLanguageStore } from '@/src/store/languageStore';
+
 import { TERRACES } from '@/src/data/terraces';
 import { getBuildingsForTerrace } from '@/src/data/buildings';
 import { getTreesForTerrace } from '@/src/data/trees';
@@ -109,7 +111,14 @@ function pad(n: number): string {
 }
 
 function notifBody(block: SunnyBlock): string {
-  return `Morgen zonnig van ${pad(block.fromHour)}:00 tot ${pad(block.toHour)}:00 ☀️`;
+  // Day-of copy: this fires at 09:00 ON the sunny day itself — "Morgen"
+  // told users to plan for the wrong day. Localized at schedule time.
+  const nl = useLanguageStore.getState().lang === 'nl';
+  const f = pad(block.fromHour);
+  const t = pad(block.toHour);
+  return nl
+    ? `Vandaag zonnig van ${f}:00 tot ${t}:00 ☀️`
+    : `Sunny today from ${f}:00 to ${t}:00 ☀️`;
 }
 
 function tomorrowAt9amAmsterdam(tomorrowDateStr: string): Date {

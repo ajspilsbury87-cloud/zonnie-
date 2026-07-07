@@ -78,7 +78,10 @@ export function SunRunSheet() {
       ? 7 * 60
       : Math.ceil((nowAmsterdamHourFloat() * 60) / SLIDER_STEP_MIN) * SLIDER_STEP_MIN;
     return Math.min(base, sliderMax - SLIDER_STEP_MIN);
-  }, [pastSunset, sliderMax]);
+  // isOpen re-arms the "now" floor each time the sheet opens — the sheet
+  // stays mounted, so without it the floor froze at first launch.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- isOpen is a re-arm trigger, not data
+  }, [pastSunset, sliderMax, isOpen]);
 
   const [distanceKm, setDistanceKm] = useState<RunDistance>(5);
   const [paceIndex, setPaceIndex] = useState(DEFAULT_PACE_INDEX);
@@ -89,6 +92,15 @@ export function SunRunSheet() {
   const effectiveStart = Math.max(sliderMin, Math.min(startMinutes ?? sliderMin, sliderMax));
 
   const resetShuffle = useCallback(() => setExcludeIds(new Set()), []);
+
+  // Fresh inputs on every open / origin change: a previous plan's start
+  // time and "another finish" exclusions must not leak into a new run.
+  useEffect(() => {
+    if (!isOpen) return;
+    setStartMinutes(null);
+    setDraftMinutes(null);
+    setExcludeIds(new Set());
+  }, [isOpen, originId]);
 
   const plan = useMemo(() => {
     if (!isOpen) return null;

@@ -13,7 +13,8 @@ import { WeatherStrip } from '@/src/components/WeatherStrip';
 import { TimeRangeQuickPicker } from '@/src/components/TimeRangeScrubber';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
 import { useUserLocation } from '@/src/hooks/useUserLocation';
-import { AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ, scoreLabel } from '@/src/engines/scoring';
+import { AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ } from '@/src/engines/scoring';
+import { bandForScore } from '@/src/engines/bands';
 import { isGreyWindow, nextSunnyHour } from '@/src/engines/sadPath';
 import { sunsetHour } from '@/src/engines/solar';
 import { selectedDateStr, useTimeStore } from '@/src/store/timeStore';
@@ -63,8 +64,18 @@ const Row = memo(function Row({
   onLongPress,
 }: RowProps) {
   const { terrace, score, distanceM } = item;
+  const t = useStrings();
   const pct = Math.round(score * 100);
   const color = scoreToColor(score);
+  // Localized band label — scoreLabel() from the engine is Dutch-only and
+  // leaked "Grotendeels zonnig" into the English UI.
+  const bandText = {
+    full: t.scoreFull,
+    mostly: t.scoreMostly,
+    partial: t.scorePartly,
+    mshade: t.scoreMostlyShade,
+    shade: t.scoreShade,
+  }[bandForScore(score)];
 
   const distLabel = showDistance && distanceM != null
     ? distanceM < 1000
@@ -106,7 +117,7 @@ const Row = memo(function Row({
             were too noisy for the row; the score chip on the right
             already conveys the sun band. */}
         <Text style={styles.subtitle} numberOfLines={1}>
-          {distLabel ? `📍 ${distLabel} · ` : '📍 '}{terrace.area} · {scoreLabel(score)}
+          {distLabel ? `📍 ${distLabel} · ` : '📍 '}{terrace.area} · {bandText}
         </Text>
       </View>
       <View style={[styles.scoreChip, { backgroundColor: color }]}>

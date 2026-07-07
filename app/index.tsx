@@ -63,10 +63,13 @@ export default function Index() {
   // Safe-area insets for the home button so it clears the status bar / notch.
   const insets = useSafeAreaInsets();
 
+  const clearSelection = useSelectionStore((s) => s.clear);
   const handleHomePress = useCallback(() => {
     haptics.light();
+    // Drop any lingering peek/selection so nothing floats over Home.
+    clearSelection();
     showLanding();
-  }, [showLanding]);
+  }, [clearSelection, showLanding]);
 
   // Each top-level surface gets its own boundary so a crash in one (e.g.
   // map render) doesn't take the bottom sheet down with it. The visible
@@ -125,9 +128,13 @@ export default function Index() {
           unless a selection is at stage 'peek', so it costs nothing the
           rest of the time. Above MainSheet (paints over its handle area),
           below the detail/crawl sheets and modals. */}
-      <ErrorBoundary surface="TerracePeekCard">
-        <TerracePeekCard />
-      </ErrorBoundary>
+      {/* Gated on the Home overlay: a peek left behind when Home reopens
+          floated on top of it, covering the CTA footer. */}
+      {!landingVisible ? (
+        <ErrorBoundary surface="TerracePeekCard">
+          <TerracePeekCard />
+        </ErrorBoundary>
+      ) : null}
       <ErrorBoundary surface="TerraceDetailSheet">
         <TerraceDetailSheet />
       </ErrorBoundary>
