@@ -412,7 +412,7 @@ export function TerraceList({ onSelect }: TerraceListProps) {
             <Text style={styles.emptyTitle}>{emptyState.title}</Text>
             <Text style={styles.emptyBody}>{emptyState.body}</Text>
             <TouchableOpacity onPress={handleResetFilters} style={styles.emptyButton}>
-              <Text style={styles.emptyButtonText}>Clear filters</Text>
+              <Text style={styles.emptyButtonText}>{t.clearFiltersButton}</Text>
             </TouchableOpacity>
           </View>
         }

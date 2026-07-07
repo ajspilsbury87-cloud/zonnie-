@@ -58,9 +58,13 @@ describe('wcViewingForTerrace — confirmed sourced venue (109 Pllek)', () => {
     expect(result?.coverageLabel).toBe('oranje');
   });
 
-  test('fixtures are the full NL_FIXTURES array', () => {
-    expect(result?.fixtures).toHaveLength(NL_FIXTURES.length);
-    expect(result?.fixtures[0]?.opponent).toBe(NL_FIXTURES[0]?.opponent);
+  test('fixtures are only those on/after the queried date', () => {
+    // IN_WINDOW is 2026-06-20: the 14 June Japan game is in the past and
+    // must be dropped — past fixtures kept being shown as "on tonight"
+    // after the Oranje exit.
+    const upcoming = NL_FIXTURES.filter((m) => m.dateStr >= IN_WINDOW);
+    expect(result?.fixtures).toHaveLength(upcoming.length);
+    expect(result?.fixtures[0]?.opponent).toBe(upcoming[0]?.opponent);
   });
 
   test('has a note (free text detail from source)', () => {
@@ -121,9 +125,10 @@ describe('wcViewingForTerrace — fallback (screen terrace not in WC_VENUES)', (
     expect(result?.coverageLabel).toBe('oranje');
   });
 
-  test('has all NL fixtures (we assume they show all group games)', () => {
+  test('has the upcoming NL fixtures (past games are never shown as on tonight)', () => {
     const result = wcViewingForTerrace(593, 1, IN_WINDOW);
-    expect(result?.fixtures).toHaveLength(NL_FIXTURES.length);
+    const upcoming = NL_FIXTURES.filter((m) => m.dateStr >= IN_WINDOW);
+    expect(result?.fixtures).toHaveLength(upcoming.length);
   });
 
   test('has no source (nothing sourced)', () => {

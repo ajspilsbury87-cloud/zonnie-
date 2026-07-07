@@ -40,8 +40,10 @@ export const PACE_BANDS: PaceBand[] = Array.from({ length: 13 }, (_, i) => {
 /** Default selection: the 5:30–5:45 band (index 6). */
 export const DEFAULT_PACE_INDEX = 6;
 
-/** A finish only counts as genuinely sunny at or above this score. */
-export const SUNNY_FINISH_THRESHOLD = 0.45;
+/** A finish only counts as genuinely sunny at or above this score.
+ *  Same bar as SUN_THRESHOLD (handoff.ts/sunUntil.ts) so Sun Run and the
+ *  peek card never disagree about whether a terrace is sunny. */
+export const SUNNY_FINISH_THRESHOLD = 0.5;
 
 /** "HH:MM" from minutes-from-midnight. */
 export function fmtClock(minutes: number): string {

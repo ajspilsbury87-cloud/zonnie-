@@ -8,18 +8,19 @@ function day(entries: Record<number, number>): number[] {
 }
 
 describe('goldenUntilHour', () => {
-  test('returns end boundary of the last hour scoring ≥ 0.5', () => {
+  test('returns end boundary of the last hour scoring ≥ 0.65 (mostly band floor)', () => {
     // Golden 12:00–19:59 → "golden until 20:00"
     const scores = day({ 10: 0.4, 12: 0.8, 15: 0.9, 19: 0.55, 20: 0.45 });
-    expect(goldenUntilHour(scores)).toBe(20);
+    // 19:00 scores 0.55 — below the recalibrated 0.65 bar, so golden ends after 15:00.
+    expect(goldenUntilHour(scores)).toBe(16);
   });
 
   test('null when no hour reaches the threshold (overcast / deep shade)', () => {
     expect(goldenUntilHour(day({ 12: 0.49, 15: 0.3 }))).toBeNull();
   });
 
-  test('threshold boundary: exactly 0.5 counts as golden', () => {
-    expect(goldenUntilHour(day({ 14: 0.5 }))).toBe(15);
+  test('threshold boundary: exactly 0.65 counts as golden', () => {
+    expect(goldenUntilHour(day({ 14: 0.65 }))).toBe(15);
   });
 });
 

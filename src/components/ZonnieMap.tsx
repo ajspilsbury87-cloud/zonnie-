@@ -515,7 +515,7 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
     } catch {
       Alert.alert(t.locationError, t.locationErrorBody);
     }
-  }, []);
+  }, [t]);
 
   /**
    * Tapping the map background dismisses an open peek card (AllTrails

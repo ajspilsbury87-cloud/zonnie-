@@ -125,5 +125,7 @@ export const useCrawlStore = create<CrawlState>((set, get) => ({
     // If null: keep current plan intact (no-op for the user).
   },
 
-  close: () => set({ isOpen: false, plan: null }),
+  // Keep `plan` through the dismiss animation — clearing it here blanked the
+  // sheet's content mid-slide. start() always sets a fresh plan on open.
+  close: () => set({ isOpen: false }),
 }));
