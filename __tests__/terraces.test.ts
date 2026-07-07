@@ -11,12 +11,11 @@ const CAPACITIES = new Set(['S', 'M', 'L']);
 
 describe('terraces.json schema', () => {
   test('has roughly the documented count', () => {
-    // Range expanded post-import (2026-05-05): bulk-imported ~750 venues
-    // from Seats-in-the-Sun's competitor list → ~1,100. Upper bound is
-    // generous to allow further imports without breaking this test;
+    // Range expanded post-import: the 2026-07-07 grid Nearby-Search sweep
+    // took the dataset to ~2,027. Upper bound generous for further imports;
     // tightens only if a regression would drop us below 800.
     expect(TERRACES.length).toBeGreaterThanOrEqual(800);
-    expect(TERRACES.length).toBeLessThanOrEqual(2000);
+    expect(TERRACES.length).toBeLessThanOrEqual(2600);
   });
 
   test('every entry has the required fields and sane values', () => {

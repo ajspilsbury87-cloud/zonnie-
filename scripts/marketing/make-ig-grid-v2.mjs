@@ -126,7 +126,7 @@ async function tile01_hero() {
   layers.push({ input: icon, left: Math.round((W - 108) / 2), top: 130 });
   await stack(layers, {
     headline: 'Find your place\nin the sun.', hlSize: 60, top: 300,
-    sub: '1,300+ Amsterdam terraces, scored for sun — live, every hour.',
+    sub: '2,000+ Amsterdam terraces, scored for sun — live, every hour.',
   });
   const hw = 960, hh = Math.round(hw * 860 / 2800);
   const hero = await rounded(await sharp(HERO).resize(hw).png().toBuffer(), hw, hh, 26);
@@ -331,7 +331,7 @@ async function socialCard() {
     hlW = 1060;
   }
   layers.push({ input: hlBuf, left: 70, top: 178 });
-  const sub = await text({ markup: `<span foreground="${C.inkSoft}">1,300+ Amsterdam terraces, scored for sun — live.</span>`, font: 'Inter 22', fontfile: I_REG, align: 'left' });
+  const sub = await text({ markup: `<span foreground="${C.inkSoft}">2,000+ Amsterdam terraces, scored for sun — live.</span>`, font: 'Inter 22', fontfile: I_REG, align: 'left' });
   layers.push({ input: sub.buffer, left: 70, top: 300 });
   // Bottom strip: lower two-thirds of the terrace scene (ground, people, houses).
   const strip = await sharp(HERO).extract({ left: 0, top: 230, width: 2800, height: 630 }).resize(1200, 270).png().toBuffer();
