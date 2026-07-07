@@ -20,7 +20,7 @@ import { create } from 'zustand';
 import { generateSunCrawl } from '@/src/engines/crawl';
 import type { CrawlPlan } from '@/src/engines/crawl';
 import type { Weather, WeatherProfile } from '@/src/engines/types';
-import { nowAmsterdamHourFloat, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
+import { nowAmsterdamHourFloat, selectedDateStr, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
 
 interface CrawlState {
   /** The current crawl plan, or null when none has been generated yet. */
@@ -70,9 +70,15 @@ interface CrawlState {
  * hours in the past. Future dates use the picker's window start.
  */
 function crawlStartHour(dateStr: string): number {
-  const h = dateStr === todayAmsterdamDateStr()
-    ? Math.floor(nowAmsterdamHourFloat())
-    : useTimeStore.getState().fromHour;
+  if (dateStr === todayAmsterdamDateStr()) {
+    return Math.min(21, Math.max(8, Math.floor(nowAmsterdamHourFloat())));
+  }
+  // Future date. Use the picker's window start when the user actually
+  // selected that date; via the post-sunset pivot the store still says
+  // "today" with a stale evening window, so fall back to the same
+  // representative afternoon the landing/Sun Run pivots use.
+  const { dateOffset, fromHour } = useTimeStore.getState();
+  const h = selectedDateStr(dateOffset) === dateStr ? fromHour : 13;
   return Math.min(21, Math.max(8, h));
 }
 
