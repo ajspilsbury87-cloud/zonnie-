@@ -140,7 +140,7 @@ describe('useCrawlStore', () => {
 
   // ── close() ───────────────────────────────────────────────────────────────
 
-  test('close() sets isOpen=false and clears plan', () => {
+  test('close() sets isOpen=false but keeps the plan for the dismiss animation', () => {
     const plan = makePlan();
     mockGenerateSunCrawl.mockReturnValue(plan);
     useCrawlStore.getState().start(1, '2026-06-21', 'sunny');
@@ -148,7 +148,9 @@ describe('useCrawlStore', () => {
 
     useCrawlStore.getState().close();
 
+    // Clearing the plan on close blanked the sheet content mid-slide;
+    // start() always sets a fresh plan, so keeping it here is safe.
     expect(useCrawlStore.getState().isOpen).toBe(false);
-    expect(useCrawlStore.getState().plan).toBeNull();
+    expect(useCrawlStore.getState().plan).not.toBeNull();
   });
 });

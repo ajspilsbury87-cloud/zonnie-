@@ -93,13 +93,22 @@ export function haversineM(aLat: number, aLng: number, bLat: number, bLng: numbe
  * is needed.
  */
 export function sunLeavesHour(hourlyScores: readonly number[]): number {
-  let last = -1;
   // We only scan the afternoon/evening window (13–23) because morning sun
   // leaving isn't a "chase the sun" situation — the sun is still rising.
+  // End of the FIRST consecutive sunny run, not the last sunny hour of the
+  // day: taking the overall last hour skipped shade gaps and told users to
+  // stay hours after their table went dark (contradicting sunUntil.ts).
+  let start = -1;
   for (let h = 13; h <= 23; h++) {
-    if ((hourlyScores[h] ?? 0) >= SUN_THRESHOLD) last = h;
+    if ((hourlyScores[h] ?? 0) >= SUN_THRESHOLD) { start = h; break; }
   }
-  return last; // last hour that is sunny; -1 if never sunny
+  if (start < 0) return -1;
+  let last = start;
+  for (let h = start + 1; h <= 23; h++) {
+    if ((hourlyScores[h] ?? 0) >= SUN_THRESHOLD) last = h;
+    else break;
+  }
+  return last;
 }
 
 /**

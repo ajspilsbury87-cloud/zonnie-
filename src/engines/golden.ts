@@ -13,10 +13,12 @@
  * derivations of the score curve, not part of the score computation.
  */
 
-/** Score at/above this counts as "golden" (matches the 'mostly sunny' band floor). */
-const GOLDEN_THRESHOLD = 0.5;
-/** Score below this counts as "sun has left" (matches the 'partial sun' band floor). */
-const SUNDOWN_THRESHOLD = 0.3;
+/** Score at/above this counts as "golden" (matches the 'mostly' band floor
+ *  in bands.ts — these drifted when the bands were recalibrated, so golden
+ *  pills appeared on terraces whose badge said partial/shade). */
+const GOLDEN_THRESHOLD = 0.65;
+/** Score below this counts as "sun has left" (matches the 'partial' band floor). */
+const SUNDOWN_THRESHOLD = 0.4;
 /** Only show the countdown when the drop is at most this many minutes away. */
 const SUNDOWNER_HORIZON_MIN = 90;
 

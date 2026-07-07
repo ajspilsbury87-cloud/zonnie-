@@ -179,6 +179,7 @@ export const strings = {
     noResultsQuery: (query: string) => `Niets in de dataset komt overeen met "${query}".`,
     noTerraces: 'Geen terrassen gevonden',
     noTerracesHint: 'Probeer een andere zoekopdracht, minder buurten of een ruimere tijdperiode.',
+    clearFiltersButton: 'Wis filters',
 
     // Grey-window banner — results exist, but nothing has real sun
     greyWindowReturn: (h: number) => `Grijs in dit tijdvak — de zon is terug rond ${String(h).padStart(2, '0')}:00`,
@@ -354,7 +355,7 @@ export const strings = {
     verdictLow: '☁️ Eigenlijk geen terrasdag',
     verdictLoading: 'Dagelijkse samenvatting laden…',
     verdictStatLine: (count: number, fromHour: number, toHour: number) =>
-      `${count} terrassen boven 65% tussen ${fromHour}:00–${toHour}:00`,
+      `${count} ${count === 1 ? 'terras' : 'terrassen'} boven 65% tussen ${fromHour}:00–${toHour}:00`,
     verdictStatLineNoWindow: (count: number) =>
       `${count} ${count === 1 ? 'terras' : 'terrassen'} boven 65% vandaag`,
     verdictTopPicks: 'TOP PICKS VANDAAG',
@@ -584,6 +585,7 @@ export const strings = {
     noTerraces: 'No terraces match',
     noTerracesHint:
       'Try a different search, fewer neighbourhoods, or a wider time range.',
+    clearFiltersButton: 'Clear filters',
 
     // Grey-window banner — results exist, but nothing has real sun
     greyWindowReturn: (h: number) => `Grey in this window — the sun is back around ${String(h).padStart(2, '0')}:00`,
@@ -757,7 +759,7 @@ export const strings = {
     verdictLow: '☁️ Not really a terrace day',
     verdictLoading: 'Loading today\'s summary…',
     verdictStatLine: (count: number, fromHour: number, toHour: number) =>
-      `${count} terraces above 65% between ${fromHour}:00–${toHour}:00`,
+      `${count} ${count === 1 ? 'terrace' : 'terraces'} above 65% between ${fromHour}:00–${toHour}:00`,
     verdictStatLineNoWindow: (count: number) =>
       `${count} ${count === 1 ? 'terrace' : 'terraces'} above 65% today`,
     verdictTopPicks: 'TOP PICKS TODAY',

@@ -176,7 +176,11 @@ export function wcViewingForTerrace(
 
     return {
       tier: venue.status,
-      fixtures,
+      // Only today's and future fixtures: after the Oranje exit (R32, on
+      // penalties to Morocco, 2026-06-29) the June group games kept being
+      // presented as what venues were showing tonight. An empty list means
+      // "no NL fixtures remain" — the venue still shows the tournament.
+      fixtures: fixtures.filter((m) => m.dateStr >= todayStr),
       coverageLabel,
       note: venue.note,
       extra: venue.extra,
@@ -188,7 +192,8 @@ export function wcViewingForTerrace(
   // we never claim the venue has confirmed anything here.
   return {
     tier: 'fallback',
-    fixtures: NL_FIXTURES,
+    // Same date filter as sourced venues — no past games shown as upcoming.
+    fixtures: NL_FIXTURES.filter((m) => m.dateStr >= todayStr),
     coverageLabel: 'oranje',
   };
 }

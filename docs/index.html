@@ -278,7 +278,7 @@
 <section class="blk wrap" id="explore">
   <p class="eyebrow reveal">Live demo · real data</p>
   <h2 class="reveal">The sunniest terraces, <em>right now</em>.</h2>
-  <p class="lead reveal">Drag the sun across the day and watch all 993 real terraces re-rank live — the same sun model that powers the app, running right here in your browser.</p>
+  <p class="lead reveal">Drag the sun across the day and watch all 1,330 real terraces re-rank live — the same sun model that powers the app, running right here in your browser.</p>
   <div class="explorer reveal d1">
     <div class="exp-annotate hand">try me →</div>
     <div class="exp-top">
@@ -342,7 +342,7 @@
 <section class="blk wrap">
   <div class="trust reveal">
     <div class="ti"><div class="stars">★★★★★</div><div class="l">Loved by Amsterdam sun-chasers</div></div>
-    <div class="ti"><div class="n">1,028</div><div class="l">terraces, hand-curated</div></div>
+    <div class="ti"><div class="n">1,330</div><div class="l">terraces, verified &amp; curated</div></div>
     <div class="ti"><div class="n">100%</div><div class="l">on-device · zero tracking</div></div>
   </div>
 </section>
@@ -537,7 +537,7 @@
   function loadData(){ if(loaded)return; loaded=true;
     fetch('terraces-lite.json').then(function(r){return r.json();}).then(function(d){ state.data=d;
       try{ var h=+new Date().toLocaleString('en-GB',{timeZone:'Europe/Amsterdam',hour:'2-digit',hour12:false}); if(h>=8&&h<=21){state.hour=h;slider.value=h;} }catch(e){}
-      ensureLeaflet(function(){ try{ if(window.L) initMap(); }catch(e){} buildChips(); render(); });
+      ensureLeaflet(function(){ try{ if(window.L) initMap(); else{ var em=document.getElementById('expMap'); if(em) em.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:20px;text-align:center;color:#5A4A38;font-size:.9rem">Map unavailable — the map library could not load. The ranked list still works.</div>'; } }catch(e){} buildChips(); render(); });
     }).catch(function(){ listEl.innerHTML='<p style="text-align:center;color:var(--ink-soft);padding:26px 0;">Couldn\'t load the live demo — the full experience is in the app.</p>'; });
   }
   new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){loadData();}});},{rootMargin:'300px'}).observe($('#explore'));

@@ -25,8 +25,11 @@ export function nextSunnyHour(
 ): number | null {
   if (!hourly) return null;
   const from = Math.max(0, Math.floor(afterHour) + 1);
+  // Strictly BEFORE the sunset hour: suggesting the sunset hour itself made
+  // the banner's one-tap jump land on another grey window (the 2h range it
+  // sets extends past sundown).
   const to = Math.min(23, Math.floor(sunsetH));
-  for (let h = from; h <= to; h++) {
+  for (let h = from; h < to; h++) {
     const w = hourly[h];
     if (w != null && w.cloudCover < SUNNY_CLOUD_MAX) return h;
   }
