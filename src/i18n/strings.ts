@@ -407,6 +407,7 @@ export const strings = {
     ) =>
       `☀️ Mijn Chase the Sun route door ${area}:\n1. ${stop1name} — zon tot ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min lopen 🌅\n\nBlijf de hele middag in de zon → ${appUrl}`,
     crawlChaseButton: '☀️ Chase the sun vanaf hier',
+    crawlChaseButtonTomorrow: '☀️ Chase the sun — morgen',
 
     // Perfect For guides (landing-page entry-point cards)
     perfectForHeader: 'PERFECT VOOR',
@@ -812,6 +813,7 @@ export const strings = {
     ) =>
       `☀️ My Chase the Sun route through ${area}:\n1. ${stop1name} — sun till ${stop1until}:00\n2. ${stop2name} — ${stop2walk} min walk 🌅\n\nStay in the sun all afternoon → ${appUrl}`,
     crawlChaseButton: '☀️ Chase the sun from here',
+    crawlChaseButtonTomorrow: '☀️ Chase the sun — tomorrow',
 
     // Perfect For guides (landing-page entry-point cards)
     perfectForHeader: 'PERFECT FOR',

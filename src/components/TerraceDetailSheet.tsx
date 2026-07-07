@@ -54,7 +54,7 @@ import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
 import { isParadeViewTerrace, isWorldPrideLive } from '@/src/data/pride';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { useSunRunStore } from '@/src/store/sunRunStore';
-import { selectedDateStr, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
+import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { usePlacesStore } from '@/src/store/placesStore';
 import { useFavoritesStore } from '@/src/store/favoritesStore';
@@ -463,13 +463,32 @@ export function TerraceDetailSheet() {
    * Instead we show the button whenever conditions 1+2 hold, and react to
    * the plan being null (store.start returned false) with an Alert.
    */
+  // After sunset the crawl pivots to TOMORROW (same convention as the
+  // verdict card and Sun Run) instead of silently vanishing with the sun —
+  // the one surface that just disappeared at night kept reading as broken.
+  const crawlPivotsToTomorrow = isPastSunsetAmsterdam();
   const showCrawlButton = useMemo(() => {
-    if (!terrace || !hourlyScores || dateOffset !== 0) return false;
+    if (!terrace || dateOffset !== 0) return false;
+    if (crawlPivotsToTomorrow) {
+      // Shown when the terrace has a genuinely sunny afternoon hour tomorrow.
+      const dateStr = selectedDateStr(1);
+      const hourlyWeather = weatherByDate[dateStr]?.data;
+      const buildings = getBuildingsForTerrace(terrace.id);
+      const trees = getTreesForTerrace(terrace.id);
+      for (let h = 13; h <= 21; h++) {
+        const s = computeSunScore(
+          terrace, h, dateStr, weatherProfile, hourlyWeather?.[h], buildings, trees,
+        ).score;
+        if (s >= 0.5) return true;
+      }
+      return false;
+    }
+    if (!hourlyScores) return false;
     const now = new Date();
     const nowHourInt = parseInt(formatInTimeZone(now, AMSTERDAM_TZ, 'HH'), 10);
     const currentScore = hourlyScores[nowHourInt] ?? 0;
     return currentScore >= 0.5;
-  }, [terrace, hourlyScores, dateOffset]);
+  }, [terrace, hourlyScores, dateOffset, crawlPivotsToTomorrow, weatherByDate, weatherProfile]);
 
   const startCrawl = useCrawlStore((s) => s.start);
   const crawlIsOpen = useCrawlStore((s) => s.isOpen);
@@ -477,7 +496,7 @@ export function TerraceDetailSheet() {
   const handleChaseSun = useCallback(() => {
     if (!terrace) return;
     haptics.medium();
-    const dateStr = selectedDateStr(dateOffset);
+    const dateStr = crawlPivotsToTomorrow ? selectedDateStr(1) : selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
     const hourlyWeather = entry?.data;
     startCrawl(terrace.id, dateStr, weatherProfile, hourlyWeather);
@@ -487,7 +506,7 @@ export function TerraceDetailSheet() {
     if (!didOpen) {
       Alert.alert('', t.crawlNoRoute);
     }
-  }, [terrace, dateOffset, weatherByDate, weatherProfile, startCrawl, t]);
+  }, [terrace, dateOffset, crawlPivotsToTomorrow, weatherByDate, weatherProfile, startCrawl, t]);
 
   const setRange = useTimeStore((s) => s.setRange);
 
@@ -848,9 +867,11 @@ export function TerraceDetailSheet() {
                   pressed && styles.actionPressed,
                 ]}
                 accessibilityRole="button"
-                accessibilityLabel={t.crawlChaseButton}
+                accessibilityLabel={crawlPivotsToTomorrow ? t.crawlChaseButtonTomorrow : t.crawlChaseButton}
               >
-                <Text style={styles.crawlButtonText}>{t.crawlChaseButton}</Text>
+                <Text style={styles.crawlButtonText}>
+                  {crawlPivotsToTomorrow ? t.crawlChaseButtonTomorrow : t.crawlChaseButton}
+                </Text>
               </Pressable>
             ) : null}
 
