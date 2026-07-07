@@ -34,6 +34,7 @@ import {
   isTopTierBlock,
   type GoodWeatherBlock,
 } from './forecast';
+import { useLanguageStore } from '@/src/store/languageStore';
 import type { Weather } from '@/src/engines/types';
 
 /** Stable identifier so we can cancel + reschedule the same slot. */
@@ -99,11 +100,20 @@ export async function syncTomorrowForecastNotification(
     // Top-tier days get a more exciting, share-y "cracking day" nudge; normal
     // good days keep the understated line. Keeps the celebratory copy rare.
     const topTier = isTopTierBlock(block);
+    const nl = useLanguageStore.getState().lang === 'nl';
     await Notifications.scheduleNotificationAsync({
       identifier: NOTIFICATION_ID,
       content: {
-        title: topTier ? 'Morgen: top terrasdag ☀️' : 'Morgen zonnig ☀️',
-        body: topTier ? formatTopTierBody(block) : formatNotificationBody(block),
+        // Day-of copy ("Vandaag"/"Today") — this notification fires at 09:00
+        // on the good-weather day itself, not the evening before.
+        title: nl
+          ? (topTier ? 'Vandaag: top terrasdag ☀️' : 'Vandaag zonnig ☀️')
+          : (topTier ? 'Today: cracking terrace day ☀️' : 'Sunny today ☀️'),
+        body: nl
+          ? (topTier ? formatTopTierBody(block) : formatNotificationBody(block))
+          : (topTier
+              ? `Cracking terrace day ahead! Sun ${String(block.fromHour).padStart(2, '0')}:00–${String(block.toHour).padStart(2, '0')}:00 — where are you drinking? →`
+              : `Great terrace weather ${String(block.fromHour).padStart(2, '0')}:00–${String(block.toHour).padStart(2, '0')}:00 — find a sunny spot →`),
         badge: 1,
         sound: 'default',
       },

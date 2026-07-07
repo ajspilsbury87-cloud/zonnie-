@@ -19,7 +19,8 @@
  */
 
 import { Share } from 'react-native';
-import { scoreLabel } from '@/src/engines/scoring';
+import { bandForScore } from '@/src/engines/bands';
+import { strings } from '@/src/i18n/strings';
 import type { CrawlPlan } from '@/src/engines/crawl';
 
 export const APP_STORE_URL =
@@ -34,6 +35,10 @@ export interface ShareCardParams {
   fromHour: number;
   /** End hour of the window being described (Amsterdam local). */
   toHour: number;
+  /** UI language — the message is composed in the sharer's language. */
+  lang?: 'nl' | 'en';
+  /** False when the share describes a future selected date, not today. */
+  isToday?: boolean;
 }
 
 function fmtHour(h: number): string {
@@ -53,15 +58,30 @@ function buildTimeLabel(fromHour: number, toHour: number): string {
  * if they want to fire analytics.
  */
 export async function shareTerraceCard(params: ShareCardParams): Promise<void> {
-  const { name, area, score, fromHour, toHour } = params;
+  const { name, area, score, fromHour, toHour, lang = 'en', isToday = true } = params;
   const timeLabel = buildTimeLabel(fromHour, toHour);
-  const label = scoreLabel(score);
+  const nl = lang === 'nl';
+  // Localized band label (the old engine scoreLabel was Dutch-only) and an
+  // honest day word — this used to say "today" even for future-date shares.
+  const dict = strings[lang];
+  const label = {
+    full: dict.scoreFull,
+    mostly: dict.scoreMostly,
+    partial: dict.scorePartly,
+    mshade: dict.scoreMostlyShade,
+    shade: dict.scoreShade,
+  }[bandForScore(score)];
+  const day = isToday ? (nl ? 'vandaag' : 'today') : (nl ? 'die dag' : 'that day');
 
   const message = [
-    `☀️ ${name} is sunny ${timeLabel} today — ${label}`,
+    nl
+      ? `☀️ ${name} ligt ${day} ${timeLabel} in de zon — ${label}`
+      : `☀️ ${name} is sunny ${timeLabel} ${day} — ${label}`,
     `📍 ${area}, Amsterdam`,
     '',
-    `Find sunny terraces near you → ${APP_STORE_URL}`,
+    nl
+      ? `Vind zonnige terrassen bij jou → ${APP_STORE_URL}`
+      : `Find sunny terraces near you → ${APP_STORE_URL}`,
   ].join('\n');
 
   await Share.share(

@@ -231,7 +231,12 @@ function parseHash() {
   for (const part of hash.split('&')) {
     const eq = part.indexOf('=');
     if (eq < 0) continue;
-    params[part.slice(0, eq)] = decodeURIComponent(part.slice(eq + 1));
+    try {
+      params[part.slice(0, eq)] = decodeURIComponent(part.slice(eq + 1));
+    } catch (e) {
+      // Truncated %-sequence in a mangled share link — skip this part
+      // rather than letting URIError blank the whole page.
+    }
   }
 
   if (!params.t) return null;
@@ -383,7 +388,8 @@ function buildCard(terrace, score, scoreIsLegacy) {
 
 // ── Main: fetch terraces-lite.json and render ────────────────────
 (async function main() {
-  const parsed = parseHash();
+  let parsed = null;
+  try { parsed = parseHash(); } catch (e) { /* malformed hash -> empty state */ }
   const empty = document.getElementById('empty');
   const cards = document.getElementById('cards');
   const cta = document.getElementById('cta');

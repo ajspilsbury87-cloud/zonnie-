@@ -523,6 +523,8 @@ export function TerraceDetailSheet() {
       score:    shareScore,
       fromHour: shareFrom,
       toHour:   shareTo,
+      lang:     useLanguageStore.getState().lang,
+      isToday:  useTimeStore.getState().dateOffset === 0,
     }).catch(() => {
       // Share.share rejects if the user dismisses without choosing a
       // destination on some Android versions — swallow silently.
