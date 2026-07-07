@@ -93,7 +93,7 @@ export function SunRunSheet() {
   const plan = useMemo(() => {
     if (!isOpen) return null;
     const entry = weatherByDate[dateStr];
-    const hourly = entry?.status === 'ready' ? entry.data : undefined;
+    const hourly = entry?.data;
     const pace = PACE_BANDS[paceIndex] ?? PACE_BANDS[DEFAULT_PACE_INDEX]!;
     const exclude = new Set(excludeIds);
     if (originId != null) exclude.add(originId); // never finish where you started

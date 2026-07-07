@@ -136,11 +136,14 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
     const existing = get().byDate[today];
     // Don't interrupt an in-flight fetch.
     if (existing?.status === 'loading') return;
-    // Drop today's entry; next `ensure(today)` will re-fetch.
+    // Mark stale but KEEP the data: deleting it meant a failed refetch
+    // (offline foreground-resume) left nothing, and scores fell back to
+    // the synthetic sunny profile. 'idle' makes ensure() refetch while
+    // consumers keep showing slightly-old real data.
     set((s) => {
-      const next = { ...s.byDate };
-      delete next[today];
-      return { byDate: next };
+      const prev = s.byDate[today];
+      if (!prev) return s;
+      return { byDate: { ...s.byDate, [today]: { ...prev, status: 'idle' } } };
     });
   },
 }));

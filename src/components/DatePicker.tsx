@@ -164,7 +164,7 @@ export function DatePicker() {
       {dates.map((d) => {
         const active = d.offset === dateOffset;
         const entry = byDate[d.dateStr];
-        const wx = entry?.status === 'ready' ? dayWeather(entry.data) : null;
+        const wx = entry?.data ? dayWeather(entry.data) : null;
         const band = wx ? weatherBand(wx.quality) : null;
         // No data yet → neutral sand chip + faint placeholder bar (no jump).
         const washBg = band ? WASH_COLOR[band] : palette.sandDeep;

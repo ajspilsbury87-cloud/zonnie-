@@ -197,7 +197,7 @@ export function TerraceDetailSheet() {
     const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const hourlyWeather = entry?.data;
     return computeRangeScore(
       terrace,
       fromHour,
@@ -221,7 +221,7 @@ export function TerraceDetailSheet() {
     const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const hourlyWeather = entry?.data;
     const here = computeSunScore(
       terrace,
       fromHour,
@@ -365,7 +365,7 @@ export function TerraceDetailSheet() {
     const trees = getTreesForTerrace(terrace.id);
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const hourlyWeather = entry?.data;
     // Compute the full 24-hour score array (same as SunTimeline does internally).
     return Array.from({ length: 24 }, (_, h) =>
       computeSunScore(
@@ -445,7 +445,7 @@ export function TerraceDetailSheet() {
     // Gate 3: ask the engine for the best nearby still-sunny terrace.
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const hourlyWeather = entry?.data;
 
     return findNextSunnySpot(terrace, dateStr, weatherProfile, hourlyWeather);
   }, [terrace, hourlyScores, dateOffset, weatherProfile, weatherByDate]);
@@ -479,7 +479,7 @@ export function TerraceDetailSheet() {
     haptics.medium();
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const hourlyWeather = entry?.data;
     startCrawl(terrace.id, dateStr, weatherProfile, hourlyWeather);
     // After start() runs, check if the store opened — if not, the plan was null.
     // We read via getState() to avoid a stale closure on crawlIsOpen.

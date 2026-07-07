@@ -104,7 +104,7 @@ export function useScoredTerraces(
     const q = fold(query.trim());
     const weatherEntry = weatherByDate[dateStr];
     const hourlyWeather =
-      weatherEntry?.status === 'ready' ? weatherEntry.data : undefined;
+      weatherEntry?.data;
 
     let filtered: readonly Terrace[] = TERRACES;
     if (favoritesOnly) {

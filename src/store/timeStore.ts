@@ -63,7 +63,9 @@ export function nowAmsterdamHourFloat(): number {
 export function isPastSunsetAmsterdam(): boolean {
   const dateStr = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'yyyy-MM-dd');
   const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
-  return nowAmsterdamHour() > sunset;
+  // Fractional compare: the truncated integer hour said "not past sunset"
+  // for the whole clock-hour containing it (22:03-22:59 for a 22:05 sunset).
+  return nowAmsterdamHourFloat() > sunset;
 }
 
 /**

@@ -119,12 +119,11 @@ export function TodaysVerdict() {
     ensure(dateStr);
   }, [ensure, dateStr]);
   const weatherEntry = weatherByDate[dateStr];
-  const isLoading =
-    weatherEntry == null ||
-    weatherEntry.status === 'idle' ||
-    weatherEntry.status === 'loading';
+  // "Loading" = no real data yet. Keying this on status made every
+  // 30-min background refresh blank the card to the placeholder.
+  const isLoading = weatherEntry?.data == null;
   const hourlyWeather =
-    weatherEntry?.status === 'ready' ? weatherEntry.data : undefined;
+    weatherEntry?.data;
 
   // Full scoring pass — memoised on weather changes (same dep as LandingPage).
   const { scored, verdictData } = useMemo(() => {

@@ -127,7 +127,7 @@ function pickTopByRegion(
 ): RegionSection[] {
   const { dateStr, fromHour, toHour } = effectiveDayWindow();
   const entry = weatherByDate[dateStr];
-  const hourly = entry?.status === 'ready' ? entry.data : undefined;
+  const hourly = entry?.data;
 
   // One scoring pass for all terraces, then group by region.
   const scoredByRegion = new Map<Region, TopVenue[]>();
@@ -176,7 +176,7 @@ function pickFeaturedTerraces(
 ): FeaturedVenue[] {
   const { dateStr, fromHour, toHour } = effectiveDayWindow();
   const entry = weatherByDate[dateStr];
-  const hourly = entry?.status === 'ready' ? entry.data : undefined;
+  const hourly = entry?.data;
 
   return TERRACES
     .filter((t) => t.featured === true)

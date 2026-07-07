@@ -47,7 +47,7 @@ export function SunsOutBanner() {
 
   const todayStr = todayAmsterdamDateStr();
   const entry = weatherByDate[todayStr];
-  const todayHourly = entry?.status === 'ready' ? entry.data : undefined;
+  const todayHourly = entry?.data;
 
   const show =
     hydrated && !dismissed && shouldShowSunsOut(todayHourly, lastShownDate, todayStr);

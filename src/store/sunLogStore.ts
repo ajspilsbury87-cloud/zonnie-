@@ -91,7 +91,9 @@ export const useSunLogStore = create<SunLogState>((set, get) => ({
               typeof (x as SunLogEvent).terraceId === 'number' &&
               typeof (x as SunLogEvent).action === 'string',
           );
-          set({ events, hydrated: true });
+          // Merge UNDER any events logged before hydration finished, so a
+          // fast first tap can never clobber the persisted history.
+          set((st) => ({ events: [...events, ...st.events].slice(-SUN_LOG_CAP), hydrated: true }));
           return;
         }
       }
@@ -107,7 +109,14 @@ export const useSunLogStore = create<SunLogState>((set, get) => ({
     // slice(-CAP) keeps the MOST recent CAP items, dropping the oldest.
     const next = [...current, event].slice(-SUN_LOG_CAP);
     set({ events: next });
-    void persist(next);
+    if (get().hydrated) {
+      void persist(next);
+      return;
+    }
+    // First log of a session: persisting now would overwrite the stored
+    // history with just this event. Load it first (hydrate merges stored
+    // events UNDER anything already in memory), then persist the union.
+    void get().hydrate().then(() => persist(get().events));
   },
 
   distinctTerraceCount: () => {
