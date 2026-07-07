@@ -204,7 +204,7 @@ export function TerraceList({ onSelect }: TerraceListProps) {
     if (!isGreyWindow(ranked[0]?.score, ranked.length)) return null;
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    const hourly = entry?.status === 'ready' ? entry.data : undefined;
+    const hourly = entry?.data;
     const sunset = sunsetHour(dateStr, AMSTERDAM_LAT, AMSTERDAM_LNG, AMSTERDAM_TZ);
     const backAt = nextSunnyHour(hourly, toHour, sunset);
     return backAt != null

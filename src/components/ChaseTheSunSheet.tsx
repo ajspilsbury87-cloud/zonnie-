@@ -467,7 +467,7 @@ export function ChaseTheSunSheet() {
     haptics.selection();
     const dateStr = selectedDateStr(dateOffset);
     const entry = weatherByDate[dateStr];
-    const hourlyWeather = entry?.status === 'ready' ? entry.data : undefined;
+    const hourlyWeather = entry?.data;
     shuffle(dateStr, weatherProfile, hourlyWeather);
   }, [plan, dateOffset, weatherByDate, weatherProfile, shuffle]);
 

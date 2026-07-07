@@ -25,7 +25,13 @@ const MAX_CACHE_SIZE = 8000;
 
 function weatherBucket(w: Weather | undefined): string {
   if (!w) return 'syn';
-  return `${Math.round(w.cloudCover / 5) * 5}`;
+  // Bucket EVERY signal computeSunScore reads, not just cloud cover —
+  // keying on cloud alone kept serving pre-refresh scores when radiation,
+  // temp or wind changed within the same cloud bucket. Buckets are coarse
+  // (25 W/m2, 2C, 5 km/h) to keep hit rates high.
+  const rad = w.directRadiation != null ? Math.round(w.directRadiation / 25) : -1;
+  const wind = w.windSpeed != null ? Math.round(w.windSpeed / 5) : -1;
+  return `${Math.round(w.cloudCover / 5) * 5}|${rad}|${Math.round(w.temp / 2)}|${wind}`;
 }
 
 /** Sun score for a single terrace at a single hour, memoised. */

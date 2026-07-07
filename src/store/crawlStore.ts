@@ -20,6 +20,7 @@ import { create } from 'zustand';
 import { generateSunCrawl } from '@/src/engines/crawl';
 import type { CrawlPlan } from '@/src/engines/crawl';
 import type { Weather, WeatherProfile } from '@/src/engines/types';
+import { nowAmsterdamHourFloat, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
 
 interface CrawlState {
   /** The current crawl plan, or null when none has been generated yet. */
@@ -63,6 +64,18 @@ interface CrawlState {
   close: () => void;
 }
 
+/**
+ * Crawl start hour: "now" (clamped to daytime 8-21) when planning today —
+ * the engine's default 15:00 sent evening users routes whose meet time was
+ * hours in the past. Future dates use the picker's window start.
+ */
+function crawlStartHour(dateStr: string): number {
+  const h = dateStr === todayAmsterdamDateStr()
+    ? Math.floor(nowAmsterdamHourFloat())
+    : useTimeStore.getState().fromHour;
+  return Math.min(21, Math.max(8, h));
+}
+
 export const useCrawlStore = create<CrawlState>((set, get) => ({
   plan: null,
   originId: null,
@@ -70,7 +83,9 @@ export const useCrawlStore = create<CrawlState>((set, get) => ({
   lastExcluded: [],
 
   start: (originId, dateStr, weatherProfile, hourlyWeather) => {
-    const plan = generateSunCrawl(originId, dateStr, weatherProfile, hourlyWeather);
+    const plan = generateSunCrawl(originId, dateStr, weatherProfile, hourlyWeather, {
+      startHour: crawlStartHour(dateStr),
+    });
     if (plan !== null) {
       set({
         plan,
@@ -101,6 +116,7 @@ export const useCrawlStore = create<CrawlState>((set, get) => ({
 
     const newPlan = generateSunCrawl(originId, dateStr, weatherProfile, hourlyWeather, {
       excludeIds,
+      startHour: crawlStartHour(dateStr),
     });
 
     if (newPlan !== null) {
