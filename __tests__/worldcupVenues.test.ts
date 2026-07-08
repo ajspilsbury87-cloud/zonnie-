@@ -194,13 +194,13 @@ describe('Data fixes', () => {
     expect(t?.name).toBe('WestWeelde');
   });
 
-  test('terrace count is 2027', () => {
+  test('terrace count is 1996', () => {
     // 993 → 988 (removed 5 stale) → 987 (deduped LuminAir) → 1028 (added 41
     // OSM-geocoded) → 1029 (added Juno) → 1330: citywide Google Places sweep
     // 2026-07-05 added 301 confirmed-outdoor venues (ids 1521–1821). Then
-    // 2026-07-07: removed closed Bar Spek (#124) and a grid Nearby-Search
-    // sweep added ~698 verified bar/café/terrace venues → 2027.
-    expect(TERRACES.length).toBe(2027);
+    // 2026-07-07: grid Nearby-Search sweep added ~698 verified venues.
+    // 2026-07-08: businessStatus audit removed 31 permanently-closed → 1996.
+    expect(TERRACES.length).toBe(1996);
   });
 
   test('#70 Bar Botanique is in area Oost', () => {
