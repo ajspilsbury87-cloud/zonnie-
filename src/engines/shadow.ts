@@ -275,9 +275,14 @@ export function isInShadow(
  * blocks the sun if the sun azimuth falls inside that arc and the crown is
  * tall enough relative to the sun's altitude.
  *
- * Height check: uses (tree.height - tree.trunkHeight) as the effective
- * blocking height — the bare trunk below the crown is transparent. If
- * trunkHeight is absent, the full tree height is used (conservative).
+ * Height check: the crown occupies an ELEVATED band from `trunkHeight` up to
+ * `height`, so it blocks only when the sun's altitude falls INSIDE that band —
+ * [atan(trunkHeight/d), atan(height/d)]. High sun clears the crown top; low sun
+ * passes UNDER the crown through the transparent trunk. (The old model treated
+ * the crown as a ground block of height (height − trunkHeight), which let high
+ * sun through — "full sun" while sitting in tree shade — and wrongly blocked
+ * low sun in the trunk gap.) If trunkHeight is absent, the band starts at the
+ * ground (full height, conservative).
  *
  * Angular check: half-span = atan(crownRadius / distance). Same PENUMBRA_DEG
  * soft edge as the polygon building path.
@@ -302,19 +307,31 @@ export function treeShadowCoverage(
     const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance > MAX_DISTANCE_M || distance < MIN_DISTANCE_M) continue;
 
-    // Only the crown (above trunk) blocks the sun — the bare trunk is transparent.
-    const effectiveHeight =
-      tree.trunkHeight != null ? tree.height - tree.trunkHeight : tree.height;
-    if (effectiveHeight <= 0) continue;
+    // The crown is an ELEVATED band [trunkHeight, height]. Block only when the
+    // sun's altitude is inside that band; soft-edge each boundary with the same
+    // HEIGHT_RATIO_FLOOR ramp used for buildings.
+    if (tree.height <= 0) continue;
 
-    const angularHeight = Math.atan2(effectiveHeight, distance) * RAD;
-    const heightRatio = angularHeight / sunAltitude;
-    if (heightRatio < HEIGHT_RATIO_FLOOR) continue;
+    // Top edge: sun clears the crown top (uses the FULL height — the crown
+    // really extends to `height`, not height − trunkHeight).
+    const angularTop = Math.atan2(tree.height, distance) * RAD;
+    const topRatio = angularTop / sunAltitude;
+    if (topRatio < HEIGHT_RATIO_FLOOR) continue; // sun above the crown → no block
+    const topFactor =
+      topRatio >= 1 ? 1 : (topRatio - HEIGHT_RATIO_FLOOR) / (1 - HEIGHT_RATIO_FLOOR);
 
-    const heightFactor =
-      heightRatio >= 1
-        ? 1
-        : (heightRatio - HEIGHT_RATIO_FLOOR) / (1 - HEIGHT_RATIO_FLOOR);
+    // Bottom edge: sun passing UNDER the crown goes through the transparent
+    // trunk. Symmetric ramp — factor 1 at/above the crown bottom, → 0 below it.
+    let bottomFactor = 1;
+    if (tree.trunkHeight != null && tree.trunkHeight > 0) {
+      const angularBottom = Math.atan2(tree.trunkHeight, distance) * RAD;
+      const bottomRatio = sunAltitude / angularBottom;
+      if (bottomRatio < HEIGHT_RATIO_FLOOR) continue; // sun under the crown → no block
+      bottomFactor =
+        bottomRatio >= 1 ? 1 : (bottomRatio - HEIGHT_RATIO_FLOOR) / (1 - HEIGHT_RATIO_FLOOR);
+    }
+
+    const heightFactor = Math.min(topFactor, bottomFactor);
 
     // Circular arc silhouette: half-span = atan(crownRadius / distance).
     const bearing = (Math.atan2(dx, dy) * RAD + 360) % 360;
