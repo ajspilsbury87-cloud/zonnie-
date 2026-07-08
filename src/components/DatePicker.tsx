@@ -33,18 +33,21 @@ function buildDates(today: string, tomorrow: string): ChipDate[] {
   const dates: ChipDate[] = [];
   for (let offset = 0; offset <= MAX_DATE_OFFSET; offset++) {
     const dateStr = selectedDateStr(offset);
-    const ms = Date.now() + offset * 24 * 60 * 60 * 1000;
+    // Label from dateStr (noon UTC = safely mid-day in Amsterdam, no rollover),
+    // NOT from Date.now()+offset*24h — the ms form produced duplicate day chips
+    // and duplicate React keys across the DST change.
+    const labelDate = new Date(`${dateStr}T12:00:00Z`);
     let topLine: string;
     let bottomLine: string;
     if (offset === 0) {
       topLine = today;
-      bottomLine = formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'd MMM');
+      bottomLine = formatInTimeZone(labelDate, AMSTERDAM_TZ, 'd MMM');
     } else if (offset === 1) {
       topLine = tomorrow;
-      bottomLine = formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'd MMM');
+      bottomLine = formatInTimeZone(labelDate, AMSTERDAM_TZ, 'd MMM');
     } else {
-      topLine = formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'EEE');
-      bottomLine = formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'd MMM');
+      topLine = formatInTimeZone(labelDate, AMSTERDAM_TZ, 'EEE');
+      bottomLine = formatInTimeZone(labelDate, AMSTERDAM_TZ, 'd MMM');
     }
     dates.push({ offset, dateStr, topLine, bottomLine });
   }

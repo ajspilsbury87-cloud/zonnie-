@@ -165,6 +165,13 @@ export function todayAmsterdamDateStr(): string {
  * past midnight rolls over correctly.
  */
 export function selectedDateStr(dateOffset: number): string {
-  const ms = Date.now() + dateOffset * 24 * 60 * 60 * 1000;
-  return formatInTimeZone(new Date(ms), AMSTERDAM_TZ, 'yyyy-MM-dd');
+  // Calendar-day arithmetic, NOT ms addition: adding offset×24h in
+  // milliseconds drifts by an hour across a DST change, so on the night
+  // before/after the Oct/Mar clock shift 'tomorrow' resolved to today or
+  // the day after. Add whole days to today's Amsterdam calendar date via
+  // UTC (which has no DST), then format — exact every day of the year.
+  const todayStr = formatInTimeZone(new Date(), AMSTERDAM_TZ, 'yyyy-MM-dd');
+  const p = todayStr.split('-').map(Number);
+  const t = new Date(Date.UTC(p[0]!, p[1]! - 1, p[2]! + dateOffset));
+  return `${t.getUTCFullYear()}-${String(t.getUTCMonth() + 1).padStart(2, '0')}-${String(t.getUTCDate()).padStart(2, '0')}`;
 }

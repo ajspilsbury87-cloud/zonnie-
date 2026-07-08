@@ -101,19 +101,39 @@ export async function fetchHourlyForecast(dateStr: string): Promise<Weather[]> {
   const directRad = data.hourly?.direct_radiation;
   const precipProb = data.hourly?.precipitation_probability;
   const time = data.hourly?.time;
-  if (!cloud || !temp || !time || cloud.length !== 24) {
+  // DST days return 23 (spring-forward) or 25 (fall-back, e.g. 2026-10-25)
+  // hours, and after the transition array index no longer equals the local
+  // hour. Require the arrays to be present and aligned within that range,
+  // then map each reading to its ACTUAL local hour parsed from `time`
+  // ('YYYY-MM-DDTHH:MM'), instead of assuming index === hour. The old
+  // `length !== 24` throw killed the whole day's forecast on the DST day.
+  if (!cloud || !temp || !time || time.length !== cloud.length ||
+      cloud.length < 23 || cloud.length > 25) {
     throw new Error(`Unexpected Open-Meteo payload (got ${cloud?.length ?? 0} hours)`);
   }
 
-  return Array.from({ length: 24 }, (_, h) => ({
-    cloudCover: Math.round(cloud[h] ?? 0),
-    temp: Math.round(temp[h] ?? 0),
-    windSpeed: wind?.[h] != null ? Math.round(wind[h]!) : undefined,
-    windDirection: windDir?.[h] != null ? Math.round(windDir[h]!) : undefined,
-    directRadiation: directRad?.[h] != null ? Math.round(directRad[h]!) : undefined,
-    // precipProbability: undefined when the API doesn't return this field (older
-    // model responses or fallback cache). Callers must distinguish undefined
-    // (no data) from 0 (genuine zero-probability) — never coerce with ?? 0.
-    precipProbability: precipProb?.[h] != null ? Math.round(precipProb[h]!) : undefined,
-  }));
+  const idxForHour: (number | undefined)[] = new Array(24).fill(undefined);
+  for (let i = 0; i < time.length; i++) {
+    const h = Number(time[i]!.slice(11, 13));
+    // Fall-back duplicates the 2:00 hour; last-write-wins (near-identical weather).
+    if (h >= 0 && h <= 23) idxForHour[h] = i;
+  }
+
+  return Array.from({ length: 24 }, (_, h) => {
+    const i = idxForHour[h];
+    if (i == null) {
+      // Spring-forward skips 02:00 — that hour has no reading. Sun's down; 0 is fine.
+      return { cloudCover: 0, temp: 0, windSpeed: undefined, windDirection: undefined, directRadiation: undefined, precipProbability: undefined };
+    }
+    return {
+      cloudCover: Math.round(cloud[i] ?? 0),
+      temp: Math.round(temp[i] ?? 0),
+      windSpeed: wind?.[i] != null ? Math.round(wind[i]!) : undefined,
+      windDirection: windDir?.[i] != null ? Math.round(windDir[i]!) : undefined,
+      directRadiation: directRad?.[i] != null ? Math.round(directRad[i]!) : undefined,
+      // precipProbability: undefined when the API doesn't return this field —
+      // callers must distinguish undefined (no data) from 0; never coerce.
+      precipProbability: precipProb?.[i] != null ? Math.round(precipProb[i]!) : undefined,
+    };
+  });
 }
