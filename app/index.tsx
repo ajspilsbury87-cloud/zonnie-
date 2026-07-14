@@ -119,11 +119,19 @@ export default function Index() {
           <SunLegend />
         </ErrorBoundary>
       ) : null}
-      {landingVisible ? (
+      {/* Kept MOUNTED and hidden with display:none while the map is active:
+          unmounting meant every ⌂ tap re-mounted Home and re-ran the deferred
+          ranking pass, so returning home visibly lagged. display:'none' skips
+          layout and paint entirely; scores, scroll position and the
+          intro-played animation state all survive, so the return is instant. */}
+      <View
+        style={landingVisible ? styles.landingHost : styles.landingHostHidden}
+        pointerEvents={landingVisible ? 'auto' : 'none'}
+      >
         <ErrorBoundary surface="LandingPage">
           <LandingPage />
         </ErrorBoundary>
-      ) : null}
+      </View>
       {/* TerracePeekCard — compact preview after a pin tap. Renders null
           unless a selection is at stage 'peek', so it costs nothing the
           rest of the time. Above MainSheet (paints over its handle area),
@@ -158,7 +166,12 @@ export default function Index() {
       {!landingVisible && !detailSheetOpen ? (
         <Pressable
           onPress={handleHomePress}
-          style={[styles.homeButton, { top: insets.top + spacing.sm }]}
+          hitSlop={8}
+          style={({ pressed }) => [
+            styles.homeButton,
+            { top: insets.top + spacing.sm },
+            pressed && styles.homeButtonPressed,
+          ]}
           accessibilityLabel="Return to home screen"
           accessibilityRole="button"
         >
@@ -177,27 +190,45 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: spacing.md,
     // `top` is set dynamically in JSX (insets.top + spacing.sm)
-    width: 44,
-    height: 44,
+    // 52pt — the primary route back to Home earns more presence than the
+    // 44pt secondary map controls (first-user feedback: too small).
+    width: 52,
+    height: 52,
     // Circular, brand-burnt fill so it reads as a modern floating action
     // button and clearly stands out against the map (was a plain white square).
     borderRadius: radii.pill,
     backgroundColor: palette.burnt,
     alignItems: 'center',
     justifyContent: 'center',
+    // Cream ring separates the burnt disc from busy map tiles beneath.
+    borderWidth: 2,
+    borderColor: 'rgba(255, 229, 194, 0.95)',
     // Elevation lifts the button above map tiles and the MainSheet handle.
     // No zIndex — document order (last rendered sibling) handles layering.
     elevation: 6,
     shadowColor: palette.ink,
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
+    shadowOpacity: 0.28,
+    shadowRadius: 9,
+  },
+  // Tactile press: a quick shrink reads better over map tiles than a fade.
+  homeButtonPressed: {
+    transform: [{ scale: 0.94 }],
+    opacity: 0.92,
   },
   homeButtonGlyph: {
-    fontSize: 22,
+    fontSize: 26,
     color: palette.white,
     // The ⌂ glyph sits slightly low in most system fonts; nudge it up.
-    lineHeight: 26,
+    lineHeight: 30,
     textAlign: 'center',
+  },
+  // Landing host — full-screen wrapper that hides (not unmounts) Home.
+  landingHost: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  landingHostHidden: {
+    ...StyleSheet.absoluteFillObject,
+    display: 'none',
   },
 });

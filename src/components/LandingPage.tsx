@@ -5,7 +5,9 @@
  *   1. FEATURED carousel — horizontal photo cards for featured terraces
  *      (paid/curated placements, always shown regardless of sun score).
  *      Only rendered when at least one terrace has `featured === true`.
- *   2. SUNNIEST NOW sections — top-3-per-region ranked by current score.
+ *   2. SUNNIEST NOW — a single citywide top list. (Simplified 2026-07-09
+ *      from top-3-per-region after first-user feedback: six region blocks
+ *      were too dense for a first launch. One sundial, one list.)
  *
  * Restructured 2026-05-09 — was top-3-overall (which always picked
  * SW-facing Stadionbuurt venues at midday), now top-3-per-region so
@@ -23,7 +25,7 @@
  *   120ms   8 rays fan out
  *   350ms   "Zonnie" wordmark fades + slides up
  *   600ms   tagline fades + slides up
- *   1100ms  featured cards + region sections fade + slide in
+ *   1100ms  featured cards + top list fade + slide in
  *   1700ms  "See all terraces" button fades in
  *   user taps card → select(id) (detail opens over Home)
  *   user taps button → hideLanding() (lands on map without selection)
@@ -48,13 +50,11 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { useStrings } from '@/src/i18n/useStrings';
 import { useLanguageStore } from '@/src/store/languageStore';
-import { PerfectForGuides } from './PerfectForGuides';
 import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
 import { countParadeViewTerraces, isWorldPrideLive } from '@/src/data/pride';
-import { regionForArea, REGIONS_ORDERED, type Region } from '@/src/data/regions';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { rangeScoreForTerrace } from '@/src/hooks/scoreCache';
 import { haptics } from '@/src/lib/haptics';
@@ -90,12 +90,7 @@ interface FeaturedVenue {
   score: number;
 }
 
-interface RegionSection {
-  region: Region;
-  venues: TopVenue[];
-}
-
-const PER_REGION = 3;
+const TOP_CITYWIDE = 6;
 
 function nowAmsterdamHour(): number {
   const h = Number(formatInTimeZone(new Date(), AMSTERDAM_TZ, 'H'));
@@ -117,53 +112,26 @@ function effectiveDayWindow(): { dateStr: string; fromHour: number; toHour: numb
 }
 
 /**
- * Score every terrace over the effective window, group by macro-region, and
- * return the top N per region in the canonical region order
- * (Jordaan, Zuid, Oost, West, Centrum, Noord). Featured venues lead
- * their own region's section if their score is non-zero.
+ * Score every terrace over the effective window and return the citywide
+ * top N. One flat list — the earlier top-3-per-region grouping (six blocks)
+ * was too much for a first-time user; area still shows on each card.
  */
-function pickTopByRegion(
+function pickTopCitywide(
   weatherByDate: ReturnType<typeof useWeatherStore.getState>['byDate'],
-): RegionSection[] {
+): TopVenue[] {
   const { dateStr, fromHour, toHour } = effectiveDayWindow();
   const entry = weatherByDate[dateStr];
   const hourly = entry?.data;
 
-  // One scoring pass for all terraces, then group by region.
-  const scoredByRegion = new Map<Region, TopVenue[]>();
+  const scored: TopVenue[] = [];
   for (const t of TERRACES) {
-    const region = regionForArea(t.area);
-    if (region == null) continue;
     // Cached range score — shares the per-hour cache with the map + list so
     // first-launch scoring is computed once across surfaces, not three times.
     const score = rangeScoreForTerrace(t, fromHour, toHour, dateStr, hourly);
-    const list = scoredByRegion.get(region) ?? [];
-    list.push({ terrace: t, score, featured: false });
-    scoredByRegion.set(region, list);
+    if (score > 0) scored.push({ terrace: t, score, featured: t.featured === true });
   }
-
-  const sections: RegionSection[] = [];
-  for (const region of REGIONS_ORDERED) {
-    const list = scoredByRegion.get(region) ?? [];
-    list.sort((a, b) => b.score - a.score);
-
-    // Featured for this region: leads the section if it has a non-zero
-    // current score (so a paid pick can never lead while in deep shadow).
-    const featured = list.find((v) => v.terrace.featured === true && v.score > 0);
-
-    const picks: TopVenue[] = [];
-    if (featured) picks.push({ ...featured, featured: true });
-    for (const v of list) {
-      if (picks.length >= PER_REGION) break;
-      if (picks.some((p) => p.terrace.id === v.terrace.id)) continue;
-      picks.push(v);
-    }
-
-    // Skip a region with no terraces in the dataset (unlikely but graceful).
-    if (picks.length === 0) continue;
-    sections.push({ region, venues: picks });
-  }
-  return sections;
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, TOP_CITYWIDE);
 }
 
 /**
@@ -227,11 +195,11 @@ export function LandingPage() {
   // Instead we paint immediately with no cards, then compute the rankings AFTER
   // interactions/animations settle (so taps are handled first). Recomputes when
   // the live forecast lands (weatherByDate changes).
-  const [sections, setSections] = useState<RegionSection[]>([]);
+  const [topVenues, setTopVenues] = useState<TopVenue[]>([]);
   const [featuredTerraces, setFeaturedTerraces] = useState<FeaturedVenue[]>([]);
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
-      setSections(pickTopByRegion(weatherByDate));
+      setTopVenues(pickTopCitywide(weatherByDate));
       setFeaturedTerraces(pickFeaturedTerraces(weatherByDate));
     });
     return () => task.cancel();
@@ -402,7 +370,7 @@ export function LandingPage() {
           </Animated.Text>
         </Animated.View>
 
-        {/* Card stack: today's verdict + WC blocks + featured carousel + region sections.
+        {/* Card stack: today's verdict + seasonal banner + top list.
             All fade/slide together as one group. */}
         <Animated.View style={[styles.cardStack, cardsStyle]}>
           {/* ── Sun's out moment — celebratory banner on a top terrace day,
@@ -411,9 +379,6 @@ export function LandingPage() {
 
           {/* ── Today's Verdict — daily-habit anchor, always first ────────── */}
           <TodaysVerdict />
-
-          {/* ── Perfect For guides — horizontal shortcut row ─────────────── */}
-          <PerfectForGuides />
 
           {/* ── World Cup 2026 — date-gated; both blocks vanish after 2026-07-19 ── */}
 
@@ -441,21 +406,20 @@ export function LandingPage() {
             </Pressable>
           ) : null}
 
-          {/* Spotlight card: present throughout the tournament window. */}
+          {/* Spotlight — one slim line during the window (was a full card;
+              compressed 2026-07-09 in the first-launch simplification). */}
           {wcLive ? (
             <Pressable
               onPress={handleWcPress}
               style={({ pressed }) => [
-                styles.wcCard,
-                pressed && styles.wcCardPressed,
+                styles.wcBanner,
+                pressed && styles.wcBannerPressed,
               ]}
               accessibilityLabel={t.wcSpotlightCta}
             >
-              <Text style={styles.wcCardTitle}>{t.wcSpotlightTitle}</Text>
-              <Text style={styles.wcCardBody}>{t.wcSpotlightBody(SCREEN_TERRACE_COUNT)}</Text>
-              <View style={styles.wcCardCta}>
-                <Text style={styles.wcCardCtaText}>{t.wcSpotlightCta} →</Text>
-              </View>
+              <Text style={styles.wcBannerText} numberOfLines={2}>
+                {t.wcSpotlightTitle} · {t.wcSpotlightBody(SCREEN_TERRACE_COUNT)} →
+              </Text>
             </Pressable>
           ) : null}
 
@@ -466,16 +430,14 @@ export function LandingPage() {
             <Pressable
               onPress={handlePridePress}
               style={({ pressed }) => [
-                styles.wcCard,
-                pressed && styles.wcCardPressed,
+                styles.wcBanner,
+                pressed && styles.wcBannerPressed,
               ]}
               accessibilityLabel={t.prideSpotlightCta}
             >
-              <Text style={styles.wcCardTitle}>{t.prideSpotlightTitle}</Text>
-              <Text style={styles.wcCardBody}>{t.prideSpotlightBody(PARADE_TERRACE_COUNT)}</Text>
-              <View style={styles.wcCardCta}>
-                <Text style={styles.wcCardCtaText}>{t.prideSpotlightCta} →</Text>
-              </View>
+              <Text style={styles.wcBannerText} numberOfLines={2}>
+                {t.prideSpotlightTitle} · {t.prideSpotlightBody(PARADE_TERRACE_COUNT)} →
+              </Text>
             </Pressable>
           ) : null}
 
@@ -500,21 +462,10 @@ export function LandingPage() {
             </View>
           )}
 
-          {/* ── Sunniest-now regional sections ──────────────────────────── */}
+          {/* ── Sunniest now — one flat citywide top list ───────────────── */}
           <Text style={styles.sectionLabel}>{pastSunset ? t.sunniestTomorrow : t.sunniestNow}</Text>
-          {/* Sections rendered directly in the outer ScrollView — no nested
-              vertical ScrollView needed since everything scrolls together. */}
-          {sections.map((section) => (
-            <View key={section.region} style={styles.regionBlock}>
-              <Text style={styles.regionLabel}>{section.region}</Text>
-              {section.venues.map((v) => (
-                <VenueCard
-                  key={v.terrace.id}
-                  venue={v}
-                  onPress={handleCardPress}
-                />
-              ))}
-            </View>
+          {topVenues.map((v) => (
+            <VenueCard key={v.terrace.id} venue={v} onPress={handleCardPress} />
           ))}
         </Animated.View>
       </ScrollView>
@@ -881,16 +832,6 @@ const styles = StyleSheet.create({
   },
 
   // ── Venue list cards ───────────────────────────────────────────────
-  regionBlock: {
-    marginBottom: spacing.md,
-  },
-  regionLabel: {
-    fontFamily: fonts.displayBold,
-    fontSize: fontSizes.md,
-    color: palette.ink,
-    marginBottom: spacing.xs,
-    letterSpacing: -0.2,
-  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
