@@ -203,6 +203,18 @@ export const strings = {
     sunRunShare: 'Deel met je loopgroep ☀️',
     sunRunAnother: 'Andere finish',
 
+    // My sun summer (Phase A community — on-device stats)
+    sunStatsTitle: '☀️ Mijn zonzomer',
+    sunStatsEntry: '☀️ Mijn zonzomer',
+    statTerraces: 'terrassen ontdekt',
+    statActiveDays: 'actieve dagen',
+    statStreak: 'dagen op rij',
+    statBestStreak: 'beste reeks',
+    statRuns: 'sun runs',
+    sunStatsSunniest: (name: string, pct: number) => `Zonnigste moment: ${pct} ☀ bij ${name}`,
+    sunStatsShare: 'Deel je zonzomer ☀️',
+    sunStatsEmpty: 'Je zonzomer begint nu — ontdek een paar terrassen en kom terug voor je stats.',
+
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Nodig de groep uit',
 
@@ -609,6 +621,18 @@ export const strings = {
     sunRunSunnyTill: (hhmm: string) => `sunny till ${hhmm} ☀️`,
     sunRunShare: 'Share with your run group ☀️',
     sunRunAnother: 'Another finish',
+
+    // My sun summer (Phase A community — on-device stats)
+    sunStatsTitle: '☀️ My sun summer',
+    sunStatsEntry: '☀️ My sun summer',
+    statTerraces: 'terraces explored',
+    statActiveDays: 'active days',
+    statStreak: 'day streak',
+    statBestStreak: 'best streak',
+    statRuns: 'sun runs',
+    sunStatsSunniest: (name: string, pct: number) => `Sunniest moment: ${pct} ☀ at ${name}`,
+    sunStatsShare: 'Share your sun summer ☀️',
+    sunStatsEmpty: 'Your sun summer starts now — explore a few terraces and come back for your stats.',
 
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Invite the group',
