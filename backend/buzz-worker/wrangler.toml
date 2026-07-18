@@ -1,0 +1,10 @@
+name = "zonnie-buzz"
+main = "worker.js"
+compatibility_date = "2026-07-01"
+
+# KV namespace binding — created in the one-time setup (see README.md):
+#   npx wrangler kv namespace create BUZZ
+# then paste the printed id below.
+[[kv_namespaces]]
+binding = "BUZZ"
+id = "PASTE_KV_NAMESPACE_ID_HERE"
