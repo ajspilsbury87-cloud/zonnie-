@@ -54,6 +54,7 @@ import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
 import { isParadeViewTerrace, isWorldPrideLive } from '@/src/data/pride';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { useSunRunStore } from '@/src/store/sunRunStore';
+import { BuzzRow } from '@/src/components/BuzzRow';
 import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { usePlacesStore } from '@/src/store/placesStore';
@@ -964,6 +965,10 @@ export function TerraceDetailSheet() {
                 </Text>
               </>
             ) : null}
+
+            {/* Terrace buzz — renders nothing until the buzz backend flag
+                is on (dark launch; see src/lib/buzz.ts). */}
+            <BuzzRow terraceId={terrace.id} />
 
             <View style={styles.actionRow}>
               <Pressable

@@ -215,6 +215,13 @@ export const strings = {
     sunStatsShare: 'Deel je zonzomer ☀️',
     sunStatsEmpty: 'Je zonzomer begint nu — ontdek een paar terrassen en kom terug voor je stats.',
 
+    // Terrace buzz (community Phase B — anonymous aggregate check-ins)
+    buzzWeek: (n: number) => `☀️ ${n} ${n === 1 ? 'check-in' : 'check-ins'} hier deze week`,
+    buzzTotal: (n: number) => `☀️ ${n} ${n === 1 ? 'check-in' : 'check-ins'} hier tot nu toe`,
+    buzzFirst: '☀️ Wees de eerste die hier incheckt',
+    buzzCheckIn: 'Check in',
+    buzzCheckedIn: '✓ Ingecheckt',
+
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Nodig de groep uit',
 
@@ -633,6 +640,13 @@ export const strings = {
     sunStatsSunniest: (name: string, pct: number) => `Sunniest moment: ${pct} ☀ at ${name}`,
     sunStatsShare: 'Share your sun summer ☀️',
     sunStatsEmpty: 'Your sun summer starts now — explore a few terraces and come back for your stats.',
+
+    // Terrace buzz (community Phase B — anonymous aggregate check-ins)
+    buzzWeek: (n: number) => `☀️ ${n} ${n === 1 ? 'check-in' : 'check-ins'} here this week`,
+    buzzTotal: (n: number) => `☀️ ${n} ${n === 1 ? 'check-in' : 'check-ins'} here so far`,
+    buzzFirst: '☀️ Be the first to check in here',
+    buzzCheckIn: 'Check in',
+    buzzCheckedIn: '✓ Checked in',
 
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Invite the group',
