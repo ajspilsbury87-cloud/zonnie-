@@ -61,6 +61,7 @@ import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useLandingStore } from '@/src/store/landingStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { useSunStatsStore } from '@/src/store/sunStatsStore';
 import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
 import { fonts, fontSizes, palette, radii, scoreToColor, spacing } from '@/src/theme/tokens';
@@ -241,6 +242,13 @@ export function LandingPage() {
   const handleCardPress = (terraceId: number) => {
     haptics.light();
     select(terraceId);
+  };
+
+  /** Open the "My sun summer" stats sheet — renders over Home. */
+  const openSunStats = useSunStatsStore((s) => s.open);
+  const handleStatsPress = () => {
+    haptics.light();
+    openSunStats();
   };
 
   // Animation drivers.
@@ -467,6 +475,18 @@ export function LandingPage() {
           {topVenues.map((v) => (
             <VenueCard key={v.terrace.id} venue={v} onPress={handleCardPress} />
           ))}
+
+          {/* My sun summer — personal stats sheet (Phase A community).
+              Below the fold on purpose: a return-visit hook, not first-launch
+              furniture. */}
+          <Pressable
+            onPress={handleStatsPress}
+            style={({ pressed }) => [styles.statsPill, pressed && styles.statsPillPressed]}
+            accessibilityRole="button"
+            accessibilityLabel={t.sunStatsEntry}
+          >
+            <Text style={styles.statsPillText}>{t.sunStatsEntry} →</Text>
+          </Pressable>
         </Animated.View>
       </ScrollView>
 
@@ -829,6 +849,26 @@ const styles = StyleSheet.create({
     color: palette.cream,
     textTransform: 'uppercase',
     letterSpacing: 0.6,
+  },
+
+  // My sun summer entry — quiet pill under the top list.
+  statsPill: {
+    alignSelf: 'center',
+    backgroundColor: palette.white,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: palette.mist,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  statsPillPressed: {
+    opacity: 0.7,
+  },
+  statsPillText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.cocoa,
   },
 
   // ── Venue list cards ───────────────────────────────────────────────
