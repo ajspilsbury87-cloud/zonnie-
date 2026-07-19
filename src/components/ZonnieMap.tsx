@@ -20,9 +20,11 @@ import { haptics } from '@/src/lib/haptics';
 import { HintBubble } from '@/src/onboarding/HintBubble';
 import { useHint } from '@/src/onboarding/useHint';
 import { useStrings } from '@/src/i18n/useStrings';
+import { useAreaStore } from '@/src/store/areaStore';
+import { useSearchStore } from '@/src/store/searchStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { todayAmsterdamDateStr } from '@/src/store/timeStore';
-import { fonts, fontSizes, palette, spacing } from '@/src/theme/tokens';
+import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
 import { bandForScore, type ScoreBand } from '@/src/engines/bands';
 
 // Above this latitude delta (~5km vertical span), the map view spans
@@ -393,6 +395,13 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   const t = useStrings();
   const mapRef = useRef<MapView>(null);
   const scored = useScoredTerraces();
+  const clearAreas = useAreaStore((s) => s.clear);
+  const clearSearch = useSearchStore((s) => s.clear);
+  const handleClearFilters = useCallback(() => {
+    haptics.selection();
+    clearAreas();
+    clearSearch();
+  }, [clearAreas, clearSearch]);
   const selectedId = useSelectionStore((s) => s.selectedId);
   const panTo = useSelectionStore((s) => s.panTo);
   const clearPanTo = useSelectionStore((s) => s.clearPanTo);
@@ -722,6 +731,24 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
       >
         <Text style={styles.locateGlyph}>⌖</Text>
       </Pressable>
+
+      {/* Empty-state notice — the list has one, but the map used to go
+          SILENTLY blank when a filter combo matched zero venues (e.g. the
+          favourites chip with nothing saved). Filters aren't persisted, so
+          a relaunch "mysteriously" fixed it — this explains it instead. */}
+      {scored.length === 0 ? (
+        <View style={[styles.emptyNotice, { top: insets.top + spacing.sm + 44 + spacing.sm }]}>
+          <Text style={styles.emptyNoticeText}>{t.mapNoMatches}</Text>
+          <Pressable
+            onPress={handleClearFilters}
+            style={({ pressed }) => [styles.emptyNoticeButton, pressed && { opacity: 0.8 }]}
+            accessibilityRole="button"
+            accessibilityLabel={t.clearFiltersButton}
+          >
+            <Text style={styles.emptyNoticeButtonText}>{t.clearFiltersButton}</Text>
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -729,6 +756,41 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
+  emptyNotice: {
+    position: 'absolute',
+    alignSelf: 'center',
+    alignItems: 'center',
+    backgroundColor: palette.white,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: palette.mist,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.sm,
+    shadowColor: palette.ink,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.14,
+    shadowRadius: 8,
+    elevation: 5,
+    maxWidth: 300,
+  },
+  emptyNoticeText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    color: palette.inkSoft,
+    textAlign: 'center',
+  },
+  emptyNoticeButton: {
+    backgroundColor: palette.ink,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  emptyNoticeButtonText: {
+    fontFamily: fonts.bodySemibold,
+    fontSize: fontSizes.sm,
+    color: palette.cream,
+  },
   locateButton: {
     position: 'absolute',
     // `top` is set inline from safe-area insets (below the chip ribbon).
