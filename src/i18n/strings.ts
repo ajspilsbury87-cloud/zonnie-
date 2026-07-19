@@ -221,6 +221,7 @@ export const strings = {
     buzzFirst: '☀️ Wees de eerste die hier incheckt',
     buzzCheckIn: 'Check in',
     buzzCheckedIn: '✓ Ingecheckt',
+    mapNoMatches: 'Geen terrassen passen bij je filters',
 
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Nodig de groep uit',
@@ -647,6 +648,7 @@ export const strings = {
     buzzFirst: '☀️ Be the first to check in here',
     buzzCheckIn: 'Check in',
     buzzCheckedIn: '✓ Checked in',
+    mapNoMatches: 'No terraces match your filters',
 
     // Chase-the-Sun invite (Phase 0)
     crawlInvite: '📣 Invite the group',
