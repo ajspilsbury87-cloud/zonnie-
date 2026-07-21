@@ -62,7 +62,7 @@ const config: ExpoConfig = {
   // PLUS the new native image share card (react-native-view-shot, which can
   // only ship in a build, not an OTA). Runtime → "1.3.0"; the old build #15
   // (v1.2.1) keeps its own separate 1.2.1 OTA lineage and is unaffected.
-  version: '1.3.0',
+  version: '1.4.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
