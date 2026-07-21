@@ -68,3 +68,22 @@ Don't dump all 9 in one day — 1/day over ~9 days keeps reach up. After posting
 - **Stories → Highlights:** "How it works", "De Pijp", "Chase the Sun".
 - The account follows 121 / has 38 followers — following far more than follow
   back reads growth-hacky for a brand; consider trimming follows to venues/press.
+
+---
+
+## July growth calendar (updated 2026-07-16 — pack refreshed to 1,900+ counts)
+
+Status: 1 of the pack published so far — it drew good accounts into the likes,
+so the series works. The rest are refreshed with live data and two NEW tiles
+were added. Suggested order from today:
+
+| When | Post | Why now |
+|---|---|---|
+| Today | `11-sunsummer.png` — "Your sun summer, counted." | New-feature news; caption: "New in Zonnie: your terraces, streaks and sunniest moment — counted. ☀️ Link in bio." |
+| +1–2 days | Next unposted tile from the 09→01 order | Keep the cadence the algorithm rewarded |
+| ~Jul 22–24 | `10-worldpride.png` — Canal Parade terraces | 2–3 days before WorldPride opens (Jul 25); the app's Parade filter lights up automatically Jul 25 |
+| Jul 25 | Story: screen-record the 🏳️‍🌈 Parade filter on the map | Feature is LIVE that day — show it working |
+| Aug 1 (parade day) | Story from a parade-view terrace + repost tile 10 | Peak relevance moment of the summer |
+| After | Remaining pack tiles, ~2/week + a weather-pegged spotlight on hot days | `make-ig-grid-v2.mjs` regenerates the De Pijp spotlight with live data any time |
+
+Reminder: pin the hero/map/browser trio once the grid is fully posted.
