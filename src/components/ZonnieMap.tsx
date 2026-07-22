@@ -575,24 +575,33 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   // mapRegion is only updated on pan/zoom settle (onRegionChangeComplete),
   // not during the gesture — so this useMemo doesn't fire while dragging.
   const markers = useMemo(() => {
+    const cap = maxPinsFromZoom(mapRegion.latitudeDelta);
     const minLat = mapRegion.latitude - mapRegion.latitudeDelta / 2 - VIEWPORT_MARGIN;
     const maxLat = mapRegion.latitude + mapRegion.latitudeDelta / 2 + VIEWPORT_MARGIN;
     const minLng = mapRegion.longitude - mapRegion.longitudeDelta / 2 - VIEWPORT_MARGIN;
     const maxLng = mapRegion.longitude + mapRegion.longitudeDelta / 2 + VIEWPORT_MARGIN;
 
-    // Filter to viewport, then thin to the zoom-aware pin cap.
-    // `scored` is already sorted best-first; thinPins keeps that priority
-    // but spreads the budget across a viewport grid — a plain top-N slice
-    // starved quiet neighbourhoods at wide zooms and users read the gaps
-    // as missing venues (see pinThinning.ts).
-    const visible = scored.filter(
-      (s) =>
+    // Aggressive culling: collect pins in viewport until we reach the render cap,
+    // then stop — no need to filter the entire dataset. This trades off the
+    // global rank guarantee (scored is sorted best-first everywhere) for
+    // speed: a viewport at wide zoom only processes as many terraces as it
+    // will render, not all 1,986. thinPins still spreads the budget across a
+    // grid so quiet neighborhoods remain visible.
+    const visible: ScoredTerrace[] = [];
+    for (const s of scored) {
+      if (
         s.terrace.lat >= minLat &&
         s.terrace.lat <= maxLat &&
         s.terrace.lng >= minLng &&
-        s.terrace.lng <= maxLng,
-    );
-    const cap = maxPinsFromZoom(mapRegion.latitudeDelta);
+        s.terrace.lng <= maxLng
+      ) {
+        visible.push(s);
+        // Early exit: once we have 2.5× the render cap, thinPins has enough
+        // to work with and the remaining terraces outside the viewport are
+        // certainly below-screen anyway.
+        if (visible.length > cap * 2.5) break;
+      }
+    }
     const capped = thinPins(visible, cap, mapRegion);
 
     // Always include the selected terrace even if it's been panned off-screen

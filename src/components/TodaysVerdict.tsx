@@ -162,12 +162,16 @@ export function TodaysVerdict() {
   }, [weatherByDate, dateStr]);
 
   // Top N picks: highest peak score across the day, excluding zero-score entries.
+  // Memoize on scored identity (not contents) — when weather refreshes in the
+  // background, the new scored array from the deferred pass is a new reference,
+  // so memoization re-sorts. But within a render cycle the same scored reference
+  // means the picks stay constant. Avoid re-sorting on every intermediate render.
   const topPicks = useMemo(() => {
     return [...scored]
       .sort((a, b) => b.peakScore - a.peakScore)
       .filter((s) => s.peakScore > 0)
       .slice(0, TOP_PICKS_COUNT);
-  }, [scored]);
+  }, [scored]); // scored is already identity-stable per its own useMemo
 
   // Best favourite for today: highest full-day score among saved terraces.
   const bestFavourite = useMemo(() => {
