@@ -21,7 +21,17 @@ import { computeSunScore } from '@/src/engines/scoring';
 import type { Terrace, Weather } from '@/src/engines/types';
 
 const HOUR_SCORE_CACHE = new Map<string, number>();
-const MAX_CACHE_SIZE = 8000;
+// Must comfortably exceed the largest single working set: TodaysVerdict scores
+// the WHOLE dataset across all 24 hours (≈2,000 terraces × 24 = ~48k entries)
+// in one pass, and the ranked list/map add a multi-hour window on top. At the
+// old 8,000 cap that pass thrashed — evicting entries before reuse, so a warm
+// re-score of a full-day window cost ~750ms on-device (measured) and also
+// evicted the entries the map + list needed, forcing THEM to recompute cold.
+// 60,000 holds a full 24h dataset pass plus a second weather bucket during a
+// refresh, with headroom to ~2,500 terraces. Memory ≈ 60k × ~150B ≈ 9MB.
+// (Sized as a constant rather than importing TERRACES.length to keep this
+// module free of React/store/data deps — see the file header.)
+const MAX_CACHE_SIZE = 60000;
 
 function weatherBucket(w: Weather | undefined): string {
   if (!w) return 'syn';
