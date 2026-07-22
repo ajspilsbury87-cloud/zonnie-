@@ -32,6 +32,12 @@ export function isWorldPrideLive(dateStr: string): boolean {
   return dateStr >= WORLDPRIDE_START && dateStr <= WORLDPRIDE_END;
 }
 
+/** True during the teaser window (3 days before start, before it goes live). */
+export function isWorldPrideTeaser(dateStr: string): boolean {
+  const threeDAysBefore = '2026-07-22';
+  return dateStr >= threeDAysBefore && dateStr < WORLDPRIDE_START;
+}
+
 export function isCanalParadeDay(dateStr: string): boolean {
   return dateStr === CANAL_PARADE_DATE;
 }

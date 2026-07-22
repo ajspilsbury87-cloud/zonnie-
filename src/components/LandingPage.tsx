@@ -54,7 +54,7 @@ import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
-import { countParadeViewTerraces, isWorldPrideLive } from '@/src/data/pride';
+import { countParadeViewTerraces, isWorldPrideLive, isWorldPrideTeaser } from '@/src/data/pride';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { rangeScoreForTerrace } from '@/src/hooks/scoreCache';
 import { haptics } from '@/src/lib/haptics';
@@ -189,6 +189,7 @@ export function LandingPage() {
   // WorldPride window (25 Jul – 8 Aug 2026) — picks up right after the WC
   // layer retires on 19 Jul; the two spotlights are never visible together.
   const prideLive = isWorldPrideLive(today);
+  const prideTeaser = isWorldPrideTeaser(today);
 
   // Scoring all ~1,028 terraces is the heaviest work on this screen. Running it
   // inside render (useMemo) blocked the first paint and the JS thread, so the
@@ -441,6 +442,15 @@ export function LandingPage() {
                 {t.wcSpotlightTitle} · {t.wcSpotlightBody(SCREEN_TERRACE_COUNT)} →
               </Text>
             </Pressable>
+          ) : null}
+
+          {/* WorldPride teaser — appears 3 days before launch (22–24 Jul). */}
+          {prideTeaser && !prideLive ? (
+            <View style={styles.wcBanner}>
+              <Text style={styles.wcBannerText} numberOfLines={2}>
+                🌈 Coming July 25: WorldPride spotlight with 137 parade-view terraces
+              </Text>
+            </View>
           ) : null}
 
           {/* WorldPride spotlight — 25 Jul–8 Aug 2026, auto-retires after.
