@@ -50,7 +50,7 @@ export const WC_VENUES: Record<number, WCVenue> = {
   535: { status: 'confirmed', coverage: 'oranje', note: 'Terrace big screen at The Hoxton · orange wine special', source: 'https://www.yourlittleblackbook.me/en/ek-voetbal-kijken-amsterdam/' },
   662: { status: 'confirmed', coverage: 'oranje', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
   797: { status: 'confirmed', coverage: 'oranje', note: 'DJs after the 20 & 26 Jun matches', source: 'https://oost-online.nl/oranje-kijken-in-oost-deze-cafes-zenden-de-groepswedstrijden-van-nederland-uit/' },
-  1383: { status: 'confirmed', coverage: 'all', note: 'Open-air terrace screen · all matches', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
+  780: { status: 'confirmed', coverage: 'all', note: 'Open-air terrace screen · all matches', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
   1437: { status: 'likely', coverage: 'oranje', source: 'https://oost-online.nl/oranje-kijken-in-oost-deze-cafes-zenden-de-groepswedstrijden-van-nederland-uit/' },
   1386: { status: 'confirmed', coverage: 'all', note: 'Broadcasts every World Cup match', source: 'https://www.yourlittleblackbook.me/en/wk-kijken-amsterdam-groot-scherm-2026/' },
 

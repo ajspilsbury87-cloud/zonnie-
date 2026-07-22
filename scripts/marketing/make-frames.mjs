@@ -402,18 +402,18 @@ async function renderFrame({ outName, screenshotBuffer, eyebrow, headline, subhe
 async function main() {
   mkdirSync(OUT_DIR, { recursive: true });
 
-  // Frame 5 paywall: edit in memory (raw untouched), then clean its status bar.
-  const paywallEdited = await editPaywall(path.join(RAW_DIR, 'Paywall.png'));
-
   // Helper: load a raw screenshot, THEN normalise its status bar in memory.
   const raw = async (name) => cleanStatusBar(await sharp(path.join(RAW_DIR, name)).png().toBuffer(), name);
 
+  // v1.3.0 set — new home (Today's Verdict + top picks), live map, terrace
+  // detail with Chase the Sun, and the Perfect For shortcuts. No paywall frame
+  // (Pro is fully unlocked). Source PNGs must be 1206x2622 in RAW_DIR.
   await renderFrame({
-    outName: '01-list.png',
-    screenshotBuffer: await raw('Ranked list.png'),
-    eyebrow: 'RANKED BY SUN',
-    headline: 'Know before\nyou go.',
-    subhead: '1,000+ Amsterdam terraces, scored for sun.',
+    outName: '01-home.png',
+    screenshotBuffer: await raw('Home.png'),
+    eyebrow: "TODAY'S VERDICT",
+    headline: 'Is it a\nterrace day?',
+    subhead: "A daily read on the sun — plus\ntoday's sunniest picks.",
   });
 
   await renderFrame({
@@ -421,35 +421,27 @@ async function main() {
     screenshotBuffer: await raw('Map.png'),
     eyebrow: 'THE LIVE MAP',
     headline: 'Every terrace.\nOn one map.',
-    subhead: 'Live sun scores across Amsterdam —\nupdated by the minute.',
+    subhead: 'Live sun scores across Amsterdam,\nupdated by the minute.',
   });
 
   await renderFrame({
-    outName: '03-filters.png',
-    screenshotBuffer: await raw('When and what.png'),
-    eyebrow: 'TIME & VIBE',
-    headline: 'Your time.\nYour vibe.',
-    subhead: 'Pick a moment. Filter by café, bar,\nor restaurant.',
-  });
-
-  await renderFrame({
-    outName: '04-detail.png',
-    screenshotBuffer: await raw('Terrace card.png'),
-    eyebrow: 'EVERY DETAIL',
-    headline: 'Sun by the hour.\nPer terrace.',
-    subhead: 'Photos, ratings, opening hours, directions.',
+    outName: '03-detail.png',
+    screenshotBuffer: await raw('Detail.png'),
+    eyebrow: 'CHASE THE SUN',
+    headline: 'Follow the sun,\nspot to spot.',
+    subhead: 'Sun by the hour, the best time to go,\nand a crawl that chases the light.',
     headlineSize: 48,
   });
 
   await renderFrame({
-    outName: '05-paywall.png',
-    screenshotBuffer: await cleanStatusBar(paywallEdited, 'Paywall.png'),
-    eyebrow: 'ZONNIE PRO',
-    headline: 'Chase the\nsun smarter.',
-    subhead: 'Drag to any hour. Google ratings.\nUnlimited favourites.',
+    outName: '04-sunniest.png',
+    screenshotBuffer: await raw('Perfect for.png'),
+    eyebrow: 'SUNNIEST RIGHT NOW',
+    headline: 'The sunniest spots,\nby neighbourhood.',
+    subhead: 'Top picks across Jordaan, Zuid, Oost\nand every corner of Amsterdam.',
   });
 
-  console.log('\nAll five frames written to ' + OUT_DIR);
+  console.log('\nAll frames written to ' + OUT_DIR);
 }
 
 main().catch((err) => { console.error('FAILED:', err); process.exit(1); });

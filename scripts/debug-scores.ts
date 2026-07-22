@@ -4,24 +4,18 @@
  */
 
 import { TERRACES } from '../src/data/terraces';
-import { getBuildings } from '../src/data/buildings';
 import { computeSunScore } from '../src/engines/scoring';
-
-const buildings = getBuildings();
-console.log('Buildings:', buildings.length);
 
 const dateStr = '2026-05-04';
 const hour = 14;
 
 const scores = TERRACES.map((t) => {
-  const r = computeSunScore(t, buildings, hour, dateStr, 'sunny');
+  const r = computeSunScore(t, hour, dateStr, 'sunny');
   return {
     id: t.id,
     name: t.name,
     facing: t.facing,
     score: r.score,
-    coverage: r.shadow,
-    inShadow: r.shadow >= 0.5,
     sunAlt: r.sun.altitude,
   };
 });
@@ -39,16 +33,6 @@ for (const k of Object.keys(buckets).sort((a, b) => Number(a) - Number(b))) {
     buckets[k],
   );
 }
-
-const inShadow = scores.filter((s) => s.inShadow).length;
-console.log(
-  '\nIn shadow:',
-  inShadow,
-  '/',
-  scores.length,
-  '=',
-  ((inShadow / scores.length) * 100).toFixed(0) + '%',
-);
 
 const facingScores: Record<string, number[]> = {};
 for (const s of scores) {
@@ -78,6 +62,5 @@ for (let i = 0; i < 10; i++) {
     s.name.padEnd(35).slice(0, 35),
     s.facing.padEnd(3),
     'score=' + s.score.toFixed(3),
-    s.inShadow ? '[SHADOW]' : '',
   );
 }

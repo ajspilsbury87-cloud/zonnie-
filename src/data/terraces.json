@@ -1992,21 +1992,6 @@
     "openness": 0.291
   },
   {
-    "id": 140,
-    "name": "Piet de Gruyter",
-    "lat": 52.3665,
-    "lng": 4.84898,
-    "area": "West",
-    "facing": "S",
-    "capacity": "L",
-    "vibe": "Cultural garden",
-    "address": "Rijnvis Feithstraat 2",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-06-06T11:43:08.064Z",
-    "openness": 0.921
-  },
-  {
     "id": 141,
     "reservationUrl": "https://www.pacificamsterdam.nl/en/reservation-form",
     "name": "Pacific Park",
@@ -3005,15 +2990,20 @@
   {
     "id": 205,
     "name": "De Bierhut",
-    "lat": 52.3645,
-    "lng": 4.9225,
+    "lat": 52.4196211,
+    "lng": 4.9061375,
     "area": "Oost",
     "facing": "S",
     "capacity": "S",
     "vibe": "Beer terrace",
-    "address": "Stentorstraat 5",
+    "address": "Stentorstraat 5, 1035 XB Amsterdam, Netherlands",
     "verified": true,
-    "openness": 0.728
+    "openness": 0.728,
+    "placeId": "ChIJ9zFxHG0IxkcRSV2nW9xebBo",
+    "googleRating": 4.5,
+    "googleReviewCount": 65,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-07-22T10:44:39.383Z"
   },
   {
     "id": 209,
@@ -6891,7 +6881,8 @@
     "placeId": "ChIJ1cZszgUJxkcRHZ_bA9Ip9og",
     "googleRating": 4.6,
     "googleReviewCount": 403,
-    "openness": 0.856
+    "openness": 0.856,
+    "outdoorScreens": 1
   },
   {
     "id": 781,
@@ -16130,23 +16121,6 @@
     "openness": 0.792
   },
   {
-    "id": 1383,
-    "name": "Alba",
-    "lat": 52.35325,
-    "lng": 4.90794,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "L",
-    "vibe": "Natural wine bar with 130m² sun terrace open morning to evening",
-    "address": "Wibautstraat 105",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-06-06T11:36:50.912Z",
-    "outdoorScreens": 1,
-    "outdoorScreensVerifiedAt": "2026-06-06T00:00:00.000Z",
-    "openness": 0.433
-  },
-  {
     "id": 1386,
     "name": "Café Struis",
     "lat": 52.3668572,
@@ -16233,51 +16207,6 @@
     "verifiedAt": "2026-06-06T10:24:50.348Z",
     "placeId": "ChIJNf2OejoJxkcR4KNrp5RaDAk",
     "openness": 1
-  },
-  {
-    "id": 1394,
-    "name": "Canvas (Volkshotel)",
-    "lat": 52.35375,
-    "lng": 4.91179,
-    "area": "Oost",
-    "facing": "All",
-    "capacity": "L",
-    "vibe": "Rooftop bar on the 7th floor of Volkshotel with panoramic 360° city views",
-    "address": "Wibautstraat 150, 1091 GR Amsterdam",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-06-06T10:24:51.793Z",
-    "openness": 0.622
-  },
-  {
-    "id": 1397,
-    "name": "Badhuis Javaplein",
-    "lat": 52.36355,
-    "lng": 4.93992,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Historic public bathhouse converted into a lively restaurant with a sun terrace",
-    "address": "Javaplein 21, 1095 CJ Amsterdam",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-06-06T10:24:52.876Z",
-    "openness": 0.589
-  },
-  {
-    "id": 1398,
-    "name": "Massalia",
-    "lat": 52.35721,
-    "lng": 4.91835,
-    "area": "Oost",
-    "facing": "S",
-    "capacity": "L",
-    "vibe": "French-Greek restobar on Beukenplein with a 120-seat terrace and natural wines",
-    "address": "Beukenplein, 1092 Amsterdam Oost",
-    "verified": true,
-    "coordSource": "places_api",
-    "verifiedAt": "2026-06-06T10:24:53.206Z",
-    "openness": 0.292
   },
   {
     "id": 1401,
@@ -17519,19 +17448,19 @@
   {
     "id": 1477,
     "name": "Amstel Hotel terrace",
-    "lat": 52.36032,
-    "lng": 4.905,
+    "lat": 52.360099999999996,
+    "lng": 4.9049,
     "area": "Oost",
     "facing": "W",
     "capacity": "M",
     "vibe": "Grand hotel riverside terrace",
-    "address": "Professor Tulpplein 1, Amsterdam",
-    "verified": false,
-    "coordSource": "estimated",
-    "verifiedAt": null,
-    "placeId": null,
-    "googleRating": 4.4,
-    "googleReviewCount": 256,
+    "address": "Professor Tulpplein 1, 1018 GX Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "verifiedAt": "2026-07-22T10:44:39.383Z",
+    "placeId": "ChIJ2z9uuZAJxkcRTdWVTMl58-o",
+    "googleRating": 4.6,
+    "googleReviewCount": 1797,
     "openness": 0.64
   },
   {
@@ -17604,19 +17533,6 @@
     "verifiedAt": "2026-07-04T09:20:23.453Z"
   },
   {
-    "id": 1482,
-    "name": "Pink's Bakery",
-    "lat": 52.364423,
-    "lng": 4.854689,
-    "area": "De Baarsjes",
-    "facing": "SE",
-    "capacity": "S",
-    "vibe": "artisan sourdough bakery",
-    "address": "Postjesweg 86a",
-    "verified": false,
-    "coordSource": "estimated"
-  },
-  {
     "id": 1483,
     "name": "Mundi",
     "lat": 52.36444100000001,
@@ -17632,19 +17548,6 @@
     "googleRating": 4.6,
     "googleReviewCount": 235,
     "verifiedAt": "2026-07-04T09:20:23.453Z"
-  },
-  {
-    "id": 1484,
-    "name": "Bar Bistro Belleami",
-    "lat": 52.366173,
-    "lng": 4.86201,
-    "area": "De Baarsjes",
-    "facing": "SW",
-    "capacity": "M",
-    "vibe": "French-Med corner bistro",
-    "address": "Tweede Kostverlorenkade 70",
-    "verified": false,
-    "coordSource": "estimated"
   },
   {
     "id": 1485,
@@ -17947,15 +17850,19 @@
   {
     "id": 1503,
     "name": "Grammes",
-    "lat": 52.347262,
-    "lng": 4.894935,
+    "lat": 52.347245799999996,
+    "lng": 4.894953699999999,
     "area": "Zuid",
     "facing": "SE",
     "capacity": "S",
     "vibe": "French pastry & coffee",
-    "address": "Maasstraat 16",
-    "verified": false,
-    "coordSource": "estimated"
+    "address": "Maasstraat 16, 1078 EP Amsterdam, Netherlands",
+    "verified": true,
+    "coordSource": "places_api",
+    "placeId": "ChIJzWpYiQ8JxkcR-sbjRAgMKVk",
+    "googleRating": 4.6,
+    "googleReviewCount": 490,
+    "verifiedAt": "2026-07-22T10:44:39.383Z"
   },
   {
     "id": 1504,
@@ -17990,19 +17897,6 @@
     "googleRating": 4.4,
     "googleReviewCount": 286,
     "verifiedAt": "2026-07-04T09:20:23.453Z"
-  },
-  {
-    "id": 1506,
-    "name": "Bar Gallizia",
-    "lat": 52.363858,
-    "lng": 4.934233,
-    "area": "Indische Buurt",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "Italian wine bar terrace",
-    "address": "Javastraat 67",
-    "verified": false,
-    "coordSource": "estimated"
   },
   {
     "id": 1507,
@@ -18056,19 +17950,6 @@
     "verifiedAt": "2026-07-04T09:20:23.453Z"
   },
   {
-    "id": 1510,
-    "name": "Café Restaurant Sandberg",
-    "lat": 52.3579,
-    "lng": 4.87986,
-    "area": "Zuid",
-    "facing": "S",
-    "capacity": "M",
-    "vibe": "museum-square terrace café",
-    "address": "Museumplein 10",
-    "verified": false,
-    "coordSource": "estimated"
-  },
-  {
     "id": 1511,
     "name": "Kantina Greca",
     "lat": 52.352294,
@@ -18078,19 +17959,6 @@
     "capacity": "S",
     "vibe": "Greek deli courtyard patio",
     "address": "Ceintuurbaan 228",
-    "verified": false,
-    "coordSource": "estimated"
-  },
-  {
-    "id": 1512,
-    "name": "Caffé Combo",
-    "lat": 52.353535,
-    "lng": 4.855671,
-    "area": "Zuid",
-    "facing": "W",
-    "capacity": "M",
-    "vibe": "Mediterranean shared-dining bar",
-    "address": "Amstelveenseweg 156",
     "verified": false,
     "coordSource": "estimated"
   },

@@ -270,6 +270,12 @@ export function LandingPage() {
   // until a later re-render committed a non-zero opacity. Rendering it at full
   // opacity from the first frame keeps it interactive immediately.
 
+  // Reset opacity when returning to Home (e.g. via home button after navigating away).
+  // After the intro plays, this effect keeps Home visible on re-entry.
+  useEffect(() => {
+    containerOpacity.value = 1;
+  }, []);
+
   useEffect(() => {
     // If the intro has already played this session, all shared values were
     // initialised at their final state above — nothing to animate.
