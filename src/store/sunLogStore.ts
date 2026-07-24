@@ -34,8 +34,9 @@ export interface SunLogEvent {
   /** Terrace ID (matches TERRACES[n].id). */
   terraceId: number;
   /** What the user did. The sunrun_* pair are Phase-0 Sun Run signals
-   *  (SPEC-sun-run-phase0.md §1) — generation vs actual share-through. */
-  action: 'open' | 'favorite' | 'share' | 'directions' | 'sunrun_generate' | 'sunrun_share' | 'wrapped_share' | 'checkin';
+   *  (SPEC-sun-run-phase0.md §1) — generation vs actual share-through.
+   *  Pride events track WorldPride seasonal moment engagement. */
+  action: 'open' | 'favorite' | 'share' | 'directions' | 'sunrun_generate' | 'sunrun_share' | 'wrapped_share' | 'checkin' | 'pride_spotlight_view' | 'pride_filter_apply' | 'pride_terrace_open';
   /**
    * The computed sun score (0–1) at the time the action was taken, when
    * readily available at the call site. Omitted if not in scope — never
