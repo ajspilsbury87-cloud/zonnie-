@@ -45,6 +45,7 @@ import { haptics } from '@/src/lib/haptics';
 import { NeighborhoodFilter } from '@/src/components/NeighborhoodFilter';
 import { TimeRangeFineTune } from '@/src/components/TimeRangeScrubber';
 import { useAreaStore } from '@/src/store/areaStore';
+import { useSunLogStore } from '@/src/store/sunLogStore';
 import { todayAmsterdamDateStr, useTimeStore } from '@/src/store/timeStore';
 import { isWorldPrideLive } from '@/src/data/pride';
 import { fonts, fontSizes, palette, radii, spacing } from '@/src/theme/tokens';
@@ -248,7 +249,14 @@ export function FilterChips() {
             <Chip
               label={t.filterPride}
               active={prideRouteOnly}
-              onPress={() => { haptics.selection(); togglePrideRouteOnly(); }}
+              onPress={() => {
+                haptics.selection();
+                // Sun Log: count only the ON toggle as a filter apply.
+                if (!prideRouteOnly) {
+                  useSunLogStore.getState().log({ ts: Date.now(), terraceId: -1, action: 'pride_filter_apply' });
+                }
+                togglePrideRouteOnly();
+              }}
               accessibilityLabel={t.filterPrideA11y}
             />
           ) : null}

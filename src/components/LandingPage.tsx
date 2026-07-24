@@ -35,7 +35,7 @@
  * regardless of any in-app time-window the user has selected.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, InteractionManager, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -61,6 +61,7 @@ import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useLandingStore } from '@/src/store/landingStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { useSunLogStore } from '@/src/store/sunLogStore';
 import { useSunStatsStore } from '@/src/store/sunStatsStore';
 import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -191,6 +192,16 @@ export function LandingPage() {
   const prideLive = isWorldPrideLive(today);
   const prideTeaser = isWorldPrideTeaser(today);
 
+  // Sun Log: one spotlight/teaser impression per app session — enough to
+  // measure awareness → adoption without eating into the 2,000-event cap.
+  // terraceId -1 is the no-terrace sentinel (stats ignore ids < 0).
+  const prideViewLogged = useRef(false);
+  useEffect(() => {
+    if (prideViewLogged.current || (!prideLive && !prideTeaser)) return;
+    prideViewLogged.current = true;
+    useSunLogStore.getState().log({ ts: Date.now(), terraceId: -1, action: 'pride_spotlight_view' });
+  }, [prideLive, prideTeaser]);
+
   // Scoring all ~1,028 terraces is the heaviest work on this screen. Running it
   // inside render (useMemo) blocked the first paint and the JS thread, so the
   // "See all terraces" tap didn't register for several seconds on a cold launch.
@@ -230,6 +241,8 @@ export function LandingPage() {
   const setPrideRouteOnly = useAreaStore((s) => s.setPrideRouteOnly);
   const handlePridePress = () => {
     haptics.medium();
+    // Sun Log: the spotlight tap IS the filter apply (terraceId -1 sentinel).
+    useSunLogStore.getState().log({ ts: Date.now(), terraceId: -1, action: 'pride_filter_apply' });
     setPrideRouteOnly(true);
     setTimeout(hideLanding, 60);
   };

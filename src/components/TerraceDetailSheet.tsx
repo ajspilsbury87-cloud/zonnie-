@@ -52,6 +52,7 @@ import { findNextSunnySpot, ORIGIN_HORIZON_MIN } from '@/src/engines/handoff';
 import { bandForScore } from '@/src/engines/bands';
 import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
 import { isParadeViewTerrace, isWorldPrideLive } from '@/src/data/pride';
+import { useAreaStore } from '@/src/store/areaStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { useSunRunStore } from '@/src/store/sunRunStore';
 import { BuzzRow } from '@/src/components/BuzzRow';
@@ -166,6 +167,15 @@ export function TerraceDetailSheet() {
         terraceId: selectedId,
         action: 'open',
       });
+      // Pride funnel: an open that happens while the parade-route filter is
+      // active counts as pride-driven engagement (spotlight → filter → open).
+      if (useAreaStore.getState().prideRouteOnly) {
+        useSunLogStore.getState().log({
+          ts: Date.now(),
+          terraceId: selectedId,
+          action: 'pride_terrace_open',
+        });
+      }
     } else {
       ref.current?.close();
     }

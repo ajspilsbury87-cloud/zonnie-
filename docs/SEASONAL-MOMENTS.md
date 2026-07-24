@@ -48,13 +48,29 @@ Each seasonal moment implements three things:
 ### WorldPride Amsterdam 2026
 
 - **Window**: 25 Jul – 8 Aug 2026
-- **Teaser**: 22 Jul – 25 Jul 2026 (3-day awareness window)
+- **Teaser**: 22 Jul – 24 Jul 2026 (hides when the live window opens on the 25th)
 - **Data**: `src/data/pride.ts`
-- **Scope**: 137 terraces within 250m of the Canal Parade route (Oosterdok → Nieuwe Herengracht → Amstel → Prinsengracht → Westerdok)
+- **Scope**: 137 terraces within 130m (`PARADE_VIEW_MAX_M`) of the Canal Parade route (Oosterdok → Nieuwe Herengracht → Amstel → Prinsengracht → Westerdok)
 - **Canal Parade Day**: 1 Aug 2026, 12:00–18:00 (parade itself; we curate geography, not logistics)
 - **Tracking**: Pride events in `sunLogStore` (see `docs/METRICS.md` for KPIs)
 
-## Upcoming Moments (Planned)
+## Next Up: October 2026 double-header (planned)
+
+Both October candidates land in the same month, so they can share one build/release cycle. **Recommendation: ship the Marathon moment first** — it is route-based, so it reuses the pride.ts polyline+proximity pattern almost verbatim; ADE is venue-based and needs a curation decision.
+
+### Amsterdam Marathon 2026 (recommended next)
+
+- **Date**: mid-Oct 2026 — confirm exact race day at tcsamsterdammarathon.nl before building
+- **Teaser**: 3 days before race day (same pattern as pride)
+- **Scope**: terraces within ~130m of the route polyline — Olympic Stadium → Vondelpark → Amstel out-and-back. Cheer-from-a-terrace framing; honest proximity claim, same as the parade.
+- **Effort**: small — copy `pride.ts`, swap the polyline + dates, wire the same teaser/spotlight/filter UI and `marathon_*` events.
+
+### Amsterdam Dance Event (ADE) 2026
+
+- **Date**: 3rd week of Oct 2026 (Wed–Sun) — confirm at amsterdam-dance-event.nl
+- **Teaser**: 3 days before opening day
+- **Scope**: TBD — venue-proximity curation only works once the venue list is out; alternative is a "sunny daytime recovery terraces" angle (ADE is a night event; the daytime lens is the blue-ocean angle)
+- **Open decision**: proximity-to-venues vs. daytime-recovery framing — decide when the 2026 venue lineup publishes (September)
 
 ### King's Day 2027
 
@@ -62,18 +78,6 @@ Each seasonal moment implements three things:
 - **Teaser**: 24 Apr 2027 onward
 - **Scope**: Amsterdam city-wide (no geographic filter, just a celebration layer)
 - **Candidate**: Broad terrace appeal; fewer geo-constraints than parade-based moments
-
-### Amsterdam Dance Event (ADE) 2026
-
-- **Date**: 19–23 Oct 2026
-- **Teaser**: 16 Oct 2026 onward
-- **Scope**: Terraces near NDSM, Mellékhoz Music, live music venues (TBD after venue lineup confirmed)
-
-### Amsterdam Marathon 2027
-
-- **Date**: 19 Sep 2027 (tentative)
-- **Teaser**: 16 Sep 2027 onward
-- **Scope**: Terraces along the marathon route (likely Vondelpark → Museumplein → Red Light District loop)
 
 ## Adding a New Seasonal Moment
 
