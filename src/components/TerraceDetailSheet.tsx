@@ -51,7 +51,7 @@ import { sundownerMinutes } from '@/src/engines/golden';
 import { findNextSunnySpot, ORIGIN_HORIZON_MIN } from '@/src/engines/handoff';
 import { bandForScore } from '@/src/engines/bands';
 import { wcViewingForTerrace } from '@/src/data/worldcupVenues';
-import { isParadeViewTerrace, isWorldPrideLive } from '@/src/data/pride';
+import { CANAL_PARADE_DATE, isParadeViewTerrace, isWorldPrideLive, paradePassWindowLabel } from '@/src/data/pride';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
 import { useSunRunStore } from '@/src/store/sunRunStore';
@@ -948,6 +948,18 @@ export function TerraceDetailSheet() {
                 <View style={[styles.infoChip, styles.infoChipBrand]}>
                   <Text style={[styles.infoChipText, styles.infoChipTextBrand]}>
                     🏳️‍🌈 {t.prideOnRoute}
+                  </Text>
+                </View>
+              ) : null}
+              {/* Boat pass-time estimate — geometry-based (position along the
+                  route → convoy timing model in pride.ts). Hidden once the
+                  parade day has passed; the label is stale after 1 Aug. */}
+              {isWorldPrideLive(todayAmsterdamDateStr()) &&
+              todayAmsterdamDateStr() <= CANAL_PARADE_DATE &&
+              paradePassWindowLabel(terrace) != null ? (
+                <View style={[styles.infoChip, styles.infoChipBrand]}>
+                  <Text style={[styles.infoChipText, styles.infoChipTextBrand]}>
+                    🛥️ {t.prideBoatsPass(paradePassWindowLabel(terrace)!)}
                   </Text>
                 </View>
               ) : null}

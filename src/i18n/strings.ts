@@ -233,6 +233,9 @@ export const strings = {
     filterPride: '🏳️‍🌈 Parade',
     filterPrideA11y: 'Toon alleen terrassen langs de Canal Parade-route',
     prideOnRoute: 'Langs de Canal Parade-route',
+    prideBoatsPass: (w: string) => `Boten varen hier ${w} langs · za 1 aug`,
+    prideParadeDayTitle: '🏳️‍🌈 Canal Parade vandaag',
+    prideParadeDayBody: (n: number) => `boten varen 12:00–18:00 · ${n} terrassen met zicht op de route`,
     filterHint: '⛛ Tik om te filteren op buurt of naam',
 
     // Map
@@ -660,6 +663,9 @@ export const strings = {
     filterPride: '🏳️‍🌈 Parade',
     filterPrideA11y: 'Show only terraces along the Canal Parade route',
     prideOnRoute: 'On the Canal Parade route',
+    prideBoatsPass: (w: string) => `Boats pass here ${w} · Sat 1 Aug`,
+    prideParadeDayTitle: '🏳️‍🌈 Canal Parade today',
+    prideParadeDayBody: (n: number) => `boats sail 12:00–18:00 · ${n} terraces with a view of the route`,
     filterHint: '⛛ Tap to refine by area or name',
 
     // Map

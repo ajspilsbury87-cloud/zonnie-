@@ -2,6 +2,7 @@
 import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, {
   Marker,
+  Polyline,
   PROVIDER_DEFAULT,
   type MapPressEvent,
   type Region as MapRegion,
@@ -12,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MapRegionPill } from '@/src/components/MapRegionPill';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
 import { isWorldCupLive } from '@/src/data/worldcup';
+import { isWorldPrideLive, PARADE_ROUTE_SEGMENTS } from '@/src/data/pride';
 import type { Region } from '@/src/data/regions';
 import { thinPins } from '@/src/engines/pinThinning';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -411,6 +413,9 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   // We don't need this to react to a store; it only needs to be correct on
   // each fresh render (the map re-renders when scored changes anyway).
   const wcLiveToday = isWorldCupLive(todayAmsterdamDateStr());
+  // WorldPride: rainbow parade-route overlay, gated to the 25 Jul–8 Aug
+  // window — same evaluate-per-render idiom as wcLiveToday above.
+  const prideLiveToday = isWorldPrideLive(todayAmsterdamDateStr());
 
   // Tracks which macro-region the map is currently centred on, driving
   // the floating region pill. Updates on gesture-settle (not during the
@@ -673,6 +678,20 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         showsScale
         userInterfaceStyle="light"
       >
+        {/* WorldPride rainbow — the Canal Parade route drawn in the six flag
+            colours along the water. Solid per-segment colours (Apple Maps has
+            no gradient polylines); rendered before the pins so terraces stay
+            tappable on top. Static data — no re-render cost after mount. */}
+        {prideLiveToday
+          ? PARADE_ROUTE_SEGMENTS.map((seg, i) => (
+              <Polyline
+                key={`pride-route-${i}`}
+                coordinates={seg.coordinates}
+                strokeColor={seg.color}
+                strokeWidth={4}
+              />
+            ))
+          : null}
         {markers.map(({ item, band, selected, featured, topPick, screens }) => (
           <TerracePin
             key={item.terrace.id}

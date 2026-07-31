@@ -104,6 +104,136 @@ export function distanceToParadeRouteM(lat: number, lng: number): number {
   return best;
 }
 
+// ── Rainbow route rendering ───────────────────────────────────────────────────
+
+/** Classic 6-stripe pride flag, top-to-bottom order. */
+export const PRIDE_FLAG_COLORS = [
+  '#E40303', // red
+  '#FF8C00', // orange
+  '#FFED00', // yellow
+  '#008026', // green
+  '#24408E', // blue
+  '#732982', // purple
+] as const;
+
+/** One solid-colour stretch of the parade route, ready for a map Polyline.
+ *  Apple Maps has no gradient polylines, so the rainbow is drawn as
+ *  consecutive solid segments cycling through the flag colours. */
+export interface ParadeRouteSegment {
+  coordinates: { latitude: number; longitude: number }[];
+  color: string;
+}
+
+/** Cumulative distance (m) at each PARADE_ROUTE vertex; index 0 = 0. */
+function cumulativeRouteM(): number[] {
+  const cum = [0];
+  for (let i = 1; i < PARADE_ROUTE.length; i++) {
+    const a = PARADE_ROUTE[i - 1]!;
+    const b = PARADE_ROUTE[i]!;
+    const dx = (b.lng - a.lng) * M_LNG;
+    const dy = (b.lat - a.lat) * M_LAT;
+    cum.push(cum[i - 1]! + Math.sqrt(dx * dx + dy * dy));
+  }
+  return cum;
+}
+const ROUTE_CUM_M = cumulativeRouteM();
+const ROUTE_TOTAL_M = ROUTE_CUM_M[ROUTE_CUM_M.length - 1]!;
+
+/** Point at a given cumulative distance along the route (linear interp). */
+function pointAtRouteM(m: number): { latitude: number; longitude: number } {
+  const clamped = Math.min(ROUTE_TOTAL_M, Math.max(0, m));
+  for (let i = 1; i < ROUTE_CUM_M.length; i++) {
+    if (clamped <= ROUTE_CUM_M[i]!) {
+      const a = PARADE_ROUTE[i - 1]!;
+      const b = PARADE_ROUTE[i]!;
+      const span = ROUTE_CUM_M[i]! - ROUTE_CUM_M[i - 1]!;
+      const t = span === 0 ? 0 : (clamped - ROUTE_CUM_M[i - 1]!) / span;
+      return {
+        latitude: a.lat + (b.lat - a.lat) * t,
+        longitude: a.lng + (b.lng - a.lng) * t,
+      };
+    }
+  }
+  const last = PARADE_ROUTE[PARADE_ROUTE.length - 1]!;
+  return { latitude: last.lat, longitude: last.lng };
+}
+
+/** 36 stripes ≈ 6 full flag cycles over the ~9 km route — each stripe is a
+ *  few hundred metres, so the rainbow reads clearly at city zoom. Computed
+ *  once at module load; segments share endpoints so the line is continuous. */
+const STRIPE_COUNT = 36;
+export const PARADE_ROUTE_SEGMENTS: readonly ParadeRouteSegment[] = (() => {
+  const segments: ParadeRouteSegment[] = [];
+  for (let i = 0; i < STRIPE_COUNT; i++) {
+    const from = (i / STRIPE_COUNT) * ROUTE_TOTAL_M;
+    const to = ((i + 1) / STRIPE_COUNT) * ROUTE_TOTAL_M;
+    // Include any route vertices that fall inside the stripe so bends are
+    // followed faithfully, not cut across.
+    const coords = [pointAtRouteM(from)];
+    for (let v = 0; v < PARADE_ROUTE.length; v++) {
+      if (ROUTE_CUM_M[v]! > from && ROUTE_CUM_M[v]! < to) {
+        coords.push({ latitude: PARADE_ROUTE[v]!.lat, longitude: PARADE_ROUTE[v]!.lng });
+      }
+    }
+    coords.push(pointAtRouteM(to));
+    segments.push({ coordinates: coords, color: PRIDE_FLAG_COLORS[i % PRIDE_FLAG_COLORS.length]! });
+  }
+  return segments;
+})();
+
+// ── Boat pass-time estimate ───────────────────────────────────────────────────
+
+/** Fraction (0..1) along the route of the point nearest to a coordinate. */
+export function paradeRouteFraction(lat: number, lng: number): number {
+  let bestDist = Infinity;
+  let bestM = 0;
+  for (let i = 0; i < PARADE_ROUTE.length - 1; i++) {
+    const a = PARADE_ROUTE[i]!;
+    const b = PARADE_ROUTE[i + 1]!;
+    const px = (lng - a.lng) * M_LNG;
+    const py = (lat - a.lat) * M_LAT;
+    const bx = (b.lng - a.lng) * M_LNG;
+    const by = (b.lat - a.lat) * M_LAT;
+    const len2 = bx * bx + by * by;
+    const t = len2 === 0 ? 0 : Math.min(1, Math.max(0, (px * bx + py * by) / len2));
+    const dx = px - t * bx;
+    const dy = py - t * by;
+    const d = Math.sqrt(dx * dx + dy * dy);
+    if (d < bestDist) {
+      bestDist = d;
+      bestM = ROUTE_CUM_M[i]! + Math.sqrt(len2) * t;
+    }
+  }
+  return ROUTE_TOTAL_M === 0 ? 0 : bestM / ROUTE_TOTAL_M;
+}
+
+/** Model: the parade departs Oosterdok at 12:00; the lead boat takes ~3 h to
+ *  reach Westerdok, and the convoy takes ~3 h to clear any given point. So a
+ *  spot at fraction f sees boats from 12:00 + f·3h until ~3 h later (capped
+ *  at 18:00). Honest label — rounded to 15 min and marked approximate. */
+const PARADE_START_MIN = 12 * 60;
+const LEAD_BOAT_TRANSIT_MIN = 3 * 60;
+const CONVOY_LENGTH_MIN = 3 * 60;
+const PARADE_END_MIN = 18 * 60;
+
+function fmtMin(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = Math.round((min % 60) / 15) * 15;
+  return m === 60 ? `${h + 1}:00` : `${h}:${String(m).padStart(2, '0')}`;
+}
+
+/**
+ * "~13:15–16:15" window during which boats pass this terrace, or null when
+ * the terrace isn't parade-view. Pure; safe to call in render.
+ */
+export function paradePassWindowLabel(t: Terrace): string | null {
+  if (!isParadeViewTerrace(t)) return null;
+  const f = paradeRouteFraction(t.lat, t.lng);
+  const first = PARADE_START_MIN + f * LEAD_BOAT_TRANSIT_MIN;
+  const last = Math.min(PARADE_END_MIN, first + CONVOY_LENGTH_MIN);
+  return `~${fmtMin(first)}–${fmtMin(last)}`;
+}
+
 // Per-terrace verdicts never change at runtime (coords are static), so the
 // polyline walk runs once per terrace across the whole app session.
 const paradeViewCache = new Map<number, boolean>();

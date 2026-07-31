@@ -54,7 +54,7 @@ import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
-import { countParadeViewTerraces, isWorldPrideLive, isWorldPrideTeaser } from '@/src/data/pride';
+import { countParadeViewTerraces, isCanalParadeDay, isWorldPrideLive, isWorldPrideTeaser } from '@/src/data/pride';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { rangeScoreForTerrace } from '@/src/hooks/scoreCache';
 import { haptics } from '@/src/lib/haptics';
@@ -479,7 +479,9 @@ export function LandingPage() {
               accessibilityLabel={t.prideSpotlightCta}
             >
               <Text style={styles.wcBannerText} numberOfLines={2}>
-                {t.prideSpotlightTitle} · {t.prideSpotlightBody(PARADE_TERRACE_COUNT)} →
+                {isCanalParadeDay(today)
+                  ? `${t.prideParadeDayTitle} · ${t.prideParadeDayBody(PARADE_TERRACE_COUNT)} →`
+                  : `${t.prideSpotlightTitle} · ${t.prideSpotlightBody(PARADE_TERRACE_COUNT)} →`}
               </Text>
             </Pressable>
           ) : null}
