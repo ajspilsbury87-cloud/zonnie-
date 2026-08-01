@@ -13,6 +13,9 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const OUT = path.join(ROOT, 'marketing/instagram/v2/12-parademap.png');
 const GEO = JSON.parse(readFileSync(path.join(ROOT, 'src/data/prideRouteGeo.json'), 'utf8'));
 const VENUES = JSON.parse(readFileSync(path.join(ROOT, 'src/data/prideVenues.json'), 'utf8'));
+// Real central-Amsterdam geometry (OSM) — run scripts/marketing/fetch-basemap.mjs
+// to regenerate. Gives the card an authentic canal-ring basemap.
+const BASE = JSON.parse(readFileSync(path.join(ROOT, 'marketing/data/amsterdam-basemap.json'), 'utf8'));
 
 const F_BOLD = path.join(ROOT, 'node_modules/@expo-google-fonts/fraunces/700Bold/Fraunces_700Bold.ttf');
 const I_REG = path.join(ROOT, 'node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf');
@@ -24,6 +27,12 @@ const C = {
   mist: '#E8DCC8', white: '#FFFFFF',
 };
 const FLAG = ['#E40303', '#FF8C00', '#FFED00', '#008026', '#24408E', '#732982'];
+// Basemap palette — warm-tinted so the real OSM geometry sits inside the
+// Zonnie brand rather than looking like a stock map screenshot.
+const MAP = {
+  paper: '#FDF7EE', road: '#F0E7DA', park: '#DDE8CE',
+  water: '#C2D9E6', canal: '#B4CFE0',
+};
 const W = 1080, H = 1350;
 
 async function text({ markup, font, fontfile, width, align = 'centre', spacing }) {
@@ -48,11 +57,46 @@ const route = GEO.route.map(([lat, lng]) => ({ x: lng * M_LNG, y: lat * M_LAT })
 const xs = route.map((p) => p.x), ys = route.map((p) => p.y);
 const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
 
-const CARD_X = 110, CARD_Y = 600, CARD_W = 860, CARD_H = 580, PAD = 70;
-const scale = Math.min((CARD_W - 2 * PAD) / (maxX - minX), (CARD_H - 2 * PAD) / (maxY - minY));
+// PAD leaves room around the route so the surrounding canal ring shows.
+const CARD_X = 110, CARD_Y = 600, CARD_W = 860, CARD_H = 580, PAD = 78;
+// Reserve a caption band at the bottom so the route never lands under it.
+const CAPTION_BAND = 52;
+const FIT_H = CARD_H - CAPTION_BAND;
+const scale = Math.min((CARD_W - 2 * PAD) / (maxX - minX), (FIT_H - 2 * PAD) / (maxY - minY));
 const ox = CARD_X + (CARD_W - (maxX - minX) * scale) / 2;
-const oy = CARD_Y + (CARD_H - (maxY - minY) * scale) / 2;
+const oy = CARD_Y + (FIT_H - (maxY - minY) * scale) / 2;
 const px = (p) => ({ x: ox + (p.x - minX) * scale, y: oy + (maxY - p.y) * scale }); // north up
+
+// ── Basemap: project real OSM geometry through the same transform ─────────────
+const projLatLng = ([lat, lng]) => px({ x: lng * M_LNG, y: lat * M_LAT });
+/** Skip anything wholly outside the card — keeps the SVG a sane size. */
+function visible(pts) {
+  let minPx = Infinity, maxPx = -Infinity, minPy = Infinity, maxPy = -Infinity;
+  for (const ll of pts) {
+    const p = projLatLng(ll);
+    minPx = Math.min(minPx, p.x); maxPx = Math.max(maxPx, p.x);
+    minPy = Math.min(minPy, p.y); maxPy = Math.max(maxPy, p.y);
+  }
+  return maxPx >= CARD_X && minPx <= CARD_X + CARD_W && maxPy >= CARD_Y && minPy <= CARD_Y + CARD_H;
+}
+const toPath = (pts) =>
+  pts.map((ll, i) => {
+    const p = projLatLng(ll);
+    return `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+  }).join('');
+
+const layer = (features, attrs) =>
+  features
+    .filter(visible)
+    .map((pts) => `<path d="${toPath(pts)}" ${attrs}/>`)
+    .join('');
+
+const basemapSvg = [
+  layer(BASE.parks, `fill="${MAP.park}" stroke="none"`),
+  layer(BASE.water, `fill="${MAP.water}" stroke="none"`),
+  layer(BASE.roads, `fill="none" stroke="${MAP.road}" stroke-width="2.2" stroke-linecap="round"`),
+  layer(BASE.canals, `fill="none" stroke="${MAP.canal}" stroke-width="3.4" stroke-linecap="round"`),
+].join('');
 
 // Split into equal-length stripes cycling the six flag colours.
 const cum = [0];
@@ -80,12 +124,12 @@ for (let s = 0; s < STRIPES; s++) {
   for (let v = 0; v < route.length; v++) if (cum[v] > from && cum[v] < to) pts.push(route[v]);
   pts.push(pointAt(to));
   const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p).x.toFixed(1)},${px(p).y.toFixed(1)}`).join('');
-  stripesSvg += `<path d="${d}" stroke="${FLAG[s % 6]}" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  stripesSvg += `<path d="${d}" stroke="${FLAG[s % 6]}" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
-// White casing under the stripes ties the segments into one continuous line.
+// White casing under the stripes lifts the rainbow off the busy basemap and
+// ties the segments into one continuous line.
 const casingD = route.map((p, i) => `${i === 0 ? 'M' : 'L'}${px(p).x.toFixed(1)},${px(p).y.toFixed(1)}`).join('');
-stripesSvg = `<path d="${casingD}" stroke="${C.white}" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
-<path d="${casingD}" stroke="${C.mist}" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` + stripesSvg;
+stripesSvg = `<path d="${casingD}" stroke="${C.white}" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` + stripesSvg;
 
 // Toilets (every other official pin, so the card stays readable).
 let toiletsSvg = '';
@@ -105,12 +149,27 @@ let pinsSvg = '';
 });
 
 const card = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-<rect x="${CARD_X}" y="${CARD_Y}" width="${CARD_W}" height="${CARD_H}" rx="30" fill="${C.white}"/>
+<defs>
+  <clipPath id="cardClip">
+    <rect x="${CARD_X}" y="${CARD_Y}" width="${CARD_W}" height="${CARD_H}" rx="30"/>
+  </clipPath>
+  <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0.9" stop-color="${MAP.paper}" stop-opacity="0"/>
+    <stop offset="0.97" stop-color="${MAP.paper}" stop-opacity="0.97"/>
+  </linearGradient>
+</defs>
+<g clip-path="url(#cardClip)">
+  <rect x="${CARD_X}" y="${CARD_Y}" width="${CARD_W}" height="${CARD_H}" fill="${MAP.paper}"/>
+  ${basemapSvg}
+  ${stripesSvg}
+  ${toiletsSvg}
+  ${pinsSvg}
+  <rect x="${CARD_X}" y="${CARD_Y}" width="${CARD_W}" height="${CARD_H}" fill="url(#fade)"/>
+</g>
 <rect x="${CARD_X}" y="${CARD_Y}" width="${CARD_W}" height="${CARD_H}" rx="30" fill="none" stroke="${C.mist}" stroke-width="2"/>
-${stripesSvg}
-${toiletsSvg}
-${pinsSvg}
 <text x="${CARD_X + CARD_W / 2}" y="${CARD_Y + CARD_H - 26}" font-family="sans-serif" font-weight="600" font-size="19" letter-spacing="1.5" fill="${C.inkSoft}" text-anchor="middle">THE REAL ROUTE · BOAT TIMES · TOILETS · EVENTS</text>
+<!-- ODbL requires attribution wherever OSM-derived geometry is rendered. -->
+<text x="${CARD_X + CARD_W - 16}" y="${CARD_Y + 22}" font-family="sans-serif" font-size="11" fill="${C.inkSoft}" opacity="0.65" text-anchor="end">© OpenStreetMap contributors</text>
 </svg>`;
 
 const layers = [];
