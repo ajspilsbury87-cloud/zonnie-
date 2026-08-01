@@ -34,11 +34,21 @@ on:
         description: Update message shown in EAS
         default: WorldPride Canal Parade layer (1.3.0 OTA)
         required: true
+      expo_token:
+        description: >-
+          One-time Expo access token. Leave BLANK to use the EXPO_TOKEN repo
+          secret. Only use this when you can't add a repo secret. It is visible
+          in this run's record — REVOKE it at expo.dev right after the run.
+        required: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Mask the one-time token in logs
+        if: inputs.expo_token != ''
+        run: echo "::add-mask::${{ inputs.expo_token }}"
+
       - name: Checkout the 1.3.0-pinned tree
         uses: actions/checkout@v4
         with:
@@ -66,7 +76,8 @@ jobs:
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+          # Prefer the one-time dispatch input; fall back to the repo secret.
+          token: ${{ inputs.expo_token || secrets.EXPO_TOKEN }}
 
       # Only export a key if the secret is actually set — an empty export would
       # override the value --environment production pulls from EAS and blank it out.
