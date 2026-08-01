@@ -13,7 +13,7 @@ Zonnie is an Expo-based iOS and Android app that forecasts sun exposure at Amste
 
 ## Seasonal Moments: WorldPride 2026
 
-**WorldPride Amsterdam runs 25 Jul – 8 Aug 2026.** Zonnie features 137 curated terraces within 250m of the Canal Parade route.
+**WorldPride Amsterdam runs 25 Jul – 8 Aug 2026.** Zonnie features 185 curated terraces within 130m of the Canal Parade route.
 
 - **Teaser window** (22–25 Jul): Spotlight card with event info
 - **Live window** (25 Jul–8 Aug): Dedicated pride filter to explore parade-view terraces
@@ -102,7 +102,7 @@ See `docs/METRICS.md` for detailed KPIs and how to review event data.
 
 - [Expo documentation](https://expo.dev/)
 - **Project documentation**: See `docs/` folder for architecture, metrics, and seasonal moments
-- **Dataset reference**: `src/data/pride.ts` defines the 137 parade-view terraces and date windows
+- **Dataset reference**: `src/data/pride.ts` defines the 185 parade-view terraces and date windows
 
 ## License
 

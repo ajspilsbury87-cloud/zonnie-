@@ -50,7 +50,7 @@ Each seasonal moment implements three things:
 - **Window**: 25 Jul – 8 Aug 2026
 - **Teaser**: 22 Jul – 24 Jul 2026 (hides when the live window opens on the 25th)
 - **Data**: `src/data/pride.ts`
-- **Scope**: 137 terraces within 130m (`PARADE_VIEW_MAX_M`) of the Canal Parade route (Oosterdok → Nieuwe Herengracht → Amstel → Prinsengracht → Westerdok)
+- **Scope**: 185 terraces within 130m (`PARADE_VIEW_MAX_M`) of the Canal Parade route (Oosterdok → Schippersgracht → Nieuwe Herengracht → Amstel → Prinsengracht → Korte Prinsengracht → Westerdok; OSM waterway centerlines via scripts/build-parade-route.mjs)
 - **Canal Parade Day**: 1 Aug 2026, 12:00–18:00 (parade itself; we curate geography, not logistics)
 - **Map overlay**: the route renders as a rainbow polyline (36 solid segments cycling the 6 flag colours — Apple Maps has no gradients) during the live window
 - **Boat pass-time**: detail sheet shows a "~13:15–16:15" estimate per parade-view terrace (position along route → convoy timing model: lead boat 12:00 + 3 h transit, ~3 h convoy); hidden after parade day

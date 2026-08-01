@@ -93,7 +93,7 @@ For WorldPride Amsterdam 2026 (25 Jul – 8 Aug), track these metrics:
 
 3. **Engagement (Terrace Opens)**: Count `pride_terrace_open` events from the pride-filtered view.
    - Key ratio: `pride_terrace_open / pride_filter_apply` = filter-to-action conversion.
-   - Informs whether the 137 curated parade-view terraces resonate or need refinement.
+   - Informs whether the 185 curated parade-view terraces resonate or need refinement.
 
 4. **Quality**: Examine score distribution of opened terraces.
    - Are users opening only high-score (sunny) terraces, or is the curation trusted for lower scores too?
@@ -104,7 +104,7 @@ For WorldPride Amsterdam 2026 (25 Jul – 8 Aug), track these metrics:
 The log creates a feedback loop:
 
 - **Pattern recognition**: If pride conversion funnels are strong, replicate the teaser→live pattern for the next seasonal moment.
-- **Dataset validation**: If very few terraces are opened from the 137 curated spots, revisit the curation logic or the proximity threshold (`PARADE_VIEW_MAX_M` in `src/data/pride.ts`).
+- **Dataset validation**: If very few terraces are opened from the 185 curated spots, revisit the curation logic or the proximity threshold (`PARADE_VIEW_MAX_M` in `src/data/pride.ts`).
 - **Timing optimization**: Teaser window length (currently 3 days) can be tuned based on how many users convert early vs. on the final live day.
 - **Feature template**: Each seasonal moment can re-use the same tracking actions if the pattern holds. New moments (e.g., King's Day, ADE, Marathon) add their own actions by the same naming convention: `[season]_spotlight_view`, `[season]_filter_apply`, `[season]_terrace_open`.
 

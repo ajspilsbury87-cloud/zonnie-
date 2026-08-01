@@ -121,7 +121,9 @@ export const useSunLogStore = create<SunLogState>((set, get) => ({
   },
 
   distinctTerraceCount: () => {
-    const ids = new Set(get().events.map((e) => e.terraceId));
+    // Ignore sentinel ids (< 0) used by non-terrace events (pride spotlight/
+    // filter) — they'd otherwise inflate "terraces explored" by one.
+    const ids = new Set(get().events.filter((e) => e.terraceId >= 0).map((e) => e.terraceId));
     return ids.size;
   },
 }));

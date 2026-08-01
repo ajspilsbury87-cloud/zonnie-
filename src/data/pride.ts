@@ -17,6 +17,7 @@
  */
 
 import type { Terrace } from '@/src/engines/types';
+import routeGeo from './prideRouteGeo.json';
 
 // ── Window ────────────────────────────────────────────────────────────────────
 
@@ -45,12 +46,12 @@ export function isCanalParadeDay(dateStr: string): boolean {
 // ── Parade route ──────────────────────────────────────────────────────────────
 
 /**
- * The 2026 route as a polyline: Oosterdok → Nieuwe Herengracht → Amstel →
- * Prinsengracht (the long stretch) → Westerdok. Points are hand-placed on
- * the waterways at recognisable bridges/junctions; segment interpolation
- * covers the bends well within the proximity threshold's tolerance.
+ * Hand-placed fallback route — superseded by the OSM-derived polyline in
+ * prideRouteGeo.json (see below), kept as the safety net if that file is
+ * ever missing or malformed. Known inaccuracies: corners cut at the
+ * Amstel→Prinsengracht turn and the Oosterdok approach.
  */
-export const PARADE_ROUTE: readonly { lat: number; lng: number }[] = [
+const HAND_ROUTE: readonly { lat: number; lng: number }[] = [
   { lat: 52.3755, lng: 4.9075 }, // Oosterdok
   { lat: 52.3710, lng: 4.9093 }, // Nieuwe Herengracht (north end)
   { lat: 52.3665, lng: 4.9035 }, // Nieuwe Herengracht → Amstel (Hermitage)
@@ -68,6 +69,49 @@ export const PARADE_ROUTE: readonly { lat: number; lng: number }[] = [
   { lat: 52.3803, lng: 4.8875 }, // Prinsengracht x Brouwersgracht
   { lat: 52.3845, lng: 4.8885 }, // Westerdok
 ];
+
+/** [lat, lng] pair from prideRouteGeo.json, validated. */
+function isLatLngPair(p: unknown): p is [number, number] {
+  return Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]);
+}
+
+/**
+ * The parade route, OSM-accurate: waterway centerlines (Schippersgracht,
+ * Nieuwe Herengracht, Amstel, Prinsengracht, Korte Prinsengracht) assembled
+ * by scripts/build-parade-route.mjs so the polyline follows the actual
+ * water. Falls back to HAND_ROUTE if the JSON is missing or malformed —
+ * this runs at module load, so it must never throw (startup crash).
+ */
+export const PARADE_ROUTE: readonly { lat: number; lng: number }[] = (() => {
+  try {
+    const pts = (routeGeo as { route?: unknown }).route;
+    if (Array.isArray(pts)) {
+      const mapped = pts.filter(isLatLngPair).map(([lat, lng]) => ({ lat, lng }));
+      if (mapped.length >= 2) return mapped;
+    }
+  } catch {
+    // fall through to hand route
+  }
+  return HAND_ROUTE;
+})();
+
+/**
+ * Existing public toilets within 200 m of the route (OSM amenity=toilets,
+ * same build script). Honest framing: these are the city's permanent
+ * facilities near the route — NOT official event toilets, which
+ * pride.amsterdam publishes separately closer to the day.
+ */
+export const PRIDE_TOILETS: readonly { lat: number; lng: number }[] = (() => {
+  try {
+    const pts = (routeGeo as { toilets?: unknown }).toilets;
+    if (Array.isArray(pts)) {
+      return pts.filter(isLatLngPair).map(([lat, lng]) => ({ lat, lng }));
+    }
+  } catch {
+    // fall through to empty
+  }
+  return [];
+})();
 
 /** A terrace "sees" the parade within this straight-line distance of the
  *  route. ~130m ≈ a short block from the quay — close enough to wander
@@ -163,22 +207,33 @@ function pointAtRouteM(m: number): { latitude: number; longitude: number } {
  *  once at module load; segments share endpoints so the line is continuous. */
 const STRIPE_COUNT = 36;
 export const PARADE_ROUTE_SEGMENTS: readonly ParadeRouteSegment[] = (() => {
-  const segments: ParadeRouteSegment[] = [];
-  for (let i = 0; i < STRIPE_COUNT; i++) {
-    const from = (i / STRIPE_COUNT) * ROUTE_TOTAL_M;
-    const to = ((i + 1) / STRIPE_COUNT) * ROUTE_TOTAL_M;
-    // Include any route vertices that fall inside the stripe so bends are
-    // followed faithfully, not cut across.
-    const coords = [pointAtRouteM(from)];
-    for (let v = 0; v < PARADE_ROUTE.length; v++) {
-      if (ROUTE_CUM_M[v]! > from && ROUTE_CUM_M[v]! < to) {
-        coords.push({ latitude: PARADE_ROUTE[v]!.lat, longitude: PARADE_ROUTE[v]!.lng });
+  // Runs at module load — a throw here would crash the app at startup, so
+  // any failure degrades to "no rainbow" instead of "no app".
+  try {
+    const segments: ParadeRouteSegment[] = [];
+    for (let i = 0; i < STRIPE_COUNT; i++) {
+      const from = (i / STRIPE_COUNT) * ROUTE_TOTAL_M;
+      const to = ((i + 1) / STRIPE_COUNT) * ROUTE_TOTAL_M;
+      // Include any route vertices that fall inside the stripe so bends are
+      // followed faithfully, not cut across.
+      const coords = [pointAtRouteM(from)];
+      for (let v = 0; v < PARADE_ROUTE.length; v++) {
+        if (ROUTE_CUM_M[v]! > from && ROUTE_CUM_M[v]! < to) {
+          coords.push({ latitude: PARADE_ROUTE[v]!.lat, longitude: PARADE_ROUTE[v]!.lng });
+        }
+      }
+      coords.push(pointAtRouteM(to));
+      // Native map polylines hard-crash on NaN coordinates — filter, then
+      // drop any stripe left with fewer than 2 points.
+      const safe = coords.filter((c) => Number.isFinite(c.latitude) && Number.isFinite(c.longitude));
+      if (safe.length >= 2) {
+        segments.push({ coordinates: safe, color: PRIDE_FLAG_COLORS[i % PRIDE_FLAG_COLORS.length]! });
       }
     }
-    coords.push(pointAtRouteM(to));
-    segments.push({ coordinates: coords, color: PRIDE_FLAG_COLORS[i % PRIDE_FLAG_COLORS.length]! });
+    return segments;
+  } catch {
+    return [];
   }
-  return segments;
 })();
 
 // ── Boat pass-time estimate ───────────────────────────────────────────────────

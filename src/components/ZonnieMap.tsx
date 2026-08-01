@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MapRegionPill } from '@/src/components/MapRegionPill';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
 import { isWorldCupLive } from '@/src/data/worldcup';
-import { isWorldPrideLive, PARADE_ROUTE_SEGMENTS } from '@/src/data/pride';
+import { isWorldPrideLive, PARADE_ROUTE_SEGMENTS, PRIDE_TOILETS } from '@/src/data/pride';
 import type { Region } from '@/src/data/regions';
 import { thinPins } from '@/src/engines/pinThinning';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -416,6 +416,9 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   // WorldPride: rainbow parade-route overlay, gated to the 25 Jul–8 Aug
   // window — same evaluate-per-render idiom as wcLiveToday above.
   const prideLiveToday = isWorldPrideLive(todayAmsterdamDateStr());
+  // Toilet pins only show with the parade filter ON — event-lens info, kept
+  // out of the everyday map to avoid clutter.
+  const prideRouteOnly = useAreaStore((s) => s.prideRouteOnly);
 
   // Tracks which macro-region the map is currently centred on, driving
   // the floating region pill. Updates on gesture-settle (not during the
@@ -692,6 +695,23 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
               />
             ))
           : null}
+        {/* Public toilets near the route (OSM data, existing city facilities
+            — not official event toilets). Only with the parade filter on. */}
+        {prideLiveToday && prideRouteOnly
+          ? PRIDE_TOILETS.map((p, i) => (
+              <Marker
+                key={`pride-toilet-${i}`}
+                coordinate={{ latitude: p.lat, longitude: p.lng }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                tracksViewChanges={false}
+                title={t.prideToilet}
+              >
+                <View style={styles.toiletPin}>
+                  <Text style={styles.toiletPinGlyph}>🚻</Text>
+                </View>
+              </Marker>
+            ))
+          : null}
         {markers.map(({ item, band, selected, featured, topPick, screens }) => (
           <TerracePin
             key={item.terrace.id}
@@ -784,6 +804,22 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
+  // Small white disc so the 🚻 glyph reads against busy map tiles; kept
+  // visually quieter than terrace pins (info layer, not a destination).
+  toiletPin: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: palette.white,
+    borderWidth: 1,
+    borderColor: palette.mist,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toiletPinGlyph: {
+    fontSize: 13,
+    lineHeight: 16,
+  },
   emptyNotice: {
     position: 'absolute',
     alignSelf: 'center',
