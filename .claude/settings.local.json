@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": [
+      "Bash(mkdir scripts\\\\audit)",
+      "Bash(mkdir audit-output *)"
+    ]
+  }
+}

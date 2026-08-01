@@ -27,7 +27,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { getBuildingsForTerrace } from '../src/data/buildings';
 import { computeSunScore, scoreLabel } from '../src/engines/scoring';
 import type { Terrace } from '../src/engines/types';
 
@@ -107,13 +106,12 @@ interface Scored {
 }
 
 function score(terrace: Terrace): Scored {
-  const buildings = getBuildingsForTerrace(terrace.id);
   let mid = 0;
   let midN = 0;
   let eve = 0;
   let eveN = 0;
   for (let h = 12; h <= 21; h++) {
-    const r = computeSunScore(terrace, buildings, h, DATE, 'sunny');
+    const r = computeSunScore(terrace, h, DATE, 'sunny');
     if (h <= 18) {
       mid += r.score;
       midN++;

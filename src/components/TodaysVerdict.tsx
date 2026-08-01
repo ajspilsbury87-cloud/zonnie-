@@ -31,13 +31,13 @@
  * No new native dependencies — uses only imports already in the bundle.
  */
 
-import { useEffect, useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { InteractionManager, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useStrings } from '@/src/i18n/useStrings';
 import { cachedHourScore } from '@/src/hooks/scoreCache';
 import { TERRACES } from '@/src/data/terraces';
-import { computeTodaysVerdict, VERDICT_STRONG_THRESHOLD } from '@/src/engines/todaysVerdict';
+import { computeTodaysVerdict, VERDICT_STRONG_THRESHOLD, type TodaysVerdictData } from '@/src/engines/todaysVerdict';
 import { SunArc } from '@/src/components/SunArc';
 import { haptics } from '@/src/lib/haptics';
 import { useSelectionStore } from '@/src/store/selectionStore';
@@ -97,6 +97,29 @@ function lastStrongHour(hourly: number[]): number | null {
   return last;
 }
 
+/**
+ * The full-dataset scoring pass — every terrace across the core day plus the
+ * city-wide verdict. This is the heaviest work on the landing screen
+ * (~2,000 terraces × 24h ≈ 48k score lookups). It's a plain function (not a
+ * hook) so the component can run it OFF the render path via InteractionManager
+ * — the same deferral LandingPage uses — instead of blocking first paint.
+ */
+function computeVerdictScoring(
+  dateStr: string,
+  hourlyWeather: readonly import('@/src/engines/types').Weather[] | undefined,
+): { scored: ScoredForDay[]; verdictData: TodaysVerdictData } {
+  const allScored: ScoredForDay[] = TERRACES.map((terrace) => {
+    const hourly = buildHourlyScores(terrace, dateStr, hourlyWeather);
+    let peak = 0;
+    for (let h = DAY_FROM; h <= DAY_TO; h++) {
+      if ((hourly[h] ?? 0) > peak) peak = hourly[h] ?? 0;
+    }
+    return { terrace, peakScore: peak, hourly };
+  });
+  const allDayArrays = allScored.map((s) => s.hourly);
+  return { scored: allScored, verdictData: computeTodaysVerdict(allDayArrays) };
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function TodaysVerdict() {
@@ -118,39 +141,37 @@ export function TodaysVerdict() {
   useEffect(() => {
     ensure(dateStr);
   }, [ensure, dateStr]);
-  const weatherEntry = weatherByDate[dateStr];
-  // "Loading" = no real data yet. Keying this on status made every
-  // 30-min background refresh blank the card to the placeholder.
-  const isLoading = weatherEntry?.data == null;
-  const hourlyWeather =
-    weatherEntry?.data;
-
-  // Full scoring pass — memoised on weather changes (same dep as LandingPage).
-  const { scored, verdictData } = useMemo(() => {
-    const allScored: ScoredForDay[] = TERRACES.map((terrace) => {
-      const hourly = buildHourlyScores(terrace, dateStr, hourlyWeather);
-      let peak = 0;
-      for (let h = DAY_FROM; h <= DAY_TO; h++) {
-        if ((hourly[h] ?? 0) > peak) peak = hourly[h] ?? 0;
-      }
-      return { terrace, peakScore: peak, hourly };
+  // Full scoring pass — the heaviest work on the landing screen (~2,000
+  // terraces × 24h). DEFERRED off the render path via InteractionManager so
+  // Home paints and its CTA stays tappable immediately; the card fills a beat
+  // later (same pattern as LandingPage). `verdictData == null` means "not ready
+  // yet" — weather still loading OR the deferred pass hasn't run — and shows the
+  // neutral placeholder. Recomputes when the live forecast lands (weatherByDate
+  // changes); a background refresh keeps prior data so the card never blanks.
+  const [scored, setScored] = useState<ScoredForDay[]>([]);
+  const [verdictData, setVerdictData] = useState<TodaysVerdictData | null>(null);
+  useEffect(() => {
+    const hourlyWeather = weatherByDate[dateStr]?.data;
+    if (hourlyWeather == null) return; // weather not loaded yet — show placeholder
+    const task = InteractionManager.runAfterInteractions(() => {
+      const r = computeVerdictScoring(dateStr, hourlyWeather);
+      setScored(r.scored);
+      setVerdictData(r.verdictData);
     });
-
-    const allDayArrays = allScored.map((s) => s.hourly);
-    return {
-      scored: allScored,
-      verdictData: computeTodaysVerdict(allDayArrays),
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dateStr is stable for today; re-computes only when weather changes
+    return () => task.cancel();
   }, [weatherByDate, dateStr]);
 
   // Top N picks: highest peak score across the day, excluding zero-score entries.
+  // Memoize on scored identity (not contents) — when weather refreshes in the
+  // background, the new scored array from the deferred pass is a new reference,
+  // so memoization re-sorts. But within a render cycle the same scored reference
+  // means the picks stay constant. Avoid re-sorting on every intermediate render.
   const topPicks = useMemo(() => {
     return [...scored]
       .sort((a, b) => b.peakScore - a.peakScore)
       .filter((s) => s.peakScore > 0)
       .slice(0, TOP_PICKS_COUNT);
-  }, [scored]);
+  }, [scored]); // scored is already identity-stable per its own useMemo
 
   // Best favourite for today: highest full-day score among saved terraces.
   const bestFavourite = useMemo(() => {
@@ -173,7 +194,7 @@ export function TodaysVerdict() {
 
   // ── Headline text ─────────────────────────────────────────────────────────
 
-  const headlineText = isLoading
+  const headlineText = verdictData == null
     ? t.verdictLoading
     : verdictData.tier === 'high'
       ? (pastSunset ? t.verdictHighTomorrow : t.verdictHigh)
@@ -181,7 +202,7 @@ export function TodaysVerdict() {
         ? (pastSunset ? t.verdictMidTomorrow : t.verdictMid)
         : (pastSunset ? t.verdictLowTomorrow : t.verdictLow);
 
-  const statText = !isLoading && verdictData.strongCount > 0
+  const statText = verdictData != null && verdictData.strongCount > 0
     ? verdictData.bestWindow != null
       ? t.verdictStatLine(
           verdictData.strongCount,
@@ -208,7 +229,7 @@ export function TodaysVerdict() {
       </Text>
 
       {/* Evening note — makes it unmistakable the card has moved to tomorrow */}
-      {pastSunset && !isLoading ? (
+      {pastSunset && verdictData != null ? (
         <Text style={styles.eveningNote}>{t.verdictEveningNote}</Text>
       ) : null}
 
@@ -220,7 +241,7 @@ export function TodaysVerdict() {
       {/* Sun arc — the day as a horizon. Warm dots mark the city's best
           window; the sun marker sits at the current time (hidden on the
           post-sunset tomorrow view — the sun is below the horizon). */}
-      {!isLoading ? (
+      {verdictData != null ? (
         <SunArc
           fromHour={DAY_FROM}
           toHour={DAY_TO}
@@ -253,7 +274,7 @@ export function TodaysVerdict() {
       ) : null}
 
       {/* Divider before top picks, only when picks exist */}
-      {!isLoading && topPicks.length > 0 ? (
+      {verdictData != null && topPicks.length > 0 ? (
         <>
           <View style={styles.divider} />
           <Text style={styles.picksLabel}>{pastSunset ? t.verdictTopPicksTomorrow : t.verdictTopPicks}</Text>

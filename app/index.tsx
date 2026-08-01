@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { InteractionManager, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ErrorBoundary } from '@/src/components/ErrorBoundary';
@@ -16,12 +16,41 @@ import { TerraceDetailSheet } from '@/src/components/TerraceDetailSheet';
 import { TerracePeekCard } from '@/src/components/TerracePeekCard';
 import { ZonnieMap } from '@/src/components/ZonnieMap';
 import type { ScoredTerrace } from '@/src/hooks/useScoredTerraces';
+import { cachedHourScore } from '@/src/hooks/scoreCache';
+import { TERRACES } from '@/src/data/terraces';
 import { haptics } from '@/src/lib/haptics';
 import { useLandingStore } from '@/src/store/landingStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { useWeatherStore } from '@/src/store/weatherStore';
+import { useTimeStore, nowAmsterdamHour, todayAmsterdamDateStr, isPastSunsetAmsterdam, selectedDateStr } from '@/src/store/timeStore';
 import { palette, radii, spacing } from '@/src/theme/tokens';
 
 export default function Index() {
+  const preWarmDoneRef = useRef(false);
+
+  // Pre-warm the score cache for the default window on cold launch, so
+  // subsequent operations see a warm cache. This runs silently in the
+  // background after interactions settle.
+  useEffect(() => {
+    if (preWarmDoneRef.current) return;
+    preWarmDoneRef.current = true;
+    const task = InteractionManager.runAfterInteractions(() => {
+      const pastSunset = isPastSunsetAmsterdam();
+      const dateStr = pastSunset ? selectedDateStr(1) : todayAmsterdamDateStr();
+      const fromHour = pastSunset ? 13 : nowAmsterdamHour();
+      const toHour = pastSunset ? 15 : Math.min(fromHour + 2, 23);
+      const weatherByDate = useWeatherStore.getState().byDate;
+      const hourlyWeather = weatherByDate[dateStr]?.data;
+      // Warm the cache for the default window: score ~1,986 terraces × (toHour - fromHour + 1) hours
+      for (const terrace of TERRACES) {
+        for (let h = fromHour; h <= toHour; h++) {
+          cachedHourScore(terrace as any, h, dateStr, hourlyWeather?.[h]);
+        }
+      }
+    });
+    return () => task.cancel();
+  }, []);
+
   const select = useSelectionStore((s) => s.select);
   const peek = useSelectionStore((s) => s.peek);
   // List rows commit to a terrace → open the full detail sheet directly.

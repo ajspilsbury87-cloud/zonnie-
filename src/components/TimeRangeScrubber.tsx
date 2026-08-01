@@ -7,7 +7,7 @@
  *   TimeRangeFineTune     ← mid-snap+: FROM/TO sliders (Pro)
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStrings } from '@/src/i18n/useStrings';
 import { StyleSheet, Text, View, Pressable, useWindowDimensions } from 'react-native';
 import Slider from '@react-native-community/slider';
@@ -208,6 +208,8 @@ function RangeSlider({ label, value, min, max, onCommit }: RangeSliderProps) {
   );
 }
 
+const TIME_DEBOUNCE_MS = 300; // Debounce time scrubber so rapid releases don't thrash scoring
+
 export function TimeRangeFineTune() {
   const t = useStrings();
   const fromHour     = useTimeStore((s) => s.fromHour);
@@ -215,6 +217,25 @@ export function TimeRangeFineTune() {
   const setFromHour  = useTimeStore((s) => s.setFromHour);
   const setToHour    = useTimeStore((s) => s.setToHour);
   const dateOffset   = useTimeStore((s) => s.dateOffset);
+
+  // Debounce the slider commits so rapid from/to adjustments don't thrash the score cache.
+  const fromTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const toTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const debouncedSetFromHour = useCallback((h: number) => {
+    if (fromTimeoutRef.current) clearTimeout(fromTimeoutRef.current);
+    fromTimeoutRef.current = setTimeout(() => setFromHour(h), TIME_DEBOUNCE_MS);
+  }, [setFromHour]);
+
+  const debouncedSetToHour = useCallback((h: number) => {
+    if (toTimeoutRef.current) clearTimeout(toTimeoutRef.current);
+    toTimeoutRef.current = setTimeout(() => setToHour(h), TIME_DEBOUNCE_MS);
+  }, [setToHour]);
+
+  useEffect(() => () => {
+    if (fromTimeoutRef.current) clearTimeout(fromTimeoutRef.current);
+    if (toTimeoutRef.current) clearTimeout(toTimeoutRef.current);
+  }, []);
   const isPro        = usePurchaseStore((s) => s.isPro);
   const showPaywall  = useProPaywallStore((s) => s.show);
   const { sunrise, sunset } = useMemo(() => {
@@ -235,14 +256,14 @@ export function TimeRangeFineTune() {
             value={Math.max(sunrise, fromHour)}
             min={sunrise}
             max={Math.min(sunset, Math.max(sunrise, toHour))}
-            onCommit={setFromHour}
+            onCommit={debouncedSetFromHour}
           />
           <RangeSlider
             label={t.to}
             value={toHour}
             min={Math.min(sunset, Math.max(sunrise, fromHour))}
             max={sunset}
-            onCommit={setToHour}
+            onCommit={debouncedSetToHour}
           />
         </View>
         {!isPro ? (

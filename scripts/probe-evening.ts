@@ -16,7 +16,6 @@
  */
 
 import { TERRACES } from '../src/data/terraces';
-import { getBuildingsForTerrace } from '../src/data/buildings';
 import { computeSunScore, scoreLabel } from '../src/engines/scoring';
 import { solarPosition } from '../src/engines/solar';
 import { amsterdamLocalToUtc } from '../src/engines/scoring';
@@ -40,11 +39,10 @@ for (let h = 17; h <= 22; h++) {
 
 // ─── Score every terrace, 18-21h average ─────────────────────────────────
 const scored = TERRACES.map((t) => {
-  const tBuildings = getBuildingsForTerrace(t.id);
   let sum = 0;
   const perHour: number[] = [];
   for (let h = 18; h <= 21; h++) {
-    const s = computeSunScore(t, tBuildings, h, DATE, 'sunny').score;
+    const s = computeSunScore(t, h, DATE, 'sunny').score;
     perHour.push(s);
     sum += s;
   }
@@ -92,13 +90,12 @@ const sample = scored.slice(0, 15);
 console.log('Rank  Current  Proposed  Δ      Name');
 for (let i = 0; i < sample.length; i++) {
   const { t, avg } = sample[i]!;
-  const tBuildings = getBuildingsForTerrace(t.id);
   // Recompute with sqrt curve. We can't easily monkey-patch
   // computeSunScore; instead, replicate just the altitude factor swap
   // and apply the same other multipliers.
   let sum = 0;
   for (let h = 18; h <= 21; h++) {
-    const r = computeSunScore(t, tBuildings, h, DATE, 'sunny');
+    const r = computeSunScore(t, h, DATE, 'sunny');
     if (r.sun.altitude <= 0) continue;
     // Current factor that contributed to r.score:
     const currentAlt = Math.min(1, r.sun.altitude / ALT_CEILING);

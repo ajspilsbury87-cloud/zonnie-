@@ -19,7 +19,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { getBuildingsForTerrace } from '../src/data/buildings';
 import { computeSunScore, windShelterFactor } from '../src/engines/scoring';
 import { solarPosition } from '../src/engines/solar';
 import { amsterdamLocalToUtc } from '../src/engines/scoring';
@@ -66,9 +65,7 @@ function findByName(needle: string): Terrace {
 }
 
 function hourScore(t: Terrace, hour: number, dateStr: string, weather?: Weather): number {
-  const buildings = getBuildingsForTerrace(t.id);
-  const r = computeSunScore(t, buildings, hour, dateStr, 'sunny', weather);
-  return r.score;
+  return computeSunScore(t, hour, dateStr, 'sunny', weather).score;
 }
 
 // ─── Solar physics checks ───────────────────────────────────────────
@@ -197,26 +194,10 @@ check('Wind shelter: calm wind has no penalty regardless of facing', () => {
 
 // ─── Shadow / building geometry ────────────────────────────────────
 
-check('Score with no nearby buildings ≥ score with nearby buildings', () => {
-  // For two scoring runs on the same terrace, removing buildings can
-  // only increase the score (no shadow obstruction). This is a
-  // monotonicity property the engine MUST satisfy.
-  const t = findByName('Café Kiebêrt');
-  const buildings = getBuildingsForTerrace(t.id);
-  for (let h = 12; h <= 19; h++) {
-    const withB = computeSunScore(t, buildings, h, '2026-05-15', 'sunny').score;
-    const withoutB = computeSunScore(t, [], h, '2026-05-15', 'sunny').score;
-    if (withoutB < withB - 1e-9) {
-      return `at ${h}:00, no-buildings=${withoutB.toFixed(3)} < with-buildings=${withB.toFixed(3)}`;
-    }
-  }
-  return null;
-});
-
-check('Continuous shadow coverage produces non-binary scores', () => {
-  // We replaced the old binary `isInShadow → boolean` with `shadowCoverage
-  // → 0..1`. There must be at least some terraces whose score falls
-  // between the "no shadow" and "full shadow" plateaus.
+check('Score distribution is not degenerate (not bimodal extremes only)', () => {
+  // Scores should spread across the range — not clump only at 0 and 1.
+  // Shadow was removed from the engine; facing + sun angle produce the
+  // spread now.
   const samples: number[] = [];
   for (const t of TERRACES.slice(0, 100)) {
     samples.push(hourScore(t, 17, '2026-05-15'));

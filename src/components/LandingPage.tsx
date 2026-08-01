@@ -35,7 +35,7 @@
  * regardless of any in-app time-window the user has selected.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, InteractionManager, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -54,13 +54,14 @@ import { SunsOutBanner } from './SunsOutBanner';
 import { TodaysVerdict } from './TodaysVerdict';
 import { TERRACES } from '@/src/data/terraces';
 import { isWorldCupLive, matchForBanner } from '@/src/data/worldcup';
-import { countParadeViewTerraces, isWorldPrideLive } from '@/src/data/pride';
+import { countParadeViewTerraces, isCanalParadeDay, isWorldPrideLive, isWorldPrideTeaser } from '@/src/data/pride';
 import { AMSTERDAM_TZ } from '@/src/engines/scoring';
 import { rangeScoreForTerrace } from '@/src/hooks/scoreCache';
 import { haptics } from '@/src/lib/haptics';
 import { useAreaStore } from '@/src/store/areaStore';
 import { useLandingStore } from '@/src/store/landingStore';
 import { useSelectionStore } from '@/src/store/selectionStore';
+import { useSunLogStore } from '@/src/store/sunLogStore';
 import { useSunStatsStore } from '@/src/store/sunStatsStore';
 import { isPastSunsetAmsterdam, selectedDateStr, todayAmsterdamDateStr } from '@/src/store/timeStore';
 import { useWeatherStore } from '@/src/store/weatherStore';
@@ -189,6 +190,17 @@ export function LandingPage() {
   // WorldPride window (25 Jul – 8 Aug 2026) — picks up right after the WC
   // layer retires on 19 Jul; the two spotlights are never visible together.
   const prideLive = isWorldPrideLive(today);
+  const prideTeaser = isWorldPrideTeaser(today);
+
+  // Sun Log: one spotlight/teaser impression per app session — enough to
+  // measure awareness → adoption without eating into the 2,000-event cap.
+  // terraceId -1 is the no-terrace sentinel (stats ignore ids < 0).
+  const prideViewLogged = useRef(false);
+  useEffect(() => {
+    if (prideViewLogged.current || (!prideLive && !prideTeaser)) return;
+    prideViewLogged.current = true;
+    useSunLogStore.getState().log({ ts: Date.now(), terraceId: -1, action: 'pride_spotlight_view' });
+  }, [prideLive, prideTeaser]);
 
   // Scoring all ~1,028 terraces is the heaviest work on this screen. Running it
   // inside render (useMemo) blocked the first paint and the JS thread, so the
@@ -229,6 +241,8 @@ export function LandingPage() {
   const setPrideRouteOnly = useAreaStore((s) => s.setPrideRouteOnly);
   const handlePridePress = () => {
     haptics.medium();
+    // Sun Log: the spotlight tap IS the filter apply (terraceId -1 sentinel).
+    useSunLogStore.getState().log({ ts: Date.now(), terraceId: -1, action: 'pride_filter_apply' });
     setPrideRouteOnly(true);
     setTimeout(hideLanding, 60);
   };
@@ -269,6 +283,18 @@ export function LandingPage() {
   // skipped in touch hit-testing, so fading it in from 0 left the button dead
   // until a later re-render committed a non-zero opacity. Rendering it at full
   // opacity from the first frame keeps it interactive immediately.
+
+  // Read the landing visibility from store so we can reset opacity when returning.
+  const landingVisible = useLandingStore((s) => s.visible);
+
+  // Reset opacity when returning to Home (via home button). LandingPage is always
+  // mounted, so we hook into the visible state change to restore the opacity
+  // that was faded to 0 when leaving.
+  useEffect(() => {
+    if (landingVisible) {
+      containerOpacity.value = 1;
+    }
+  }, [landingVisible, containerOpacity]);
 
   useEffect(() => {
     // If the intro has already played this session, all shared values were
@@ -431,6 +457,15 @@ export function LandingPage() {
             </Pressable>
           ) : null}
 
+          {/* WorldPride teaser — appears 3 days before launch (22–24 Jul). */}
+          {prideTeaser && !prideLive ? (
+            <View style={styles.wcBanner}>
+              <Text style={styles.wcBannerText} numberOfLines={2}>
+                🌈 Coming July 25: WorldPride spotlight with 137 parade-view terraces
+              </Text>
+            </View>
+          ) : null}
+
           {/* WorldPride spotlight — 25 Jul–8 Aug 2026, auto-retires after.
               Reuses the WC card's visual family (same styles) so seasonal
               moments read as one recurring format. */}
@@ -444,7 +479,9 @@ export function LandingPage() {
               accessibilityLabel={t.prideSpotlightCta}
             >
               <Text style={styles.wcBannerText} numberOfLines={2}>
-                {t.prideSpotlightTitle} · {t.prideSpotlightBody(PARADE_TERRACE_COUNT)} →
+                {isCanalParadeDay(today)
+                  ? `${t.prideParadeDayTitle} · ${t.prideParadeDayBody(PARADE_TERRACE_COUNT)} →`
+                  : `${t.prideSpotlightTitle} · ${t.prideSpotlightBody(PARADE_TERRACE_COUNT)} →`}
               </Text>
             </Pressable>
           ) : null}

@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { InteractionManager } from 'react-native';
 
 import { TERRACES } from '@/src/data/terraces';
 import { regionForArea } from '@/src/data/regions';
@@ -99,7 +100,7 @@ export function useScoredTerraces(
     ? `${userCoord.lat.toFixed(4)},${userCoord.lng.toFixed(4)}`
     : 'none';
 
-  return useMemo(() => {
+  const compute = useCallback(() => {
     const dateStr = selectedDateStr(dateOffset);
     const q = fold(query.trim());
     const weatherEntry = weatherByDate[dateStr];
@@ -185,7 +186,7 @@ export function useScoredTerraces(
     }
 
     return scored;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `coordKey` (lat/lng rounded to 4dp) is the intentional dep proxy for `userCoord`, so minor GPS jitter doesn't bust the memo (see coordKey above).
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `coordKey` (lat/lng rounded to 4dp) is the intentional dep proxy for `userCoord`, so minor GPS jitter doesn't bust the memoised compute (see coordKey above).
   }, [
     dateOffset,
     fromHour,
@@ -202,4 +203,32 @@ export function useScoredTerraces(
     weatherByDate,
     coordKey,
   ]);
+
+  // ── Deferred application ──────────────────────────────────────────────────
+  // The INITIAL value is computed synchronously: by the time the map + list
+  // mount (after Home is dismissed) the shared per-hour score cache is already
+  // warm — LandingPage + TodaysVerdict pre-scored the day window while Home was
+  // up — so this first pass is a few ms of cache hits, and the surfaces paint
+  // with real data (no empty-state flash on the list).
+  const [scored, setScored] = useState<ScoredTerrace[]>(compute);
+
+  // Every recompute AFTER mount (time / date / filter / search change) is
+  // applied AFTER interactions settle, so a COLD sweep — a new date, or evening
+  // hours outside the pre-warmed window — can't block the tap that triggered
+  // it. `compute`'s identity only changes when a real input changes, and the
+  // PREVIOUS results stay on screen until the deferred pass finishes, so the
+  // list + map never flash empty mid-update.
+  const firstRun = useRef(true);
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return; // initial state already holds the first compute()
+    }
+    const task = InteractionManager.runAfterInteractions(() => {
+      setScored(compute());
+    });
+    return () => task.cancel();
+  }, [compute]);
+
+  return scored;
 }

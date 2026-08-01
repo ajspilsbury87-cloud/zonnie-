@@ -2,6 +2,7 @@
 import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, {
   Marker,
+  Polyline,
   PROVIDER_DEFAULT,
   type MapPressEvent,
   type Region as MapRegion,
@@ -12,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MapRegionPill } from '@/src/components/MapRegionPill';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
 import { isWorldCupLive } from '@/src/data/worldcup';
+import { isWorldPrideLive, PARADE_ROUTE_SEGMENTS, PRIDE_TOILETS, prideEventsForDate } from '@/src/data/pride';
 import type { Region } from '@/src/data/regions';
 import { thinPins } from '@/src/engines/pinThinning';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -411,6 +413,12 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   // We don't need this to react to a store; it only needs to be correct on
   // each fresh render (the map re-renders when scored changes anyway).
   const wcLiveToday = isWorldCupLive(todayAmsterdamDateStr());
+  // WorldPride: rainbow parade-route overlay, gated to the 25 Jul–8 Aug
+  // window — same evaluate-per-render idiom as wcLiveToday above.
+  const prideLiveToday = isWorldPrideLive(todayAmsterdamDateStr());
+  // Toilet pins only show with the parade filter ON — event-lens info, kept
+  // out of the everyday map to avoid clutter.
+  const prideRouteOnly = useAreaStore((s) => s.prideRouteOnly);
 
   // Tracks which macro-region the map is currently centred on, driving
   // the floating region pill. Updates on gesture-settle (not during the
@@ -575,24 +583,33 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
   // mapRegion is only updated on pan/zoom settle (onRegionChangeComplete),
   // not during the gesture — so this useMemo doesn't fire while dragging.
   const markers = useMemo(() => {
+    const cap = maxPinsFromZoom(mapRegion.latitudeDelta);
     const minLat = mapRegion.latitude - mapRegion.latitudeDelta / 2 - VIEWPORT_MARGIN;
     const maxLat = mapRegion.latitude + mapRegion.latitudeDelta / 2 + VIEWPORT_MARGIN;
     const minLng = mapRegion.longitude - mapRegion.longitudeDelta / 2 - VIEWPORT_MARGIN;
     const maxLng = mapRegion.longitude + mapRegion.longitudeDelta / 2 + VIEWPORT_MARGIN;
 
-    // Filter to viewport, then thin to the zoom-aware pin cap.
-    // `scored` is already sorted best-first; thinPins keeps that priority
-    // but spreads the budget across a viewport grid — a plain top-N slice
-    // starved quiet neighbourhoods at wide zooms and users read the gaps
-    // as missing venues (see pinThinning.ts).
-    const visible = scored.filter(
-      (s) =>
+    // Aggressive culling: collect pins in viewport until we reach the render cap,
+    // then stop — no need to filter the entire dataset. This trades off the
+    // global rank guarantee (scored is sorted best-first everywhere) for
+    // speed: a viewport at wide zoom only processes as many terraces as it
+    // will render, not all 1,986. thinPins still spreads the budget across a
+    // grid so quiet neighborhoods remain visible.
+    const visible: ScoredTerrace[] = [];
+    for (const s of scored) {
+      if (
         s.terrace.lat >= minLat &&
         s.terrace.lat <= maxLat &&
         s.terrace.lng >= minLng &&
-        s.terrace.lng <= maxLng,
-    );
-    const cap = maxPinsFromZoom(mapRegion.latitudeDelta);
+        s.terrace.lng <= maxLng
+      ) {
+        visible.push(s);
+        // Early exit: once we have 2.5× the render cap, thinPins has enough
+        // to work with and the remaining terraces outside the viewport are
+        // certainly below-screen anyway.
+        if (visible.length > cap * 2.5) break;
+      }
+    }
     const capped = thinPins(visible, cap, mapRegion);
 
     // Always include the selected terrace even if it's been panned off-screen
@@ -664,6 +681,54 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
         showsScale
         userInterfaceStyle="light"
       >
+        {/* WorldPride rainbow — the Canal Parade route drawn in the six flag
+            colours along the water. Solid per-segment colours (Apple Maps has
+            no gradient polylines); rendered before the pins so terraces stay
+            tappable on top. Static data — no re-render cost after mount. */}
+        {prideLiveToday
+          ? PARADE_ROUTE_SEGMENTS.map((seg, i) => (
+              <Polyline
+                key={`pride-route-${i}`}
+                coordinates={seg.coordinates}
+                strokeColor={seg.color}
+                strokeWidth={4}
+              />
+            ))
+          : null}
+        {/* Official WorldPride event locations (pride.amsterdam program).
+            Past events hide themselves via their `until` date. */}
+        {prideLiveToday && prideRouteOnly
+          ? prideEventsForDate(todayAmsterdamDateStr()).map((e) => (
+              <Marker
+                key={`pride-event-${e.label}`}
+                coordinate={{ latitude: e.lat, longitude: e.lng }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                tracksViewChanges={false}
+                title={e.label}
+              >
+                <View style={styles.eventPin}>
+                  <Text style={styles.eventPinGlyph}>{e.emoji}</Text>
+                </View>
+              </Marker>
+            ))
+          : null}
+        {/* Official event toilets (WorldPride toilet map).
+            Only with the parade filter on. */}
+        {prideLiveToday && prideRouteOnly
+          ? PRIDE_TOILETS.map((p, i) => (
+              <Marker
+                key={`pride-toilet-${i}`}
+                coordinate={{ latitude: p.lat, longitude: p.lng }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                tracksViewChanges={false}
+                title={t.prideToilet}
+              >
+                <View style={styles.toiletPin}>
+                  <Text style={styles.toiletPinGlyph}>🚻</Text>
+                </View>
+              </Marker>
+            ))
+          : null}
         {markers.map(({ item, band, selected, featured, topPick, screens }) => (
           <TerracePin
             key={item.terrace.id}
@@ -756,6 +821,38 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
+  // Small white disc so the 🚻 glyph reads against busy map tiles; kept
+  // visually quieter than terrace pins (info layer, not a destination).
+  toiletPin: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: palette.white,
+    borderWidth: 1,
+    borderColor: palette.mist,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toiletPinGlyph: {
+    fontSize: 13,
+    lineHeight: 16,
+  },
+  // Event pins read slightly larger than toilets — destinations, not
+  // utilities — but stay below terrace pins in visual weight.
+  eventPin: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: palette.white,
+    borderWidth: 2,
+    borderColor: palette.burnt,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventPinGlyph: {
+    fontSize: 16,
+    lineHeight: 20,
+  },
   emptyNotice: {
     position: 'absolute',
     alignSelf: 'center',

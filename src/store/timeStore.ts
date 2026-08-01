@@ -35,7 +35,7 @@ interface TimeState {
   resetToNow: () => void;
 }
 
-function nowAmsterdamHour(): number {
+export function nowAmsterdamHour(): number {
   const now = new Date();
   const [hh] = formatInTimeZone(now, AMSTERDAM_TZ, 'HH:mm').split(':').map(Number);
   return hh ?? 12;

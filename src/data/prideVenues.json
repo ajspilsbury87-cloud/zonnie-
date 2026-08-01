@@ -1,0 +1,30 @@
+{
+  "source": "Toilets: official WorldPride toilet map (icons georeferenced to the named bridge/square, ±50m). Events: pride.amsterdam/en/events + iamsterdam program, fetched 2026-08-01.",
+  "toilets": [
+    [52.3846, 4.8895], [52.3823, 4.8877], [52.3806, 4.8872], [52.3795, 4.8862],
+    [52.3792, 4.884], [52.3776, 4.8853], [52.3758, 4.8843], [52.3747, 4.8832],
+    [52.3725, 4.8817], [52.3703, 4.8815], [52.3694, 4.8819], [52.3686, 4.8821],
+    [52.3662, 4.8824], [52.3641, 4.8837], [52.3641, 4.882], [52.3626, 4.8818],
+    [52.3629, 4.8867], [52.3605, 4.885], [52.362, 4.8897], [52.3601, 4.8925],
+    [52.3623, 4.8923], [52.3617, 4.8945], [52.3627, 4.896], [52.3609, 4.899],
+    [52.3623, 4.9004], [52.364, 4.9013], [52.3637, 4.9033], [52.3653, 4.9026],
+    [52.3661, 4.9012], [52.3676, 4.9019], [52.3687, 4.9082], [52.3697, 4.911],
+    [52.3716, 4.9142], [52.3743, 4.912], [52.3766, 4.9097], [52.3665, 4.8952],
+    [52.3656, 4.896], [52.366, 4.8975], [52.3668, 4.8928], [52.3688, 4.8899],
+    [52.373, 4.8925], [52.3725, 4.9004], [52.3745, 4.9], [52.3742, 4.8979],
+    [52.3782, 4.9]
+  ],
+  "events": [
+    { "label": "Pride Park · Vondelpark", "lat": 52.3579, "lng": 4.8686, "until": "2026-08-08", "emoji": "🏳️‍🌈" },
+    { "label": "WorldPride Village · Museumplein · 4–8 Aug", "lat": 52.3585, "lng": 4.8816, "until": "2026-08-08", "emoji": "🎪" },
+    { "label": "UNITY Concert · Museumplein · 4 Aug 17:30", "lat": 52.3577, "lng": 4.8825, "until": "2026-08-04", "emoji": "🎤" },
+    { "label": "Wedding Party XXL · Museumplein · 6 Aug 17:30", "lat": 52.3581, "lng": 4.8808, "until": "2026-08-06", "emoji": "💍" },
+    { "label": "Closing Concert · Museumplein · 8 Aug 17:30", "lat": 52.3573, "lng": 4.8818, "until": "2026-08-08", "emoji": "🎶" },
+    { "label": "Street party · Reguliersdwarsstraat · until 1 Aug", "lat": 52.3663, "lng": 4.8907, "until": "2026-08-01", "emoji": "🎉" },
+    { "label": "Street party · Zeedijk · until 1 Aug", "lat": 52.3745, "lng": 4.9, "until": "2026-08-01", "emoji": "🎉" },
+    { "label": "Street party · Warmoesstraat · until 1 Aug", "lat": 52.3735, "lng": 4.8965, "until": "2026-08-01", "emoji": "🎉" },
+    { "label": "Street party · Amstel & Halvemaansteeg · until 1 Aug", "lat": 52.366, "lng": 4.8975, "until": "2026-08-01", "emoji": "🎉" },
+    { "label": "Street party · Rembrandtplein · until 1 Aug", "lat": 52.3662, "lng": 4.8955, "until": "2026-08-01", "emoji": "🎉" },
+    { "label": "Homomonument · Westermarkt", "lat": 52.3746, "lng": 4.8838, "until": "2026-08-08", "emoji": "🏳️‍🌈" }
+  ]
+}

@@ -56,12 +56,14 @@ ${tile(gx + tw + 24, gy + th + 24, tw, th, '4', 'SUN RUNS')}
 </svg>`;
 
 const layers = [];
+// Increased top padding: Instagram crops aggressively, so move headline down 40px
+// to ensure the badge + headline stay visible.
 const eb = await text({ markup: `<span foreground="${C.terracotta}" letter_spacing="9500">NEW IN ZONNIE</span>`, font: 'Inter SemiBold 15', fontfile: I_SEMI });
-layers.push({ input: eb.buffer, left: Math.round((W - eb.width) / 2), top: 120 });
+layers.push({ input: eb.buffer, left: Math.round((W - eb.width) / 2), top: 160 });
 // Render unwrapped (no width) so the two explicit lines never rewrap.
 const hl = await text({ markup: `<span foreground="${C.ink}">Your sun summer,\ncounted.</span>`, font: 'Fraunces 46', fontfile: F_BOLD, spacing: -4 });
-layers.push({ input: hl.buffer, left: Math.round((W - hl.width) / 2), top: 180 });
-const subTop = 180 + hl.height + 30;
+layers.push({ input: hl.buffer, left: Math.round((W - hl.width) / 2), top: 220 });
+const subTop = 220 + hl.height + 30;
 const sub = await text({ markup: `<span foreground="${C.inkSoft}">Terraces explored, sunny streaks, your golden moment — tracked on your phone, shared with one tap.</span>`, font: 'Inter 21', fontfile: I_REG, width: 800, spacing: 6 });
 layers.push({ input: sub.buffer, left: Math.round((W - sub.width) / 2), top: subTop });
 layers.push({ input: Buffer.from(card), left: 0, top: 0 });
