@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MapRegionPill } from '@/src/components/MapRegionPill';
 import { centroidForRegion, regionForCoordinate } from '@/src/data/regionFromCoordinate';
 import { isWorldCupLive } from '@/src/data/worldcup';
-import { isWorldPrideLive, PARADE_ROUTE_SEGMENTS, PRIDE_TOILETS } from '@/src/data/pride';
+import { isWorldPrideLive, PARADE_ROUTE_SEGMENTS, PRIDE_TOILETS, prideEventsForDate } from '@/src/data/pride';
 import type { Region } from '@/src/data/regions';
 import { thinPins } from '@/src/engines/pinThinning';
 import { useScoredTerraces, type ScoredTerrace } from '@/src/hooks/useScoredTerraces';
@@ -695,8 +695,25 @@ export function ZonnieMap({ onSelect }: ZonnieMapProps) {
               />
             ))
           : null}
-        {/* Public toilets near the route (OSM data, existing city facilities
-            — not official event toilets). Only with the parade filter on. */}
+        {/* Official WorldPride event locations (pride.amsterdam program).
+            Past events hide themselves via their `until` date. */}
+        {prideLiveToday && prideRouteOnly
+          ? prideEventsForDate(todayAmsterdamDateStr()).map((e) => (
+              <Marker
+                key={`pride-event-${e.label}`}
+                coordinate={{ latitude: e.lat, longitude: e.lng }}
+                anchor={{ x: 0.5, y: 0.5 }}
+                tracksViewChanges={false}
+                title={e.label}
+              >
+                <View style={styles.eventPin}>
+                  <Text style={styles.eventPinGlyph}>{e.emoji}</Text>
+                </View>
+              </Marker>
+            ))
+          : null}
+        {/* Official event toilets (WorldPride toilet map).
+            Only with the parade filter on. */}
         {prideLiveToday && prideRouteOnly
           ? PRIDE_TOILETS.map((p, i) => (
               <Marker
@@ -819,6 +836,22 @@ const styles = StyleSheet.create({
   toiletPinGlyph: {
     fontSize: 13,
     lineHeight: 16,
+  },
+  // Event pins read slightly larger than toilets — destinations, not
+  // utilities — but stay below terrace pins in visual weight.
+  eventPin: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: palette.white,
+    borderWidth: 2,
+    borderColor: palette.burnt,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventPinGlyph: {
+    fontSize: 16,
+    lineHeight: 20,
   },
   emptyNotice: {
     position: 'absolute',

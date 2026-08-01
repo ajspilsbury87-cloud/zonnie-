@@ -18,6 +18,7 @@
 
 import type { Terrace } from '@/src/engines/types';
 import routeGeo from './prideRouteGeo.json';
+import prideVenues from './prideVenues.json';
 
 // ── Window ────────────────────────────────────────────────────────────────────
 
@@ -96,22 +97,64 @@ export const PARADE_ROUTE: readonly { lat: number; lng: number }[] = (() => {
 })();
 
 /**
- * Existing public toilets within 200 m of the route (OSM amenity=toilets,
- * same build script). Honest framing: these are the city's permanent
- * facilities near the route — NOT official event toilets, which
- * pride.amsterdam publishes separately closer to the day.
+ * Event toilets from the OFFICIAL WorldPride toilet map (prideVenues.json —
+ * icons georeferenced to the named bridge/square, ±50m). Falls back to the
+ * OSM public-toilet sweep in prideRouteGeo.json if the official list is
+ * ever missing/malformed. Module-load code — must never throw.
  */
 export const PRIDE_TOILETS: readonly { lat: number; lng: number }[] = (() => {
   try {
-    const pts = (routeGeo as { toilets?: unknown }).toilets;
-    if (Array.isArray(pts)) {
-      return pts.filter(isLatLngPair).map(([lat, lng]) => ({ lat, lng }));
+    const official = (prideVenues as { toilets?: unknown }).toilets;
+    if (Array.isArray(official)) {
+      const mapped = official.filter(isLatLngPair).map(([lat, lng]) => ({ lat, lng }));
+      if (mapped.length > 0) return mapped;
+    }
+    const osm = (routeGeo as { toilets?: unknown }).toilets;
+    if (Array.isArray(osm)) {
+      return osm.filter(isLatLngPair).map(([lat, lng]) => ({ lat, lng }));
     }
   } catch {
     // fall through to empty
   }
   return [];
 })();
+
+/** A plottable WorldPride event location. */
+export interface PrideEvent {
+  label: string;
+  lat: number;
+  lng: number;
+  /** Last day (yyyy-MM-dd) the pin should show; hides the day after. */
+  until: string;
+  emoji: string;
+}
+
+/** Official public events (pride.amsterdam program), validated at load. */
+export const PRIDE_EVENTS: readonly PrideEvent[] = (() => {
+  try {
+    const raw = (prideVenues as { events?: unknown }).events;
+    if (Array.isArray(raw)) {
+      return raw.filter(
+        (e): e is PrideEvent =>
+          e != null &&
+          typeof e === 'object' &&
+          typeof (e as PrideEvent).label === 'string' &&
+          Number.isFinite((e as PrideEvent).lat) &&
+          Number.isFinite((e as PrideEvent).lng) &&
+          typeof (e as PrideEvent).until === 'string' &&
+          typeof (e as PrideEvent).emoji === 'string',
+      );
+    }
+  } catch {
+    // fall through to empty
+  }
+  return [];
+})();
+
+/** Events still current on the given day (past events hide themselves). */
+export function prideEventsForDate(dateStr: string): PrideEvent[] {
+  return PRIDE_EVENTS.filter((e) => dateStr <= e.until);
+}
 
 /** A terrace "sees" the parade within this straight-line distance of the
  *  route. ~130m ≈ a short block from the quay — close enough to wander
