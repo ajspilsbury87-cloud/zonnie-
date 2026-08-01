@@ -62,7 +62,20 @@ const config: ExpoConfig = {
   // PLUS the new native image share card (react-native-view-shot, which can
   // only ship in a build, not an OTA). Runtime → "1.3.0"; the old build #15
   // (v1.2.1) keeps its own separate 1.2.1 OTA lineage and is unaffected.
-  version: '1.4.0',
+  // ⚠️ OTA-TARGET BRANCH — DO NOT MERGE TO MASTER.
+  // Master is at 1.4.0 (build #18, TestFlight). This branch deliberately
+  // pins the version BACK to 1.3.0 for ONE purpose: with
+  // `runtimeVersion: { policy: 'appVersion' }`, `eas update` tags the OTA
+  // with this version string. Publishing from here tags the update
+  // "1.3.0", so the LIVE App Store binary (build #16, v1.3.0) picks it up —
+  // delivering the date-gated WorldPride Canal Parade layer to the public
+  // without waiting on App Store review of 1.4.0. The 1.4.0 TestFlight
+  // build listens for "1.4.0" OTAs and is unaffected by this update.
+  // Native parity verified: no native module added since build #16
+  // (only change 514a659..master is this version field), so the full
+  // current JS bundle runs on build #16. ⚠️ Confirm 1.3.0 is the actual
+  // live App Store version before publishing (see OTA-WORLDPRIDE.md).
+  version: '1.3.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
