@@ -62,7 +62,12 @@ const config: ExpoConfig = {
   // PLUS the new native image share card (react-native-view-shot, which can
   // only ship in a build, not an OTA). Runtime → "1.3.0"; the old build #15
   // (v1.2.1) keeps its own separate 1.2.1 OTA lineage and is unaffected.
-  version: '1.4.0',
+  // ⚠️ OTA-TARGET BRANCH — DO NOT MERGE. Pinned to 1.3.0 so `eas update`
+  // tags the OTA runtime "1.3.0" and the LIVE App Store build (#16) receives
+  // this morning's full WorldPride work (rainbow route + toilet pins). Native
+  // parity verified vs build #16: no native change since 514a659 except this
+  // version field, so the bundle runs on the live binary. See OTA-WORLDPRIDE.md.
+  version: '1.3.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'zonnie',
